@@ -545,6 +545,22 @@ A- 3</textarea></div>
       <div class="open">Open tool →</div>
     </div>
 
+    <!-- Zodiac love match -->
+    <div class="tool" data-tags="free utility" data-name="zodiac love compatibility match romance horoscope couple star sign">
+      <span class="badge free">Free</span>
+      <div class="ico">💞</div>
+      <h3>Zodiac Love Match</h3>
+      <p>Check the cosmic chemistry between two star signs.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:48px">You</span><select id="lvA" onchange="loveMatch()"><option value="0">Aries</option><option value="1">Taurus</option><option value="2">Gemini</option><option value="3">Cancer</option><option value="4" selected>Leo</option><option value="5">Virgo</option><option value="6">Libra</option><option value="7">Scorpio</option><option value="8">Sagittarius</option><option value="9">Capricorn</option><option value="10">Aquarius</option><option value="11">Pisces</option></select></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:48px">Them</span><select id="lvB" onchange="loveMatch()"><option value="0">Aries</option><option value="1">Taurus</option><option value="2">Gemini</option><option value="3">Cancer</option><option value="4">Leo</option><option value="5">Virgo</option><option value="6" selected>Libra</option><option value="7">Scorpio</option><option value="8">Sagittarius</option><option value="9">Capricorn</option><option value="10">Aquarius</option><option value="11">Pisces</option></select></div>
+        <div class="row"><span class="out" id="lvScore" style="font-size:24px">—</span><span style="font-size:13px;color:var(--grn)" id="lvHead"></span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;line-height:1.55" id="lvText"></span></div>
+        <div class="row"><button class="smallbtn" onclick="copyLove(this)">Copy result</button><span style="color:var(--mut);font-size:10px">for fun ✨</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
     <!-- Monitoring: premium star -->
     <div class="tool" data-tags="premium monitor" data-name="monitoring agent watch web alerts" onclick="goPrem()">
       <span class="badge prem">Premium</span>
@@ -971,6 +987,37 @@ A- 3</textarea></div>
     set('salH',hourly);set('salW',hourly*H);set('salB',hourly*H*2);set('salM',yearly/12);set('salY',yearly);
   }
   salary();
+  // zodiac love match
+  const LSIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const LELEM=['Fire','Earth','Air','Water','Fire','Earth','Air','Water','Fire','Earth','Air','Water'];
+  function elemScore(a,b){
+    const e1=LELEM[a],e2=LELEM[b];
+    if(e1===e2)return 90;
+    const k=[e1,e2].sort().join('+');
+    return ({'Air+Fire':86,'Earth+Water':85,'Air+Water':63,'Air+Earth':58,'Earth+Fire':55,'Fire+Water':50})[k]||60;
+  }
+  function loveMatch(){
+    const a=+document.getElementById('lvA').value,b=+document.getElementById('lvB').value;
+    let s=elemScore(a,b);
+    if(a===b)s+=4;                 // same sign, kindred spirits
+    if(Math.abs(a-b)===6)s+=8;     // opposite signs attract
+    s+=((a+b)%5)-2;                // small deterministic flavour
+    s=Math.max(48,Math.min(98,Math.round(s)));
+    let head,body;
+    if(s>=85){head='🔥 Power couple';body='Strong, natural chemistry — you click on a deep level and bring out the best in each other.';}
+    else if(s>=70){head='💞 Sweet harmony';body='Plenty of spark and common ground. A promising, easy-flowing match with real staying power.';}
+    else if(s>=58){head='✨ Opposites at work';body='Different rhythms, but the friction can be electric if you both stay curious and lean in.';}
+    else{head='🌗 Slow burn';body='You will need patience and compromise — but unlikely pairs sometimes surprise everyone, including themselves.';}
+    document.getElementById('lvScore').textContent=s+'%';
+    document.getElementById('lvHead').textContent=head;
+    document.getElementById('lvText').textContent=LSIGNS[a]+' ('+LELEM[a]+') + '+LSIGNS[b]+' ('+LELEM[b]+'): '+body;
+  }
+  function copyLove(btn){
+    const a=+document.getElementById('lvA').value,b=+document.getElementById('lvB').value;
+    const txt=LSIGNS[a]+' ❤ '+LSIGNS[b]+' — '+document.getElementById('lvScore').textContent+' '+document.getElementById('lvHead').textContent+' · niftytoolshub.com';
+    if(navigator.clipboard){navigator.clipboard.writeText(txt);const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1200);}
+  }
+  loveMatch();
   // dead pixel
   function deadPixel(){document.getElementById('pixel').style.display='block';}
   function closePixel(){document.getElementById('pixel').style.display='none';}
