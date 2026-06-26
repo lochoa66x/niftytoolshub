@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Toolkit — merge, split, compress & convert | NiftyTools Hub</title>
+<meta name="description" content="Free browser-based PDF toolkit: merge PDFs, extract pages, optimize files, convert images to PDF and export PDF pages as JPG or PNG.">
+<meta property="og:title" content="PDF Toolkit — NiftyTools Hub">
+<meta property="og:description" content="Merge, extract, optimize and convert PDFs locally in your browser.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/pdf-tools.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    --bg:#0a0d0a; --panel:#0d110d; --txt:#d6e2d6; --mut:#74856f; --line:#1b241c;
+    --grn:#46e07a; --grnsoft:#2f9d57; --amber:#ffb454; --bad:#ff6b6b;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
+    background:
+      linear-gradient(rgba(70,224,122,.02) 1px,transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,
+      radial-gradient(900px 520px at 82% -12%, rgba(70,224,122,.06), transparent 60%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);background:rgba(10,13,10,.85);position:sticky;top:0;z-index:5;backdrop-filter:blur(8px)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:56px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--txt)}
+  .logo .mk{width:11px;height:16px;background:var(--grn);box-shadow:0 0 10px var(--grn);animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:.12}}
+  .crumb{color:var(--mut);font-size:12.5px;margin:22px 0 6px}
+  h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.5px;margin:6px 0 12px;text-transform:uppercase}
+  h1::before{content:"> ";color:var(--grn)}
+  .lead{color:var(--mut);font-size:14px;max-width:780px;margin:0 0 24px}
+  .layout{display:grid;grid-template-columns:minmax(280px,380px) 1fr;gap:18px;align-items:start}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:18px}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 16px}
+  .panel h2::before{content:"// ";color:var(--grnsoft)}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px}
+  input,select{width:100%;font-family:var(--mono);background:var(--bg);border:1px solid var(--line);
+    color:var(--txt);border-radius:4px;padding:9px 11px;font-size:14px;outline:0;caret-color:var(--grn)}
+  input:focus,select:focus{border-color:var(--grnsoft)}
+  input[type="range"]{padding:0;height:28px;accent-color:var(--grn)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .drop{border:1px dashed var(--grnsoft);background:rgba(70,224,122,.05);border-radius:8px;padding:26px 18px;text-align:center;cursor:pointer}
+  .drop:hover,.drop.drag{background:rgba(70,224,122,.09);box-shadow:0 0 24px rgba(70,224,122,.08)}
+  .drop .big{font-size:32px;margin-bottom:8px}
+  .drop b{color:var(--grn)}
+  .drop p{margin:6px 0 0;color:var(--mut);font-size:12px}
+  .stack{display:grid;gap:12px}
+  .row{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+  .row:last-child{margin-bottom:0}
+  .hint{font-size:11.5px;color:var(--mut);line-height:1.5;margin-top:4px}
+  .value{font-size:12px;color:var(--grn);font-weight:700;text-align:right;min-width:52px}
+  .btn,.smallbtn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;
+    border-radius:5px;padding:10px 14px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
+  .smallbtn{border-color:var(--line);color:var(--txt);padding:6px 9px;font-size:12px}
+  .btn:hover:not(:disabled),.smallbtn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.4)}
+  .btn:disabled,.smallbtn:disabled{opacity:.38;cursor:not-allowed}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--grn);color:var(--grn);box-shadow:none}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .files{display:grid;gap:8px;margin-top:12px}
+  .file{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:10px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+  .file b{display:block;font-size:12.5px;word-break:break-word}
+  .file span{display:block;color:var(--mut);font-size:11px;margin-top:2px}
+  .file .moves{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+  .preview{
+    min-height:390px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;padding:16px;overflow:hidden;
+    background:linear-gradient(180deg,#0b100b,#090c09);
+  }
+  canvas{max-width:100%;max-height:620px;border-radius:5px;box-shadow:0 0 24px rgba(0,0,0,.35);background:#fff}
+  .empty{text-align:center;color:var(--mut);font-size:13px;max-width:420px}
+  .empty .icon{font-size:44px;margin-bottom:10px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+  @media(max-width:720px){.stats{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:11px 12px}
+  .stat .k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+  .stat .v{font-size:15px;font-weight:700;margin-top:3px;word-break:break-word}
+  .status{border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:11px 12px;color:var(--mut);font-size:12.5px;margin-top:12px}
+  .status.good{border-color:var(--grnsoft);color:var(--txt);background:rgba(70,224,122,.05)}
+  .status.bad{border-color:rgba(255,107,107,.55);color:var(--bad);background:rgba(255,107,107,.06)}
+  .status.warn{border-color:rgba(255,180,84,.55);color:var(--amber);background:rgba(255,180,84,.06)}
+  .note{font-size:12px;color:var(--mut);line-height:1.65}
+  .related{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .related a{border:1px solid var(--line);border-radius:5px;padding:9px 14px;font-size:13px;color:var(--txt)}
+  .related a:hover{border-color:var(--grn);color:var(--grn);text-decoration:none}
+  .modebox{display:none}
+  .modebox.show{display:block}
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <a href="/" style="color:var(--mut);font-size:13px">← all tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb">Home / PDF Tools / PDF Toolkit</div>
+  <h1>PDF Toolkit</h1>
+  <p class="lead">Merge PDFs, extract pages, optimize files, make PDFs from images, and export a PDF page as JPG or PNG. Everything runs in your browser, so files stay on your device.</p>
+
+  <div class="layout">
+    <section>
+      <div class="panel">
+        <h2>Add files</h2>
+        <label class="drop" id="drop">
+          <input id="fileInput" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" multiple hidden>
+          <div class="big">📄</div>
+          <b>Drop PDFs or images here</b>
+          <p>or click to pick PDF, JPG, PNG or WebP files</p>
+        </label>
+        <div class="files" id="fileList"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Operation</h2>
+        <div class="stack">
+          <div>
+            <label for="operation">What do you want to do?</label>
+            <select id="operation">
+              <option value="merge">Merge PDFs</option>
+              <option value="extract">Extract / split pages</option>
+              <option value="optimize">Optimize PDF</option>
+              <option value="images">Images to PDF</option>
+              <option value="render">PDF page to image</option>
+            </select>
+          </div>
+
+          <div class="modebox show" id="mergeBox">
+            <p class="hint">Uses PDF files in the order shown above. Use the arrow buttons to reorder before processing.</p>
+          </div>
+
+          <div class="modebox" id="extractBox">
+            <label for="extractFile">PDF file</label>
+            <select id="extractFile"></select>
+            <label for="pages" style="margin-top:12px">Pages to keep</label>
+            <input id="pages" value="1-3" placeholder="1-3,5,8">
+            <div class="hint">Use page numbers and ranges, for example 1-3,5,8. This creates one new PDF from the selected pages.</div>
+          </div>
+
+          <div class="modebox" id="optimizeBox">
+            <label for="optFile">PDF file</label>
+            <select id="optFile"></select>
+            <p class="hint">Re-saves the PDF with object streams and fresh metadata. Some PDFs shrink a lot; image-heavy scans may not.</p>
+          </div>
+
+          <div class="modebox" id="imagesBox">
+            <label for="pageSize">Page size</label>
+            <select id="pageSize">
+              <option value="fit">Fit each image to its own page</option>
+              <option value="letter">Letter portrait</option>
+              <option value="a4">A4 portrait</option>
+            </select>
+            <label for="margin" style="margin-top:12px">Margin</label>
+            <input id="margin" type="number" value="24" min="0">
+            <div class="hint">Uses all image files in the order shown above. WebP is converted to PNG before embedding.</div>
+          </div>
+
+          <div class="modebox" id="renderBox">
+            <label for="renderFile">PDF file</label>
+            <select id="renderFile"></select>
+            <div class="grid" style="margin-top:12px">
+              <div><label for="renderPage">Page</label><input id="renderPage" type="number" min="1" value="1"></div>
+              <div><label for="renderFormat">Format</label><select id="renderFormat"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option></select></div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="row" style="margin-bottom:4px"><label for="scale" style="margin:0;flex:1">Render scale</label><span class="value" id="scaleVal">2.0x</span></div>
+              <input id="scale" type="range" min="1" max="4" step="0.25" value="2">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Export</h2>
+        <div class="stack">
+          <div><label for="name">File name</label><input id="name" value="nifty-pdf"></div>
+          <div class="actions">
+            <button class="btn" id="process" disabled>Process</button>
+            <button class="btn" id="download" disabled>Download</button>
+            <button class="btn ghost" id="reset" disabled>Reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="panel">
+        <h2>Preview / result</h2>
+        <div class="preview" id="preview">
+          <div class="empty" id="empty"><div class="icon">📄</div>Your PDF result summary or exported page preview will appear here.</div>
+          <canvas id="canvas" hidden></canvas>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Input</div><div class="v" id="sInput">—</div></div>
+          <div class="stat"><div class="k">Output</div><div class="v" id="sOutput">—</div></div>
+          <div class="stat"><div class="k">Pages</div><div class="v" id="sPages">—</div></div>
+          <div class="stat"><div class="k">Savings</div><div class="v" id="sSave">—</div></div>
+        </div>
+        <div class="status" id="status">Loading PDF tools...</div>
+      </div>
+
+      <div class="panel">
+        <h2>Private by design</h2>
+        <p class="note">PDF operations run in your browser with PDF-lib and PDF.js. NiftyTools does not upload your files. Keep the tab open until processing finishes, especially for large scans or long documents.</p>
+        <p class="note">Encrypted or password-protected PDFs may not open. Optimization is a safe browser-side re-save, not heavy scan compression, so very image-heavy files may stay close to the original size.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Related tools</h2>
+        <div class="related">
+          <a href="/image-tools.html">Image Toolkit</a>
+          <a href="/">JSON Formatter</a>
+          <a href="/">QR Code Maker</a>
+          <a href="/">All tools</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap">© 2026 NiftyTools Hub · a Voynich Tech project · niftytoolshub.com</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  const $=id=>document.getElementById(id);
+  const state={items:[],blob:null,blobUrl:null,outputName:'',outputBytes:0,lastPages:0};
+  const canvas=$('canvas'),ctx=canvas.getContext('2d');
+  const fmtBytes=n=>{
+    if(!n)return '—';
+    const u=['B','KB','MB','GB'];let i=0,v=n;
+    while(v>=1024&&i<u.length-1){v/=1024;i++;}
+    return (v>=10||i===0?v.toFixed(0):v.toFixed(1))+' '+u[i];
+  };
+  const cleanName=(ext)=>{
+    const raw=($('name').value||'nifty-pdf').trim().replace(/[^\w.-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')||'nifty-pdf';
+    return raw.replace(/\.(pdf|jpg|jpeg|png)$/i,'')+'.'+ext;
+  };
+  const isPdf=file=>file.type==='application/pdf'||/\.pdf$/i.test(file.name);
+  const isImage=file=>/^image\/(png|jpe?g|webp)$/i.test(file.type)||/\.(png|jpe?g|webp)$/i.test(file.name);
+  const inputBytes=()=>state.items.reduce((sum,item)=>sum+item.file.size,0);
+  function setStatus(msg,type=''){
+    $('status').textContent=msg;
+    $('status').className='status'+(type?' '+type:'');
+  }
+  function setButtons(){
+    $('process').disabled=state.items.length===0;
+    $('reset').disabled=state.items.length===0;
+    $('download').disabled=!state.blob;
+  }
+  function revokeOutput(){
+    if(state.blobUrl)URL.revokeObjectURL(state.blobUrl);
+    state.blob=null;state.blobUrl=null;state.outputName='';state.outputBytes=0;state.lastPages=0;
+    $('download').disabled=true;
+    $('sOutput').textContent='—';$('sSave').textContent='—';
+  }
+  function updateStats(){
+    const pdfs=state.items.filter(x=>x.kind==='pdf').length;
+    const imgs=state.items.filter(x=>x.kind==='image').length;
+    $('sInput').textContent=state.items.length ? state.items.length+' file'+(state.items.length===1?'':'s')+' · '+fmtBytes(inputBytes()) : '—';
+    $('sPages').textContent=state.lastPages ? state.lastPages : (pdfs||imgs ? pdfs+' PDF · '+imgs+' image' : '—');
+  }
+  function renderFiles(){
+    const list=$('fileList');
+    list.innerHTML='';
+    if(!state.items.length){
+      list.innerHTML='<div class="hint">No files selected yet.</div>';
+    }else{
+      state.items.forEach((item,i)=>{
+        const row=document.createElement('div');
+        row.className='file';
+        row.innerHTML='<div><b>'+escapeHtml(item.file.name)+'</b><span>'+item.kind.toUpperCase()+' · '+fmtBytes(item.file.size)+'</span></div>'+
+          '<div class="moves"><button class="smallbtn" data-act="up" data-i="'+i+'" '+(i===0?'disabled':'')+'>↑</button><button class="smallbtn" data-act="down" data-i="'+i+'" '+(i===state.items.length-1?'disabled':'')+'>↓</button><button class="smallbtn" data-act="remove" data-i="'+i+'">Remove</button></div>';
+        list.appendChild(row);
+      });
+    }
+    updatePdfSelects();
+    updateStats();
+    setButtons();
+  }
+  function escapeHtml(s){return s.replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+  function updatePdfSelects(){
+    const pdfItems=state.items.map((item,i)=>({item,i})).filter(x=>x.item.kind==='pdf');
+    for(const id of ['extractFile','optFile','renderFile']){
+      const sel=$(id);
+      sel.innerHTML=pdfItems.length ? pdfItems.map(x=>'<option value="'+x.i+'">'+escapeHtml(x.item.file.name)+'</option>').join('') : '<option value="">Add a PDF first</option>';
+    }
+  }
+  function addFiles(files){
+    revokeOutput();
+    let added=0,rejected=0;
+    for(const file of files){
+      if(isPdf(file)){state.items.push({kind:'pdf',file});added++;}
+      else if(isImage(file)){state.items.push({kind:'image',file});added++;}
+      else rejected++;
+    }
+    renderFiles();
+    if(added)setStatus('Added '+added+' file'+(added===1?'':'s')+'. Choose an operation and process.','good');
+    if(rejected)setStatus('Skipped '+rejected+' unsupported file'+(rejected===1?'':'s')+'.','warn');
+  }
+  function showMode(){
+    const op=$('operation').value;
+    for(const box of document.querySelectorAll('.modebox'))box.classList.remove('show');
+    $(op+'Box').classList.add('show');
+    revokeOutput();
+    canvas.hidden=true;$('empty').hidden=false;
+    setButtons();
+  }
+  function parsePages(raw,total){
+    const text=(raw||'').trim().toLowerCase();
+    if(!text||text==='all')return Array.from({length:total},(_,i)=>i);
+    const pages=[];
+    for(const part of text.split(',')){
+      const p=part.trim();
+      if(!p)continue;
+      if(p.includes('-')){
+        const [a,b]=p.split('-').map(n=>parseInt(n,10));
+        if(!Number.isFinite(a)||!Number.isFinite(b))throw new Error('Bad page range: '+p);
+        const step=a<=b?1:-1;
+        for(let n=a;n!==b+step;n+=step){
+          if(n<1||n>total)throw new Error('Page '+n+' is outside 1-'+total);
+          pages.push(n-1);
+        }
+      }else{
+        const n=parseInt(p,10);
+        if(!Number.isFinite(n)||n<1||n>total)throw new Error('Page '+p+' is outside 1-'+total);
+        pages.push(n-1);
+      }
+    }
+    if(!pages.length)throw new Error('Enter at least one page.');
+    return pages;
+  }
+  async function loadPdf(file){
+    return PDFLib.PDFDocument.load(await file.arrayBuffer());
+  }
+  async function mergePdfs(){
+    const pdfItems=state.items.filter(x=>x.kind==='pdf');
+    if(pdfItems.length<2)throw new Error('Add at least two PDFs to merge.');
+    const out=await PDFLib.PDFDocument.create();
+    let pages=0;
+    for(const item of pdfItems){
+      const src=await loadPdf(item.file);
+      const copied=await out.copyPages(src,src.getPageIndices());
+      copied.forEach(page=>out.addPage(page));
+      pages+=copied.length;
+    }
+    out.setTitle('Merged with NiftyTools Hub');
+    return {bytes:await out.save({useObjectStreams:true}),name:cleanName('pdf'),pages};
+  }
+  async function extractPages(){
+    const idx=parseInt($('extractFile').value,10);
+    if(!Number.isFinite(idx)||!state.items[idx])throw new Error('Choose a PDF to extract from.');
+    const src=await loadPdf(state.items[idx].file);
+    const wanted=parsePages($('pages').value,src.getPageCount());
+    const out=await PDFLib.PDFDocument.create();
+    const copied=await out.copyPages(src,wanted);
+    copied.forEach(page=>out.addPage(page));
+    out.setTitle('Extracted pages with NiftyTools Hub');
+    return {bytes:await out.save({useObjectStreams:true}),name:cleanName('pdf'),pages:copied.length};
+  }
+  async function optimizePdf(){
+    const idx=parseInt($('optFile').value,10);
+    if(!Number.isFinite(idx)||!state.items[idx])throw new Error('Choose a PDF to optimize.');
+    const doc=await loadPdf(state.items[idx].file);
+    doc.setProducer('NiftyTools Hub');
+    doc.setModificationDate(new Date());
+    return {bytes:await doc.save({useObjectStreams:true,updateFieldAppearances:false}),name:cleanName('pdf'),pages:doc.getPageCount()};
+  }
+  async function imageToPngBytes(file){
+    if(file.type==='image/png')return new Uint8Array(await file.arrayBuffer());
+    const img=await loadImage(file);
+    const c=document.createElement('canvas');
+    c.width=img.naturalWidth;c.height=img.naturalHeight;
+    c.getContext('2d').drawImage(img,0,0);
+    const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));
+    return new Uint8Array(await blob.arrayBuffer());
+  }
+  function loadImage(file){
+    return new Promise((resolve,reject)=>{
+      const url=URL.createObjectURL(file);
+      const img=new Image();
+      img.onload=()=>{URL.revokeObjectURL(url);resolve(img);};
+      img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Could not open '+file.name));};
+      img.src=url;
+    });
+  }
+  async function imagesToPdf(){
+    const imgItems=state.items.filter(x=>x.kind==='image');
+    if(!imgItems.length)throw new Error('Add at least one JPG, PNG or WebP image.');
+    const out=await PDFLib.PDFDocument.create();
+    const preset=$('pageSize').value, margin=Math.max(0,parseFloat($('margin').value)||0);
+    for(const item of imgItems){
+      let embed;
+      if(/^image\/jpe?g$/i.test(item.file.type)||/\.jpe?g$/i.test(item.file.name))embed=await out.embedJpg(await item.file.arrayBuffer());
+      else embed=await out.embedPng(await imageToPngBytes(item.file));
+      const iw=embed.width,ih=embed.height;
+      let pw=iw,ph=ih;
+      if(preset==='letter'){pw=612;ph=792;}
+      if(preset==='a4'){pw=595.28;ph=841.89;}
+      if(preset==='fit'){pw=iw+margin*2;ph=ih+margin*2;}
+      const page=out.addPage([pw,ph]);
+      const maxW=Math.max(1,pw-margin*2),maxH=Math.max(1,ph-margin*2);
+      const ratio=Math.min(maxW/iw,maxH/ih);
+      const w=iw*ratio,h=ih*ratio;
+      page.drawImage(embed,{x:(pw-w)/2,y:(ph-h)/2,width:w,height:h});
+    }
+    out.setTitle('Images to PDF with NiftyTools Hub');
+    return {bytes:await out.save({useObjectStreams:true}),name:cleanName('pdf'),pages:imgItems.length};
+  }
+  async function renderPageImage(){
+    if(!window.pdfjsLib)throw new Error('PDF renderer is still loading. Try again in a moment.');
+    const idx=parseInt($('renderFile').value,10);
+    if(!Number.isFinite(idx)||!state.items[idx])throw new Error('Choose a PDF to render.');
+    const data=new Uint8Array(await state.items[idx].file.arrayBuffer());
+    const pdf=await pdfjsLib.getDocument({data}).promise;
+    const pageNum=parseInt($('renderPage').value,10)||1;
+    if(pageNum<1||pageNum>pdf.numPages)throw new Error('Page must be between 1 and '+pdf.numPages+'.');
+    const page=await pdf.getPage(pageNum);
+    const scale=parseFloat($('scale').value)||2;
+    const viewport=page.getViewport({scale});
+    canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+    canvas.hidden=false;$('empty').hidden=true;
+    await page.render({canvasContext:ctx,viewport}).promise;
+    const fmt=$('renderFormat').value;
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,fmt,0.92));
+    return {blob,name:cleanName(fmt==='image/png'?'png':'jpg'),pages:1};
+  }
+  function finishBlob(blob,name,pages){
+    revokeOutput();
+    state.blob=blob;state.blobUrl=URL.createObjectURL(blob);state.outputName=name;state.outputBytes=blob.size;state.lastPages=pages||0;
+    $('download').disabled=false;
+    $('sOutput').textContent=fmtBytes(blob.size);
+    $('sPages').textContent=pages||'—';
+    const before=inputBytes(),diff=before-blob.size;
+    $('sSave').textContent=before ? (diff>=0 ? Math.round(diff/before*100)+'% smaller' : Math.round(-diff/before*100)+'% larger') : '—';
+  }
+  async function processFiles(){
+    try{
+      if(!window.PDFLib)throw new Error('PDF library is still loading. Try again in a moment.');
+      setStatus('Processing... keep this tab open.','warn');
+      $('process').disabled=true;
+      const op=$('operation').value;
+      let result;
+      if(op==='merge')result=await mergePdfs();
+      else if(op==='extract')result=await extractPages();
+      else if(op==='optimize')result=await optimizePdf();
+      else if(op==='images')result=await imagesToPdf();
+      else if(op==='render')result=await renderPageImage();
+      if(result.bytes)finishBlob(new Blob([result.bytes],{type:'application/pdf'}),result.name,result.pages);
+      else finishBlob(result.blob,result.name,result.pages);
+      if(op!=='render'){canvas.hidden=true;$('empty').hidden=false;$('empty').innerHTML='<div class="icon">✅</div>Done. Your file is ready to download.';}
+      setStatus('Done. Download is ready.','good');
+    }catch(err){
+      setStatus(err.message||'Something went wrong while processing the file.','bad');
+    }finally{
+      setButtons();
+    }
+  }
+  function downloadOutput(){
+    if(!state.blob){setStatus('Process a file first, then download it.','bad');return;}
+    const a=document.createElement('a');
+    a.href=state.blobUrl;a.download=state.outputName||'nifty-output.pdf';a.rel='noopener';
+    document.body.appendChild(a);a.click();a.remove();
+    setStatus('Download started.','good');
+  }
+  function resetTool(){
+    revokeOutput();state.items=[];
+    $('fileInput').value='';canvas.hidden=true;$('empty').hidden=false;$('empty').innerHTML='<div class="icon">📄</div>Your PDF result summary or exported page preview will appear here.';
+    renderFiles();setStatus('Add files to begin.');
+  }
+  $('fileInput').addEventListener('change',e=>addFiles(e.target.files));
+  $('operation').addEventListener('change',showMode);
+  $('process').addEventListener('click',processFiles);
+  $('download').addEventListener('click',downloadOutput);
+  $('reset').addEventListener('click',resetTool);
+  $('scale').addEventListener('input',()=>$('scaleVal').textContent=parseFloat($('scale').value).toFixed(1)+'x');
+  $('fileList').addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-act]');
+    if(!btn)return;
+    const i=parseInt(btn.dataset.i,10),act=btn.dataset.act;
+    revokeOutput();
+    if(act==='remove')state.items.splice(i,1);
+    if(act==='up'&&i>0)[state.items[i-1],state.items[i]]=[state.items[i],state.items[i-1]];
+    if(act==='down'&&i<state.items.length-1)[state.items[i+1],state.items[i]]=[state.items[i],state.items[i+1]];
+    renderFiles();
+  });
+  const drop=$('drop');
+  ['dragenter','dragover'].forEach(evt=>drop.addEventListener(evt,e=>{e.preventDefault();drop.classList.add('drag');}));
+  ['dragleave','drop'].forEach(evt=>drop.addEventListener(evt,e=>{e.preventDefault();drop.classList.remove('drag');}));
+  drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+  window.addEventListener('load',()=>{
+    if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    renderFiles();
+    setStatus(window.PDFLib ? 'Add files to begin.' : 'PDF library did not load. Check your connection or deploy before testing.','warn');
+  });
+</script>
+</body>
+</html>

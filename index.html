@@ -178,7 +178,7 @@
 </header>
 
 <section class="hero wrap">
-  <span class="pill"><span class="dot"></span> system online · 30+ tools loaded</span>
+  <span class="pill"><span class="dot"></span> system online · 39+ tools loaded</span>
   <h1>Every tool you need,<br><span class="grad">one terminal.</span></h1>
   <p class="sub">// converters, clocks, screen tests, password tools — free, forever. Plus monitoring agents that watch the web for you. All for $10 a month.</p>
   <div class="search">
@@ -193,6 +193,11 @@
     <div class="chip" data-f="free" onclick="filter(this)">Free</div>
     <div class="chip" data-f="premium" onclick="filter(this)">Premium</div>
     <div class="chip" data-f="convert" onclick="filter(this)">Converters</div>
+    <div class="chip" data-f="image" onclick="filter(this)">Images</div>
+    <div class="chip" data-f="pdf" onclick="filter(this)">PDF</div>
+    <div class="chip" data-f="developer" onclick="filter(this)">Developer</div>
+    <div class="chip" data-f="text" onclick="filter(this)">Text</div>
+    <div class="chip" data-f="fun" onclick="filter(this)">Fun</div>
     <div class="chip" data-f="time" onclick="filter(this)">Time</div>
     <div class="chip" data-f="screen" onclick="filter(this)">Screen</div>
     <div class="chip" data-f="monitor" onclick="filter(this)">Monitoring</div>
@@ -264,7 +269,7 @@
     </div>
 
     <!-- Zodiac: interactive -->
-    <div class="tool" data-tags="free utility" data-name="zodiac star sign chinese horoscope birthday astrology">
+    <div class="tool" data-tags="free utility fun" data-name="zodiac star sign chinese horoscope birthday astrology">
       <span class="badge free">Free</span>
       <div class="ico">♌</div>
       <h3>Zodiac Finder</h3>
@@ -343,7 +348,7 @@
     </div>
 
     <!-- Magic 8-ball -->
-    <div class="tool" data-tags="free utility" data-name="magic 8 ball fortune yes no decision answer random">
+    <div class="tool" data-tags="free utility fun" data-name="magic 8 ball fortune yes no decision answer random">
       <span class="badge free">Free</span>
       <div class="ico">🎱</div>
       <h3>Magic 8-Ball</h3>
@@ -454,7 +459,7 @@ Dana</textarea></div>
     </div>
 
     <!-- Case converter -->
-    <div class="tool" data-tags="free utility convert" data-name="upper lower case converter title sentence text capitalize">
+    <div class="tool" data-tags="free utility convert text" data-name="upper lower case converter title sentence text capitalize">
       <span class="badge free">Free</span>
       <div class="ico">Aa</div>
       <h3>Case Converter</h3>
@@ -549,7 +554,7 @@ A- 3</textarea></div>
     </div>
 
     <!-- Zodiac love match -->
-    <div class="tool" data-tags="free utility" data-name="zodiac love compatibility match romance horoscope couple star sign">
+    <div class="tool" data-tags="free utility fun" data-name="zodiac love compatibility match romance horoscope couple star sign">
       <span class="badge free">Free</span>
       <div class="ico">💞</div>
       <h3>Zodiac Love Match</h3>
@@ -597,6 +602,10 @@ A- 3</textarea></div>
       </div>
       <div class="open">Open tool →</div>
     </div>
+    <div class="tool" data-tags="free utility convert image" data-name="image compressor resize webp jpg png converter background remover" onclick="location.href='/image-tools.html'">
+      <span class="badge free">Free</span><div class="ico">🖼️</div>
+      <h3>Image Toolkit</h3><p>Compress, resize, convert WebP/JPG/PNG, and remove simple backgrounds.</p><div class="open">Open full tool →</div>
+    </div>
     <div class="tool" data-tags="free time" data-name="stopwatch timer pomodoro focus">
       <span class="badge free">Free</span><div class="ico">⏱️</div>
       <h3>Timer & Stopwatch</h3><p>Stopwatch and a 25-minute Pomodoro focus timer.</p>
@@ -610,7 +619,7 @@ A- 3</textarea></div>
       <span class="badge free">Free</span><div class="ico">💱</div>
       <h3>Currency Converter</h3><p>Live exchange rates across 150+ currencies.</p><div class="open">Open tool →</div>
     </div>
-    <div class="tool" data-tags="free utility" data-name="word character counter reading time">
+    <div class="tool" data-tags="free utility text" data-name="word character counter reading time">
       <span class="badge free">Free</span><div class="ico">🔤</div>
       <h3>Word Counter</h3><p>Count words, characters and reading time as you type.</p>
       <div class="mini collapsed" onclick="event.stopPropagation()">
@@ -642,9 +651,21 @@ A- 3</textarea></div>
       </div>
       <div class="open">Open tool →</div>
     </div>
-    <div class="tool" data-tags="premium utility" data-name="pdf merge split tools" onclick="goPrem()">
-      <span class="badge prem">Premium</span><div class="ico">📄</div>
-      <h3>PDF Toolkit</h3><p>Merge, split, compress and convert PDFs securely.</p><div class="open">Open tool →</div>
+    <div class="tool" data-tags="free utility convert pdf" data-name="pdf toolkit merge split extract compress optimize jpg png convert images" onclick="location.href='/pdf-tools.html'">
+      <span class="badge free">Free</span><div class="ico">📄</div>
+      <h3>PDF Toolkit</h3><p>Merge, extract pages, optimize, make PDFs from images, and export pages as images.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility convert developer" data-name="developer toolkit json yaml csv base64 url jwt hash uuid regex timestamp" onclick="location.href='/dev-tools.html'">
+      <span class="badge free">Free</span><div class="ico">&lt;/&gt;</div>
+      <h3>Developer Toolkit</h3><p>JSON, YAML, CSV, Base64, URL, JWT, hashes, UUIDs, regex and timestamps.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility convert text" data-name="text cleanup suite dedupe sort trim find replace diff slug readability markdown word frequency case" onclick="location.href='/text-tools.html'">
+      <span class="badge free">Free</span><div class="ico">¶</div>
+      <h3>Text Cleanup Suite</h3><p>Clean, sort, dedupe, diff, slugify, analyze, and preview Markdown.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility fun" data-name="tarot card reader daily draw astrology fortune cards spread love career decision" onclick="location.href='/tarot-tools.html'">
+      <span class="badge free">Free</span><div class="ico">☾</div>
+      <h3>Tarot Card Reader</h3><p>Daily draws, quick answers, spreads, reversals, and reflective interpretations.</p><div class="open">Open full tool →</div>
     </div>
 
   </div>
