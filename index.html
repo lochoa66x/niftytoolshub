@@ -178,7 +178,7 @@
 </header>
 
 <section class="hero wrap">
-  <span class="pill"><span class="dot"></span> system online · 39+ tools loaded</span>
+  <span class="pill"><span class="dot"></span> system online · 41+ tools loaded</span>
   <h1>Every tool you need,<br><span class="grad">one terminal.</span></h1>
   <p class="sub">// converters, clocks, screen tests, password tools — free, forever. Plus monitoring agents that watch the web for you. All for $10 a month.</p>
   <div class="search">
@@ -593,14 +593,15 @@ A- 3</textarea></div>
       </div>
       <div class="open">Open tool →</div>
     </div>
-    <div class="tool" data-tags="free utility" data-name="qr code generator maker link wifi">
+    <div class="tool" data-tags="free utility convert" data-name="qr code toolkit pro generator maker link wifi vcard email sms phone event branded png svg" onclick="location.href='/qr-tools.html'">
       <span class="badge free">Free</span><div class="ico">▦</div>
-      <h3>QR Code Maker</h3><p>Turn any link or text into a scannable QR code.</p>
-      <div class="mini collapsed" onclick="event.stopPropagation()">
-        <div class="row"><input id="qrin" value="https://niftytoolshub.com" placeholder="Link or text…" oninput="makeQR()"></div>
-        <div class="row" style="justify-content:center"><img id="qrimg" alt="QR code" style="width:150px;height:150px;background:#fff;border-radius:10px;padding:6px"></div>
-      </div>
-      <div class="open">Open tool →</div>
+      <h3>QR Code Toolkit Pro</h3><p>URL, text, Wi-Fi, vCard, email, SMS, phone and event QR codes with PNG/SVG export.</p>
+      <div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility finance business" data-name="receipt generator invoice maker printable pdf tax discount payment line items business" onclick="location.href='/receipt-tools.html'">
+      <span class="badge free">Free</span><div class="ico">🧾</div>
+      <h3>Receipt Generator</h3><p>Create printable receipts with line items, tax, discounts, payment details and PDF-ready layout.</p>
+      <div class="open">Open full tool →</div>
     </div>
     <div class="tool" data-tags="free utility convert image" data-name="image compressor resize webp jpg png converter background remover" onclick="location.href='/image-tools.html'">
       <span class="badge free">Free</span><div class="ico">🖼️</div>
@@ -666,6 +667,10 @@ A- 3</textarea></div>
     <div class="tool" data-tags="free utility fun" data-name="tarot card reader daily draw astrology fortune cards spread love career decision" onclick="location.href='/tarot-tools.html'">
       <span class="badge free">Free</span><div class="ico">☾</div>
       <h3>Tarot Card Reader</h3><p>Daily draws, quick answers, spreads, reversals, and reflective interpretations.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility fun" data-name="birth chart zodiac astrology toolkit sun moon rising compatibility numerology lucky color number horoscope" onclick="location.href='/astrology-tools.html'">
+      <span class="badge free">Free</span><div class="ico">♌</div>
+      <h3>Birth Chart / Zodiac Toolkit</h3><p>Sun, moon, rising, compatibility, numerology, daily vibe, lucky color and number.</p><div class="open">Open full tool →</div>
     </div>
 
   </div>
@@ -877,10 +882,6 @@ A- 3</textarea></div>
   function copyPass(btn){const v=document.getElementById('pgout').textContent;
     if(navigator.clipboard){navigator.clipboard.writeText(v);const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1200);}}
   genPass();
-  // QR maker
-  function makeQR(){const v=encodeURIComponent(document.getElementById('qrin').value||' ');
-    document.getElementById('qrimg').src='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data='+v;}
-  makeQR();
   // word counter
   function wordCount(){
     const t=document.getElementById('wcin').value||'';
