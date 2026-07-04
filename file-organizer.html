@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Organizer Toolkit - local file grouping, duplicates and rename planner | NiftyTools Hub</title>
+<meta name="description" content="Organize files locally in your browser: drag files in, group by type, date, size or keyword, detect duplicates, preview batch renames, and export a JSON or CSV plan.">
+<meta property="og:title" content="File Organizer Toolkit - NiftyTools Hub">
+<meta property="og:description" content="Private browser-based file organization with grouping, duplicate detection, rename previews and exportable plans.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/file-organizer.html">
+<style>
+  :root{
+    --bg:#020704;
+    --panel:#07120b;
+    --panel2:#0b1910;
+    --line:#173822;
+    --line2:#24663b;
+    --txt:#eafff1;
+    --mut:#91aa99;
+    --green:#38ff88;
+    --green2:#18c96a;
+    --amber:#ffd166;
+    --red:#ff5a6f;
+    --cyan:#69e8ff;
+    --shadow:0 0 38px rgba(56,255,136,.14);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(56,255,136,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(56,255,136,.035) 1px,transparent 1px),
+      radial-gradient(circle at 14% 0%,rgba(56,255,136,.13),transparent 34%),
+      radial-gradient(circle at 90% 12%,rgba(105,232,255,.10),transparent 30%),
+      var(--bg);
+    background-size:38px 38px,38px 38px,100% 100%,100% 100%,100% 100%;
+    color:var(--txt);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    letter-spacing:0;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.024) 50%,rgba(0,0,0,.09) 50%);
+    background-size:100% 4px;
+    mix-blend-mode:screen;
+    opacity:.32;
+    z-index:10;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    border-bottom:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.88);
+    backdrop-filter:blur(12px);
+  }
+  .nav{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;text-transform:uppercase}
+  .mark{width:34px;height:34px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.25)}
+  .navlinks{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .navlinks a{
+    border:1px solid rgba(56,255,136,.28);
+    color:var(--mut);
+    padding:9px 12px;
+    background:rgba(7,18,11,.64);
+    min-height:38px;
+  }
+  .navlinks a:hover{color:var(--green);border-color:var(--green)}
+  .hero{
+    position:relative;
+    min-height:420px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    align-items:center;
+    gap:34px;
+    padding:58px 0 34px;
+  }
+  #matrix{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.22;
+    pointer-events:none;
+    mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  }
+  .crumb{color:var(--green);font-size:13px;text-transform:uppercase;margin-bottom:18px}
+  h1{
+    position:relative;
+    margin:0;
+    font-size:clamp(40px,7vw,84px);
+    line-height:.92;
+    text-transform:uppercase;
+    text-shadow:0 0 18px rgba(56,255,136,.32);
+  }
+  .lead{color:var(--mut);font-size:clamp(15px,2vw,18px);line-height:1.75;max-width:740px;margin:22px 0 0}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:1px solid var(--green);
+    color:#011508;
+    background:var(--green);
+    padding:13px 18px;
+    min-height:46px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 18px rgba(56,255,136,.22);
+  }
+  .btn.secondary{background:transparent;color:var(--green)}
+  .btn:hover,.mini-btn:hover{filter:brightness(1.08)}
+  .console{
+    position:relative;
+    border:1px solid rgba(56,255,136,.28);
+    background:linear-gradient(180deg,rgba(7,18,11,.88),rgba(4,10,6,.78));
+    padding:18px;
+    box-shadow:var(--shadow);
+    min-height:320px;
+    overflow:hidden;
+  }
+  .console:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(56,255,136,.06),transparent);
+    transform:translateX(-100%);
+    animation:sweep 5s linear infinite;
+  }
+  @keyframes sweep{to{transform:translateX(100%)}}
+  .console-inner{position:relative}
+  .status-row{display:flex;justify-content:space-between;gap:10px;color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:14px}
+  .file-stack{border:1px solid rgba(56,255,136,.20);background:#020704;padding:14px;min-height:220px}
+  .stack-line{display:grid;grid-template-columns:84px 1fr 70px;gap:10px;align-items:center;border-bottom:1px solid rgba(56,255,136,.10);padding:9px 0;color:var(--mut);font-size:12px}
+  .stack-line:last-child{border-bottom:0}
+  .stack-line b{color:var(--green);font-size:14px}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .quick{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:78px;
+  }
+  .quick b{display:block;color:var(--green);font-size:18px;margin-bottom:5px}
+  .quick span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding-bottom:58px}
+  .panel{
+    grid-column:span 6;
+    border:1px solid rgba(56,255,136,.22);
+    background:linear-gradient(180deg,rgba(7,18,11,.86),rgba(4,10,6,.78));
+    padding:18px;
+    min-height:300px;
+    box-shadow:0 0 24px rgba(0,0,0,.24);
+  }
+  .panel.wide{grid-column:span 12}
+  .panel.third{grid-column:span 4}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .panel-head h2{font-size:18px;margin:0;text-transform:uppercase}
+  .panel-head p{margin:4px 0 0;color:var(--mut);font-size:13px;line-height:1.5}
+  .badge{border:1px solid rgba(56,255,136,.35);color:var(--green);padding:6px 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+  .dropzone{
+    border:1px dashed rgba(56,255,136,.52);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.035) 0 1px,transparent 1px 18px),
+      rgba(2,7,4,.72);
+    min-height:260px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:24px;
+    transition:border-color .18s ease,background .18s ease,transform .18s ease;
+  }
+  .dropzone.active{border-color:var(--green);background:rgba(56,255,136,.08);transform:translateY(-1px)}
+  .dropzone h2{font-size:clamp(28px,5vw,52px);line-height:.96;margin:0 0 12px;text-transform:uppercase;color:var(--green)}
+  .dropzone p{color:var(--mut);line-height:1.6;max-width:620px;margin:0 auto 18px}
+  .hidden-input{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .mini-btn{
+    border:1px solid rgba(56,255,136,.34);
+    background:rgba(2,7,4,.72);
+    color:var(--txt);
+    padding:10px 12px;
+    min-height:40px;
+  }
+  .mini-btn.primary{border-color:var(--green);color:#021409;background:var(--green);font-weight:900}
+  .mini-btn.warn{border-color:rgba(255,209,102,.6);color:var(--amber)}
+  .mini-btn.red{border-color:rgba(255,90,111,.6);color:var(--red)}
+  .mini-btn:disabled{opacity:.45;cursor:not-allowed}
+  label{display:block;color:var(--mut);font-size:12px;margin:0 0 6px;text-transform:uppercase}
+  input,select,textarea{
+    width:100%;
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    color:var(--txt);
+    padding:11px 12px;
+    outline:none;
+    min-height:44px;
+  }
+  textarea{resize:vertical;min-height:110px;line-height:1.55}
+  input:focus,select:focus,textarea:focus{border-color:var(--green)}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .switches{display:flex;gap:12px;flex-wrap:wrap;color:var(--mut);font-size:13px;margin:10px 0}
+  .switches input{width:auto;min-height:auto;margin-right:6px}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .stat{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:82px;
+  }
+  .stat b{display:block;color:var(--green);font-size:22px;margin-bottom:6px;word-break:break-word}
+  .stat span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .table-wrap{border:1px solid rgba(56,255,136,.18);background:#020704;overflow:auto;max-height:420px}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:780px}
+  th,td{padding:10px;border-bottom:1px solid rgba(56,255,136,.10);text-align:left;vertical-align:top}
+  th{position:sticky;top:0;background:#07120b;color:var(--green);z-index:1}
+  td{color:var(--mut)}
+  td b{color:var(--txt);font-weight:700}
+  .folder-list{display:grid;gap:10px;max-height:500px;overflow:auto;padding-right:4px}
+  .folder{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+  }
+  .folder-title{display:flex;justify-content:space-between;gap:10px;color:var(--green);font-weight:900;margin-bottom:8px}
+  .folder-files{color:var(--mut);font-size:12px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+  .output-box{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    color:var(--txt);
+    padding:12px;
+    min-height:96px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.6;
+    max-height:360px;
+    overflow:auto;
+  }
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .chip{border:1px solid rgba(56,255,136,.22);background:rgba(0,0,0,.24);color:var(--mut);padding:7px 9px;font-size:12px}
+  .chip.good{color:var(--green);border-color:rgba(56,255,136,.45)}
+  .chip.warn{color:var(--amber);border-color:rgba(255,209,102,.45)}
+  .progress{height:14px;border:1px solid rgba(56,255,136,.18);background:#020704;overflow:hidden;margin-top:10px}
+  .progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .16s ease}
+  .footer-note{color:var(--mut);font-size:12px;line-height:1.65;margin-top:14px;border-top:1px solid rgba(56,255,136,.14);padding-top:14px}
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr}
+    .panel,.panel.third{grid-column:span 12}
+    .stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:640px){
+    .wrap{width:min(100% - 24px,1180px)}
+    .nav{align-items:flex-start;flex-direction:column}
+    .navlinks{width:100%}
+    .navlinks a{flex:1;text-align:center}
+    .hero{padding:38px 0 24px;min-height:auto}
+    .hero-actions .btn,.mini-btn{width:100%}
+    .form-grid,.form-grid.three,.stat-grid,.quick-grid{grid-template-columns:1fr}
+    .panel{padding:14px}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="mark">NT</span><span>NiftyTools Hub</span></a>
+    <nav class="navlinks" aria-label="File organizer navigation">
+      <a href="#drop">Drop</a>
+      <a href="#organize">Organize</a>
+      <a href="#duplicates">Duplicates</a>
+      <a href="#rename">Rename</a>
+      <a href="#export">Export</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <canvas id="matrix" aria-hidden="true"></canvas>
+    <div>
+      <div class="crumb">Home / Documents / File Organizer Toolkit</div>
+      <h1>File Organizer Toolkit</h1>
+      <p class="lead">Drop files into a private browser workbench, group them by useful rules, detect duplicates, preview batch renames, and export a clean organization plan. Files stay on your device unless you export the plan.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#drop">Start organizing</a>
+        <button class="btn secondary" type="button" onclick="loadSampleFiles()">Load sample files</button>
+      </div>
+    </div>
+    <aside class="console">
+      <div class="console-inner">
+        <div class="status-row"><span>local-only file workbench</span><span id="privacyStatus">no upload</span></div>
+        <div class="file-stack" id="heroStack">
+          <div class="stack-line"><b>INTAKE</b><span>Drag files into the console</span><span>idle</span></div>
+          <div class="stack-line"><b>GROUP</b><span>Extension, type, date, size or keyword</span><span>ready</span></div>
+          <div class="stack-line"><b>DEDUPE</b><span>Name + size scan, optional SHA-256</span><span>ready</span></div>
+          <div class="stack-line"><b>RENAME</b><span>Preview first, export plan second</span><span>safe</span></div>
+        </div>
+        <div class="quick-grid">
+          <div class="quick"><b id="quickFiles">0</b><span>Files loaded</span></div>
+          <div class="quick"><b id="quickSize">0 B</b><span>Total size</span></div>
+          <div class="quick"><b id="quickGroups">0</b><span>Plan folders</span></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap layout">
+    <article class="panel wide" id="drop">
+      <div class="panel-head">
+        <div>
+          <h2>File Intake</h2>
+          <p>Drag files here or choose them from your device. Folder paths are kept when the browser provides them.</p>
+        </div>
+        <span class="badge">Private</span>
+      </div>
+      <input class="hidden-input" id="fileInput" type="file" multiple>
+      <input class="hidden-input" id="folderInput" type="file" multiple webkitdirectory>
+      <div class="dropzone" id="dropzone">
+        <div>
+          <h2>Drop Files</h2>
+          <p>Images, PDFs, documents, archives, audio, video, code, spreadsheets, messy downloads: bring the pile here and make sense of it.</p>
+          <div class="controls" style="justify-content:center">
+            <button class="mini-btn primary" type="button" onclick="$('fileInput').click()">Choose files</button>
+            <button class="mini-btn" type="button" onclick="$('folderInput').click()">Choose folder</button>
+            <button class="mini-btn" type="button" onclick="loadSampleFiles()">Try sample set</button>
+            <button class="mini-btn red" type="button" onclick="clearFiles()">Clear</button>
+          </div>
+        </div>
+      </div>
+      <p class="footer-note">This page reads file names, sizes, types and modified dates inside your browser. Content is only read if you run the optional hash scan.</p>
+    </article>
+
+    <article class="panel wide" id="summary">
+      <div class="panel-head">
+        <div>
+          <h2>Summary Dashboard</h2>
+          <p>Fast inventory of the file pile.</p>
+        </div>
+        <span class="badge" id="fileStatus">Empty</span>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><b id="statFiles">0</b><span>Total files</span></div>
+        <div class="stat"><b id="statSize">0 B</b><span>Total size</span></div>
+        <div class="stat"><b id="statImages">0</b><span>Images</span></div>
+        <div class="stat"><b id="statDocs">0</b><span>Documents</span></div>
+        <div class="stat"><b id="statVideos">0</b><span>Video/audio</span></div>
+        <div class="stat"><b id="statArchives">0</b><span>Archives</span></div>
+        <div class="stat"><b id="statDuplicates">0</b><span>Possible duplicate files</span></div>
+        <div class="stat"><b id="statTypes">0</b><span>Extensions</span></div>
+      </div>
+    </article>
+
+    <article class="panel" id="organize">
+      <div class="panel-head">
+        <div>
+          <h2>Organization Rules</h2>
+          <p>Choose how the plan groups your files.</p>
+        </div>
+        <span class="badge">Plan</span>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="groupMode">Group by</label>
+          <select id="groupMode" onchange="renderAll()">
+            <option value="type">File type</option>
+            <option value="extension">Extension</option>
+            <option value="size">Size bucket</option>
+            <option value="date">Modified month</option>
+            <option value="keyword">Custom keyword</option>
+          </select>
+        </div>
+        <div>
+          <label for="keywordInput">Custom keywords</label>
+          <input id="keywordInput" type="text" value="invoice, receipt, screenshot, contract" oninput="renderAll()">
+        </div>
+        <div>
+          <label for="searchInput">Filter/search</label>
+          <input id="searchInput" type="text" placeholder="name, extension, folder..." oninput="renderAll()">
+        </div>
+        <div>
+          <label for="quickFilter">Quick filter</label>
+          <select id="quickFilter" onchange="renderAll()">
+            <option value="all">All files</option>
+            <option value="image">Images only</option>
+            <option value="document">Documents only</option>
+            <option value="media">Video/audio only</option>
+            <option value="archive">Archives only</option>
+            <option value="large">Large files over 50 MB</option>
+          </select>
+        </div>
+      </div>
+      <div class="switches">
+        <label><input id="includeOriginalFolders" type="checkbox" onchange="renderAll()"> Include original folders in plan</label>
+        <label><input id="keepUnknownTogether" type="checkbox" checked onchange="renderAll()"> Put unknown files together</label>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="renderAll()">Refresh plan</button>
+        <button class="mini-btn" type="button" onclick="copyPlanText()">Copy plan</button>
+      </div>
+      <div class="chip-row" id="extensionChips"></div>
+    </article>
+
+    <article class="panel" id="duplicates">
+      <div class="panel-head">
+        <div>
+          <h2>Duplicate Finder Lite</h2>
+          <p>Name + size is instant. SHA-256 content scan is optional and local.</p>
+        </div>
+        <span class="badge">Dedupe</span>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="renderDuplicateReport()">Scan name + size</button>
+        <button class="mini-btn warn" id="hashButton" type="button" onclick="hashFiles()">Run content hash scan</button>
+      </div>
+      <div class="progress"><span id="hashProgress"></span></div>
+      <div class="output-box" id="duplicateOutput">Add files to scan for possible duplicates.</div>
+      <p class="footer-note">Hashing reads file bytes locally. Very large files may take a moment depending on your device.</p>
+    </article>
+
+    <article class="panel wide" id="rename">
+      <div class="panel-head">
+        <div>
+          <h2>Batch Rename Planner</h2>
+          <p>Preview names before doing anything risky. This page does not rename files on disk.</p>
+        </div>
+        <span class="badge">Preview</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="renamePrefix">Prefix</label><input id="renamePrefix" type="text" value="" oninput="renderAll()"></div>
+        <div><label for="renameSuffix">Suffix</label><input id="renameSuffix" type="text" value="" oninput="renderAll()"></div>
+        <div><label for="renameStart">Number start</label><input id="renameStart" type="number" value="1" oninput="renderAll()"></div>
+        <div><label for="replaceFrom">Replace text</label><input id="replaceFrom" type="text" placeholder="old text" oninput="renderAll()"></div>
+        <div><label for="replaceTo">With</label><input id="replaceTo" type="text" placeholder="new text" oninput="renderAll()"></div>
+        <div><label for="numberPad">Number padding</label><input id="numberPad" type="number" min="1" max="8" value="3" oninput="renderAll()"></div>
+      </div>
+      <div class="switches">
+        <label><input id="renameNumbering" type="checkbox" checked onchange="renderAll()"> Add numbering</label>
+        <label><input id="renameLowercase" type="checkbox" onchange="renderAll()"> Lowercase names</label>
+        <label><input id="renameKeepExt" type="checkbox" checked onchange="renderAll()"> Keep extension</label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Original</th><th>Preview name</th><th>Planned folder</th><th>Size</th></tr></thead>
+          <tbody id="renameTable"><tr><td colspan="4">Add files to preview rename rules.</td></tr></tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel" id="preview">
+      <div class="panel-head">
+        <div>
+          <h2>Organization Preview</h2>
+          <p>Folder plan generated from the current rules and filters.</p>
+        </div>
+        <span class="badge" id="folderCount">0 folders</span>
+      </div>
+      <div class="folder-list" id="folderList"></div>
+    </article>
+
+    <article class="panel" id="files">
+      <div class="panel-head">
+        <div>
+          <h2>File Inventory</h2>
+          <p>Filtered files currently used for the plan.</p>
+        </div>
+        <span class="badge" id="inventoryCount">0 files</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Type</th><th>Modified</th><th>Size</th></tr></thead>
+          <tbody id="fileTable"><tr><td colspan="4">No files loaded yet.</td></tr></tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel wide" id="export">
+      <div class="panel-head">
+        <div>
+          <h2>Export Plan</h2>
+          <p>Download a JSON or CSV plan. This exports the organization map, not your actual files.</p>
+        </div>
+        <span class="badge">Export</span>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="downloadJSON()">Download JSON plan</button>
+        <button class="mini-btn" type="button" onclick="downloadCSV()">Download CSV plan</button>
+        <button class="mini-btn" type="button" onclick="copyPlanText()">Copy text plan</button>
+      </div>
+      <div class="output-box" id="planText">Your exportable plan will appear after files are added.</div>
+      <p class="footer-note">Future upgrade idea: ZIP export with reorganized files. For now, this tool gives you a safe preview and plan before touching your actual folders.</p>
+    </article>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const state = {
+  files: [],
+  filtered: [],
+  plan: new Map(),
+  hashMode: false
+};
+
+const typeGroups = {
+  image: ['jpg','jpeg','png','gif','webp','avif','svg','bmp','tif','tiff','heic'],
+  document: ['pdf','doc','docx','txt','rtf','md','pages','odt','xls','xlsx','csv','ppt','pptx','key','numbers'],
+  media: ['mp4','mov','avi','mkv','webm','mp3','wav','m4a','aac','flac','ogg'],
+  archive: ['zip','rar','7z','tar','gz','bz2','dmg','pkg'],
+  code: ['html','css','js','ts','tsx','jsx','json','xml','yaml','yml','py','rb','php','java','c','cpp','go','rs','swift']
+};
+
+function formatBytes(bytes) {
+  if (!bytes) return '0 B';
+  const units = ['B','KB','MB','GB','TB'];
+  let size = bytes;
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit += 1;
+  }
+  return `${size.toFixed(size >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
+}
+
+function cleanName(name) {
+  return String(name || 'untitled')
+    .replace(/[\\/:*?"<>|]+/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim() || 'untitled';
+}
+
+function cleanFolderPath(path) {
+  return String(path || 'files')
+    .split('/')
+    .map((segment) => cleanName(segment).toLowerCase().replace(/\s+/g, '-'))
+    .filter(Boolean)
+    .join('/') || 'files';
+}
+
+function extensionFor(name) {
+  const clean = String(name || '');
+  const last = clean.lastIndexOf('.');
+  if (last <= 0 || last === clean.length - 1) return 'no-ext';
+  return clean.slice(last + 1).toLowerCase();
+}
+
+function baseNameFor(name) {
+  const last = name.lastIndexOf('.');
+  if (last <= 0) return name;
+  return name.slice(0, last);
+}
+
+function typeForExt(ext) {
+  for (const [type, list] of Object.entries(typeGroups)) {
+    if (list.includes(ext)) return type;
+  }
+  return ext === 'no-ext' ? 'unknown' : 'other';
+}
+
+function sizeBucket(size) {
+  if (size < 1024 * 1024) return 'tiny-under-1mb';
+  if (size < 10 * 1024 * 1024) return 'small-1mb-to-10mb';
+  if (size < 50 * 1024 * 1024) return 'medium-10mb-to-50mb';
+  if (size < 250 * 1024 * 1024) return 'large-50mb-to-250mb';
+  return 'huge-over-250mb';
+}
+
+function monthBucket(timestamp) {
+  const date = timestamp ? new Date(timestamp) : new Date(0);
+  if (date.getFullYear() < 1980) return 'unknown-date';
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function getRelativePath(file) {
+  return file.webkitRelativePath || file.relativePath || file.name;
+}
+
+function fileRecord(file, index) {
+  const ext = extensionFor(file.name);
+  const type = typeForExt(ext);
+  return {
+    id: `${Date.now()}-${index}-${Math.random().toString(36).slice(2)}`,
+    file,
+    name: file.name,
+    path: getRelativePath(file),
+    size: file.size || 0,
+    modified: file.lastModified || 0,
+    ext,
+    type,
+    bucket: sizeBucket(file.size || 0),
+    hash: ''
+  };
+}
+
+function addFiles(fileList) {
+  const incoming = Array.from(fileList || []);
+  const start = state.files.length;
+  incoming.forEach((file, index) => state.files.push(fileRecord(file, start + index)));
+  renderAll();
+}
+
+function loadSampleFiles() {
+  const now = Date.now();
+  const names = [
+    ['IMG_1042.JPG', 3421000, 'image/jpeg', now - 86400000 * 2],
+    ['IMG_1042 copy.JPG', 3421000, 'image/jpeg', now - 86400000 * 2],
+    ['invoice_june.pdf', 820000, 'application/pdf', now - 86400000 * 9],
+    ['client_contract_final.docx', 210000, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', now - 86400000 * 35],
+    ['screenshot-dashboard.png', 1540000, 'image/png', now - 86400000],
+    ['tax_receipt_2025.pdf', 640000, 'application/pdf', now - 86400000 * 60],
+    ['launch-notes.md', 18000, 'text/markdown', now - 86400000 * 4],
+    ['vacation-video.mov', 82200000, 'video/quicktime', now - 86400000 * 110],
+    ['archive_old.zip', 132000000, 'application/zip', now - 86400000 * 180],
+    ['invoice_june.pdf', 820000, 'application/pdf', now - 86400000 * 9]
+  ];
+  const sample = names.map(([name, size, type, modified], index) => {
+    const ext = extensionFor(name);
+    return {
+      id: `sample-${Date.now()}-${index}`,
+      file: null,
+      name,
+      path: index % 2 ? `Downloads/${name}` : name,
+      size,
+      modified,
+      ext,
+      type: typeForExt(ext),
+      bucket: sizeBucket(size),
+      hash: ''
+    };
+  });
+  state.files = state.files.concat(sample);
+  renderAll();
+}
+
+function clearFiles() {
+  state.files = [];
+  state.filtered = [];
+  state.plan = new Map();
+  state.hashMode = false;
+  $('hashProgress').style.width = '0%';
+  renderAll();
+}
+
+function filteredFiles() {
+  const query = $('searchInput').value.trim().toLowerCase();
+  const filter = $('quickFilter').value;
+  return state.files.filter((item) => {
+    const haystack = `${item.name} ${item.path} ${item.ext} ${item.type}`.toLowerCase();
+    if (query && !haystack.includes(query)) return false;
+    if (filter === 'all') return true;
+    if (filter === 'large') return item.size >= 50 * 1024 * 1024;
+    return item.type === filter;
+  });
+}
+
+function keywordFolder(item) {
+  const keywords = $('keywordInput').value
+    .split(',')
+    .map((keyword) => keyword.trim().toLowerCase())
+    .filter(Boolean);
+  const target = `${item.name} ${item.path}`.toLowerCase();
+  const found = keywords.find((keyword) => target.includes(keyword));
+  if (found) return `keyword-${cleanName(found).toLowerCase().replace(/\s+/g, '-')}`;
+  return $('keepUnknownTogether').checked ? 'keyword-other' : item.ext;
+}
+
+function folderFor(item) {
+  const mode = $('groupMode').value;
+  let folder = 'files';
+  if (mode === 'extension') folder = item.ext === 'no-ext' ? 'no-extension' : item.ext;
+  if (mode === 'type') folder = item.type;
+  if (mode === 'size') folder = item.bucket;
+  if (mode === 'date') folder = monthBucket(item.modified);
+  if (mode === 'keyword') folder = keywordFolder(item);
+  const originalFolder = item.path.includes('/') ? item.path.split('/').slice(0, -1).join('/') : '';
+  if ($('includeOriginalFolders').checked && originalFolder) {
+    folder = `${folder}/${originalFolder}`;
+  }
+  return cleanFolderPath(folder);
+}
+
+function previewName(item, index) {
+  const keepExt = $('renameKeepExt').checked;
+  const ext = item.ext !== 'no-ext' ? item.ext : '';
+  let base = baseNameFor(item.name);
+  const from = $('replaceFrom').value;
+  const to = $('replaceTo').value;
+  if (from) base = base.split(from).join(to);
+  const prefix = $('renamePrefix').value;
+  const suffix = $('renameSuffix').value;
+  if ($('renameLowercase').checked) base = base.toLowerCase();
+  let number = '';
+  if ($('renameNumbering').checked) {
+    const start = Number($('renameStart').value) || 1;
+    const pad = Math.max(1, Math.min(8, Number($('numberPad').value) || 3));
+    number = String(start + index).padStart(pad, '0') + '-';
+  }
+  const nextBase = cleanName(`${prefix}${number}${base}${suffix}`);
+  return keepExt && ext ? `${nextBase}.${ext}` : nextBase;
+}
+
+function buildPlan() {
+  const plan = new Map();
+  state.filtered.forEach((item, index) => {
+    const folder = folderFor(item);
+    if (!plan.has(folder)) plan.set(folder, []);
+    plan.get(folder).push({
+      ...item,
+      folder,
+      previewName: previewName(item, index),
+      plannedPath: `${folder}/${previewName(item, index)}`
+    });
+  });
+  state.plan = plan;
+  return plan;
+}
+
+function duplicateGroupsBy(keyFn) {
+  const groups = new Map();
+  state.files.forEach((item) => {
+    const key = keyFn(item);
+    if (!key) return;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(item);
+  });
+  return [...groups.entries()].filter(([, files]) => files.length > 1);
+}
+
+function possibleDuplicateCount() {
+  return duplicateGroupsBy((item) => `${item.name.toLowerCase()}::${item.size}`).reduce((sum, [, files]) => sum + files.length, 0);
+}
+
+function renderStats() {
+  const totalSize = state.files.reduce((sum, item) => sum + item.size, 0);
+  const exts = new Set(state.files.map((item) => item.ext));
+  $('statFiles').textContent = state.files.length.toLocaleString();
+  $('statSize').textContent = formatBytes(totalSize);
+  $('statImages').textContent = state.files.filter((item) => item.type === 'image').length;
+  $('statDocs').textContent = state.files.filter((item) => item.type === 'document').length;
+  $('statVideos').textContent = state.files.filter((item) => item.type === 'media').length;
+  $('statArchives').textContent = state.files.filter((item) => item.type === 'archive').length;
+  $('statDuplicates').textContent = possibleDuplicateCount();
+  $('statTypes').textContent = exts.size;
+  $('quickFiles').textContent = state.files.length.toLocaleString();
+  $('quickSize').textContent = formatBytes(totalSize);
+  $('quickGroups').textContent = state.plan.size.toLocaleString();
+  $('fileStatus').textContent = state.files.length ? 'Loaded' : 'Empty';
+}
+
+function renderExtensionChips() {
+  const counts = new Map();
+  state.files.forEach((item) => counts.set(item.ext, (counts.get(item.ext) || 0) + 1));
+  const chips = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 14)
+    .map(([ext, count]) => `<span class="chip">${ext}: ${count}</span>`)
+    .join('');
+  $('extensionChips').innerHTML = chips || '<span class="chip">No extensions yet</span>';
+}
+
+function renderFileTable() {
+  $('inventoryCount').textContent = `${state.filtered.length} files`;
+  if (!state.filtered.length) {
+    $('fileTable').innerHTML = '<tr><td colspan="4">No files match the current filter.</td></tr>';
+    return;
+  }
+  $('fileTable').innerHTML = state.filtered.slice(0, 300).map((item) => `
+    <tr>
+      <td><b>${escapeHTML(item.name)}</b><br>${escapeHTML(item.path)}</td>
+      <td>${escapeHTML(item.type)} / ${escapeHTML(item.ext)}</td>
+      <td>${item.modified ? new Date(item.modified).toLocaleString() : 'Unknown'}</td>
+      <td>${formatBytes(item.size)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderFolderPreview() {
+  const plan = state.plan;
+  $('folderCount').textContent = `${plan.size} folders`;
+  if (!plan.size) {
+    $('folderList').innerHTML = '<div class="folder"><div class="folder-files">No plan yet.</div></div>';
+    return;
+  }
+  $('folderList').innerHTML = [...plan.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([folder, files]) => {
+    const listed = files.slice(0, 12).map((item) => `- ${item.previewName}`).join('\n');
+    const more = files.length > 12 ? `\n- ...and ${files.length - 12} more` : '';
+    return `<div class="folder"><div class="folder-title"><span>/${escapeHTML(folder)}</span><span>${files.length}</span></div><div class="folder-files">${escapeHTML(listed + more)}</div></div>`;
+  }).join('');
+}
+
+function renderRenameTable() {
+  if (!state.filtered.length) {
+    $('renameTable').innerHTML = '<tr><td colspan="4">Add files to preview rename rules.</td></tr>';
+    return;
+  }
+  $('renameTable').innerHTML = state.filtered.slice(0, 300).map((item, index) => `
+    <tr>
+      <td><b>${escapeHTML(item.name)}</b><br>${escapeHTML(item.path)}</td>
+      <td>${escapeHTML(previewName(item, index))}</td>
+      <td>${escapeHTML(folderFor(item))}</td>
+      <td>${formatBytes(item.size)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderPlanText() {
+  if (!state.plan.size) {
+    $('planText').textContent = 'Your exportable plan will appear after files are added.';
+    return;
+  }
+  const lines = [];
+  for (const [folder, files] of [...state.plan.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    lines.push(`/${folder}`);
+    files.forEach((item) => lines.push(`  ${item.name} -> ${item.previewName}`));
+    lines.push('');
+  }
+  $('planText').textContent = lines.join('\n').trim();
+}
+
+function renderDuplicateReport() {
+  if (!state.files.length) {
+    $('duplicateOutput').textContent = 'Add files to scan for possible duplicates.';
+    return;
+  }
+  const nameGroups = duplicateGroupsBy((item) => `${item.name.toLowerCase()}::${item.size}`);
+  const hashGroups = state.hashMode ? duplicateGroupsBy((item) => item.hash) : [];
+  const sections = [];
+  if (nameGroups.length) {
+    sections.push('Possible duplicates by name + size:');
+    nameGroups.forEach(([key, files]) => {
+      sections.push(`\n${key}`);
+      files.forEach((item) => sections.push(`  - ${item.path} (${formatBytes(item.size)})`));
+    });
+  } else {
+    sections.push('No name + size duplicates found.');
+  }
+  if (state.hashMode) {
+    sections.push('\nExact duplicates by content hash:');
+    if (hashGroups.length) {
+      hashGroups.forEach(([hash, files]) => {
+        sections.push(`\n${hash.slice(0, 24)}...`);
+        files.forEach((item) => sections.push(`  - ${item.path} (${formatBytes(item.size)})`));
+      });
+    } else {
+      sections.push('No matching hashes found.');
+    }
+  }
+  $('duplicateOutput').textContent = sections.join('\n');
+}
+
+async function hashFiles() {
+  if (!crypto.subtle) {
+    $('duplicateOutput').textContent = 'This browser does not expose crypto.subtle for SHA-256 hashing.';
+    return;
+  }
+  const hashable = state.files.filter((item) => item.file && !item.hash);
+  if (!hashable.length) {
+    state.hashMode = true;
+    renderDuplicateReport();
+    return;
+  }
+  $('hashButton').disabled = true;
+  for (let i = 0; i < hashable.length; i++) {
+    const item = hashable[i];
+    const buffer = await item.file.arrayBuffer();
+    const hash = await crypto.subtle.digest('SHA-256', buffer);
+    item.hash = [...new Uint8Array(hash)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    $('hashProgress').style.width = `${Math.round(((i + 1) / hashable.length) * 100)}%`;
+  }
+  $('hashButton').disabled = false;
+  state.hashMode = true;
+  renderDuplicateReport();
+}
+
+function planRows() {
+  const rows = [];
+  for (const [folder, files] of state.plan.entries()) {
+    files.forEach((item) => rows.push({
+      originalName: item.name,
+      originalPath: item.path,
+      plannedFolder: folder,
+      previewName: item.previewName,
+      plannedPath: item.plannedPath,
+      type: item.type,
+      extension: item.ext,
+      size: item.size,
+      modified: item.modified ? new Date(item.modified).toISOString() : ''
+    }));
+  }
+  return rows;
+}
+
+function downloadJSON() {
+  const data = {
+    generatedAt: new Date().toISOString(),
+    fileCount: state.filtered.length,
+    groupMode: $('groupMode').value,
+    rows: planRows()
+  };
+  downloadBlob('nifty-file-organization-plan.json', JSON.stringify(data, null, 2), 'application/json');
+}
+
+function downloadCSV() {
+  const headers = ['originalName','originalPath','plannedFolder','previewName','plannedPath','type','extension','size','modified'];
+  const rows = planRows();
+  const csv = [headers.join(',')].concat(rows.map((row) => headers.map((key) => csvCell(row[key])).join(','))).join('\n');
+  downloadBlob('nifty-file-organization-plan.csv', csv, 'text/csv');
+}
+
+function csvCell(value) {
+  const text = String(value ?? '');
+  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function downloadBlob(name, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function copyPlanText() {
+  const text = $('planText').textContent;
+  if (!text || text.startsWith('Your exportable')) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    $('privacyStatus').textContent = 'plan copied';
+  } catch (err) {
+    const area = document.createElement('textarea');
+    area.value = text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+    $('privacyStatus').textContent = 'plan copied';
+  }
+  setTimeout(() => $('privacyStatus').textContent = 'no upload', 1200);
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+function renderAll() {
+  state.filtered = filteredFiles();
+  buildPlan();
+  renderStats();
+  renderExtensionChips();
+  renderFileTable();
+  renderFolderPreview();
+  renderRenameTable();
+  renderPlanText();
+  renderDuplicateReport();
+}
+
+function setupDropzone() {
+  const zone = $('dropzone');
+  const input = $('fileInput');
+  const folderInput = $('folderInput');
+  input.addEventListener('change', () => {
+    addFiles(input.files);
+    input.value = '';
+  });
+  folderInput.addEventListener('change', () => {
+    addFiles(folderInput.files);
+    folderInput.value = '';
+  });
+  ['dragenter','dragover'].forEach((eventName) => {
+    zone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      zone.classList.add('active');
+    });
+  });
+  ['dragleave','drop'].forEach((eventName) => {
+    zone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      zone.classList.remove('active');
+    });
+  });
+  zone.addEventListener('drop', (event) => {
+    addFiles(event.dataTransfer.files);
+  });
+}
+
+function startMatrix() {
+  const canvas = $('matrix');
+  const ctx = canvas.getContext('2d');
+  let width = 0;
+  let height = 0;
+  let columns = [];
+  const glyphs = '0101 FILE SORT HASH PLAN RENAME COPY JSON CSV LOCAL'.split('');
+
+  function resize() {
+    width = canvas.offsetWidth;
+    height = canvas.offsetHeight;
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    const count = Math.max(12, Math.floor(width / 18));
+    columns = Array.from({ length: count }, () => Math.random() * height);
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(2,7,4,.16)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(56,255,136,.72)';
+    ctx.font = '14px monospace';
+    columns.forEach((y, index) => {
+      const x = index * 18;
+      ctx.fillText(glyphs[Math.floor(Math.random() * glyphs.length)], x, y);
+      columns[index] = y > height + Math.random() * 420 ? 0 : y + 16;
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+function init() {
+  setupDropzone();
+  renderAll();
+  startMatrix();
+}
+
+init();
+</script>
+</body>
+</html>
