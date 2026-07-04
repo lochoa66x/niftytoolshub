@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter Pro - Measurement Studio | NiftyTools Hub</title>
+<meta name="description" content="Convert length, area, volume, mass, temperature, speed, time, data, pressure, energy, power and angles locally in your browser.">
+<meta property="og:title" content="Unit Converter Pro - NiftyTools Hub">
+<meta property="og:description" content="A polished measurement studio with multi-output conversions, formulas, favorites, batch conversion and precision controls.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/unit-tools.html">
+<style>
+  :root{
+    --bg:#020704;
+    --panel:#07120b;
+    --panel2:#0b1910;
+    --line:#173822;
+    --line2:#24663b;
+    --txt:#eafff1;
+    --mut:#91aa99;
+    --green:#38ff88;
+    --green2:#18c96a;
+    --amber:#ffd166;
+    --red:#ff5a6f;
+    --cyan:#69e8ff;
+    --shadow:0 0 38px rgba(56,255,136,.15);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(56,255,136,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(56,255,136,.035) 1px,transparent 1px),
+      radial-gradient(circle at 14% 0%,rgba(56,255,136,.13),transparent 34%),
+      radial-gradient(circle at 88% 12%,rgba(105,232,255,.10),transparent 30%),
+      var(--bg);
+    background-size:38px 38px,38px 38px,100% 100%,100% 100%,100% 100%;
+    color:var(--txt);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    letter-spacing:0;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.024) 50%,rgba(0,0,0,.09) 50%);
+    background-size:100% 4px;
+    mix-blend-mode:screen;
+    opacity:.32;
+    z-index:10;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    border-bottom:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.88);
+    backdrop-filter:blur(12px);
+  }
+  .nav{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;text-transform:uppercase}
+  .mark{width:34px;height:34px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.25)}
+  .navlinks{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .navlinks a{
+    border:1px solid rgba(56,255,136,.28);
+    color:var(--mut);
+    padding:9px 12px;
+    background:rgba(7,18,11,.64);
+    min-height:38px;
+  }
+  .navlinks a:hover{color:var(--green);border-color:var(--green)}
+  .hero{
+    position:relative;
+    min-height:420px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    align-items:center;
+    gap:34px;
+    padding:58px 0 34px;
+  }
+  #matrix{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.22;
+    pointer-events:none;
+    mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  }
+  .crumb{color:var(--green);font-size:13px;text-transform:uppercase;margin-bottom:18px}
+  h1{
+    position:relative;
+    margin:0;
+    font-size:clamp(40px,7vw,84px);
+    line-height:.92;
+    text-transform:uppercase;
+    text-shadow:0 0 18px rgba(56,255,136,.32);
+  }
+  .lead{color:var(--mut);font-size:clamp(15px,2vw,18px);line-height:1.75;max-width:740px;margin:22px 0 0}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:1px solid var(--green);
+    color:#011508;
+    background:var(--green);
+    padding:13px 18px;
+    min-height:46px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 18px rgba(56,255,136,.22);
+  }
+  .btn.secondary{background:transparent;color:var(--green)}
+  .btn:hover,.mini-btn:hover,.chip:hover{filter:brightness(1.08)}
+  .console{
+    position:relative;
+    border:1px solid rgba(56,255,136,.28);
+    background:linear-gradient(180deg,rgba(7,18,11,.88),rgba(4,10,6,.78));
+    padding:18px;
+    box-shadow:var(--shadow);
+    min-height:320px;
+    overflow:hidden;
+  }
+  .console:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(56,255,136,.06),transparent);
+    transform:translateX(-100%);
+    animation:sweep 5s linear infinite;
+  }
+  @keyframes sweep{to{transform:translateX(100%)}}
+  .console-inner{position:relative}
+  .status-row{display:flex;justify-content:space-between;gap:10px;color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:14px}
+  .meter-face{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.05) 0 1px,transparent 1px 20px),
+      #020704;
+    min-height:214px;
+    display:grid;
+    align-content:center;
+    padding:18px;
+    text-align:center;
+  }
+  .meter-face b{display:block;color:var(--green);font-size:clamp(34px,6vw,62px);line-height:1;word-break:break-word}
+  .meter-face span{display:block;color:var(--mut);font-size:13px;line-height:1.6;margin-top:12px}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .quick{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:78px;
+  }
+  .quick b{display:block;color:var(--green);font-size:18px;margin-bottom:5px}
+  .quick span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding-bottom:58px}
+  .panel{
+    grid-column:span 6;
+    border:1px solid rgba(56,255,136,.22);
+    background:linear-gradient(180deg,rgba(7,18,11,.86),rgba(4,10,6,.78));
+    padding:18px;
+    min-height:300px;
+    box-shadow:0 0 24px rgba(0,0,0,.24);
+  }
+  .panel.wide{grid-column:span 12}
+  .panel.third{grid-column:span 4}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .panel-head h2{font-size:18px;margin:0;text-transform:uppercase}
+  .panel-head p{margin:4px 0 0;color:var(--mut);font-size:13px;line-height:1.5}
+  .badge{border:1px solid rgba(56,255,136,.35);color:var(--green);padding:6px 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+  label{display:block;color:var(--mut);font-size:12px;margin:0 0 6px;text-transform:uppercase}
+  input,select,textarea{
+    width:100%;
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    color:var(--txt);
+    padding:11px 12px;
+    outline:none;
+    min-height:44px;
+  }
+  textarea{resize:vertical;min-height:146px;line-height:1.58}
+  input:focus,select:focus,textarea:focus{border-color:var(--green)}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .mini-btn{
+    border:1px solid rgba(56,255,136,.34);
+    background:rgba(2,7,4,.72);
+    color:var(--txt);
+    padding:10px 12px;
+    min-height:40px;
+  }
+  .mini-btn.primary{border-color:var(--green);color:#021409;background:var(--green);font-weight:900}
+  .mini-btn.warn{border-color:rgba(255,209,102,.6);color:var(--amber)}
+  .mini-btn.red{border-color:rgba(255,90,111,.6);color:var(--red)}
+  .result{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.035) 0 1px,transparent 1px 18px),
+      #020704;
+    min-height:150px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:18px;
+  }
+  .result-main{font-size:clamp(28px,5vw,52px);font-weight:900;color:var(--green);word-break:break-word}
+  .result-sub{color:var(--mut);font-size:13px;line-height:1.55;margin-top:8px}
+  .output-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .unit-card{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:94px;
+  }
+  .unit-card b{display:block;color:var(--green);font-size:18px;margin-bottom:5px;word-break:break-word}
+  .unit-card span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .unit-card button{margin-top:8px;border:1px solid rgba(56,255,136,.22);background:transparent;color:var(--mut);padding:6px 8px;font-size:11px}
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{
+    border:1px solid rgba(56,255,136,.22);
+    background:rgba(0,0,0,.24);
+    color:var(--mut);
+    padding:8px 10px;
+    font-size:12px;
+  }
+  .chip.active{color:var(--green);border-color:var(--green);background:rgba(56,255,136,.08)}
+  .output-box{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    color:var(--txt);
+    padding:12px;
+    min-height:96px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.6;
+    max-height:430px;
+    overflow:auto;
+  }
+  .table-wrap{border:1px solid rgba(56,255,136,.18);background:#020704;overflow:auto;max-height:420px}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:680px}
+  th,td{padding:10px;border-bottom:1px solid rgba(56,255,136,.10);text-align:left;vertical-align:top}
+  th{position:sticky;top:0;background:#07120b;color:var(--green);z-index:1}
+  td{color:var(--mut)}
+  td b{color:var(--txt)}
+  .footer-note{color:var(--mut);font-size:12px;line-height:1.65;margin-top:14px;border-top:1px solid rgba(56,255,136,.14);padding-top:14px}
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr}
+    .panel,.panel.third{grid-column:span 12}
+    .output-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:640px){
+    .wrap{width:min(100% - 24px,1180px)}
+    .nav{align-items:flex-start;flex-direction:column}
+    .navlinks{width:100%}
+    .navlinks a{flex:1;text-align:center}
+    .hero{padding:38px 0 24px;min-height:auto}
+    .hero-actions .btn,.mini-btn{width:100%}
+    .form-grid,.form-grid.three,.output-grid,.quick-grid{grid-template-columns:1fr}
+    .panel{padding:14px}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="mark">NT</span><span>NiftyTools Hub</span></a>
+    <nav class="navlinks" aria-label="Unit converter navigation">
+      <a href="#converter">Convert</a>
+      <a href="#all">All Units</a>
+      <a href="#batch">Batch</a>
+      <a href="#favorites">Favorites</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <canvas id="matrix" aria-hidden="true"></canvas>
+    <div>
+      <div class="crumb">Home / Converters / Measurement Studio</div>
+      <h1>Unit Converter Pro</h1>
+      <p class="lead">Convert length, area, volume, mass, temperature, speed, time, data size, pressure, energy, power and angles. Enter once, see every unit, batch convert lists, and save common conversions locally.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#converter">Start converting</a>
+        <button class="btn secondary" type="button" onclick="loadPreset('c-to-f')">Quick temp check</button>
+      </div>
+    </div>
+    <aside class="console">
+      <div class="console-inner">
+        <div class="status-row"><span>local measurement engine</span><span id="copyStatus">ready</span></div>
+        <div class="meter-face">
+          <b id="heroResult">--</b>
+          <span id="heroFormula">Pick a category and enter a value.</span>
+        </div>
+        <div class="quick-grid">
+          <div class="quick"><b id="quickCategory">Length</b><span>Category</span></div>
+          <div class="quick"><b id="quickPrecision">4</b><span>Decimals</span></div>
+          <div class="quick"><b id="quickUnits">0</b><span>Visible units</span></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap layout">
+    <article class="panel wide" id="converter">
+      <div class="panel-head">
+        <div>
+          <h2>Conversion Console</h2>
+          <p>Choose a measurement family, source unit and target unit.</p>
+        </div>
+        <span class="badge">Core</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="valueInput">Value</label><input id="valueInput" type="number" value="10" oninput="convert()"></div>
+        <div><label for="categorySelect">Category</label><select id="categorySelect" onchange="setCategory(this.value)"></select></div>
+        <div><label for="precisionInput">Precision</label><input id="precisionInput" type="number" min="0" max="12" value="4" oninput="convert()"></div>
+        <div><label for="fromUnit">From</label><select id="fromUnit" onchange="convert()"></select></div>
+        <div><label for="toUnit">To</label><select id="toUnit" onchange="convert()"></select></div>
+        <div><label for="unitSearch">Search units</label><input id="unitSearch" type="text" placeholder="meter, pound, psi..." oninput="renderUnitSearch()"></div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="convert()">Convert</button>
+        <button class="mini-btn" type="button" onclick="swapUnits()">Swap</button>
+        <button class="mini-btn" type="button" onclick="copyText(resultLine())">Copy result</button>
+        <button class="mini-btn" type="button" onclick="saveFavorite()">Save conversion</button>
+      </div>
+      <div class="result">
+        <div>
+          <div class="result-main" id="mainResult">--</div>
+          <div class="result-sub" id="mainSub">Conversion output appears here.</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel wide" id="all">
+      <div class="panel-head">
+        <div>
+          <h2>All Units In Category</h2>
+          <p>One value, every output in the selected category.</p>
+        </div>
+        <span class="badge" id="allCount">0 units</span>
+      </div>
+      <div class="output-grid" id="allOutputs"></div>
+    </article>
+
+    <article class="panel" id="formula">
+      <div class="panel-head">
+        <div>
+          <h2>Formula / Explanation</h2>
+          <p>Readable formula for the selected conversion.</p>
+        </div>
+        <span class="badge">Math</span>
+      </div>
+      <div class="output-box" id="formulaOutput"></div>
+      <div class="controls">
+        <button class="mini-btn" type="button" onclick="copyText($('formulaOutput').textContent)">Copy formula</button>
+      </div>
+    </article>
+
+    <article class="panel" id="favorites">
+      <div class="panel-head">
+        <div>
+          <h2>Common & Favorite Conversions</h2>
+          <p>Fast presets plus your saved conversions in this browser.</p>
+        </div>
+        <span class="badge">Fast</span>
+      </div>
+      <div class="chip-row" id="commonPresets"></div>
+      <div class="output-box" id="favoriteBox" style="margin-top:12px"></div>
+      <div class="controls">
+        <button class="mini-btn red" type="button" onclick="clearFavorites()">Clear saved</button>
+      </div>
+    </article>
+
+    <article class="panel wide" id="batch">
+      <div class="panel-head">
+        <div>
+          <h2>Batch Conversion Table</h2>
+          <p>Paste one number per line and convert the full list with the current units.</p>
+        </div>
+        <span class="badge">Batch</span>
+      </div>
+      <div class="form-grid">
+        <div><label for="batchInput">Input values</label><textarea id="batchInput">1
+5
+10
+25
+100</textarea></div>
+        <div>
+          <label>Batch output</label>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Input</th><th>Output</th><th>Formula</th></tr></thead>
+              <tbody id="batchRows"><tr><td colspan="3">Run batch conversion.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="runBatch()">Run batch</button>
+        <button class="mini-btn" type="button" onclick="copyText(batchText())">Copy batch</button>
+      </div>
+    </article>
+
+    <article class="panel wide" id="search">
+      <div class="panel-head">
+        <div>
+          <h2>Unit Search</h2>
+          <p>Filter units in the current category and jump conversion direction quickly.</p>
+        </div>
+        <span class="badge">Search</span>
+      </div>
+      <div class="output-grid" id="unitSearchResults"></div>
+      <p class="footer-note">All conversions are calculated in your browser. No values are uploaded or stored unless you save a favorite locally.</p>
+    </article>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const categories = {
+  length: {
+    label: 'Length',
+    base: 'meter',
+    units: [
+      unit('meter', 'Meter', 'm', 1),
+      unit('kilometer', 'Kilometer', 'km', 1000),
+      unit('centimeter', 'Centimeter', 'cm', 0.01),
+      unit('millimeter', 'Millimeter', 'mm', 0.001),
+      unit('micrometer', 'Micrometer', 'um', 1e-6),
+      unit('nanometer', 'Nanometer', 'nm', 1e-9),
+      unit('mile', 'Mile', 'mi', 1609.344),
+      unit('yard', 'Yard', 'yd', 0.9144),
+      unit('foot', 'Foot', 'ft', 0.3048),
+      unit('inch', 'Inch', 'in', 0.0254),
+      unit('nautical-mile', 'Nautical mile', 'nmi', 1852)
+    ]
+  },
+  area: {
+    label: 'Area',
+    base: 'square-meter',
+    units: [
+      unit('square-meter', 'Square meter', 'm2', 1),
+      unit('square-kilometer', 'Square kilometer', 'km2', 1e6),
+      unit('square-centimeter', 'Square centimeter', 'cm2', 0.0001),
+      unit('square-mile', 'Square mile', 'mi2', 2589988.110336),
+      unit('square-yard', 'Square yard', 'yd2', 0.83612736),
+      unit('square-foot', 'Square foot', 'ft2', 0.09290304),
+      unit('square-inch', 'Square inch', 'in2', 0.00064516),
+      unit('acre', 'Acre', 'ac', 4046.8564224),
+      unit('hectare', 'Hectare', 'ha', 10000)
+    ]
+  },
+  volume: {
+    label: 'Volume',
+    base: 'liter',
+    units: [
+      unit('liter', 'Liter', 'L', 1),
+      unit('milliliter', 'Milliliter', 'mL', 0.001),
+      unit('cubic-meter', 'Cubic meter', 'm3', 1000),
+      unit('cubic-centimeter', 'Cubic centimeter', 'cm3', 0.001),
+      unit('us-gallon', 'US gallon', 'gal', 3.785411784),
+      unit('us-quart', 'US quart', 'qt', 0.946352946),
+      unit('us-pint', 'US pint', 'pt', 0.473176473),
+      unit('us-cup', 'US cup', 'cup', 0.2365882365),
+      unit('fluid-ounce', 'US fluid ounce', 'fl oz', 0.0295735295625),
+      unit('tablespoon', 'Tablespoon', 'tbsp', 0.01478676478125),
+      unit('teaspoon', 'Teaspoon', 'tsp', 0.00492892159375)
+    ]
+  },
+  mass: {
+    label: 'Weight / Mass',
+    base: 'kilogram',
+    units: [
+      unit('kilogram', 'Kilogram', 'kg', 1),
+      unit('gram', 'Gram', 'g', 0.001),
+      unit('milligram', 'Milligram', 'mg', 1e-6),
+      unit('metric-ton', 'Metric ton', 't', 1000),
+      unit('pound', 'Pound', 'lb', 0.45359237),
+      unit('ounce', 'Ounce', 'oz', 0.028349523125),
+      unit('stone', 'Stone', 'st', 6.35029318),
+      unit('us-ton', 'US ton', 'short ton', 907.18474)
+    ]
+  },
+  temperature: {
+    label: 'Temperature',
+    base: 'celsius',
+    units: [
+      tempUnit('celsius', 'Celsius', 'deg C', (v) => v, (v) => v),
+      tempUnit('fahrenheit', 'Fahrenheit', 'deg F', (v) => (v - 32) * 5 / 9, (v) => v * 9 / 5 + 32),
+      tempUnit('kelvin', 'Kelvin', 'K', (v) => v - 273.15, (v) => v + 273.15),
+      tempUnit('rankine', 'Rankine', 'deg R', (v) => (v - 491.67) * 5 / 9, (v) => (v + 273.15) * 9 / 5)
+    ]
+  },
+  speed: {
+    label: 'Speed',
+    base: 'meter-per-second',
+    units: [
+      unit('meter-per-second', 'Meter per second', 'm/s', 1),
+      unit('kilometer-per-hour', 'Kilometer per hour', 'km/h', 0.2777777777778),
+      unit('mile-per-hour', 'Mile per hour', 'mph', 0.44704),
+      unit('foot-per-second', 'Foot per second', 'ft/s', 0.3048),
+      unit('knot', 'Knot', 'kn', 0.5144444444)
+    ]
+  },
+  time: {
+    label: 'Time',
+    base: 'second',
+    units: [
+      unit('nanosecond', 'Nanosecond', 'ns', 1e-9),
+      unit('microsecond', 'Microsecond', 'us', 1e-6),
+      unit('millisecond', 'Millisecond', 'ms', 0.001),
+      unit('second', 'Second', 's', 1),
+      unit('minute', 'Minute', 'min', 60),
+      unit('hour', 'Hour', 'hr', 3600),
+      unit('day', 'Day', 'day', 86400),
+      unit('week', 'Week', 'wk', 604800),
+      unit('month', 'Month avg', 'mo', 2629746),
+      unit('year', 'Year avg', 'yr', 31556952)
+    ]
+  },
+  data: {
+    label: 'Data Size',
+    base: 'byte',
+    units: [
+      unit('bit', 'Bit', 'bit', 0.125),
+      unit('byte', 'Byte', 'B', 1),
+      unit('kilobyte', 'Kilobyte', 'KB', 1000),
+      unit('kibibyte', 'Kibibyte', 'KiB', 1024),
+      unit('megabyte', 'Megabyte', 'MB', 1e6),
+      unit('mebibyte', 'Mebibyte', 'MiB', 1048576),
+      unit('gigabyte', 'Gigabyte', 'GB', 1e9),
+      unit('gibibyte', 'Gibibyte', 'GiB', 1073741824),
+      unit('terabyte', 'Terabyte', 'TB', 1e12),
+      unit('tebibyte', 'Tebibyte', 'TiB', 1099511627776)
+    ]
+  },
+  pressure: {
+    label: 'Pressure',
+    base: 'pascal',
+    units: [
+      unit('pascal', 'Pascal', 'Pa', 1),
+      unit('kilopascal', 'Kilopascal', 'kPa', 1000),
+      unit('megapascal', 'Megapascal', 'MPa', 1e6),
+      unit('bar', 'Bar', 'bar', 100000),
+      unit('atmosphere', 'Atmosphere', 'atm', 101325),
+      unit('psi', 'Pound per square inch', 'psi', 6894.757293168),
+      unit('torr', 'Torr', 'Torr', 133.3223684211),
+      unit('mmhg', 'Millimeter mercury', 'mmHg', 133.322387415),
+      unit('inhg', 'Inch mercury', 'inHg', 3386.389)
+    ]
+  },
+  energy: {
+    label: 'Energy',
+    base: 'joule',
+    units: [
+      unit('joule', 'Joule', 'J', 1),
+      unit('kilojoule', 'Kilojoule', 'kJ', 1000),
+      unit('calorie', 'Calorie', 'cal', 4.184),
+      unit('kilocalorie', 'Kilocalorie', 'kcal', 4184),
+      unit('watt-hour', 'Watt hour', 'Wh', 3600),
+      unit('kilowatt-hour', 'Kilowatt hour', 'kWh', 3600000),
+      unit('btu', 'BTU', 'BTU', 1055.05585262),
+      unit('electronvolt', 'Electronvolt', 'eV', 1.602176634e-19)
+    ]
+  },
+  power: {
+    label: 'Power',
+    base: 'watt',
+    units: [
+      unit('watt', 'Watt', 'W', 1),
+      unit('kilowatt', 'Kilowatt', 'kW', 1000),
+      unit('megawatt', 'Megawatt', 'MW', 1e6),
+      unit('horsepower', 'Horsepower mechanical', 'hp', 745.699871582),
+      unit('btu-per-hour', 'BTU per hour', 'BTU/h', 0.2930710701722)
+    ]
+  },
+  angle: {
+    label: 'Angle',
+    base: 'radian',
+    units: [
+      unit('radian', 'Radian', 'rad', 1),
+      unit('degree', 'Degree', 'deg', Math.PI / 180),
+      unit('turn', 'Turn', 'turn', Math.PI * 2),
+      unit('gradian', 'Gradian', 'grad', Math.PI / 200),
+      unit('arcminute', 'Arcminute', 'arcmin', Math.PI / 10800),
+      unit('arcsecond', 'Arcsecond', 'arcsec', Math.PI / 648000)
+    ]
+  }
+};
+
+const commonPresets = [
+  { id: 'm-to-ft', label: 'Meters -> feet', category: 'length', from: 'meter', to: 'foot', value: 1 },
+  { id: 'km-to-mi', label: 'Kilometers -> miles', category: 'length', from: 'kilometer', to: 'mile', value: 5 },
+  { id: 'lb-to-kg', label: 'Pounds -> kilograms', category: 'mass', from: 'pound', to: 'kilogram', value: 150 },
+  { id: 'c-to-f', label: 'Celsius -> Fahrenheit', category: 'temperature', from: 'celsius', to: 'fahrenheit', value: 20 },
+  { id: 'mph-to-kmh', label: 'MPH -> km/h', category: 'speed', from: 'mile-per-hour', to: 'kilometer-per-hour', value: 60 },
+  { id: 'gb-to-gib', label: 'GB -> GiB', category: 'data', from: 'gigabyte', to: 'gibibyte', value: 1 },
+  { id: 'psi-to-bar', label: 'PSI -> bar', category: 'pressure', from: 'psi', to: 'bar', value: 32 },
+  { id: 'kwh-to-j', label: 'kWh -> joules', category: 'energy', from: 'kilowatt-hour', to: 'joule', value: 1 }
+];
+
+function unit(id, name, symbol, factor) {
+  return { id, name, symbol, factor };
+}
+
+function tempUnit(id, name, symbol, toBase, fromBase) {
+  return { id, name, symbol, toBase, fromBase, temperature: true };
+}
+
+function category() {
+  return categories[$('categorySelect').value];
+}
+
+function unitById(cat, id) {
+  return cat.units.find((item) => item.id === id) || cat.units[0];
+}
+
+function toBase(value, unitInfo) {
+  return unitInfo.toBase ? unitInfo.toBase(value) : value * unitInfo.factor;
+}
+
+function fromBase(value, unitInfo) {
+  return unitInfo.fromBase ? unitInfo.fromBase(value) : value / unitInfo.factor;
+}
+
+function convertValue(value, fromId, toId, cat = category()) {
+  const from = unitById(cat, fromId);
+  const to = unitById(cat, toId);
+  const base = toBase(value, from);
+  return fromBase(base, to);
+}
+
+function precision() {
+  return Math.max(0, Math.min(12, Number($('precisionInput').value) || 0));
+}
+
+function formatNumber(value) {
+  if (!Number.isFinite(value)) return '--';
+  const decimals = precision();
+  if (Math.abs(value) >= 1e9 || (Math.abs(value) > 0 && Math.abs(value) < 1e-6)) {
+    return value.toExponential(Math.min(decimals, 8));
+  }
+  return Number(value.toFixed(decimals)).toLocaleString(undefined, {
+    maximumFractionDigits: decimals
+  });
+}
+
+function init() {
+  $('categorySelect').innerHTML = Object.entries(categories).map(([id, data]) => `<option value="${id}">${data.label}</option>`).join('');
+  $('categorySelect').value = 'length';
+  renderCommonPresets();
+  setCategory('length');
+  renderFavorites();
+  startMatrix();
+}
+
+function setCategory(id) {
+  $('categorySelect').value = id;
+  const cat = category();
+  $('fromUnit').innerHTML = cat.units.map((item) => `<option value="${item.id}">${item.name} (${item.symbol})</option>`).join('');
+  $('toUnit').innerHTML = cat.units.map((item) => `<option value="${item.id}">${item.name} (${item.symbol})</option>`).join('');
+  $('fromUnit').value = cat.units[0].id;
+  $('toUnit').value = cat.units[Math.min(1, cat.units.length - 1)].id;
+  $('quickCategory').textContent = cat.label;
+  convert();
+}
+
+function convert() {
+  const cat = category();
+  const value = Number($('valueInput').value);
+  const from = unitById(cat, $('fromUnit').value);
+  const to = unitById(cat, $('toUnit').value);
+  $('quickPrecision').textContent = precision();
+  if (!Number.isFinite(value)) {
+    $('mainResult').textContent = '--';
+    $('mainSub').textContent = 'Enter a valid number.';
+    return;
+  }
+  const result = convertValue(value, from.id, to.id, cat);
+  const main = `${formatNumber(result)} ${to.symbol}`;
+  $('mainResult').textContent = main;
+  $('mainSub').textContent = `${formatNumber(value)} ${from.symbol} = ${main}`;
+  $('heroResult').textContent = main;
+  $('heroFormula').textContent = formulaText(value, from, to, cat);
+  renderAllOutputs();
+  renderFormula();
+  renderUnitSearch();
+  runBatch();
+}
+
+function resultLine() {
+  return `${$('mainSub').textContent}`;
+}
+
+function renderAllOutputs() {
+  const cat = category();
+  const value = Number($('valueInput').value);
+  const from = unitById(cat, $('fromUnit').value);
+  if (!Number.isFinite(value)) return;
+  const base = toBase(value, from);
+  $('allOutputs').innerHTML = cat.units.map((unitInfo) => {
+    const converted = fromBase(base, unitInfo);
+    return `<div class="unit-card"><b>${formatNumber(converted)} ${escapeHTML(unitInfo.symbol)}</b><span>${escapeHTML(unitInfo.name)}</span><button type="button" data-set-to="${unitInfo.id}">Set as target</button></div>`;
+  }).join('');
+  $('allCount').textContent = `${cat.units.length} units`;
+  $('quickUnits').textContent = cat.units.length;
+  document.querySelectorAll('[data-set-to]').forEach((button) => {
+    button.addEventListener('click', () => {
+      $('toUnit').value = button.dataset.setTo;
+      convert();
+    });
+  });
+}
+
+function renderFormula() {
+  const cat = category();
+  const value = Number($('valueInput').value);
+  const from = unitById(cat, $('fromUnit').value);
+  const to = unitById(cat, $('toUnit').value);
+  $('formulaOutput').textContent = formulaText(value, from, to, cat);
+}
+
+function formulaText(value, from, to, cat) {
+  if (!Number.isFinite(value)) return 'Enter a valid number to see the formula.';
+  if (cat.label === 'Temperature') {
+    const base = toBase(value, from);
+    const result = fromBase(base, to);
+    return [
+      `${from.name} -> Celsius -> ${to.name}`,
+      `${formatNumber(value)} ${from.symbol} = ${formatNumber(base)} deg C`,
+      `${formatNumber(base)} deg C = ${formatNumber(result)} ${to.symbol}`,
+      'Temperature conversions use offsets, not simple multiplication.'
+    ].join('\n');
+  }
+  const base = toBase(value, from);
+  const result = fromBase(base, to);
+  return [
+    `${from.name} -> ${cat.base} -> ${to.name}`,
+    `Base factor: 1 ${from.symbol} = ${from.factor} base units`,
+    `Target factor: 1 ${to.symbol} = ${to.factor} base units`,
+    `${formatNumber(value)} ${from.symbol} * ${from.factor} / ${to.factor} = ${formatNumber(result)} ${to.symbol}`
+  ].join('\n');
+}
+
+function swapUnits() {
+  const from = $('fromUnit').value;
+  $('fromUnit').value = $('toUnit').value;
+  $('toUnit').value = from;
+  convert();
+}
+
+function renderCommonPresets() {
+  $('commonPresets').innerHTML = commonPresets.map((preset) => `<button class="chip" type="button" data-preset="${preset.id}">${preset.label}</button>`).join('');
+  document.querySelectorAll('[data-preset]').forEach((button) => {
+    button.addEventListener('click', () => loadPreset(button.dataset.preset));
+  });
+}
+
+function loadPreset(id) {
+  const preset = commonPresets.find((item) => item.id === id);
+  if (!preset) return;
+  setCategory(preset.category);
+  $('valueInput').value = preset.value;
+  $('fromUnit').value = preset.from;
+  $('toUnit').value = preset.to;
+  convert();
+}
+
+function saveFavorite() {
+  const favorites = loadFavorites();
+  const cat = category();
+  const item = {
+    category: $('categorySelect').value,
+    value: $('valueInput').value,
+    from: $('fromUnit').value,
+    to: $('toUnit').value,
+    label: `${cat.label}: ${unitById(cat, $('fromUnit').value).symbol} -> ${unitById(cat, $('toUnit').value).symbol}`
+  };
+  favorites.unshift(item);
+  localStorage.setItem('nifty-unit-favorites', JSON.stringify(favorites.slice(0, 12)));
+  renderFavorites();
+}
+
+function loadFavorites() {
+  try {
+    return JSON.parse(localStorage.getItem('nifty-unit-favorites') || '[]');
+  } catch (err) {
+    return [];
+  }
+}
+
+function renderFavorites() {
+  const favorites = loadFavorites();
+  if (!favorites.length) {
+    $('favoriteBox').textContent = 'No saved conversions yet. Use "Save conversion" after setting up a conversion.';
+    return;
+  }
+  $('favoriteBox').innerHTML = favorites.map((favorite, index) => `<button class="chip" type="button" data-favorite="${index}">${escapeHTML(favorite.label)} (${escapeHTML(favorite.value)})</button>`).join(' ');
+  document.querySelectorAll('[data-favorite]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const favorite = loadFavorites()[Number(button.dataset.favorite)];
+      if (!favorite) return;
+      setCategory(favorite.category);
+      $('valueInput').value = favorite.value;
+      $('fromUnit').value = favorite.from;
+      $('toUnit').value = favorite.to;
+      convert();
+    });
+  });
+}
+
+function clearFavorites() {
+  localStorage.removeItem('nifty-unit-favorites');
+  renderFavorites();
+}
+
+function renderUnitSearch() {
+  const cat = category();
+  const query = $('unitSearch').value.trim().toLowerCase();
+  const units = cat.units.filter((item) => {
+    const haystack = `${item.name} ${item.symbol} ${item.id}`.toLowerCase();
+    return !query || haystack.includes(query);
+  });
+  $('unitSearchResults').innerHTML = units.map((item) => `<div class="unit-card"><b>${escapeHTML(item.symbol)}</b><span>${escapeHTML(item.name)}</span><button type="button" data-from-unit="${item.id}">From</button> <button type="button" data-to-unit="${item.id}">To</button></div>`).join('') || '<div class="unit-card"><span>No matching units.</span></div>';
+  document.querySelectorAll('[data-from-unit]').forEach((button) => {
+    button.addEventListener('click', () => {
+      $('fromUnit').value = button.dataset.fromUnit;
+      convert();
+    });
+  });
+  document.querySelectorAll('[data-to-unit]').forEach((button) => {
+    button.addEventListener('click', () => {
+      $('toUnit').value = button.dataset.toUnit;
+      convert();
+    });
+  });
+}
+
+function runBatch() {
+  const cat = category();
+  const from = unitById(cat, $('fromUnit').value);
+  const to = unitById(cat, $('toUnit').value);
+  const values = $('batchInput').value.split(/\n/).map((line) => line.trim()).filter(Boolean);
+  if (!values.length) {
+    $('batchRows').innerHTML = '<tr><td colspan="3">Paste values to batch convert.</td></tr>';
+    return;
+  }
+  $('batchRows').innerHTML = values.map((line) => {
+    const value = Number(line);
+    if (!Number.isFinite(value)) return `<tr><td>${escapeHTML(line)}</td><td>Invalid</td><td>Skipped</td></tr>`;
+    const result = convertValue(value, from.id, to.id, cat);
+    return `<tr><td><b>${formatNumber(value)} ${escapeHTML(from.symbol)}</b></td><td>${formatNumber(result)} ${escapeHTML(to.symbol)}</td><td>${escapeHTML(from.symbol)} -> ${escapeHTML(to.symbol)}</td></tr>`;
+  }).join('');
+}
+
+function batchText() {
+  const rows = [...$('batchRows').querySelectorAll('tr')].map((row) => [...row.children].map((cell) => cell.textContent.trim()).join('\t'));
+  return rows.join('\n');
+}
+
+async function copyText(text) {
+  const clean = String(text || '').trim();
+  if (!clean) return;
+  try {
+    await navigator.clipboard.writeText(clean);
+  } catch (err) {
+    const area = document.createElement('textarea');
+    area.value = clean;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  $('copyStatus').textContent = 'copied';
+  setTimeout(() => $('copyStatus').textContent = 'ready', 1200);
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+function startMatrix() {
+  const canvas = $('matrix');
+  const ctx = canvas.getContext('2d');
+  let width = 0;
+  let height = 0;
+  let columns = [];
+  const glyphs = '0101 UNIT METER KILO POUND JOULE PSI WATT BYTE CONVERT'.split('');
+  function resize() {
+    width = canvas.offsetWidth;
+    height = canvas.offsetHeight;
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    const count = Math.max(12, Math.floor(width / 18));
+    columns = Array.from({ length: count }, () => Math.random() * height);
+  }
+  function draw() {
+    ctx.fillStyle = 'rgba(2,7,4,.16)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(56,255,136,.72)';
+    ctx.font = '14px monospace';
+    columns.forEach((y, index) => {
+      const x = index * 18;
+      ctx.fillText(glyphs[Math.floor(Math.random() * glyphs.length)], x, y);
+      columns[index] = y > height + Math.random() * 420 ? 0 : y + 16;
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+init();
+</script>
+</body>
+</html>

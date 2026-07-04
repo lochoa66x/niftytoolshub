@@ -332,7 +332,7 @@
     <div class="category-card" onclick="focusTool('salary')"><b>Finance & Business</b><span>Salary, mortgage, auto loan, receipts, percentages and business calculators.</span></div>
     <div class="category-card" onclick="jumpFilter('fun')"><b>Fun & Random</b><span>Random toolkit, tarot, zodiac, prank terminal, dice, coin flips and quick playful tools.</span></div>
     <div class="category-card" onclick="focusTool('zodiac')"><b>Mystic / Astrology</b><span>Tarot reader, birth chart toolkit, zodiac compatibility and gematria.</span></div>
-    <div class="category-card" onclick="jumpFilter('convert')"><b>Everyday Utilities</b><span>Converters, clocks, timers, text tools, lorem ipsum and days-lived calculators.</span></div>
+    <div class="category-card" onclick="jumpFilter('convert')"><b>Everyday Utilities</b><span>Unit converter, clocks, timers, text tools, lorem ipsum and days-lived calculators.</span></div>
     <div class="category-card" onclick="jumpFilter('screen')"><b>Device Tests</b><span>Webcam, microphone, speakers, screen, keyboard, mouse, typing and internet pulse tests.</span></div>
     <div class="category-card" onclick="jumpFilter('developer')"><b>Developer Tools</b><span>JSON, YAML, CSV, Base64, URL, JWT, hashes, UUIDs and regex helpers.</span></div>
   </div>
@@ -366,22 +366,13 @@
 
   <div class="grid" id="grid">
 
-    <!-- Unit converter: interactive -->
-    <div class="tool" data-tags="free convert" data-name="unit converter metric imperial">
-      <span class="badge free">Free</span>
-      <div class="ico">📏</div>
-      <h3>Unit Converter</h3>
-      <p>Metric ↔ imperial. Length, weight, temperature — instant.</p>
-      <div class="mini collapsed" onclick="event.stopPropagation()">
-        <div class="row">
-          <input id="uv" type="number" value="10" oninput="conv()">
-          <select id="uf" onchange="conv()"><option value="km">km</option><option value="m">m</option><option value="kg">kg</option><option value="c">°C</option></select>
-        </div>
-        <div class="row"><span class="out" id="uout">6.21 mi</span></div>
-      </div>
-      <div class="open">Open tool →</div>
-    </div>
 
+    <!-- Unit converter pro -->
+    <div class="tool" data-tags="free utility convert unit measurement length area volume mass temperature speed time data pressure energy power angle" data-name="unit converter pro measurement studio length area volume mass temperature speed time data pressure energy power angle batch formula" onclick="location.href='/unit-tools.html'">
+      <span class="badge free">Free</span><div class="ico">UNIT</div>
+      <h3>Unit Converter Pro</h3><p>Convert measurements across 12 categories with formulas, batch mode and saved favorites.</p>
+      <div class="open">Open full tool -></div>
+    </div>
     <!-- World clock: interactive -->
     <div class="tool" data-tags="free time" data-name="world clock time zones countries">
       <span class="badge free">Free</span>
