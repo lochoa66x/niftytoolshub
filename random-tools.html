@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Toolkit Pro - dice, coin, lottery, picker and generators | NiftyTools Hub</title>
+<meta name="description" content="A privacy-first random toolkit with coin flip, dice roller, lottery numbers, random picker, countdown timer, days-lived calculator, lorem ipsum and generators.">
+<meta property="og:title" content="Random Toolkit Pro - NiftyTools Hub">
+<meta property="og:description" content="Flip coins, roll dice, pick winners, generate numbers, passwords, countdowns, lorem ipsum and life stats in one polished random console.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/random-tools.html">
+<style>
+  :root{
+    --bg:#020704;
+    --panel:#07120b;
+    --panel2:#0b1910;
+    --line:#173822;
+    --line2:#24663b;
+    --txt:#eafff1;
+    --mut:#91aa99;
+    --green:#38ff88;
+    --green2:#18c96a;
+    --amber:#ffd166;
+    --red:#ff5a6f;
+    --blue:#69e8ff;
+    --purple:#c795ff;
+    --shadow:0 0 40px rgba(56,255,136,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(56,255,136,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(56,255,136,.035) 1px,transparent 1px),
+      radial-gradient(circle at 16% 0%,rgba(56,255,136,.15),transparent 34%),
+      radial-gradient(circle at 88% 14%,rgba(105,232,255,.11),transparent 29%),
+      radial-gradient(circle at 60% 94%,rgba(255,209,102,.08),transparent 28%),
+      var(--bg);
+    background-size:38px 38px,38px 38px,100% 100%,100% 100%,100% 100%,100% 100%;
+    color:var(--txt);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    letter-spacing:0;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.09) 50%);
+    background-size:100% 4px;
+    mix-blend-mode:screen;
+    opacity:.32;
+    z-index:10;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    border-bottom:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.88);
+    backdrop-filter:blur(12px);
+  }
+  .nav{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;text-transform:uppercase}
+  .mark{width:34px;height:34px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.25)}
+  .navlinks{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .navlinks a{
+    border:1px solid rgba(56,255,136,.28);
+    color:var(--mut);
+    padding:9px 12px;
+    background:rgba(7,18,11,.64);
+    min-height:38px;
+  }
+  .navlinks a:hover{color:var(--green);border-color:var(--green)}
+  .hero{
+    position:relative;
+    min-height:430px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    align-items:center;
+    gap:34px;
+    padding:58px 0 34px;
+  }
+  #matrix{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.22;
+    pointer-events:none;
+    mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  }
+  .crumb{color:var(--green);font-size:13px;text-transform:uppercase;margin-bottom:18px}
+  h1{
+    position:relative;
+    margin:0;
+    font-size:clamp(40px,7vw,86px);
+    line-height:.92;
+    text-transform:uppercase;
+    text-shadow:0 0 18px rgba(56,255,136,.32);
+  }
+  .lead{color:var(--mut);font-size:clamp(15px,2vw,18px);line-height:1.75;max-width:740px;margin:22px 0 0}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:1px solid var(--green);
+    color:#011508;
+    background:var(--green);
+    padding:13px 18px;
+    min-height:46px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 18px rgba(56,255,136,.22);
+  }
+  .btn.secondary{background:transparent;color:var(--green)}
+  .btn:hover,.mini-btn:hover{filter:brightness(1.08)}
+  .console{
+    position:relative;
+    border:1px solid rgba(56,255,136,.28);
+    background:linear-gradient(180deg,rgba(7,18,11,.88),rgba(4,10,6,.78));
+    padding:18px;
+    box-shadow:var(--shadow);
+    min-height:320px;
+    overflow:hidden;
+  }
+  .console:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(56,255,136,.06),transparent);
+    transform:translateX(-100%);
+    animation:sweep 5s linear infinite;
+  }
+  @keyframes sweep{to{transform:translateX(100%)}}
+  .console-inner{position:relative}
+  .status-row{display:flex;justify-content:space-between;gap:10px;color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:14px}
+  .orb{
+    width:min(260px,70vw);
+    aspect-ratio:1;
+    border:1px solid rgba(56,255,136,.35);
+    margin:20px auto;
+    display:grid;
+    place-items:center;
+    border-radius:999px;
+    background:
+      radial-gradient(circle at 35% 30%,rgba(255,255,255,.16),transparent 16%),
+      radial-gradient(circle,rgba(56,255,136,.20),rgba(2,7,4,.9) 68%);
+    box-shadow:0 0 34px rgba(56,255,136,.22), inset 0 0 40px rgba(56,255,136,.12);
+  }
+  .orb.spin{animation:coinSpin .72s ease-in-out}
+  @keyframes coinSpin{
+    0%{transform:rotateY(0) scale(1)}
+    50%{transform:rotateY(900deg) scale(1.07)}
+    100%{transform:rotateY(1800deg) scale(1)}
+  }
+  .orb b{font-size:clamp(44px,8vw,80px);color:var(--green);text-shadow:0 0 18px rgba(56,255,136,.44)}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .quick{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:78px;
+  }
+  .quick b{display:block;color:var(--green);font-size:18px;margin-bottom:5px}
+  .quick span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 auto 16px}
+  .tab{
+    border:1px solid rgba(56,255,136,.24);
+    background:rgba(7,18,11,.72);
+    color:var(--mut);
+    padding:10px 12px;
+    min-height:40px;
+  }
+  .tab.active{color:var(--green);border-color:var(--green);background:rgba(56,255,136,.09)}
+  .layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding-bottom:58px}
+  .panel{
+    grid-column:span 6;
+    border:1px solid rgba(56,255,136,.22);
+    background:linear-gradient(180deg,rgba(7,18,11,.86),rgba(4,10,6,.78));
+    padding:18px;
+    min-height:300px;
+    box-shadow:0 0 24px rgba(0,0,0,.24);
+  }
+  .panel.wide{grid-column:span 12}
+  .panel.third{grid-column:span 4}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .panel-head h2{font-size:18px;margin:0;text-transform:uppercase}
+  .panel-head p{margin:4px 0 0;color:var(--mut);font-size:13px;line-height:1.5}
+  .badge{border:1px solid rgba(56,255,136,.35);color:var(--green);padding:6px 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  label{display:block;color:var(--mut);font-size:12px;margin:0 0 6px;text-transform:uppercase}
+  input,select,textarea{
+    width:100%;
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    color:var(--txt);
+    padding:11px 12px;
+    outline:none;
+    min-height:44px;
+  }
+  textarea{resize:vertical;min-height:130px;line-height:1.55}
+  input:focus,select:focus,textarea:focus{border-color:var(--green)}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .mini-btn{
+    border:1px solid rgba(56,255,136,.34);
+    background:rgba(2,7,4,.72);
+    color:var(--txt);
+    padding:10px 12px;
+    min-height:40px;
+  }
+  .mini-btn.primary{border-color:var(--green);color:#021409;background:var(--green);font-weight:900}
+  .mini-btn.warn{border-color:rgba(255,209,102,.6);color:var(--amber)}
+  .mini-btn.red{border-color:rgba(255,90,111,.6);color:var(--red)}
+  .result{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.035) 0 1px,transparent 1px 18px),
+      #020704;
+    min-height:106px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .result.flash:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(56,255,136,.20);
+    animation:flash .38s ease-out forwards;
+  }
+  @keyframes flash{to{opacity:0}}
+  .result-main{font-size:clamp(26px,5vw,46px);color:var(--green);font-weight:900;word-break:break-word}
+  .result-sub{color:var(--mut);font-size:13px;line-height:1.55;margin-top:8px}
+  .history{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+    min-height:34px;
+  }
+  .chip{
+    border:1px solid rgba(56,255,136,.22);
+    background:rgba(0,0,0,.24);
+    color:var(--mut);
+    padding:7px 9px;
+    font-size:12px;
+  }
+  .chip.good{color:var(--green);border-color:rgba(56,255,136,.45)}
+  .chip.amber{color:var(--amber);border-color:rgba(255,209,102,.45)}
+  .dice-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .die{
+    width:54px;
+    height:54px;
+    border:1px solid rgba(56,255,136,.34);
+    background:#020704;
+    color:var(--green);
+    display:grid;
+    place-items:center;
+    font-weight:900;
+    box-shadow:inset 0 0 18px rgba(56,255,136,.09);
+  }
+  .die.roll{animation:bounce .45s ease}
+  @keyframes bounce{
+    0%,100%{transform:translateY(0) rotate(0)}
+    40%{transform:translateY(-10px) rotate(5deg)}
+    70%{transform:translateY(3px) rotate(-4deg)}
+  }
+  .switches{display:flex;gap:12px;flex-wrap:wrap;color:var(--mut);font-size:13px;margin:8px 0}
+  .switches input{width:auto;min-height:auto;margin-right:6px}
+  .output-box{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    color:var(--txt);
+    padding:12px;
+    min-height:88px;
+    white-space:pre-wrap;
+    word-break:break-word;
+    line-height:1.6;
+  }
+  .countdown-face{
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    padding:18px;
+    text-align:center;
+  }
+  .clock{font-size:clamp(40px,7vw,74px);font-weight:900;color:var(--green);line-height:1;text-shadow:0 0 18px rgba(56,255,136,.34)}
+  .tiny{color:var(--mut);font-size:12px;line-height:1.55;margin-top:10px}
+  .footer-note{color:var(--mut);font-size:12px;line-height:1.65;margin-top:14px;border-top:1px solid rgba(56,255,136,.14);padding-top:14px}
+  .hidden{display:none}
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr}
+    .panel,.panel.third{grid-column:span 12}
+    .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:640px){
+    .wrap{width:min(100% - 24px,1180px)}
+    .nav{align-items:flex-start;flex-direction:column}
+    .navlinks{width:100%}
+    .navlinks a{flex:1;text-align:center}
+    .hero{padding:38px 0 24px;min-height:auto}
+    .hero-actions .btn,.mini-btn{width:100%}
+    .form-grid,.form-grid.three,.quick-grid{grid-template-columns:1fr}
+    .panel{padding:14px}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="mark">NT</span><span>NiftyTools Hub</span></a>
+    <nav class="navlinks" aria-label="Random toolkit navigation">
+      <a href="#dice">Dice</a>
+      <a href="#picker">Picker</a>
+      <a href="#timer">Timer</a>
+      <a href="#lived">Life Stats</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <canvas id="matrix" aria-hidden="true"></canvas>
+    <div>
+      <div class="crumb">Home / Fun Tools / Random Toolkit Pro</div>
+      <h1>Random Toolkit Pro</h1>
+      <p class="lead">One private browser console for flips, dice, picks, lottery numbers, passwords, countdowns, lorem ipsum and life stats. No account, no backend, no drama.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#coin">Start randomizing</a>
+        <button class="btn secondary" type="button" onclick="randomizeEverything()">Chaos button</button>
+      </div>
+    </div>
+    <aside class="console">
+      <div class="console-inner">
+        <div class="status-row"><span>entropy pool: local</span><span id="rngMode">crypto ready</span></div>
+        <div class="orb" id="heroOrb"><b id="heroSymbol">?</b></div>
+        <div class="quick-grid">
+          <div class="quick"><b id="quickCoin">--</b><span>Last coin</span></div>
+          <div class="quick"><b id="quickDice">--</b><span>Last dice total</span></div>
+          <div class="quick"><b id="quickPick">--</b><span>Last pick</span></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap">
+    <div class="tabs" aria-label="Jump to random tools">
+      <button class="tab active" type="button" onclick="jumpTo('coin', this)">Coin</button>
+      <button class="tab" type="button" onclick="jumpTo('dice', this)">Dice</button>
+      <button class="tab" type="button" onclick="jumpTo('lottery', this)">Lottery</button>
+      <button class="tab" type="button" onclick="jumpTo('picker', this)">Picker</button>
+      <button class="tab" type="button" onclick="jumpTo('timer', this)">Timer</button>
+      <button class="tab" type="button" onclick="jumpTo('lived', this)">Life stats</button>
+    </div>
+  </section>
+
+  <section class="wrap layout">
+    <article class="panel third" id="coin">
+      <div class="panel-head">
+        <div>
+          <h2>Coin Flip</h2>
+          <p>Animated heads or tails with a clean history trail.</p>
+        </div>
+        <span class="badge">50/50</span>
+      </div>
+      <div class="result" id="coinResult">
+        <div>
+          <div class="result-main" id="coinMain">Ready</div>
+          <div class="result-sub" id="coinSub">Flip when ready.</div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="flipCoin()">Flip coin</button>
+        <button class="mini-btn" type="button" onclick="copyText($('coinMain').textContent)">Copy</button>
+        <button class="mini-btn red" type="button" onclick="clearHistory('coinHistory')">Clear</button>
+      </div>
+      <div class="history" id="coinHistory"></div>
+    </article>
+
+    <article class="panel" id="dice">
+      <div class="panel-head">
+        <div>
+          <h2>Dice Roller</h2>
+          <p>D4 through D20, multiple dice and fast totals.</p>
+        </div>
+        <span class="badge">RPG</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="diceSides">Die</label><select id="diceSides"><option value="4">D4</option><option value="6" selected>D6</option><option value="8">D8</option><option value="10">D10</option><option value="12">D12</option><option value="20">D20</option><option value="100">D100</option></select></div>
+        <div><label for="diceCount">Count</label><input id="diceCount" type="number" min="1" max="20" value="2"></div>
+        <div><label for="diceModifier">Modifier</label><input id="diceModifier" type="number" value="0"></div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="rollDice()">Roll dice</button>
+        <button class="mini-btn" type="button" onclick="copyText($('diceTotal').textContent)">Copy total</button>
+      </div>
+      <div class="dice-row" id="diceFaces"></div>
+      <div class="result">
+        <div>
+          <div class="result-main" id="diceTotal">--</div>
+          <div class="result-sub" id="diceBreakdown">Choose dice and roll.</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel" id="lottery">
+      <div class="panel-head">
+        <div>
+          <h2>Lottery Numbers</h2>
+          <p>Presets plus custom range/count draws.</p>
+        </div>
+        <span class="badge">Lucky</span>
+      </div>
+      <div class="form-grid">
+        <div><label for="lotteryPreset">Preset</label><select id="lotteryPreset" onchange="applyLotteryPreset()"><option value="649">6 of 49</option><option value="mega">5 of 70 + bonus 1 of 25</option><option value="power">5 of 69 + bonus 1 of 26</option><option value="custom">Custom</option></select></div>
+        <div><label for="lotteryCount">Count</label><input id="lotteryCount" type="number" min="1" max="20" value="6"></div>
+        <div><label for="lotteryMin">Min</label><input id="lotteryMin" type="number" value="1"></div>
+        <div><label for="lotteryMax">Max</label><input id="lotteryMax" type="number" value="49"></div>
+      </div>
+      <div class="switches"><label><input id="lotterySort" type="checkbox" checked> Sort results</label><label><input id="lotteryBonus" type="checkbox"> Add bonus ball</label></div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="generateLottery()">Generate</button>
+        <button class="mini-btn" type="button" onclick="copyText($('lotteryResult').textContent)">Copy</button>
+      </div>
+      <div class="result">
+        <div>
+          <div class="result-main" id="lotteryResult">--</div>
+          <div class="result-sub" id="lotterySub">For fun only. Please be sane with actual money.</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel" id="number">
+      <div class="panel-head">
+        <div>
+          <h2>Random Number</h2>
+          <p>Integer or decimal results in any sensible range.</p>
+        </div>
+        <span class="badge">Range</span>
+      </div>
+      <div class="form-grid">
+        <div><label for="numMin">Min</label><input id="numMin" type="number" value="1"></div>
+        <div><label for="numMax">Max</label><input id="numMax" type="number" value="100"></div>
+        <div><label for="numDecimals">Decimals</label><input id="numDecimals" type="number" min="0" max="8" value="2"></div>
+        <div><label for="numCount">How many</label><input id="numCount" type="number" min="1" max="100" value="1"></div>
+      </div>
+      <div class="switches"><label><input id="numDecimalMode" type="checkbox"> Allow decimals</label><label><input id="numUnique" type="checkbox"> Unique integers</label></div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="generateNumbers()">Generate</button>
+        <button class="mini-btn" type="button" onclick="copyText($('numberOutput').textContent)">Copy</button>
+      </div>
+      <div class="output-box" id="numberOutput">--</div>
+    </article>
+
+    <article class="panel wide" id="picker">
+      <div class="panel-head">
+        <div>
+          <h2>Random Picker</h2>
+          <p>Paste names, tasks, teams or lunch options. Pick one or build a draw history.</p>
+        </div>
+        <span class="badge">Draw</span>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="pickerItems">Items</label>
+          <textarea id="pickerItems">Pizza
+Sushi
+Tacos
+Pasta
+Burgers
+Ramen</textarea>
+        </div>
+        <div>
+          <label>Winner</label>
+          <div class="result" style="min-height:130px">
+            <div>
+              <div class="result-main" id="pickerWinner">--</div>
+              <div class="result-sub" id="pickerSub">One item per line, comma, or semicolon.</div>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="mini-btn primary" type="button" onclick="pickItem(false)">Pick</button>
+            <button class="mini-btn warn" type="button" onclick="pickItem(true)">Pick and remove</button>
+            <button class="mini-btn" type="button" onclick="copyText($('pickerWinner').textContent)">Copy</button>
+          </div>
+        </div>
+      </div>
+      <div class="history" id="pickerHistory"></div>
+    </article>
+
+    <article class="panel third" id="decision">
+      <div class="panel-head">
+        <div>
+          <h2>Yes / No</h2>
+          <p>A decisive little oracle for low-stakes choices.</p>
+        </div>
+        <span class="badge">Choice</span>
+      </div>
+      <input id="decisionQuestion" type="text" value="Should I ship this today?" aria-label="Decision question">
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="makeDecision()">Decide</button>
+        <button class="mini-btn" type="button" onclick="copyText($('decisionAnswer').textContent)">Copy</button>
+      </div>
+      <div class="result">
+        <div>
+          <div class="result-main" id="decisionAnswer">--</div>
+          <div class="result-sub" id="decisionSub">Ask something harmless.</div>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel" id="password">
+      <div class="panel-head">
+        <div>
+          <h2>Password Lite</h2>
+          <p>Password and passphrase generator for quick use.</p>
+        </div>
+        <span class="badge">Private</span>
+      </div>
+      <div class="form-grid">
+        <div><label for="passMode">Mode</label><select id="passMode" onchange="togglePassMode()"><option value="password">Password</option><option value="phrase">Passphrase</option></select></div>
+        <div><label for="passLength">Length / Words</label><input id="passLength" type="number" min="4" max="64" value="18"></div>
+      </div>
+      <div class="switches" id="passwordOptions">
+        <label><input id="passUpper" type="checkbox" checked> Uppercase</label>
+        <label><input id="passNumbers" type="checkbox" checked> Numbers</label>
+        <label><input id="passSymbols" type="checkbox" checked> Symbols</label>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="generatePassword()">Generate</button>
+        <button class="mini-btn" type="button" onclick="copyText($('passwordOutput').textContent)">Copy</button>
+      </div>
+      <div class="output-box" id="passwordOutput">--</div>
+    </article>
+
+    <article class="panel" id="timer">
+      <div class="panel-head">
+        <div>
+          <h2>Presentation Timer</h2>
+          <p>A clean countdown you can glance at while presenting.</p>
+        </div>
+        <span class="badge">Focus</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="timerMin">Minutes</label><input id="timerMin" type="number" min="0" max="999" value="5"></div>
+        <div><label for="timerSec">Seconds</label><input id="timerSec" type="number" min="0" max="59" value="0"></div>
+        <div><label for="timerLabel">Label</label><input id="timerLabel" type="text" value="Demo"></div>
+      </div>
+      <div class="countdown-face">
+        <div class="clock" id="timerClock">05:00</div>
+        <div class="tiny" id="timerStatus">Ready</div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="startTimer()">Start</button>
+        <button class="mini-btn warn" type="button" onclick="pauseTimer()">Pause</button>
+        <button class="mini-btn red" type="button" onclick="resetTimer()">Reset</button>
+      </div>
+    </article>
+
+    <article class="panel wide" id="lived">
+      <div class="panel-head">
+        <div>
+          <h2>How Long Have I Lived?</h2>
+          <p>Birth date with optional time and timezone adjustment.</p>
+        </div>
+        <span class="badge">Life Stats</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="birthDate">Birth date</label><input id="birthDate" type="date"></div>
+        <div><label for="birthTime">Birth time optional</label><input id="birthTime" type="time"></div>
+        <div><label for="birthZone">Timezone offset optional</label><select id="birthZone"></select></div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="calculateLife()">Calculate</button>
+        <button class="mini-btn" type="button" onclick="copyText($('lifeOutput').textContent)">Copy</button>
+      </div>
+      <div class="output-box" id="lifeOutput">Choose a birth date to calculate days, hours, minutes and seconds lived.</div>
+    </article>
+
+    <article class="panel wide" id="lorem">
+      <div class="panel-head">
+        <div>
+          <h2>Lorem Ipsum Generator</h2>
+          <p>Paragraphs, sentences or words for mockups and layouts.</p>
+        </div>
+        <span class="badge">Text</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="loremMode">Mode</label><select id="loremMode"><option value="paragraphs">Paragraphs</option><option value="sentences">Sentences</option><option value="words">Words</option></select></div>
+        <div><label for="loremCount">Count</label><input id="loremCount" type="number" min="1" max="50" value="3"></div>
+        <div><label for="loremStyle">Style</label><select id="loremStyle"><option value="classic">Classic</option><option value="startup">Startup</option><option value="cosmic">Cosmic</option></select></div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" type="button" onclick="generateLorem()">Generate</button>
+        <button class="mini-btn" type="button" onclick="copyText($('loremOutput').textContent)">Copy</button>
+      </div>
+      <div class="output-box" id="loremOutput">--</div>
+      <p class="footer-note">All random tools run in your browser. The page does not need an account or store your draws.</p>
+    </article>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const state = {
+  timerId: null,
+  timerRemaining: 300,
+  timerRunning: false
+};
+
+const words = {
+  classic: ['lorem','ipsum','dolor','sit','amet','consectetur','adipiscing','elit','sed','do','eiusmod','tempor','incididunt','labore','dolore','magna','aliqua','veniam','quis','nostrud','exercitation','ullamco'],
+  startup: ['launch','metric','signal','workflow','market','product','insight','growth','platform','customer','velocity','stack','iterate','clarity','dashboard','revenue','channel','strategy','momentum','quality'],
+  cosmic: ['orbit','signal','nebula','starlight','gravity','aurora','comet','vector','eclipse','zenith','lunar','solar','quantum','meteor','constellation','horizon','pulse','galaxy','radiant','cosmic']
+};
+
+const phraseWords = ['green','signal','quiet','matrix','lunar','velvet','pixel','orbit','bright','coffee','river','nova','radar','paper','silver','mango','ember','canvas','north','echo','cobalt','garden','focus','static'];
+
+function randomFloat() {
+  if (window.crypto && crypto.getRandomValues) {
+    const arr = new Uint32Array(1);
+    crypto.getRandomValues(arr);
+    return arr[0] / 4294967296;
+  }
+  $('rngMode').textContent = 'math fallback';
+  return Math.random();
+}
+
+function randomInt(min, max) {
+  const low = Math.ceil(Math.min(min, max));
+  const high = Math.floor(Math.max(min, max));
+  return Math.floor(randomFloat() * (high - low + 1)) + low;
+}
+
+function sample(array) {
+  return array[randomInt(0, array.length - 1)];
+}
+
+function addChip(containerId, text, variant) {
+  const chip = document.createElement('span');
+  chip.className = `chip ${variant || ''}`.trim();
+  chip.textContent = text;
+  const box = $(containerId);
+  box.prepend(chip);
+  while (box.children.length > 12) box.lastElementChild.remove();
+}
+
+function flash(id) {
+  const el = $(id);
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+
+async function copyText(text) {
+  const clean = String(text || '').trim();
+  if (!clean || clean === '--') return;
+  try {
+    await navigator.clipboard.writeText(clean);
+    $('heroSymbol').textContent = 'OK';
+  } catch (err) {
+    const area = document.createElement('textarea');
+    area.value = clean;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+    $('heroSymbol').textContent = 'OK';
+  }
+  setTimeout(() => $('heroSymbol').textContent = '?', 900);
+}
+
+function jumpTo(id, button) {
+  document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+  if (button) button.classList.add('active');
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function flipCoin() {
+  const result = randomFloat() < 0.5 ? 'Heads' : 'Tails';
+  const orb = $('heroOrb');
+  orb.classList.remove('spin');
+  void orb.offsetWidth;
+  orb.classList.add('spin');
+  $('heroSymbol').textContent = result === 'Heads' ? 'H' : 'T';
+  $('coinMain').textContent = result;
+  $('coinSub').textContent = `${new Date().toLocaleTimeString()} local flip`;
+  $('quickCoin').textContent = result;
+  addChip('coinHistory', result, result === 'Heads' ? 'good' : 'amber');
+  flash('coinResult');
+}
+
+function rollDice() {
+  const sides = Number($('diceSides').value);
+  const count = Math.max(1, Math.min(20, Number($('diceCount').value) || 1));
+  const modifier = Number($('diceModifier').value) || 0;
+  const rolls = Array.from({ length: count }, () => randomInt(1, sides));
+  const rawTotal = rolls.reduce((sum, value) => sum + value, 0);
+  const total = rawTotal + modifier;
+  $('diceFaces').innerHTML = rolls.map((value) => `<span class="die roll">${value}</span>`).join('');
+  $('diceTotal').textContent = total;
+  $('diceBreakdown').textContent = `${count}D${sides}: ${rolls.join(' + ')}${modifier ? ` ${modifier > 0 ? '+' : '-'} ${Math.abs(modifier)}` : ''}`;
+  $('quickDice').textContent = total;
+  $('heroSymbol').textContent = total;
+}
+
+function applyLotteryPreset() {
+  const preset = $('lotteryPreset').value;
+  if (preset === '649') {
+    $('lotteryCount').value = 6;
+    $('lotteryMin').value = 1;
+    $('lotteryMax').value = 49;
+    $('lotteryBonus').checked = false;
+  } else if (preset === 'mega') {
+    $('lotteryCount').value = 5;
+    $('lotteryMin').value = 1;
+    $('lotteryMax').value = 70;
+    $('lotteryBonus').checked = true;
+  } else if (preset === 'power') {
+    $('lotteryCount').value = 5;
+    $('lotteryMin').value = 1;
+    $('lotteryMax').value = 69;
+    $('lotteryBonus').checked = true;
+  }
+}
+
+function generateLottery() {
+  const min = Number($('lotteryMin').value);
+  const max = Number($('lotteryMax').value);
+  const count = Math.max(1, Math.min(20, Number($('lotteryCount').value) || 1));
+  const rangeSize = Math.abs(max - min) + 1;
+  if (count > rangeSize) {
+    $('lotteryResult').textContent = 'Range too small';
+    $('lotterySub').textContent = 'Count cannot exceed unique values in range.';
+    return;
+  }
+  const picked = new Set();
+  while (picked.size < count) picked.add(randomInt(min, max));
+  let numbers = [...picked];
+  if ($('lotterySort').checked) numbers.sort((a, b) => a - b);
+  const bonusEnabled = $('lotteryBonus').checked;
+  let bonus = '';
+  if (bonusEnabled) {
+    const preset = $('lotteryPreset').value;
+    const bonusMax = preset === 'mega' ? 25 : preset === 'power' ? 26 : max;
+    bonus = ` + ${randomInt(1, bonusMax)}`;
+  }
+  $('lotteryResult').textContent = `${numbers.join('  ')}${bonus}`;
+  $('lotterySub').textContent = `${count} numbers from ${Math.min(min, max)} to ${Math.max(min, max)}${bonusEnabled ? ' with bonus' : ''}`;
+  $('heroSymbol').textContent = numbers[0];
+}
+
+function generateNumbers() {
+  const min = Number($('numMin').value);
+  const max = Number($('numMax').value);
+  const count = Math.max(1, Math.min(100, Number($('numCount').value) || 1));
+  const decimals = Math.max(0, Math.min(8, Number($('numDecimals').value) || 0));
+  const decimalMode = $('numDecimalMode').checked;
+  const unique = $('numUnique').checked && !decimalMode;
+  const results = [];
+  if (unique) {
+    const rangeSize = Math.abs(Math.floor(max) - Math.ceil(min)) + 1;
+    if (count > rangeSize) {
+      $('numberOutput').textContent = 'Range too small for unique integers.';
+      return;
+    }
+    const seen = new Set();
+    while (seen.size < count) seen.add(randomInt(min, max));
+    results.push(...seen);
+  } else {
+    for (let i = 0; i < count; i++) {
+      const value = decimalMode ? min + randomFloat() * (max - min) : randomInt(min, max);
+      results.push(decimalMode ? value.toFixed(decimals) : value);
+    }
+  }
+  $('numberOutput').textContent = results.join(count > 12 ? '\n' : ', ');
+  $('heroSymbol').textContent = results[0];
+}
+
+function parsePickerItems() {
+  return $('pickerItems').value
+    .split(/\n|,|;/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function pickItem(remove) {
+  const items = parsePickerItems();
+  if (!items.length) {
+    $('pickerWinner').textContent = 'No items';
+    $('pickerSub').textContent = 'Add at least one option first.';
+    return;
+  }
+  const index = randomInt(0, items.length - 1);
+  const winner = items[index];
+  $('pickerWinner').textContent = winner;
+  $('pickerSub').textContent = `${items.length} option${items.length === 1 ? '' : 's'} in the pool`;
+  $('quickPick').textContent = winner.slice(0, 12);
+  $('heroSymbol').textContent = 'WIN';
+  addChip('pickerHistory', winner, 'good');
+  if (remove) {
+    items.splice(index, 1);
+    $('pickerItems').value = items.join('\n');
+  }
+}
+
+function makeDecision() {
+  const options = ['Yes', 'No', 'Maybe later', 'Ask again', 'Ship it', 'Sleep on it'];
+  const answer = sample(options);
+  $('decisionAnswer').textContent = answer;
+  $('decisionSub').textContent = $('decisionQuestion').value.trim() || 'Low-stakes decision';
+  $('heroSymbol').textContent = answer === 'Yes' ? 'YES' : answer === 'No' ? 'NO' : '?';
+}
+
+function togglePassMode() {
+  const phrase = $('passMode').value === 'phrase';
+  $('passwordOptions').classList.toggle('hidden', phrase);
+  $('passLength').value = phrase ? 4 : 18;
+}
+
+function generatePassword() {
+  const phrase = $('passMode').value === 'phrase';
+  if (phrase) {
+    const count = Math.max(3, Math.min(10, Number($('passLength').value) || 4));
+    const chosen = Array.from({ length: count }, () => sample(phraseWords));
+    $('passwordOutput').textContent = chosen.join('-') + '-' + randomInt(10, 99);
+    return;
+  }
+  const length = Math.max(4, Math.min(64, Number($('passLength').value) || 18));
+  const lower = 'abcdefghijklmnopqrstuvwxyz';
+  const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const numbers = '0123456789';
+  const symbols = '!@#$%^&*()-_=+[]{};:,.?';
+  let pool = lower;
+  const required = [sample(lower)];
+  if ($('passUpper').checked) { pool += upper; required.push(sample(upper)); }
+  if ($('passNumbers').checked) { pool += numbers; required.push(sample(numbers)); }
+  if ($('passSymbols').checked) { pool += symbols; required.push(sample(symbols)); }
+  const chars = [...required];
+  while (chars.length < length) chars.push(sample(pool));
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomInt(0, i);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  $('passwordOutput').textContent = chars.join('');
+}
+
+function timerInputSeconds() {
+  const minutes = Math.max(0, Number($('timerMin').value) || 0);
+  const seconds = Math.max(0, Math.min(59, Number($('timerSec').value) || 0));
+  return minutes * 60 + seconds;
+}
+
+function formatTime(totalSeconds) {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function renderTimer() {
+  $('timerClock').textContent = formatTime(state.timerRemaining);
+  $('timerStatus').textContent = state.timerRunning ? `${$('timerLabel').value || 'Timer'} running` : 'Ready';
+}
+
+function startTimer() {
+  if (!state.timerRunning) {
+    if (state.timerRemaining <= 0) state.timerRemaining = timerInputSeconds();
+    if (state.timerRemaining <= 0) return;
+    state.timerRunning = true;
+    clearInterval(state.timerId);
+    state.timerId = setInterval(() => {
+      state.timerRemaining -= 1;
+      if (state.timerRemaining <= 0) {
+        state.timerRemaining = 0;
+        pauseTimer();
+        $('timerStatus').textContent = `${$('timerLabel').value || 'Timer'} finished`;
+        $('heroSymbol').textContent = 'END';
+      }
+      renderTimer();
+    }, 1000);
+  }
+  renderTimer();
+}
+
+function pauseTimer() {
+  state.timerRunning = false;
+  clearInterval(state.timerId);
+  state.timerId = null;
+  renderTimer();
+}
+
+function resetTimer() {
+  pauseTimer();
+  state.timerRemaining = timerInputSeconds();
+  renderTimer();
+}
+
+function populateTimezones() {
+  const select = $('birthZone');
+  const localOffset = -new Date().getTimezoneOffset() / 60;
+  const options = [{ label: 'Local timezone', value: 'local' }];
+  for (let i = -12; i <= 14; i++) {
+    const sign = i >= 0 ? '+' : '-';
+    const padded = String(Math.abs(i)).padStart(2, '0');
+    options.push({ label: `UTC${sign}${padded}:00`, value: `${sign}${padded}:00` });
+  }
+  select.innerHTML = options.map((option) => {
+    const selected = option.value === 'local' ? ' selected' : '';
+    const localLabel = option.value === 'local' ? ` (UTC${localOffset >= 0 ? '+' : ''}${localOffset})` : '';
+    return `<option value="${option.value}"${selected}>${option.label}${localLabel}</option>`;
+  }).join('');
+}
+
+function calculateLife() {
+  const date = $('birthDate').value;
+  if (!date) {
+    $('lifeOutput').textContent = 'Choose a birth date first.';
+    return;
+  }
+  const time = $('birthTime').value || '00:00';
+  let born;
+  const zone = $('birthZone').value;
+  if (zone && zone !== 'local') {
+    born = new Date(`${date}T${time}:00${zone}`);
+  } else {
+    born = new Date(`${date}T${time}:00`);
+  }
+  const now = new Date();
+  const diffMs = now - born;
+  if (!Number.isFinite(diffMs) || diffMs < 0) {
+    $('lifeOutput').textContent = 'That birth moment is in the future.';
+    return;
+  }
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const years = diffMs / (365.2425 * 24 * 60 * 60 * 1000);
+  $('lifeOutput').textContent = [
+    `${years.toFixed(6)} years lived`,
+    `${days.toLocaleString()} days`,
+    `${hours.toLocaleString()} hours`,
+    `${minutes.toLocaleString()} minutes`,
+    `${seconds.toLocaleString()} seconds`,
+    `Born: ${born.toLocaleString()}`
+  ].join('\n');
+  $('heroSymbol').textContent = days.toLocaleString();
+}
+
+function sentenceFor(style) {
+  const list = words[style] || words.classic;
+  const count = randomInt(8, 16);
+  const sentence = Array.from({ length: count }, () => sample(list)).join(' ');
+  return sentence.charAt(0).toUpperCase() + sentence.slice(1) + '.';
+}
+
+function generateLorem() {
+  const mode = $('loremMode').value;
+  const count = Math.max(1, Math.min(50, Number($('loremCount').value) || 1));
+  const style = $('loremStyle').value;
+  if (mode === 'words') {
+    $('loremOutput').textContent = Array.from({ length: count }, () => sample(words[style])).join(' ');
+  } else if (mode === 'sentences') {
+    $('loremOutput').textContent = Array.from({ length: count }, () => sentenceFor(style)).join(' ');
+  } else {
+    $('loremOutput').textContent = Array.from({ length: count }, () => Array.from({ length: randomInt(3, 6) }, () => sentenceFor(style)).join(' ')).join('\n\n');
+  }
+}
+
+function clearHistory(id) {
+  $(id).innerHTML = '';
+}
+
+function randomizeEverything() {
+  flipCoin();
+  rollDice();
+  generateLottery();
+  generateNumbers();
+  pickItem(false);
+  makeDecision();
+  generatePassword();
+  generateLorem();
+}
+
+function startMatrix() {
+  const canvas = $('matrix');
+  const ctx = canvas.getContext('2d');
+  let width = 0;
+  let height = 0;
+  let columns = [];
+  const glyphs = '0101 RANDOM DICE COIN PICK WIN ROLL LUCK YES NO'.split('');
+
+  function resize() {
+    width = canvas.offsetWidth;
+    height = canvas.offsetHeight;
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    const count = Math.max(12, Math.floor(width / 18));
+    columns = Array.from({ length: count }, () => randomFloat() * height);
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(2,7,4,.16)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(56,255,136,.72)';
+    ctx.font = '14px monospace';
+    columns.forEach((y, index) => {
+      const x = index * 18;
+      ctx.fillText(sample(glyphs), x, y);
+      columns[index] = y > height + randomFloat() * 420 ? 0 : y + 16;
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+function init() {
+  populateTimezones();
+  applyLotteryPreset();
+  resetTimer();
+  generateLorem();
+  generatePassword();
+  startMatrix();
+  $('timerMin').addEventListener('input', resetTimer);
+  $('timerSec').addEventListener('input', resetTimer);
+}
+
+init();
+</script>
+</body>
+</html>
