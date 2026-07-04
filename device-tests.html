@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Test Suite - webcam, mic, speakers, screen and speed | NiftyTools Hub</title>
+<meta name="description" content="Run private browser-based tests for your webcam, microphone, speakers, keyboard, mouse, screen, typing speed and network connection.">
+<meta property="og:title" content="Device Test Suite - NiftyTools Hub">
+<meta property="og:description" content="A privacy-first device checkup for camera, microphone, speakers, screen, keyboard, mouse, typing speed and internet pulse.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/device-tests.html">
+<style>
+  :root{
+    --bg:#020704;
+    --panel:#07120b;
+    --panel2:#0b1910;
+    --line:#173822;
+    --line2:#24663b;
+    --txt:#e8fff1;
+    --mut:#91aa99;
+    --green:#38ff88;
+    --green2:#19c96c;
+    --amber:#ffd166;
+    --red:#ff5a6f;
+    --cyan:#69e8ff;
+    --shadow:0 0 40px rgba(30,255,125,.16);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      linear-gradient(rgba(45,255,125,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(45,255,125,.035) 1px,transparent 1px),
+      radial-gradient(circle at 20% 0%,rgba(56,255,136,.14),transparent 36%),
+      radial-gradient(circle at 85% 16%,rgba(105,232,255,.10),transparent 30%),
+      var(--bg);
+    background-size:38px 38px,38px 38px,100% 100%,100% 100%,100% 100%;
+    color:var(--txt);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    letter-spacing:0;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.09) 50%);
+    background-size:100% 4px;
+    mix-blend-mode:screen;
+    opacity:.34;
+    z-index:10;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{font:inherit}
+  .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    border-bottom:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.88);
+    backdrop-filter:blur(12px);
+  }
+  .nav{height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;text-transform:uppercase}
+  .mark{width:34px;height:34px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.25)}
+  .navlinks{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .navlinks a,.ghost{
+    border:1px solid rgba(56,255,136,.28);
+    color:var(--mut);
+    padding:9px 12px;
+    background:rgba(7,18,11,.64);
+    min-height:38px;
+  }
+  .navlinks a:hover,.ghost:hover{color:var(--green);border-color:var(--green)}
+  .hero{
+    position:relative;
+    min-height:420px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    align-items:center;
+    gap:32px;
+    padding:58px 0 34px;
+  }
+  #matrix{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.24;
+    pointer-events:none;
+    mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  }
+  .crumb{color:var(--green);font-size:13px;text-transform:uppercase;margin-bottom:18px}
+  h1{
+    position:relative;
+    margin:0;
+    font-size:clamp(40px,7vw,84px);
+    line-height:.92;
+    text-transform:uppercase;
+    text-shadow:0 0 18px rgba(56,255,136,.32);
+  }
+  .lead{color:var(--mut);font-size:clamp(15px,2vw,18px);line-height:1.75;max-width:720px;margin:22px 0 0}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:1px solid var(--green);
+    color:#011508;
+    background:var(--green);
+    padding:13px 18px;
+    min-height:46px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 18px rgba(56,255,136,.22);
+  }
+  .btn.secondary{background:transparent;color:var(--green)}
+  .btn.warn{background:transparent;color:var(--amber);border-color:rgba(255,209,102,.65)}
+  .btn.danger{background:transparent;color:var(--red);border-color:rgba(255,90,111,.65)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .status-board{
+    position:relative;
+    border:1px solid rgba(56,255,136,.28);
+    background:linear-gradient(180deg,rgba(7,18,11,.88),rgba(4,10,6,.74));
+    padding:18px;
+    box-shadow:var(--shadow);
+  }
+  .status-board h2,.panel h2{font-size:18px;margin:0 0 14px;text-transform:uppercase}
+  .status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .status-card{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.58);
+    padding:14px;
+    min-height:96px;
+  }
+  .status-card b{display:block;font-size:22px;color:var(--green);margin-bottom:8px}
+  .status-card span{color:var(--mut);font-size:12px;line-height:1.5}
+  .pillrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .pill{border:1px solid rgba(56,255,136,.24);color:var(--mut);padding:8px 10px;font-size:12px;background:rgba(0,0,0,.24)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:99px;background:var(--amber);box-shadow:0 0 12px var(--amber);margin-right:8px}
+  .dot.good{background:var(--green);box-shadow:0 0 12px var(--green)}
+  .dot.bad{background:var(--red);box-shadow:0 0 12px var(--red)}
+  .layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding-bottom:58px}
+  .panel{
+    grid-column:span 6;
+    border:1px solid rgba(56,255,136,.22);
+    background:linear-gradient(180deg,rgba(7,18,11,.86),rgba(4,10,6,.78));
+    padding:18px;
+    min-height:300px;
+    box-shadow:0 0 24px rgba(0,0,0,.24);
+  }
+  .panel.wide{grid-column:span 12}
+  .panel.tall{min-height:420px}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .panel-head p{margin:4px 0 0;color:var(--mut);font-size:13px;line-height:1.5}
+  .badge{border:1px solid rgba(56,255,136,.35);color:var(--green);padding:6px 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .mini-btn{
+    border:1px solid rgba(56,255,136,.34);
+    background:rgba(2,7,4,.72);
+    color:var(--txt);
+    padding:10px 12px;
+    cursor:pointer;
+    min-height:40px;
+  }
+  .mini-btn:hover{border-color:var(--green);color:var(--green)}
+  .mini-btn.active{border-color:var(--green);background:rgba(56,255,136,.1);color:var(--green)}
+  .mini-btn.red{border-color:rgba(255,90,111,.55);color:var(--red)}
+  .screen{
+    border:1px solid rgba(56,255,136,.18);
+    background:#000;
+    min-height:238px;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    position:relative;
+  }
+  video{width:100%;height:100%;min-height:238px;object-fit:cover;background:#000}
+  .empty{color:var(--mut);text-align:center;line-height:1.65;padding:24px}
+  .snapshot{display:grid;grid-template-columns:1fr 126px;gap:10px;margin-top:10px}
+  canvas.preview{width:100%;height:90px;border:1px solid rgba(56,255,136,.18);background:#020704}
+  .meter{
+    width:100%;
+    height:120px;
+    border:1px solid rgba(56,255,136,.18);
+    background:repeating-linear-gradient(90deg,rgba(56,255,136,.05) 0 1px,transparent 1px 18px),#020704;
+    display:block;
+  }
+  .barwrap{height:16px;background:#030b06;border:1px solid rgba(56,255,136,.18);overflow:hidden}
+  .bar{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));transition:width .08s linear}
+  .readout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+  .readout div{
+    border:1px solid rgba(56,255,136,.16);
+    background:rgba(0,0,0,.2);
+    padding:10px;
+    min-height:64px;
+  }
+  .readout b{display:block;color:var(--green);font-size:18px;margin-bottom:4px}
+  .readout span{display:block;color:var(--mut);font-size:12px;line-height:1.45}
+  .info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .info{
+    border:1px solid rgba(56,255,136,.16);
+    background:rgba(0,0,0,.2);
+    padding:12px;
+    min-height:74px;
+  }
+  .info b{display:block;color:var(--green);font-size:16px;margin-bottom:6px;word-break:break-word}
+  .info span{display:block;color:var(--mut);font-size:12px;line-height:1.45;word-break:break-word}
+  .key-display{
+    border:1px solid rgba(56,255,136,.18);
+    background:#020704;
+    min-height:148px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    outline:none;
+    padding:18px;
+  }
+  .key-display:focus{border-color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.16)}
+  .key-main{font-size:clamp(32px,7vw,72px);color:var(--green);line-height:1;word-break:break-word}
+  .key-meta{color:var(--mut);margin-top:12px;font-size:13px}
+  .log{
+    margin-top:10px;
+    border:1px solid rgba(56,255,136,.14);
+    background:rgba(0,0,0,.26);
+    height:104px;
+    overflow:auto;
+    padding:10px;
+    color:var(--mut);
+    font-size:12px;
+    line-height:1.7;
+  }
+  .mouse-pad{
+    height:250px;
+    border:1px solid rgba(56,255,136,.22);
+    background:
+      linear-gradient(rgba(56,255,136,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(56,255,136,.05) 1px,transparent 1px),
+      #020704;
+    background-size:24px 24px;
+    position:relative;
+    overflow:hidden;
+    cursor:crosshair;
+    user-select:none;
+  }
+  .crosshair{
+    position:absolute;
+    width:22px;
+    height:22px;
+    transform:translate(-50%,-50%);
+    border:1px solid var(--green);
+    box-shadow:0 0 14px rgba(56,255,136,.42);
+    pointer-events:none;
+    left:50%;
+    top:50%;
+  }
+  .crosshair:before,.crosshair:after{content:"";position:absolute;background:var(--green)}
+  .crosshair:before{left:50%;top:-9px;width:1px;height:40px}
+  .crosshair:after{top:50%;left:-9px;height:1px;width:40px}
+  textarea,input[type="text"],input[type="number"]{
+    width:100%;
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    color:var(--txt);
+    padding:11px 12px;
+    outline:none;
+    min-height:44px;
+  }
+  textarea:focus,input:focus{border-color:var(--green)}
+  textarea{resize:vertical;min-height:136px;line-height:1.65}
+  .typing-line{color:var(--mut);font-size:13px;line-height:1.7;margin:0 0 10px}
+  .footer-note{color:var(--mut);font-size:12px;line-height:1.65;margin-top:18px;border-top:1px solid rgba(56,255,136,.14);padding-top:14px}
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr}
+    .panel{grid-column:span 12}
+    .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:640px){
+    .wrap{width:min(100% - 24px,1180px)}
+    .nav{height:auto;padding:12px 0;align-items:flex-start;flex-direction:column}
+    .navlinks{width:100%}
+    .navlinks a,.ghost{flex:1;text-align:center}
+    .hero{padding:38px 0 24px;min-height:auto}
+    .status-grid,.readout,.info-grid,.snapshot{grid-template-columns:1fr}
+    .hero-actions .btn{width:100%}
+    .panel{padding:14px}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="mark">NT</span><span>NiftyTools Hub</span></a>
+    <nav class="navlinks" aria-label="Device suite navigation">
+      <a href="#camera">Camera</a>
+      <a href="#mic">Mic</a>
+      <a href="#screen">Screen</a>
+      <a href="#typing">Typing</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <canvas id="matrix" aria-hidden="true"></canvas>
+    <div>
+      <div class="crumb">Home / Device Tests / Hardware Check</div>
+      <h1>Device Test Suite</h1>
+      <p class="lead">Check camera, microphone, speakers, screen, keyboard, mouse, typing speed and network pulse from one private browser console. Everything runs locally unless you click the network pulse test.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#camera">Start checkup</a>
+        <button class="btn secondary" type="button" onclick="refreshSnapshot()">Refresh snapshot</button>
+      </div>
+    </div>
+    <aside class="status-board">
+      <h2>Live Status</h2>
+      <div class="status-grid">
+        <div class="status-card"><b id="statusCamera">Idle</b><span><span id="dotCamera" class="dot"></span>Camera permission</span></div>
+        <div class="status-card"><b id="statusMic">Idle</b><span><span id="dotMic" class="dot"></span>Microphone permission</span></div>
+        <div class="status-card"><b id="statusAudio">Ready</b><span><span id="dotAudio" class="dot good"></span>Speaker tone engine</span></div>
+        <div class="status-card"><b id="statusNet">Checking</b><span><span id="dotNet" class="dot"></span>Browser connection</span></div>
+      </div>
+      <div class="pillrow">
+        <span class="pill" id="securePill">Secure context: --</span>
+        <span class="pill" id="privacyPill">No account needed</span>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap layout">
+    <article class="panel wide" id="screen">
+      <div class="panel-head">
+        <div>
+          <h2>System Snapshot</h2>
+          <p>Screen, browser, battery and connection details.</p>
+        </div>
+        <span class="badge">Local</span>
+      </div>
+      <div class="info-grid" id="snapshotGrid"></div>
+    </article>
+
+    <article class="panel tall" id="camera">
+      <div class="panel-head">
+        <div>
+          <h2>Webcam Test</h2>
+          <p>Preview your camera and capture a temporary frame.</p>
+        </div>
+        <span class="badge" id="cameraBadge">Idle</span>
+      </div>
+      <div class="screen">
+        <video id="cameraVideo" playsinline autoplay muted></video>
+        <div class="empty" id="cameraEmpty">Camera preview will appear here.</div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn" type="button" onclick="startCamera()">Start camera</button>
+        <button class="mini-btn" type="button" onclick="captureFrame()">Snapshot</button>
+        <button class="mini-btn red" type="button" onclick="stopCamera()">Stop</button>
+      </div>
+      <div class="snapshot">
+        <canvas class="preview" id="photoCanvas" width="360" height="220"></canvas>
+        <div class="readout" style="grid-template-columns:1fr;margin-top:0">
+          <div><b id="cameraResolution">--</b><span>Camera stream</span></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel tall" id="mic">
+      <div class="panel-head">
+        <div>
+          <h2>Microphone Test</h2>
+          <p>Live input meter with peak and estimated level.</p>
+        </div>
+        <span class="badge" id="micBadge">Idle</span>
+      </div>
+      <canvas class="meter" id="micCanvas" width="720" height="180"></canvas>
+      <div class="barwrap" aria-hidden="true"><div class="bar" id="micBar"></div></div>
+      <div class="controls">
+        <button class="mini-btn" type="button" onclick="startMic()">Start mic</button>
+        <button class="mini-btn red" type="button" onclick="stopMic()">Stop</button>
+      </div>
+      <div class="readout">
+        <div><b id="micLevel">0%</b><span>Current input</span></div>
+        <div><b id="micPeak">0%</b><span>Session peak</span></div>
+        <div><b id="micDb">-- dB</b><span>Estimated level</span></div>
+        <div><b id="micSample">--</b><span>Sample rate</span></div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Speaker Test</h2>
+          <p>Play short tones for left, right and center channels.</p>
+        </div>
+        <span class="badge">Audio</span>
+      </div>
+      <div class="controls">
+        <button class="mini-btn" type="button" onclick="playTone(-1)">Left</button>
+        <button class="mini-btn" type="button" onclick="playTone(0)">Center</button>
+        <button class="mini-btn" type="button" onclick="playTone(1)">Right</button>
+        <button class="mini-btn" type="button" onclick="playSweep()">Sweep</button>
+      </div>
+      <label class="typing-line" for="toneVolume">Volume</label>
+      <input id="toneVolume" type="range" min="0" max="100" value="35" oninput="document.getElementById('volumeLabel').textContent=this.value+'%'">
+      <div class="readout">
+        <div><b id="volumeLabel">35%</b><span>Tone volume</span></div>
+        <div><b id="toneStatus">Ready</b><span>Speaker engine</span></div>
+      </div>
+      <p class="footer-note">Lower your system volume first if you are wearing headphones.</p>
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Internet Pulse</h2>
+          <p>Online state, browser estimate and a quick page round trip.</p>
+        </div>
+        <span class="badge">Lite</span>
+      </div>
+      <div class="controls">
+        <button class="mini-btn" type="button" onclick="runNetworkPulse()">Run pulse</button>
+      </div>
+      <div class="readout">
+        <div><b id="netOnline">--</b><span>Browser state</span></div>
+        <div><b id="netRtt">--</b><span>Page round trip</span></div>
+        <div><b id="netDownlink">--</b><span>Browser estimate</span></div>
+        <div><b id="netType">--</b><span>Connection type</span></div>
+      </div>
+      <p class="footer-note">This is a quick signal, not a lab-grade speed test. It measures this page path and whatever the browser exposes.</p>
+    </article>
+
+    <article class="panel" id="keyboard">
+      <div class="panel-head">
+        <div>
+          <h2>Keyboard Test</h2>
+          <p>Focus the pad and press keys.</p>
+        </div>
+        <span class="badge">Input</span>
+      </div>
+      <div class="key-display" id="keyPad" tabindex="0" role="button" aria-label="Keyboard test pad">
+        <div>
+          <div class="key-main" id="keyMain">Press a key</div>
+          <div class="key-meta" id="keyMeta">code: -- | key: -- | total: 0</div>
+        </div>
+      </div>
+      <div class="log" id="keyLog"></div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Mouse Test</h2>
+          <p>Move, click and scroll inside the grid.</p>
+        </div>
+        <span class="badge">Pointer</span>
+      </div>
+      <div class="mouse-pad" id="mousePad">
+        <div class="crosshair" id="crosshair"></div>
+      </div>
+      <div class="readout">
+        <div><b id="mouseXY">--, --</b><span>Pointer position</span></div>
+        <div><b id="mouseClicks">0</b><span>Clicks</span></div>
+        <div><b id="mouseButton">--</b><span>Last button</span></div>
+        <div><b id="mouseWheel">0</b><span>Scroll delta</span></div>
+      </div>
+    </article>
+
+    <article class="panel wide" id="typing">
+      <div class="panel-head">
+        <div>
+          <h2>Typing Speed Test</h2>
+          <p>Type the prompt below to measure speed and accuracy.</p>
+        </div>
+        <span class="badge">WPM</span>
+      </div>
+      <p class="typing-line" id="typingPrompt">The quick green console checks every device before the show begins.</p>
+      <textarea id="typingInput" placeholder="Start typing here..."></textarea>
+      <div class="controls">
+        <button class="mini-btn" type="button" onclick="resetTyping()">Reset</button>
+        <button class="mini-btn" type="button" onclick="newPrompt()">New prompt</button>
+      </div>
+      <div class="readout">
+        <div><b id="typingWpm">0</b><span>Words per minute</span></div>
+        <div><b id="typingAccuracy">100%</b><span>Accuracy</span></div>
+        <div><b id="typingTime">0s</b><span>Elapsed</span></div>
+        <div><b id="typingChars">0</b><span>Characters</span></div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const state = {
+  cameraStream: null,
+  micStream: null,
+  micContext: null,
+  analyser: null,
+  micRaf: null,
+  micPeak: 0,
+  audioContext: null,
+  keyCount: 0,
+  clickCount: 0,
+  wheelTotal: 0,
+  typingStartedAt: 0,
+  typingTimer: null
+};
+
+const prompts = [
+  'The quick green console checks every device before the show begins.',
+  'Nifty tools should feel useful, fast, private and a little bit electric.',
+  'A clean browser test can save five minutes before every meeting.',
+  'Camera, microphone, keyboard and network signals are all looking sharp.',
+  'Small utilities become powerful when they are polished and easy to trust.'
+];
+
+function setStatus(area, label, mood) {
+  const status = $(`status${area}`);
+  const dot = $(`dot${area}`);
+  if (status) status.textContent = label;
+  if (dot) {
+    dot.classList.remove('good', 'bad');
+    if (mood === 'good') dot.classList.add('good');
+    if (mood === 'bad') dot.classList.add('bad');
+  }
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat().format(value);
+}
+
+function browserName() {
+  const ua = navigator.userAgent;
+  if (ua.includes('Edg/')) return 'Microsoft Edge';
+  if (ua.includes('Chrome/')) return 'Chrome';
+  if (ua.includes('Safari/') && !ua.includes('Chrome/')) return 'Safari';
+  if (ua.includes('Firefox/')) return 'Firefox';
+  return 'Browser';
+}
+
+function refreshSnapshot() {
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const ratio = window.devicePixelRatio || 1;
+  const items = [
+    ['Screen', `${screen.width} x ${screen.height}`, 'Physical screen pixels'],
+    ['Viewport', `${window.innerWidth} x ${window.innerHeight}`, 'Current browser window'],
+    ['Pixel ratio', `${ratio}x`, 'CSS pixels to screen pixels'],
+    ['Color depth', `${screen.colorDepth || '--'} bit`, 'Display color depth'],
+    ['Orientation', screen.orientation ? screen.orientation.type : 'Unknown', 'Screen orientation'],
+    ['Browser', browserName(), navigator.platform || 'Platform unavailable'],
+    ['Timezone', Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown', new Date().toLocaleString()],
+    ['Online', navigator.onLine ? 'Online' : 'Offline', 'Browser connection state'],
+    ['Connection', connection ? `${connection.downlink || '--'} Mbps` : 'Unavailable', connection ? `${connection.effectiveType || 'unknown'} effective type` : 'Network API not exposed'],
+    ['Memory', navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unavailable', 'Browser device memory estimate'],
+    ['CPU threads', navigator.hardwareConcurrency || 'Unavailable', 'Logical processor estimate'],
+    ['Touch points', navigator.maxTouchPoints || 0, 'Touch input support']
+  ];
+
+  $('snapshotGrid').innerHTML = items.map(([label, value, note]) => `
+    <div class="info"><b>${value}</b><span>${label}<br>${note}</span></div>
+  `).join('');
+
+  $('securePill').textContent = `Secure context: ${window.isSecureContext ? 'yes' : 'no'}`;
+  $('netOnline').textContent = navigator.onLine ? 'Online' : 'Offline';
+  if (connection) {
+    $('netDownlink').textContent = connection.downlink ? `${connection.downlink} Mbps` : '--';
+    $('netType').textContent = connection.effectiveType || connection.type || 'Unknown';
+  }
+  updateOnlineStatus();
+  updateBattery();
+}
+
+function updateOnlineStatus() {
+  const online = navigator.onLine;
+  setStatus('Net', online ? 'Online' : 'Offline', online ? 'good' : 'bad');
+  $('netOnline').textContent = online ? 'Online' : 'Offline';
+}
+
+async function updateBattery() {
+  if (!navigator.getBattery) return;
+  try {
+    const battery = await navigator.getBattery();
+    const level = Math.round(battery.level * 100);
+    const card = document.createElement('div');
+    card.className = 'info';
+    card.innerHTML = `<b>${level}%</b><span>Battery<br>${battery.charging ? 'Charging' : 'Not charging'}</span>`;
+    const grid = $('snapshotGrid');
+    const oldBattery = [...grid.children].find((node) => node.textContent.includes('Battery'));
+    if (oldBattery) oldBattery.replaceWith(card);
+    else grid.appendChild(card);
+  } catch (err) {
+    console.warn(err);
+  }
+}
+
+async function startCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setStatus('Camera', 'Unavailable', 'bad');
+    $('cameraBadge').textContent = 'Blocked';
+    return;
+  }
+  stopCamera();
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    state.cameraStream = stream;
+    const video = $('cameraVideo');
+    video.srcObject = stream;
+    $('cameraEmpty').style.display = 'none';
+    $('cameraBadge').textContent = 'Live';
+    setStatus('Camera', 'Live', 'good');
+    await video.play();
+    const track = stream.getVideoTracks()[0];
+    const settings = track ? track.getSettings() : {};
+    $('cameraResolution').textContent = settings.width && settings.height ? `${settings.width} x ${settings.height}` : `${video.videoWidth} x ${video.videoHeight}`;
+  } catch (err) {
+    $('cameraBadge').textContent = 'Denied';
+    setStatus('Camera', 'Denied', 'bad');
+    $('cameraEmpty').style.display = 'grid';
+    $('cameraEmpty').textContent = err.name === 'NotAllowedError' ? 'Camera permission was denied.' : `Camera error: ${err.message}`;
+  }
+}
+
+function stopCamera() {
+  if (state.cameraStream) {
+    state.cameraStream.getTracks().forEach((track) => track.stop());
+    state.cameraStream = null;
+  }
+  $('cameraVideo').srcObject = null;
+  $('cameraEmpty').style.display = 'grid';
+  $('cameraEmpty').textContent = 'Camera preview will appear here.';
+  $('cameraBadge').textContent = 'Idle';
+  $('cameraResolution').textContent = '--';
+  setStatus('Camera', 'Idle', '');
+}
+
+function captureFrame() {
+  const video = $('cameraVideo');
+  const canvas = $('photoCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#020704';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  if (!state.cameraStream || !video.videoWidth) {
+    ctx.fillStyle = '#91aa99';
+    ctx.font = '16px monospace';
+    ctx.fillText('Start camera first', 18, 42);
+    return;
+  }
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+}
+
+async function startMic() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setStatus('Mic', 'Unavailable', 'bad');
+    $('micBadge').textContent = 'Blocked';
+    return;
+  }
+  stopMic();
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const context = new AudioContext();
+    const analyser = context.createAnalyser();
+    analyser.fftSize = 1024;
+    const source = context.createMediaStreamSource(stream);
+    source.connect(analyser);
+    state.micStream = stream;
+    state.micContext = context;
+    state.analyser = analyser;
+    state.micPeak = 0;
+    $('micSample').textContent = `${formatNumber(context.sampleRate)} Hz`;
+    $('micBadge').textContent = 'Live';
+    setStatus('Mic', 'Live', 'good');
+    drawMic();
+  } catch (err) {
+    $('micBadge').textContent = 'Denied';
+    setStatus('Mic', 'Denied', 'bad');
+    $('micLevel').textContent = '0%';
+    $('micDb').textContent = err.name === 'NotAllowedError' ? 'Denied' : 'Error';
+  }
+}
+
+function stopMic() {
+  if (state.micRaf) cancelAnimationFrame(state.micRaf);
+  state.micRaf = null;
+  if (state.micStream) {
+    state.micStream.getTracks().forEach((track) => track.stop());
+    state.micStream = null;
+  }
+  if (state.micContext) {
+    state.micContext.close();
+    state.micContext = null;
+  }
+  state.analyser = null;
+  $('micBadge').textContent = 'Idle';
+  $('micBar').style.width = '0%';
+  $('micLevel').textContent = '0%';
+  $('micPeak').textContent = '0%';
+  $('micDb').textContent = '-- dB';
+  $('micSample').textContent = '--';
+  setStatus('Mic', 'Idle', '');
+  clearMicCanvas();
+}
+
+function clearMicCanvas() {
+  const canvas = $('micCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#020704';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'rgba(56,255,136,.18)';
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height / 2);
+  ctx.lineTo(canvas.width, canvas.height / 2);
+  ctx.stroke();
+}
+
+function drawMic() {
+  const analyser = state.analyser;
+  if (!analyser) return;
+  const canvas = $('micCanvas');
+  const ctx = canvas.getContext('2d');
+  const data = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(data);
+
+  let sum = 0;
+  ctx.fillStyle = '#020704';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = '#38ff88';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  data.forEach((value, index) => {
+    const x = (index / (data.length - 1)) * canvas.width;
+    const y = (value / 255) * canvas.height;
+    const centered = (value - 128) / 128;
+    sum += centered * centered;
+    if (index === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  const rms = Math.sqrt(sum / data.length);
+  const level = Math.min(100, Math.round(rms * 220));
+  state.micPeak = Math.max(state.micPeak, level);
+  const db = rms > 0 ? Math.round(20 * Math.log10(rms)) : -80;
+  $('micBar').style.width = `${level}%`;
+  $('micLevel').textContent = `${level}%`;
+  $('micPeak').textContent = `${state.micPeak}%`;
+  $('micDb').textContent = `${Math.max(db, -80)} dB`;
+  state.micRaf = requestAnimationFrame(drawMic);
+}
+
+function getAudioContext() {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!state.audioContext) state.audioContext = new AudioContext();
+  return state.audioContext;
+}
+
+function playTone(panValue) {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const volume = Number($('toneVolume').value) / 100;
+    let output = gain;
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(panValue === 0 ? 660 : 520, now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(volume * 0.32, now + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+
+    if (ctx.createStereoPanner) {
+      const panner = ctx.createStereoPanner();
+      panner.pan.setValueAtTime(panValue, now);
+      gain.connect(panner);
+      output = panner;
+    }
+
+    osc.connect(gain);
+    output.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.72);
+    $('toneStatus').textContent = panValue < 0 ? 'Left' : panValue > 0 ? 'Right' : 'Center';
+    setStatus('Audio', 'Playing', 'good');
+    setTimeout(() => {
+      $('toneStatus').textContent = 'Ready';
+      setStatus('Audio', 'Ready', 'good');
+    }, 800);
+  } catch (err) {
+    $('toneStatus').textContent = 'Blocked';
+    setStatus('Audio', 'Blocked', 'bad');
+  }
+}
+
+function playSweep() {
+  playTone(-1);
+  setTimeout(() => playTone(0), 420);
+  setTimeout(() => playTone(1), 840);
+}
+
+async function runNetworkPulse() {
+  updateOnlineStatus();
+  $('netRtt').textContent = 'Testing...';
+  const start = performance.now();
+  try {
+    const url = `${location.pathname || '/'}?pulse=${Date.now()}`;
+    await fetch(url, { cache: 'no-store', method: 'GET' });
+    const ms = Math.round(performance.now() - start);
+    $('netRtt').textContent = `${ms} ms`;
+    setStatus('Net', navigator.onLine ? 'Online' : 'Offline', navigator.onLine ? 'good' : 'bad');
+  } catch (err) {
+    $('netRtt').textContent = 'Failed';
+    setStatus('Net', 'Limited', 'bad');
+  }
+  refreshSnapshot();
+}
+
+function setupKeyboard() {
+  const pad = $('keyPad');
+  pad.addEventListener('keydown', (event) => {
+    event.preventDefault();
+    state.keyCount += 1;
+    const key = event.key === ' ' ? 'Space' : event.key;
+    $('keyMain').textContent = key;
+    $('keyMeta').textContent = `code: ${event.code} | key: ${key} | total: ${state.keyCount}`;
+    const mods = [event.ctrlKey && 'ctrl', event.metaKey && 'meta', event.altKey && 'alt', event.shiftKey && 'shift'].filter(Boolean).join('+');
+    const line = document.createElement('div');
+    line.textContent = `${new Date().toLocaleTimeString()}  ${event.code}  ${mods || 'no modifiers'}`;
+    $('keyLog').prepend(line);
+  });
+}
+
+function setupMouse() {
+  const pad = $('mousePad');
+  const crosshair = $('crosshair');
+  pad.addEventListener('pointermove', (event) => {
+    const rect = pad.getBoundingClientRect();
+    const x = Math.round(event.clientX - rect.left);
+    const y = Math.round(event.clientY - rect.top);
+    crosshair.style.left = `${x}px`;
+    crosshair.style.top = `${y}px`;
+    $('mouseXY').textContent = `${x}, ${y}`;
+  });
+  pad.addEventListener('pointerdown', (event) => {
+    state.clickCount += 1;
+    $('mouseClicks').textContent = state.clickCount;
+    $('mouseButton').textContent = ['Left', 'Middle', 'Right'][event.button] || `Button ${event.button}`;
+  });
+  pad.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    state.wheelTotal += Math.round(event.deltaY);
+    $('mouseWheel').textContent = state.wheelTotal;
+  }, { passive: false });
+}
+
+function resetTyping() {
+  clearInterval(state.typingTimer);
+  state.typingStartedAt = 0;
+  state.typingTimer = null;
+  $('typingInput').value = '';
+  $('typingWpm').textContent = '0';
+  $('typingAccuracy').textContent = '100%';
+  $('typingTime').textContent = '0s';
+  $('typingChars').textContent = '0';
+}
+
+function newPrompt() {
+  const current = $('typingPrompt').textContent;
+  const next = prompts.filter((prompt) => prompt !== current)[Math.floor(Math.random() * (prompts.length - 1))];
+  $('typingPrompt').textContent = next;
+  resetTyping();
+}
+
+function setupTyping() {
+  $('typingInput').addEventListener('input', () => {
+    if (!state.typingStartedAt) {
+      state.typingStartedAt = performance.now();
+      state.typingTimer = setInterval(updateTypingStats, 250);
+    }
+    updateTypingStats();
+  });
+}
+
+function updateTypingStats() {
+  const typed = $('typingInput').value;
+  const target = $('typingPrompt').textContent;
+  const seconds = state.typingStartedAt ? Math.max((performance.now() - state.typingStartedAt) / 1000, 0.1) : 0;
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) {
+    if (typed[i] === target[i]) correct += 1;
+  }
+  const accuracy = typed.length ? Math.round((correct / typed.length) * 100) : 100;
+  const wpm = Math.round((typed.length / 5) / Math.max(seconds / 60, 0.001));
+  $('typingWpm').textContent = typed.length ? wpm : '0';
+  $('typingAccuracy').textContent = `${accuracy}%`;
+  $('typingTime').textContent = `${Math.round(seconds)}s`;
+  $('typingChars').textContent = typed.length;
+}
+
+function startMatrix() {
+  const canvas = $('matrix');
+  const ctx = canvas.getContext('2d');
+  let width = 0;
+  let height = 0;
+  let columns = [];
+  const glyphs = '010101 DEVICE TEST CAMERA MIC SCREEN AUDIO NET KEY'.split('');
+
+  function resize() {
+    width = canvas.offsetWidth;
+    height = canvas.offsetHeight;
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    const count = Math.max(12, Math.floor(width / 18));
+    columns = Array.from({ length: count }, () => Math.random() * height);
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(2,7,4,.16)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(56,255,136,.7)';
+    ctx.font = '14px monospace';
+    columns.forEach((y, index) => {
+      const x = index * 18;
+      const glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+      ctx.fillText(glyph, x, y);
+      columns[index] = y > height + Math.random() * 400 ? 0 : y + 16;
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+function init() {
+  refreshSnapshot();
+  clearMicCanvas();
+  captureFrame();
+  setupKeyboard();
+  setupMouse();
+  setupTyping();
+  startMatrix();
+  updateOnlineStatus();
+  window.addEventListener('resize', refreshSnapshot);
+  window.addEventListener('online', refreshSnapshot);
+  window.addEventListener('offline', refreshSnapshot);
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (connection && connection.addEventListener) connection.addEventListener('change', refreshSnapshot);
+}
+
+init();
+</script>
+</body>
+</html>

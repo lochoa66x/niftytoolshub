@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fake Hacker Terminal - cinematic prank console | NiftyTools Hub</title>
+<meta name="description" content="A harmless cinematic fake hacker terminal for pranks, presentations and movie-style Matrix console visuals. No real scanning or hacking.">
+<meta property="og:title" content="Fake Hacker Terminal - NiftyTools Hub">
+<meta property="og:description" content="Run a harmless movie-style terminal simulation with fake logs, Matrix rain, progress bars and fullscreen prank mode.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/fake-hacker.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    --bg:#080b08; --panel:#0d110d; --txt:#d8e4d8; --mut:#74856f; --line:#1b241c;
+    --grn:#46e07a; --grnsoft:#2f9d57; --amber:#ffb454; --bad:#ff6b6b; --blue:#77c8ff;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
+    background:
+      linear-gradient(rgba(70,224,122,.022) 1px,transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg,rgba(70,224,122,.018) 1px,transparent 1px) 0 0/32px 100%,
+      radial-gradient(860px 520px at 82% -12%,rgba(70,224,122,.08),transparent 62%),
+      radial-gradient(580px 380px at 8% 8%,rgba(119,200,255,.05),transparent 58%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);background:rgba(8,11,8,.86);position:sticky;top:0;z-index:8;backdrop-filter:blur(8px)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:56px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--txt)}
+  .logo .mk{width:11px;height:16px;background:var(--grn);box-shadow:0 0 10px var(--grn);animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:.14}}
+  .crumb{color:var(--mut);font-size:12.5px;margin:22px 0 6px}
+  h1{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:0;margin:6px 0 12px;text-transform:uppercase}
+  h1:before{content:"> ";color:var(--grn)}
+  .lead{color:var(--mut);font-size:14px;max-width:950px;margin:0 0 24px}
+  .layout{display:grid;grid-template-columns:minmax(300px,370px) 1fr;gap:18px;align-items:start}
+  .layout>section{min-width:0}
+  @media(max-width:960px){.layout{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:18px;min-width:0}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 16px}
+  .panel h2:before{content:"// ";color:var(--grnsoft)}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px}
+  input,select{width:100%;font-family:var(--mono);background:var(--bg);border:1px solid var(--line);
+    color:var(--txt);border-radius:4px;padding:9px 11px;font-size:13px;outline:0;caret-color:var(--grn);min-width:0}
+  input:focus,select:focus{border-color:var(--grnsoft)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid2>*{min-width:0}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+  .stack{display:grid;gap:12px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;border-radius:5px;
+    padding:10px 14px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
+  .btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--grn);color:var(--grn);box-shadow:none}
+  .toggle-row{display:flex;align-items:center;gap:9px;color:var(--mut);font-size:12px}
+  .toggle-row input{width:auto}
+  .note,.hint{font-size:11.5px;color:var(--mut);line-height:1.6}
+  .sim{position:relative;border:1px solid var(--line);border-radius:8px;background:#030604;min-height:650px;overflow:hidden;box-shadow:0 0 34px rgba(70,224,122,.07)}
+  .sim:fullscreen{border:0;border-radius:0;min-height:100vh}
+  .sim-head{height:34px;border-bottom:1px solid var(--line);background:#0e130e;display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:var(--mut);font-size:11px;letter-spacing:.8px;position:relative;z-index:2}
+  .dots{display:flex;gap:6px}
+  .dots span{width:8px;height:8px;border-radius:50%;background:var(--grnsoft);opacity:.72}
+  #rain{position:absolute;inset:34px 0 0;width:100%;height:calc(100% - 34px);opacity:.26}
+  .terminal{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px;padding:18px;min-height:616px;background:linear-gradient(180deg,rgba(3,6,4,.35),rgba(3,6,4,.9))}
+  @media(max-width:780px){.terminal{grid-template-columns:1fr}.side{order:-1}}
+  .log{border:1px solid rgba(70,224,122,.18);background:rgba(3,6,4,.82);border-radius:6px;padding:14px;min-height:560px;max-height:560px;overflow:hidden;box-shadow:inset 0 0 24px rgba(70,224,122,.05)}
+  .line{font-size:12.5px;color:var(--txt);white-space:pre-wrap;word-break:break-word;margin:0 0 5px}
+  .line .time{color:var(--mut)}
+  .line .ok{color:var(--grn)}
+  .line .warn{color:var(--amber)}
+  .line .bad{color:var(--bad)}
+  .line .blue{color:var(--blue)}
+  .cursor{display:inline-block;width:8px;height:13px;background:var(--grn);vertical-align:-2px;animation:blink 1s steps(1) infinite;box-shadow:0 0 8px var(--grn)}
+  .side{display:grid;gap:12px;align-content:start}
+  .status-card{border:1px solid rgba(70,224,122,.16);background:rgba(13,17,13,.78);border-radius:6px;padding:12px}
+  .status-card h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 10px}
+  .stat{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--mut);border-top:1px solid rgba(216,228,216,.06);padding-top:6px;margin-top:6px}
+  .stat b{color:var(--txt);text-align:right}
+  .bar{height:9px;border:1px solid var(--line);border-radius:20px;background:var(--bg);overflow:hidden;margin:8px 0 12px}
+  .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--grn),var(--blue),var(--amber));width:0;transition:width .3s}
+  .watermark{position:absolute;right:20px;bottom:18px;z-index:2;color:rgba(216,228,216,.16);font-size:28px;font-weight:800;letter-spacing:3px;transform:rotate(-8deg);pointer-events:none;text-transform:uppercase}
+  .watermark.off{display:none}
+  .flash{position:absolute;inset:34px 0 0;z-index:3;pointer-events:none;opacity:0;background:rgba(70,224,122,.18)}
+  .flash.on{animation:flash .28s ease-out}
+  @keyframes flash{0%{opacity:.55}100%{opacity:0}}
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <a href="/" style="color:var(--mut);font-size:13px">back to all tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb">Home / Fun Tools / Fake Hacker Terminal</div>
+  <h1>Fake Hacker Terminal</h1>
+  <p class="lead">A harmless cinematic prank console with Matrix rain, fake logs, progress bars and fullscreen mode. It does not scan, connect, exploit or touch any real system.</p>
+
+  <div class="layout">
+    <section>
+      <div class="panel">
+        <h2>Prank controls</h2>
+        <div class="stack">
+          <div>
+            <label for="mode">Scenario</label>
+            <select id="mode" onchange="applyMode()">
+              <option value="movie">Movie Hacker</option>
+              <option value="mainframe">Corporate Mainframe</option>
+              <option value="school">School Computer Lab</option>
+              <option value="cyberpunk">Cyberpunk Overload</option>
+              <option value="presentation">Presentation Mode</option>
+            </select>
+          </div>
+          <div class="grid2">
+            <div><label for="target">Fake target label</label><input id="target" value="friend_laptop.local" oninput="updateLabels()"></div>
+            <div><label for="operator">Operator alias</label><input id="operator" value="root_guest" oninput="updateLabels()"></div>
+          </div>
+          <div class="grid2">
+            <div><label for="speed">Speed</label><select id="speed"><option value="900">Slow</option><option value="520" selected>Movie</option><option value="230">Fast</option><option value="90">Panic</option></select></div>
+            <div><label for="intensity">Intensity</label><select id="intensity"><option value="calm">Calm</option><option value="normal" selected>Normal</option><option value="chaos">Chaos</option></select></div>
+          </div>
+          <div class="actions">
+            <button class="btn" id="startBtn" onclick="startSim()">Start</button>
+            <button class="btn ghost" onclick="pauseSim()">Pause</button>
+            <button class="btn ghost" onclick="resetSim()">Reset</button>
+            <button class="btn ghost" onclick="fullscreenSim()">Fullscreen</button>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" onclick="burst()">Access granted burst</button>
+            <button class="btn ghost" onclick="copyScript(this)">Copy fake log</button>
+          </div>
+          <label class="toggle-row"><input id="safeMark" type="checkbox" checked onchange="toggleWatermark()">Show simulation watermark</label>
+          <label class="toggle-row"><input id="sound" type="checkbox">Sound beeps after start</label>
+          <p class="hint">All IPs are documentation-only fake ranges and every line is generated for theater. No network calls, no real hacking.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Good prank etiquette</h2>
+        <p class="note">Use it for laughs, presentations or a movie-style vibe. Do not use it to scare someone into thinking their data is compromised. Keep the watermark on when the joke needs a safety rail.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sim" id="sim">
+        <div class="sim-head">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <div id="sessionTitle">SIMULATION: movie_hacker.session</div>
+          <div id="clock">--:--:--</div>
+        </div>
+        <canvas id="rain"></canvas>
+        <div class="terminal">
+          <div class="log" id="log" aria-live="polite"></div>
+          <aside class="side">
+            <div class="status-card">
+              <h3>Operation</h3>
+              <div class="stat"><span>Operator</span><b id="opLabel">root_guest</b></div>
+              <div class="stat"><span>Target</span><b id="targetLabel">friend_laptop.local</b></div>
+              <div class="stat"><span>Mode</span><b id="modeLabel">Movie Hacker</b></div>
+            </div>
+            <div class="status-card">
+              <h3>Fake progress</h3>
+              <div class="stat"><span>Trace map</span><b id="traceVal">0%</b></div>
+              <div class="bar"><span id="traceBar"></span></div>
+              <div class="stat"><span>Packet theater</span><b id="packetVal">0%</b></div>
+              <div class="bar"><span id="packetBar"></span></div>
+              <div class="stat"><span>Mainframe drama</span><b id="mainVal">0%</b></div>
+              <div class="bar"><span id="mainBar"></span></div>
+            </div>
+            <div class="status-card">
+              <h3>Vitals</h3>
+              <div class="stat"><span>Fake nodes</span><b id="nodes">0</b></div>
+              <div class="stat"><span>Lines</span><b id="lineCount">0</b></div>
+              <div class="stat"><span>Risk</span><b style="color:var(--grn)">0 real</b></div>
+            </div>
+          </aside>
+        </div>
+        <div class="watermark" id="watermark">Simulation</div>
+        <div class="flash" id="flash"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
+
+<script>
+  const $=id=>document.getElementById(id);
+  const logEl=$('log');
+  let timer=null,lineTotal=0,audioCtx=null,progress={trace:0,packet:0,main:0},rainTimer=null;
+  const fakeIps=['192.0.2.14','192.0.2.88','198.51.100.7','198.51.100.44','203.0.113.9','203.0.113.201'];
+  const scenarios={
+    movie:{
+      label:'Movie Hacker',
+      title:'movie_hacker.session',
+      seed:['Booting cinematic shell...','Loading green text renderer...','Mounting fake packet tunnel...','Synchronizing dramatic progress bars...'],
+      verbs:['rendering proxy lattice','checking fake node','painting packet trail','simulating access token','spinning cipher wheel','warming up mainframe fan','generating nonsense checksum','opening movie-grade shell']
+    },
+    mainframe:{
+      label:'Corporate Mainframe',
+      title:'mainframe_audit.sim',
+      seed:['Connecting to fictional audit vault...','Reading pretend compliance ledger...','Preparing boardroom drama...','Loading synthetic payroll map...'],
+      verbs:['indexing fake ledger','querying dummy archive','staging audit banner','verifying imaginary badge','mapping office coffee machine','routing through pretend subnet','rendering green approval stamp']
+    },
+    school:{
+      label:'School Computer Lab',
+      title:'school_lab_terminal.sim',
+      seed:['Starting retro lab terminal...','Finding floppy ghost...','Loading cafeteria mainframe...','Priming prank-safe access screen...'],
+      verbs:['checking library terminal','unlocking fake study hall','scanning pretend printer queue','routing through chalkboard bus','loading pixel font','counting fictional lunch credits']
+    },
+    cyberpunk:{
+      label:'Cyberpunk Overload',
+      title:'neon_overload.sim',
+      seed:['Igniting neon trace stack...','Loading synthetic city grid...','Overclocking visual noise...','Starting rain renderer...'],
+      verbs:['spiking neon packets','mirroring fake skyline','charging chrome relay','rendering ghost node','looping synthetic uplink','compressing dramatic entropy','flooding terminal theater']
+    },
+    presentation:{
+      label:'Presentation Mode',
+      title:'presentation_prank.safe',
+      seed:['Presentation simulation armed...','Building fullscreen reveal...','Priming access granted sequence...','Loading harmless status panels...'],
+      verbs:['warming projector terminal','sequencing dramatic pause','drawing fake trace map','checking slide deck vault','rendering access banner','syncing audience suspense']
+    }
+  };
+  const endings=['OK','DONE','PASS','SIM','FAKE','READY','GRANTED','ROUTED'];
+
+  function applyMode(){
+    const m=scenarios[$('mode').value];
+    $('sessionTitle').textContent='SIMULATION: '+m.title;
+    $('modeLabel').textContent=m.label;
+    resetSim();
+  }
+  function updateLabels(){
+    $('targetLabel').textContent=$('target').value||'demo_target.local';
+    $('opLabel').textContent=$('operator').value||'guest';
+  }
+  function toggleWatermark(){
+    $('watermark').classList.toggle('off',!$('safeMark').checked);
+  }
+  function startSim(){
+    if(timer)return;
+    updateLabels();
+    if(!logEl.children.length)bootLines();
+    const tick=()=>{addLine(randomLine());advanceProgress();if($('sound').checked)beep();};
+    tick();
+    timer=setInterval(tick,Number($('speed').value)||520);
+    $('startBtn').textContent='Running';
+    startRain();
+  }
+  function pauseSim(){
+    clearInterval(timer);timer=null;$('startBtn').textContent='Start';
+  }
+  function resetSim(){
+    pauseSim();
+    logEl.innerHTML='';
+    lineTotal=0;
+    progress={trace:0,packet:0,main:0};
+    updateProgress();
+    $('nodes').textContent='0';
+    addLine('<span class="ok">SIMULATION READY.</span> No real systems will be touched.');
+    addLine('Choose a scenario and press Start.');
+  }
+  function bootLines(){
+    const m=scenarios[$('mode').value];
+    m.seed.forEach(t=>addLine('<span class="blue">'+esc(t)+'</span>'));
+  }
+  function randomLine(){
+    const m=scenarios[$('mode').value];
+    const verb=pick(m.verbs);
+    const ip=pick(fakeIps);
+    const hex=randomHex(8);
+    const target=esc($('target').value||'demo_target.local');
+    const intensity=$('intensity').value;
+    const pool=[
+      '['+tag('ok','OK')+'] '+verb+' :: '+ip+' :: checksum '+hex,
+      '['+tag('blue','TRACE')+'] '+target+' -> documentation-node '+ip+' -> visual relay',
+      '['+tag('warn','WAIT')+'] dramatic latency injected: '+rand(12,340)+'ms',
+      '['+tag('ok','SIM')+'] fake credential theater accepted for '+esc($('operator').value||'guest'),
+      '['+tag('blue','MAP')+'] node-'+rand(100,999)+' linked to synthetic subnet '+ip,
+      '['+tag('ok',pick(endings))+'] '+verb+' complete'
+    ];
+    if(intensity!=='calm')pool.push('['+tag('warn','ALERT')+'] visual firewall sparkle detected; increasing nonsense density');
+    if(intensity==='chaos')pool.push('['+tag('bad','CRITICAL')+'] mainframe drama threshold exceeded; printing faster for cinema');
+    return pick(pool);
+  }
+  function burst(){
+    updateLabels();
+    const lines=[
+      '['+tag('warn','ESCALATE')+'] synthetic permissions rising...',
+      '['+tag('blue','TRACE')+'] rendering final green screen...',
+      '['+tag('ok','ACCESS GRANTED')+'] '+esc($('target').value||'demo_target.local')+' unlocked in prank mode',
+      '['+tag('ok','SAFE')+'] This was a harmless simulation.'
+    ];
+    lines.forEach(addLine);
+    progress.trace=100;progress.packet=100;progress.main=100;updateProgress();
+    flash();
+    if($('sound').checked){beep(880);setTimeout(()=>beep(1180),90);}
+  }
+  function addLine(html){
+    const p=document.createElement('p');
+    p.className='line';
+    p.innerHTML='<span class="time">'+new Date().toLocaleTimeString()+'</span> '+html;
+    logEl.appendChild(p);
+    lineTotal++;
+    while(logEl.children.length>95)logEl.removeChild(logEl.firstChild);
+    $('lineCount').textContent=lineTotal;
+    $('nodes').textContent=Math.min(999,Math.floor(lineTotal*1.7)+rand(0,8));
+    logEl.scrollTop=logEl.scrollHeight;
+    if(lineTotal%14===0){
+      const c=document.createElement('p');
+      c.className='line';
+      c.innerHTML='<span class="time">'+new Date().toLocaleTimeString()+'</span> <span class="ok">root@prank</span>:<span class="blue">~</span>$ <span class="cursor"></span>';
+      logEl.appendChild(c);
+      setTimeout(()=>c.remove(),450);
+    }
+  }
+  function advanceProgress(){
+    const inc=$('intensity').value==='chaos'?rand(3,11):$('intensity').value==='calm'?rand(1,4):rand(2,7);
+    progress.trace=Math.min(100,progress.trace+inc);
+    progress.packet=Math.min(100,progress.packet+Math.max(1,inc-rand(0,3)));
+    progress.main=Math.min(100,progress.main+Math.max(1,inc-rand(1,4)));
+    if(progress.trace===100&&progress.packet===100&&progress.main===100&&lineTotal%7===0)burst();
+    updateProgress();
+  }
+  function updateProgress(){
+    [['trace','traceBar','traceVal'],['packet','packetBar','packetVal'],['main','mainBar','mainVal']].forEach(([k,b,v])=>{
+      $(b).style.width=progress[k]+'%';
+      $(v).textContent=progress[k]+'%';
+    });
+  }
+  function fullscreenSim(){
+    const sim=$('sim');
+    if(sim.requestFullscreen)sim.requestFullscreen();
+    if($('mode').value==='presentation')startSim();
+  }
+  function copyScript(btn){
+    const text=[...logEl.querySelectorAll('.line')].map(p=>p.textContent).join('\n');
+    if(navigator.clipboard)navigator.clipboard.writeText(text);
+    const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1100);
+  }
+  function beep(freq=660){
+    try{
+      audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+      const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+      osc.frequency.value=freq;osc.type='square';
+      gain.gain.value=.025;
+      osc.connect(gain);gain.connect(audioCtx.destination);
+      osc.start();osc.stop(audioCtx.currentTime+.035);
+    }catch(e){}
+  }
+  function flash(){
+    $('flash').classList.remove('on');
+    void $('flash').offsetWidth;
+    $('flash').classList.add('on');
+  }
+  function startRain(){
+    if(rainTimer)return;
+    const c=$('rain'),ctx=c.getContext('2d');
+    const glyphs='01 PRANK SAFE SIM ACCESS GRANTED NODE TRACE'.split('');
+    let drops=[];
+    function resize(){
+      c.width=c.clientWidth*devicePixelRatio;c.height=c.clientHeight*devicePixelRatio;
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+      drops=Array.from({length:Math.ceil(c.clientWidth/16)},()=>Math.random()*c.clientHeight/16);
+    }
+    resize();addEventListener('resize',resize);
+    rainTimer=setInterval(()=>{
+      ctx.fillStyle='rgba(3,6,4,.12)';ctx.fillRect(0,0,c.clientWidth,c.clientHeight);
+      ctx.fillStyle='#46e07a';ctx.font='13px JetBrains Mono, monospace';
+      drops.forEach((y,i)=>{
+        const text=pick(glyphs);
+        ctx.fillText(text,i*16,y*16);
+        if(y*16>c.clientHeight&&Math.random()>.965)drops[i]=0;
+        drops[i]+=1;
+      });
+    },55);
+  }
+  function tag(cls,text){return '<span class="'+cls+'">'+text+'</span>';}
+  function pick(a){return a[Math.floor(Math.random()*a.length)];}
+  function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+  function randomHex(n){return Array.from({length:n},()=>Math.floor(Math.random()*16).toString(16)).join('').toUpperCase();}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+  setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString(),1000);
+  $('clock').textContent=new Date().toLocaleTimeString();
+  resetSim();
+  startRain();
+</script>
+</body>
+</html>
