@@ -6,6 +6,31 @@
   var SESSION_KEY = "nifty_session_id";
   var MAX_EVENTS = 800;
   var searchTimers = new WeakMap();
+  var TOOL_NAMES = {
+    "signal-watch": "Early Warning Radar",
+    "aurora-watch": "Aurora Watch",
+    "meme-watch": "Meme Early Warning",
+    "ai-panic": "AI Panic Meter",
+    "image-tools": "Image Toolkit",
+    "pdf-tools": "PDF Toolkit",
+    "salary-tools": "Salary / Paycheck Calculator Pro",
+    "unit-tools": "Unit Converter Pro",
+    "time-tools": "World Clock / Time Zone Studio",
+    "device-tests": "Device Test Suite",
+    "file-organizer": "File Organizer Toolkit",
+    "color-tools": "Color Palette Studio",
+    "qr-tools": "QR Code Toolkit Pro",
+    "receipt-tools": "Receipt Generator",
+    "dev-tools": "Developer Toolkit",
+    "text-tools": "Text & Writing Toolkit Pro",
+    "tarot-tools": "Tarot Card Reader",
+    "astrology-tools": "Birth Chart / Zodiac Toolkit",
+    "random-tools": "Random Toolkit Pro",
+    "fake-hacker": "Fake Hacker Terminal",
+    "mortgage": "Mortgage Calculator",
+    "auto-loan": "Auto Loan Calculator",
+    "percentage": "Percentage Calculator"
+  };
 
   function nowIso() {
     return new Date().toISOString();
@@ -43,6 +68,33 @@
     } catch (err) {
       return safeText(value, 120);
     }
+  }
+
+  function referrerLabel() {
+    if (!document.referrer) return "direct / local";
+    try {
+      var ref = new URL(document.referrer);
+      return ref.hostname.replace(/^www\./, "");
+    } catch (err) {
+      return safeText(document.referrer, 80) || "direct / local";
+    }
+  }
+
+  function slugFromPath(value) {
+    var path = safePath(value || location.pathname);
+    var file = path.split("/").pop() || "index";
+    return file.replace(/\.html$/i, "") || "index";
+  }
+
+  function canonicalToolName(raw, target) {
+    var slug = slugFromPath(target || raw || location.pathname);
+    if (TOOL_NAMES[slug]) return TOOL_NAMES[slug];
+    var text = safeText(raw, 80);
+    if (/signal watch/i.test(text)) return "Early Warning Radar";
+    if (/salary/i.test(text)) return "Salary / Paycheck Calculator Pro";
+    if (/pdf/i.test(text)) return "PDF Toolkit";
+    if (/image/i.test(text)) return "Image Toolkit";
+    return text || TOOL_NAMES[pageName()] || pageName();
   }
 
   function cleanSearchTerm(value) {
@@ -89,6 +141,7 @@
       page: pageName(),
       path: location.pathname,
       title: safeText(document.title, 90),
+      referrer: referrerLabel(),
       session: sessionId(),
       ts: nowIso()
     }, sanitizeProps(props));
@@ -141,7 +194,7 @@
       if (card) {
         var targetPath = linkTarget(card);
         track("tool_open", {
-          tool: cardName(card),
+          tool: canonicalToolName(cardName(card), targetPath),
           target: targetPath,
           surface: card.classList.contains("featured-card") ? "featured" : "library"
         });
@@ -256,7 +309,7 @@
   function trackPage() {
     var name = pageName();
     if (name !== "index" && name !== "admin") {
-      track("tool_page_view", { tool: name });
+      track("tool_page_view", { tool: canonicalToolName(name, location.pathname) });
     }
     if (name === "admin") {
       track("admin_open", { tool: "admin" });
