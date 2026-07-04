@@ -1,0 +1,4 @@
+User-agent: *
+
+# NiftyTools hidden admin route
+Disallow: /admin.html
