@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurora Watch - northern lights visibility tonight | NiftyTools Hub</title>
+<meta name="description" content="Check whether you might see northern or southern lights tonight using NOAA aurora forecasts, Kp forecast, cloud cover, darkness, moonlight and your location.">
+<meta property="og:title" content="Aurora Watch - NiftyTools Hub">
+<meta property="og:description" content="Will I see northern lights tonight? A local aurora visibility score with sky conditions and NOAA space weather data.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/aurora-watch.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    --bg:#070b09; --panel:#0d120f; --txt:#d8e7dc; --mut:#778878; --line:#1a271d;
+    --grn:#49e67c; --grn2:#20a95d; --cyan:#73d7ff; --amber:#ffbf59; --bad:#ff7070;
+    --violet:#9b8cff; --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
+    background:
+      linear-gradient(rgba(73,230,124,.025) 1px,transparent 1px) 0 0/100% 34px,
+      linear-gradient(90deg,rgba(115,215,255,.018) 1px,transparent 1px) 0 0/34px 100%,
+      radial-gradient(900px 480px at 74% -10%,rgba(73,230,124,.11),transparent 62%),
+      radial-gradient(720px 380px at 8% 6%,rgba(115,215,255,.075),transparent 62%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);background:rgba(7,11,9,.86);position:sticky;top:0;z-index:6;backdrop-filter:blur(8px)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:56px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--txt)}
+  .logo .mk{width:11px;height:16px;background:var(--grn);box-shadow:0 0 12px var(--grn);animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:.16}}
+  .crumb{color:var(--mut);font-size:12.5px;margin:22px 0 6px}
+  h1{font-size:clamp(27px,4vw,42px);font-weight:800;margin:6px 0 12px;text-transform:uppercase;letter-spacing:0}
+  h1:before{content:"> ";color:var(--grn)}
+  .lead{color:var(--mut);font-size:14px;max-width:930px;margin:0 0 24px}
+  .layout{display:grid;grid-template-columns:minmax(300px,370px) 1fr;gap:18px;align-items:start}
+  .layout>section{min-width:0}
+  @media(max-width:930px){.layout{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:18px;min-width:0}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 16px}
+  .panel h2:before{content:"// ";color:var(--grn2)}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px}
+  input,select{width:100%;font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--txt);
+    border-radius:4px;padding:9px 11px;font-size:13px;outline:0;caret-color:var(--grn);min-width:0}
+  input:focus,select:focus{border-color:var(--grn2)}
+  .stack{display:grid;gap:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid2>*{min-width:0}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;border-radius:5px;
+    padding:10px 14px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
+  .btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(73,230,124,.35)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--grn);color:var(--grn);box-shadow:none}
+  .note,.hint{font-size:11.5px;color:var(--mut);line-height:1.6}
+  .score-panel{display:grid;grid-template-columns:218px 1fr;gap:20px;align-items:center;margin-bottom:18px}
+  @media(max-width:760px){.score-panel{grid-template-columns:1fr}}
+  .dial{width:218px;height:218px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto;
+    background:conic-gradient(var(--grn) calc(var(--score,0)*1%),rgba(216,231,220,.08) 0);
+    box-shadow:0 0 34px rgba(73,230,124,.08), inset 0 0 34px rgba(115,215,255,.04)}
+  .dial-inner{width:168px;height:168px;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;text-align:center}
+  .score{font-size:45px;font-weight:800;line-height:1;color:var(--txt)}
+  .score small{display:block;font-size:11px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:.7px;margin-top:8px}
+  .headline h2{font-size:22px;margin:0 0 8px;text-transform:uppercase;letter-spacing:0}
+  .headline p{color:var(--mut);margin:0 0 14px;max-width:650px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:var(--bg)}
+  .badge b{color:var(--grn)}
+  .hero-media{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:18px;margin-bottom:18px}
+  .hero-media>*{min-width:0}
+  @media(max-width:880px){.hero-media{grid-template-columns:1fr}}
+  .sky-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:8px;min-height:258px;background:#030604}
+  .sky-card:before{content:"";position:absolute;inset:0;background:
+    radial-gradient(circle at 20% 18%,rgba(255,255,255,.8) 0 1px,transparent 2px),
+    radial-gradient(circle at 62% 22%,rgba(255,255,255,.7) 0 1px,transparent 2px),
+    radial-gradient(circle at 78% 42%,rgba(255,255,255,.6) 0 1px,transparent 2px),
+    linear-gradient(160deg,rgba(73,230,124,.18),transparent 34%),
+    linear-gradient(25deg,rgba(115,215,255,.16),transparent 48%);
+    opacity:.82}
+  .curtain{position:absolute;left:-8%;right:-8%;top:14%;height:138px;
+    background:repeating-linear-gradient(90deg,rgba(73,230,124,.1) 0 22px,rgba(115,215,255,.18) 22px 34px,rgba(73,230,124,.04) 34px 54px);
+    filter:blur(10px);transform:skewY(-7deg);opacity:.72;animation:flow 7s ease-in-out infinite alternate}
+  @keyframes flow{to{transform:translateX(38px) skewY(-4deg);opacity:.92}}
+  .horizon{position:absolute;left:0;right:0;bottom:0;height:92px;background:linear-gradient(transparent,rgba(0,0,0,.78))}
+  .sky-copy{position:absolute;left:18px;right:18px;bottom:18px}
+  .sky-copy b{font-size:13px;color:var(--grn);text-transform:uppercase}
+  .sky-copy span{display:block;color:var(--mut);font-size:12px;margin-top:4px}
+  .map-card{border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:12px}
+  .map-card img{display:block;width:100%;height:auto;border-radius:5px;border:1px solid var(--line);background:#000}
+  .map-card .source{font-size:10.5px;color:var(--mut);margin-top:8px;line-height:1.45}
+  .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+  .card.good{border-color:rgba(73,230,124,.36)}
+  .card.watch{border-color:rgba(255,191,89,.5)}
+  .card.bad{border-color:rgba(255,112,112,.55)}
+  .card h3{font-size:14px;margin:0 0 9px;color:var(--txt)}
+  .card h3:before{content:"> ";color:var(--grn)}
+  .big{font-size:28px;font-weight:800;margin:0;color:var(--txt)}
+  .card p{font-size:12.5px;color:var(--mut);margin:6px 0 10px}
+  .meter{height:8px;border:1px solid var(--line);border-radius:20px;background:var(--bg);overflow:hidden;margin:8px 0 12px}
+  .meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--bad),var(--amber),var(--grn),var(--cyan))}
+  .metric-list{display:grid;gap:5px;margin-top:10px}
+  .metric{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--mut);border-top:1px solid rgba(216,231,220,.06);padding-top:5px}
+  .metric b{color:var(--txt);text-align:right}
+  .timeline{display:grid;gap:7px;margin-top:8px}
+  .bar{display:grid;grid-template-columns:56px 1fr 38px;gap:8px;align-items:center;font-size:11px;color:var(--mut)}
+  .bar-track{height:7px;border-radius:20px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+  .bar-track span{display:block;height:100%;background:linear-gradient(90deg,var(--grn),var(--amber));width:0}
+  .log{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:18px}
+  .log h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 12px}
+  .log h2:before{content:"// ";color:var(--grn2)}
+  pre{white-space:pre-wrap;word-break:break-word;margin:0;color:var(--txt);font-family:var(--mono);font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:12px;max-height:230px;overflow:auto}
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <a href="/" style="color:var(--mut);font-size:13px">back to all tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb">Home / Signal Tools / Aurora Watch</div>
+  <h1>Aurora Watch</h1>
+  <p class="lead">Will you see northern lights tonight? This combines NOAA aurora and Kp forecasts with your location, local night window, cloud cover, precipitation risk, moonlight and light pollution.</p>
+
+  <div class="layout">
+    <section>
+      <div class="panel">
+        <h2>Viewing location</h2>
+        <div class="stack">
+          <div>
+            <label for="place">Place preset</label>
+            <select id="place" onchange="setPlace()">
+              <option value="toronto">Toronto, Canada</option>
+              <option value="calgary">Calgary, Canada</option>
+              <option value="edmonton">Edmonton, Canada</option>
+              <option value="yellowknife">Yellowknife, Canada</option>
+              <option value="fairbanks">Fairbanks, Alaska</option>
+              <option value="reykjavik">Reykjavik, Iceland</option>
+              <option value="tromso">Tromso, Norway</option>
+              <option value="london">London, UK</option>
+              <option value="new-york">New York, USA</option>
+              <option value="chicago">Chicago, USA</option>
+              <option value="los-angeles">Los Angeles, USA</option>
+              <option value="hobart">Hobart, Australia</option>
+              <option value="dunedin">Dunedin, New Zealand</option>
+              <option value="ushuaia">Ushuaia, Argentina</option>
+              <option value="manual">Manual coordinates</option>
+            </select>
+          </div>
+          <div class="grid2">
+            <div><label for="lat">Latitude</label><input id="lat" type="number" step="0.01" value="43.65"></div>
+            <div><label for="lon">Longitude</label><input id="lon" type="number" step="0.01" value="-79.38"></div>
+          </div>
+          <div>
+            <label for="light">Viewing site</label>
+            <select id="light" onchange="refreshAurora()">
+              <option value="18">City lights</option>
+              <option value="10" selected>Suburbs / edge of town</option>
+              <option value="3">Dark rural sky</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="btn" id="refreshBtn" onclick="refreshAurora()">Refresh watch</button>
+            <button class="btn ghost" onclick="loadStormDemo()">Storm demo</button>
+            <button class="btn ghost" onclick="copyReport(this)">Copy plan</button>
+          </div>
+          <p class="hint">Best results come from a dark place with a clear view toward the pole: north in the northern hemisphere, south in the southern hemisphere.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>How it decides</h2>
+        <p class="note">The score is an observing score, not a guarantee. Space weather can be strong while clouds ruin the view, or a faint aurora can become visible from a dark site with a camera.</p>
+        <div class="badges">
+          <span class="badge"><b>Kp</b> storm strength</span>
+          <span class="badge"><b>OVATION</b> aurora oval</span>
+          <span class="badge"><b>cloud</b> sky clarity</span>
+          <span class="badge"><b>night</b> local darkness</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Sources</h2>
+        <p class="note">Space weather uses NOAA SWPC aurora products and Kp forecast data. Local sky conditions use Open-Meteo forecast data. Moonlight is estimated locally in the browser.</p>
+        <p class="note"><a href="https://www.spaceweather.gov/products/aurora-30-minute-forecast" target="_blank" rel="noopener">NOAA aurora forecast</a> / <a href="https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json" target="_blank" rel="noopener">NOAA Kp forecast JSON</a> / <a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener">Open-Meteo forecast API</a></p>
+      </div>
+    </section>
+
+    <section>
+      <div class="panel score-panel">
+        <div class="dial" id="dial" style="--score:0"><div class="dial-inner"><div class="score"><span id="scoreNum">--</span><small>chance</small></div></div></div>
+        <div class="headline">
+          <h2 id="verdict">Checking tonight</h2>
+          <p id="summary">Fetching NOAA space weather and local sky conditions now.</p>
+          <div class="badges">
+            <span class="badge"><b id="locationLabel">Toronto</b> location</span>
+            <span class="badge"><b id="bestWindow">--</b> best window</span>
+            <span class="badge"><b id="direction">--</b> direction</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <div class="sky-card">
+          <div class="curtain"></div>
+          <div class="horizon"></div>
+          <div class="sky-copy">
+            <b id="skyHeadline">Local sky watch</b>
+            <span id="skyText">Waiting for cloud cover, night window and Kp forecast.</span>
+          </div>
+        </div>
+        <div class="map-card">
+          <img id="auroraImage" src="https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" alt="NOAA aurora forecast map">
+          <div class="source" id="imageCaption">NOAA OVATION aurora forecast image. Northern map shown for northern locations; southern locations switch after refresh.</div>
+        </div>
+      </div>
+
+      <div id="cards" class="cards"></div>
+
+      <div class="log">
+        <h2>Viewing plan</h2>
+        <pre id="report">Waiting for aurora data...</pre>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
+
+<script>
+  const $=id=>document.getElementById(id);
+  const PLACES={
+    toronto:['Toronto, Canada',43.65,-79.38],
+    calgary:['Calgary, Canada',51.05,-114.07],
+    edmonton:['Edmonton, Canada',53.55,-113.49],
+    yellowknife:['Yellowknife, Canada',62.45,-114.38],
+    fairbanks:['Fairbanks, Alaska',64.84,-147.72],
+    reykjavik:['Reykjavik, Iceland',64.15,-21.94],
+    tromso:['Tromso, Norway',69.65,18.96],
+    london:['London, UK',51.51,-0.13],
+    'new-york':['New York, USA',40.71,-74.01],
+    chicago:['Chicago, USA',41.88,-87.63],
+    'los-angeles':['Los Angeles, USA',34.05,-118.24],
+    hobart:['Hobart, Australia',-42.88,147.33],
+    dunedin:['Dunedin, New Zealand',-45.88,170.50],
+    ushuaia:['Ushuaia, Argentina',-54.80,-68.30]
+  };
+  let latestState=null;
+
+  function setPlace(){
+    const p=PLACES[$('place').value];
+    if(!p)return;
+    $('lat').value=p[1];
+    $('lon').value=p[2];
+    refreshAurora();
+  }
+  function selectedName(){
+    const p=PLACES[$('place').value];
+    return p?p[0]:'Manual location';
+  }
+  function clamp(n){return Math.max(0,Math.min(100,Math.round(Number(n)||0)));}
+  function fmt(n,d=1){return Number.isFinite(Number(n))?Number(n).toFixed(d):'--';}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+  async function fetchJson(url,timeout=10000){
+    const controller=new AbortController();
+    const t=setTimeout(()=>controller.abort(),timeout);
+    try{
+      const res=await fetch(url,{signal:controller.signal,cache:'no-store'});
+      if(!res.ok)throw new Error(res.status+' '+res.statusText);
+      return await res.json();
+    }finally{clearTimeout(t);}
+  }
+
+  async function refreshAurora(){
+    $('refreshBtn').disabled=true;
+    renderLoading();
+    const lat=Number($('lat').value), lon=Number($('lon').value);
+    $('auroraImage').src=lat<0?'https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg':'https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg';
+    $('imageCaption').textContent=(lat<0?'Southern':'Northern')+' NOAA OVATION aurora forecast image. The score below also uses local cloud and darkness.';
+    try{
+      const weather=await loadWeather(lat,lon);
+      const results=await Promise.allSettled([loadKp(weather),loadOvation(lat,lon)]);
+      const kp=results[0].status==='fulfilled'?results[0].value:fallbackKp(results[0].reason);
+      const ovation=results[1].status==='fulfilled'?results[1].value:fallbackOvation(results[1].reason);
+      latestState=scoreAurora({lat,lon,name:selectedName(),weather,kp,ovation,lightPenalty:Number($('light').value)});
+      render(latestState);
+    }catch(err){
+      latestState=scoreAurora({lat,lon,name:selectedName(),weather:fallbackWeather(err),kp:fallbackKp(err),ovation:fallbackOvation(err),lightPenalty:Number($('light').value)});
+      render(latestState);
+    }finally{
+      $('refreshBtn').disabled=false;
+    }
+  }
+
+  function renderLoading(){
+    $('scoreNum').textContent='--';
+    $('verdict').textContent='Checking tonight';
+    $('summary').textContent='Fetching NOAA space weather and local sky conditions now.';
+    $('locationLabel').textContent=selectedName().split(',')[0];
+    $('bestWindow').textContent='--';
+    $('direction').textContent='--';
+    $('cards').innerHTML='';
+    $('report').textContent='Waiting for aurora data...';
+    $('dial').style.setProperty('--score',0);
+  }
+
+  async function loadWeather(lat,lon){
+    const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&hourly=cloud_cover,precipitation_probability,weather_code&daily=sunrise,sunset&forecast_days=2&timezone=auto';
+    const data=await fetchJson(url,10000);
+    const h=data.hourly||{}, d=data.daily||{};
+    const start=(d.sunset&&d.sunset[0])||((d.time&&d.time[0])?d.time[0]+'T20:00':null);
+    const end=(d.sunrise&&d.sunrise[1])||((d.time&&d.time[1])?d.time[1]+'T06:00':null);
+    const rows=(h.time||[]).map((time,i)=>({
+      time,
+      cloud:Number((h.cloud_cover||[])[i]),
+      precip:Number((h.precipitation_probability||[])[i]||0),
+      code:Number((h.weather_code||[])[i]||0)
+    })).filter(r=>r.time>=start&&r.time<=end);
+    const nightRows=rows.length?rows:(h.time||[]).slice(18,31).map((time,i)=>({
+      time,
+      cloud:Number((h.cloud_cover||[])[i+18]),
+      precip:Number((h.precipitation_probability||[])[i+18]||0),
+      code:Number((h.weather_code||[])[i+18]||0)
+    }));
+    const best=nightRows.slice().sort((a,b)=>(a.cloud+a.precip*.7)-(b.cloud+b.precip*.7))[0]||{time:start,cloud:100,precip:0,code:0};
+    const avgCloud=avg(nightRows.map(r=>Number.isFinite(r.cloud)?r.cloud:100));
+    const avgPrecip=avg(nightRows.map(r=>Number.isFinite(r.precip)?r.precip:0));
+    return {
+      ok:true, source:'Open-Meteo forecast API', start, end, rows:nightRows, best,
+      avgCloud, avgPrecip, utcOffset:Number(data.utc_offset_seconds)||0,
+      timezone:data.timezone||'local'
+    };
+  }
+
+  async function loadKp(weather){
+    const rows=await fetchJson('https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json',10000);
+    const offset=weather&&Number.isFinite(weather.utcOffset)?weather.utcOffset:0;
+    const withLocal=(Array.isArray(rows)?rows:[]).map(r=>{
+      const utc=new Date(String(r.time_tag).replace(' ','T')+'Z');
+      const local=new Date(utc.getTime()+offset*1000).toISOString().slice(0,16);
+      return {time_tag:r.time_tag, local, kp:Number(r.kp), observed:r.observed||'forecast', scale:r.noaa_scale||''};
+    }).filter(r=>Number.isFinite(r.kp));
+    const tonight=withLocal.filter(r=>weather&&weather.start&&weather.end&&r.local>=weather.start&&r.local<=weather.end);
+    const future=withLocal.filter(r=>new Date(String(r.time_tag)+'Z')>=new Date(Date.now()-3*3600*1000)).slice(0,12);
+    const use=tonight.length?tonight:future;
+    const max=use.length?Math.max(...use.map(r=>r.kp)):0;
+    const peak=use.find(r=>r.kp===max)||use[0]||null;
+    return {ok:true, source:'NOAA SWPC Kp forecast', rows:use, max, peak};
+  }
+
+  async function loadOvation(lat,lon){
+    const data=await fetchJson('https://services.swpc.noaa.gov/json/ovation_aurora_latest.json',10000);
+    const coords=(data.coordinates||data.Coordinates||[]).map(c=>({
+      lon:Number(c[0]), lat:Number(c[1]), value:Number(c[2])
+    })).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)&&Number.isFinite(p.value));
+    const same=coords.filter(p=>lat>=0?p.lat>=0:p.lat<=0);
+    const nearby=same.map(p=>({point:p,km:distanceKm(lat,lon,p.lat,p.lon)})).filter(x=>x.km<=1200);
+    const nearest=same.map(p=>({point:p,km:distanceKm(lat,lon,p.lat,p.lon)})).sort((a,b)=>a.km-b.km)[0];
+    const maxNear=nearby.length?Math.max(...nearby.map(x=>x.point.value)):0;
+    const maxHemi=same.length?Math.max(...same.map(p=>p.value)):0;
+    const bright=nearby.slice().sort((a,b)=>b.point.value-a.point.value)[0]||nearest;
+    return {
+      ok:true, source:'NOAA OVATION aurora model', maxNear, maxHemi,
+      nearestValue:nearest?nearest.point.value:0, nearestKm:nearest?nearest.km:null,
+      brightKm:bright?bright.km:null,
+      forecastTime:data['Forecast Time']||data.forecast_time||data.time_tag||null
+    };
+  }
+
+  function scoreAurora(ctx){
+    const absM=Math.abs(geomagLat(ctx.lat,ctx.lon));
+    const req=requiredKp(absM);
+    const maxKp=ctx.kp.max||0;
+    const kpGap=maxKp-req;
+    const kpScore=req===0?80:clamp(42+kpGap*17+maxKp*3);
+    const ovScore=clamp(Math.max(ctx.ovation.maxNear*1.1,ctx.ovation.nearestValue*.7,ctx.ovation.maxHemi*.35));
+    const spaceScore=clamp(Math.max(kpScore,ovScore));
+    const moon=moonInfo(new Date());
+    const skyScore=clamp(100-ctx.weather.avgCloud-ctx.weather.avgPrecip*.45-ctx.lightPenalty-moon.penalty);
+    const nightHours=hoursBetween(ctx.weather.start,ctx.weather.end);
+    const nightScore=nightHours>=7?100:nightHours>=4?82:nightHours>=2?58:28;
+    let score=clamp(spaceScore*.57+skyScore*.30+nightScore*.13);
+    if(absM<32&&maxKp<8)score=Math.min(score,34);
+    if(absM<38&&maxKp<7)score=Math.min(score,44);
+    if(!ctx.weather.ok)score=clamp(score-8);
+    const decision=verdict(score);
+    const direction=ctx.lat>=0?(absM>=63?'overhead or north':'north horizon'):(absM>=63?'overhead or south':'south horizon');
+    const best=ctx.weather.best&&ctx.weather.best.time?shortTime(ctx.weather.best.time):'after dark';
+    return {...ctx,geomagLat:absM,requiredKp:req,kpGap,spaceScore,skyScore,nightScore,moon,score,decision,direction,bestWindow:best,nightHours};
+  }
+
+  function render(s){
+    $('dial').style.setProperty('--score',s.score);
+    $('scoreNum').textContent=s.score;
+    $('verdict').textContent=s.decision.title;
+    $('summary').textContent=s.decision.text;
+    $('locationLabel').textContent=s.name.split(',')[0];
+    $('bestWindow').textContent=s.bestWindow;
+    $('direction').textContent=s.direction;
+    $('skyHeadline').textContent=s.score>=55?'Worth checking the sky':'Conditions need help';
+    $('skyText').textContent='Best window: '+s.bestWindow+' - clouds avg '+fmt(s.weather.avgCloud,0)+'% - max Kp '+fmt(s.kp.max,1)+'.';
+    $('cards').innerHTML=[
+      card('Aurora model',s.spaceScore,s.spaceScore>=55?'good':s.spaceScore>=35?'watch':'bad',
+        s.ovation.ok?'NOAA OVATION and local geomagnetic latitude are in the mix.':'NOAA OVATION did not answer, so Kp and latitude carry the estimate.',
+        {'OVATION nearby':fmt(s.ovation.maxNear,1),'hemisphere max':fmt(s.ovation.maxHemi,1),'nearest oval':s.ovation.nearestKm==null?'--':fmt(s.ovation.nearestKm,0)+' km'}),
+      card('Kp forecast',clamp(s.kp.max*11),s.kp.max>=s.requiredKp?'good':s.kp.max>=s.requiredKp-1?'watch':'bad',
+        'Your rough required Kp is '+(s.requiredKp||'low')+'. Tonight peaks near Kp '+fmt(s.kp.max,1)+'.',
+        {'max Kp':fmt(s.kp.max,1),'required Kp':s.requiredKp||'low','peak time':s.kp.peak?shortTime(s.kp.peak.local):'--'}),
+      card('Sky clarity',s.skyScore,s.skyScore>=65?'good':s.skyScore>=40?'watch':'bad',
+        s.skyScore>=65?'Cloud and precipitation look friendly enough for aurora hunting.':'Cloud, precipitation, city light or moonlight may make the view harder.',
+        {'avg cloud':fmt(s.weather.avgCloud,0)+'%','precip risk':fmt(s.weather.avgPrecip,0)+'%','site penalty':Number($('light').value)}),
+      card('Darkness window',s.nightScore,s.nightScore>=75?'good':s.nightScore>=45?'watch':'bad',
+        'Aurora is a night-sky target. The tool uses the local sunset-to-sunrise window from the forecast.',
+        {'sunset':shortTime(s.weather.start),'sunrise':shortTime(s.weather.end),'night length':fmt(s.nightHours,1)+' h'}),
+      card('Latitude fit',clamp(s.geomagLat*1.35),s.geomagLat>=55?'good':s.geomagLat>=43?'watch':'bad',
+        'Higher geomagnetic latitude means weaker storms can still be visible.',
+        {'geomag lat':fmt(s.geomagLat,1),'look direction':s.direction,'hemisphere':s.lat>=0?'north':'south'}),
+      card('Moon and glow',clamp(100-s.moon.penalty*3),s.moon.penalty<9?'good':s.moon.penalty<17?'watch':'bad',
+        'Moonlight and city glow do not stop aurora, but they can wash out faint curtains.',
+        {'moon phase':s.moon.label,'illumination':fmt(s.moon.illum*100,0)+'%','moon penalty':s.moon.penalty})
+    ].join('');
+    renderTimeline(s.weather.rows);
+    $('report').textContent=report(s);
+  }
+
+  function card(title,score,kind,text,metrics){
+    const rows=Object.entries(metrics||{}).map(([k,v])=>'<div class="metric"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>').join('');
+    return '<article class="card '+kind+'"><h3>'+esc(title)+'</h3><p class="big">'+clamp(score)+'</p><div class="meter"><span style="width:'+clamp(score)+'%"></span></div><p>'+esc(text)+'</p><div class="metric-list">'+rows+'</div></article>';
+  }
+
+  function renderTimeline(rows){
+    if(!rows||!rows.length)return;
+    const sample=rows.slice(0,8).map(r=>{
+      const clarity=clamp(100-(Number(r.cloud)||0)-(Number(r.precip)||0)*.45);
+      return '<div class="bar"><span>'+esc(shortTime(r.time))+'</span><div class="bar-track"><span style="width:'+clarity+'%"></span></div><b>'+clarity+'</b></div>';
+    }).join('');
+    const extra='<article class="card"><h3>Hour-by-hour sky</h3><p>Higher bars mean a cleaner viewing window.</p><div class="timeline">'+sample+'</div></article>';
+    $('cards').innerHTML += extra;
+  }
+
+  function report(s){
+    return [
+      'NiftyTools Aurora Watch',
+      'Location: '+s.name+' ('+fmt(s.lat,2)+', '+fmt(s.lon,2)+')',
+      'Verdict: '+s.decision.title+' - '+s.score+' / 100',
+      'Best window: '+s.bestWindow+' local time',
+      'Direction: look '+s.direction,
+      'Max Kp tonight: '+fmt(s.kp.max,1)+'; rough required Kp: '+(s.requiredKp||'low'),
+      'Cloud average: '+fmt(s.weather.avgCloud,0)+'%; precipitation risk: '+fmt(s.weather.avgPrecip,0)+'%',
+      'Moon: '+s.moon.label+' ('+fmt(s.moon.illum*100,0)+'% lit)',
+      '',
+      s.decision.advice,
+      '',
+      'Tip: give your eyes 15-20 minutes, avoid phone brightness, and use a camera night mode if the aurora is faint.'
+    ].join('\n');
+  }
+
+  function verdict(score){
+    if(score>=78)return {title:'Strong chance',text:'Space weather and local sky conditions both look promising. This is the night to step outside.',advice:'Go to the darkest nearby place with a clear pole-facing horizon.'};
+    if(score>=58)return {title:'Worth trying',text:'There is enough signal to justify a look, especially from a dark site.',advice:'Check the sky near the best window. Faint aurora may show better in a camera than to the eye.'};
+    if(score>=38)return {title:'Possible but picky',text:'One piece of the puzzle is weak: storm strength, clouds, darkness or light pollution.',advice:'Try only if you have an easy dark spot or clouds clear unexpectedly.'};
+    return {title:'Unlikely tonight',text:'The aurora or local viewing conditions do not look strong enough right now.',advice:'Stay warm, stay lazy, and check again after the next NOAA update.'};
+  }
+
+  function fallbackWeather(err){
+    const now=new Date();
+    const start=new Date(now.getFullYear(),now.getMonth(),now.getDate(),21,0);
+    const end=new Date(start.getTime()+9*3600*1000);
+    return {ok:false,source:'fallback',start:key(start),end:key(end),rows:[],best:{time:key(start),cloud:70,precip:0},avgCloud:70,avgPrecip:0,utcOffset:-new Date().getTimezoneOffset()*60,timezone:'browser',error:err&&err.message};
+  }
+  function fallbackKp(err){return {ok:false,source:'fallback',rows:[],max:0,peak:null,error:err&&err.message};}
+  function fallbackOvation(err){return {ok:false,source:'fallback',maxNear:0,maxHemi:0,nearestValue:0,nearestKm:null,brightKm:null,error:err&&err.message};}
+
+  function geomagLat(lat,lon){
+    const poleLat=80.65, poleLon=-72.68;
+    const a=rad(lat), b=rad(poleLat), d=rad(lon-poleLon);
+    const colat=Math.acos(Math.sin(a)*Math.sin(b)+Math.cos(a)*Math.cos(b)*Math.cos(d));
+    return 90-colat*180/Math.PI;
+  }
+  function requiredKp(absM){
+    if(absM>=67)return 0;
+    if(absM>=63)return 2;
+    if(absM>=58)return 3;
+    if(absM>=53)return 4;
+    if(absM>=48)return 5;
+    if(absM>=43)return 6;
+    if(absM>=38)return 7;
+    if(absM>=34)return 8;
+    return 9;
+  }
+  function moonInfo(date){
+    const lp=2551443;
+    const now=date.getTime()/1000;
+    const newMoon=Date.UTC(2001,0,24,13,48,0)/1000;
+    const phase=((now-newMoon)%lp+lp)%lp/lp;
+    const illum=(1-Math.cos(phase*2*Math.PI))/2;
+    const label=phase<.03||phase>.97?'new moon':phase<.22?'waxing crescent':phase<.28?'first quarter':phase<.47?'waxing gibbous':phase<.53?'full moon':phase<.72?'waning gibbous':phase<.78?'last quarter':'waning crescent';
+    return {phase,illum,label,penalty:Math.round(illum*18)};
+  }
+  function loadStormDemo(){
+    const lat=Number($('lat').value), lon=Number($('lon').value);
+    latestState=scoreAurora({
+      lat,lon,name:selectedName(),
+      weather:{ok:true,source:'demo',start:'2026-07-04T22:00',end:'2026-07-05T05:00',rows:[
+        {time:'2026-07-04T22:00',cloud:22,precip:0},{time:'2026-07-04T23:00',cloud:12,precip:0},{time:'2026-07-05T00:00',cloud:8,precip:0},{time:'2026-07-05T01:00',cloud:18,precip:0},{time:'2026-07-05T02:00',cloud:30,precip:5}
+      ],best:{time:'2026-07-05T00:00',cloud:8,precip:0},avgCloud:18,avgPrecip:1,utcOffset:-14400,timezone:'demo'},
+      kp:{ok:true,source:'demo',max:7.3,peak:{local:'2026-07-05T00:00'},rows:[]},
+      ovation:{ok:true,source:'demo',maxNear:66,maxHemi:88,nearestValue:42,nearestKm:640,brightKm:410},
+      lightPenalty:Number($('light').value)
+    });
+    render(latestState);
+  }
+  function copyReport(btn){
+    if(navigator.clipboard)navigator.clipboard.writeText($('report').textContent||'');
+    const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1100);
+  }
+  function distanceKm(lat1,lon1,lat2,lon2){
+    const R=6371, dLat=rad(lat2-lat1), dLon=rad(lon2-lon1);
+    const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  }
+  function rad(n){return n*Math.PI/180;}
+  function avg(a){const b=a.filter(Number.isFinite);return b.length?b.reduce((x,y)=>x+y,0)/b.length:0;}
+  function hoursBetween(start,end){if(!start||!end)return 0;return Math.max(0,(new Date(end)-new Date(start))/36e5);}
+  function shortTime(s){if(!s)return '--';const m=String(s).match(/T(\d\d):(\d\d)/);return m?m[1]+':'+m[2]:String(s);}
+  function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+  refreshAurora();
+</script>
+</body>
+</html>

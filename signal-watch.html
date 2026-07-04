@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Early Warning Radar — signal watch for space, quakes, outages & air | NiftyTools Hub</title>
-<meta name="description" content="A browser-based early warning radar that watches public anomaly signals: space weather, earthquakes, internet outages, news panic, market stress and air quality.">
-<meta property="og:title" content="Early Warning Radar — NiftyTools Hub">
-<meta property="og:description" content="Track public anomaly signals and get a clear weirdness score without tracking private people.">
+<title>Early Warning Radar - world and local signal watch | NiftyTools Hub</title>
+<meta name="description" content="A browser-based early warning radar that separates worldwide anomaly signals from local alerts, outages, news, travel, air quality and earthquakes.">
+<meta property="og:title" content="Early Warning Radar - NiftyTools Hub">
+<meta property="og:description" content="Track public anomaly signals with separate world and local scores.">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://niftytoolshub.com/signal-watch.html">
 <style>
@@ -14,15 +14,15 @@
   :root{
     --bg:#0a0d0a; --panel:#0d110d; --txt:#d6e2d6; --mut:#74856f; --line:#1b241c;
     --grn:#46e07a; --grnsoft:#2f9d57; --amber:#ffb454; --bad:#ff6b6b; --blue:#77c8ff;
-    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
     background:
       linear-gradient(rgba(70,224,122,.02) 1px,transparent 1px) 0 0/100% 32px,
       linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,
-      radial-gradient(900px 520px at 82% -12%, rgba(119,200,255,.08), transparent 60%),
-      radial-gradient(580px 360px at 4% 8%, rgba(255,180,84,.045), transparent 55%),
+      radial-gradient(900px 520px at 82% -12%,rgba(119,200,255,.08),transparent 60%),
+      radial-gradient(580px 360px at 4% 8%,rgba(255,180,84,.045),transparent 55%),
       var(--bg);
     -webkit-font-smoothing:antialiased}
   a{color:var(--grn);text-decoration:none}
@@ -34,45 +34,47 @@
   .logo .mk{width:11px;height:16px;background:var(--grn);box-shadow:0 0 10px var(--grn);animation:blink 1.1s steps(1) infinite}
   @keyframes blink{50%{opacity:.12}}
   .crumb{color:var(--mut);font-size:12.5px;margin:22px 0 6px}
-  h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.5px;margin:6px 0 12px;text-transform:uppercase}
-  h1::before{content:"> ";color:var(--grn)}
-  .lead{color:var(--mut);font-size:14px;max-width:920px;margin:0 0 24px}
+  h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:0;margin:6px 0 12px;text-transform:uppercase}
+  h1:before{content:"> ";color:var(--grn)}
+  .lead{color:var(--mut);font-size:14px;max-width:960px;margin:0 0 24px}
   .layout{display:grid;grid-template-columns:minmax(300px,370px) 1fr;gap:18px;align-items:start}
   .layout>section{min-width:0}
   @media(max-width:920px){.layout{grid-template-columns:1fr}}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin-bottom:18px;min-width:0}
-  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 16px}
-  .panel h2::before{content:"// ";color:var(--grnsoft)}
+  .panel h2,.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 16px}
+  .panel h2:before,.section-title:before{content:"// ";color:var(--grnsoft)}
   label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px}
-  input,select{width:100%;font-family:var(--mono);background:var(--bg);border:1px solid var(--line);
-    color:var(--txt);border-radius:4px;padding:9px 11px;font-size:13px;outline:0;caret-color:var(--grn);min-width:0}
+  input,select{width:100%;font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--txt);
+    border-radius:4px;padding:9px 11px;font-size:13px;outline:0;caret-color:var(--grn);min-width:0}
   input:focus,select:focus{border-color:var(--grnsoft)}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .grid>*{min-width:0}
   @media(max-width:560px){.grid{grid-template-columns:1fr}}
   .stack{display:grid;gap:12px}
   .actions{display:flex;gap:10px;flex-wrap:wrap}
-  .btn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;
-    border-radius:5px;padding:10px 14px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
+  .btn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;border-radius:5px;
+    padding:10px 14px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
   .btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.4)}
   .btn:disabled{opacity:.45;cursor:not-allowed}
   .btn.ghost{border-color:var(--line);color:var(--txt)}
   .btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--grn);color:var(--grn);box-shadow:none}
   .note,.hint{font-size:11.5px;color:var(--mut);line-height:1.6}
-  .score-panel{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:center;margin-bottom:18px}
-  @media(max-width:720px){.score-panel{grid-template-columns:1fr}}
-  .dial{width:210px;height:210px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto;
+  .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+  @media(max-width:760px){.score-grid{grid-template-columns:1fr}}
+  .score-panel{display:grid;grid-template-columns:148px 1fr;gap:16px;align-items:center;margin:0}
+  @media(max-width:520px){.score-panel{grid-template-columns:1fr}}
+  .dial{width:148px;height:148px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;margin:0 auto;
     background:conic-gradient(var(--grn) calc(var(--score,0)*1%),rgba(214,226,214,.08) 0);
-    box-shadow:0 0 30px rgba(70,224,122,.08)}
-  .dial-inner{width:164px;height:164px;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;text-align:center}
-  .score{font-size:44px;font-weight:800;line-height:1;color:var(--txt)}
-  .score small{display:block;font-size:11px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:.7px;margin-top:8px}
-  .headline h2{font-size:22px;margin:0 0 8px;text-transform:uppercase}
-  .headline p{color:var(--mut);margin:0 0 14px;max-width:620px}
+    box-shadow:0 0 24px rgba(70,224,122,.08)}
+  .dial-inner{width:112px;height:112px;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;text-align:center}
+  .score{font-size:32px;font-weight:800;line-height:1;color:var(--txt)}
+  .score small{display:block;font-size:10px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:.7px;margin-top:6px}
+  .headline h2{font-size:18px;margin:0 0 8px;text-transform:uppercase}
+  .headline p{color:var(--mut);margin:0 0 12px;max-width:620px;font-size:12.5px}
   .badges{display:flex;gap:8px;flex-wrap:wrap}
   .badge{font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:var(--bg)}
   .badge b{color:var(--grn)}
-  .signals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .signals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
   @media(max-width:720px){.signals{grid-template-columns:1fr}}
   .signal{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
   .signal[data-level="normal"]{border-color:rgba(70,224,122,.32)}
@@ -80,7 +82,7 @@
   .signal[data-level="severe"],.signal[data-level="critical"]{border-color:rgba(255,107,107,.58)}
   .signal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px}
   .signal h3{font-size:14px;margin:0;color:var(--txt)}
-  .signal h3::before{content:"> ";color:var(--grn)}
+  .signal h3:before{content:"> ";color:var(--grn)}
   .pill{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;border:1px solid var(--line);border-radius:4px;padding:3px 7px;color:var(--mut);white-space:nowrap}
   .pill.normal{color:var(--grn);border-color:rgba(70,224,122,.42)}
   .pill.elevated{color:var(--amber);border-color:rgba(255,180,84,.5)}
@@ -95,8 +97,8 @@
   .source{font-size:10.5px;color:var(--mut);margin-top:10px;word-break:break-word}
   .log{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:18px}
   .log h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 12px}
-  .log h2::before{content:"// ";color:var(--grnsoft)}
-  pre{white-space:pre-wrap;word-break:break-word;margin:0;color:var(--txt);font-family:var(--mono);font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:12px;max-height:210px;overflow:auto}
+  .log h2:before{content:"// ";color:var(--grnsoft)}
+  pre{white-space:pre-wrap;word-break:break-word;margin:0;color:var(--txt);font-family:var(--mono);font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:12px;max-height:230px;overflow:auto}
   footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
 </style>
 </head>
@@ -104,14 +106,14 @@
 <header>
   <div class="wrap nav">
     <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
-    <a href="/" style="color:var(--mut);font-size:13px">← all tools</a>
+    <a href="/" style="color:var(--mut);font-size:13px">back to all tools</a>
   </div>
 </header>
 
 <main class="wrap">
   <div class="crumb">Home / Monitoring Tools / Early Warning Radar</div>
   <h1>Early Warning Radar</h1>
-  <p class="lead">A public-signal dashboard for weirdness: space weather, earthquake clusters, internet outages, news panic, market stress and wildfire/air quality. It watches aggregate data, not private people.</p>
+  <p class="lead">A public-signal dashboard for weirdness with two separate layers: worldwide signals that affect everyone, and local signals that change with your selected place.</p>
 
   <div class="layout">
     <section>
@@ -119,7 +121,7 @@
         <h2>Radar settings</h2>
         <div class="stack">
           <div>
-            <label for="place">Local air / quake reference</label>
+            <label for="place">Local reference</label>
             <select id="place" onchange="setPlace()">
               <option value="toronto">Toronto, Canada</option>
               <option value="new-york">New York, USA</option>
@@ -144,43 +146,47 @@
             <button class="btn ghost" onclick="loadStressDemo()">Stress test</button>
             <button class="btn ghost" onclick="copyReport(this)">Copy report</button>
           </div>
-          <p class="hint">Live sources can occasionally block browser requests. If a card says “source unavailable,” the page is still working; that source just did not answer from this browser.</p>
+          <p class="hint">Worldwide score ignores your location. Local score uses coordinates for alerts, nearby quakes, air/smoke, network probes, news attention and travel friction.</p>
         </div>
       </div>
 
       <div class="panel">
-        <h2>Signal rules</h2>
-        <p class="note">Scores are anomaly estimates, not predictions. The radar raises the level when multiple independent public systems move at once: solar activity, earthquakes, outages, public information-seeking, market volatility and air/smoke conditions.</p>
-        <div class="badges">
-          <span class="badge"><b>0-24</b> normal</span>
-          <span class="badge"><b>25-44</b> elevated</span>
-          <span class="badge"><b>45-64</b> weird</span>
-          <span class="badge"><b>65-79</b> severe</span>
-          <span class="badge"><b>80+</b> critical</span>
-        </div>
+        <h2>Signal split</h2>
+        <p class="note">World radar: space weather, global quake clustering, major internet status pages, public information-seeking and market stress.</p>
+        <p class="note">Local radar: official alerts where available, nearby quakes, local air/smoke, weather friction, your-network health probes, local news attention and travel friction.</p>
       </div>
 
       <div class="panel">
         <h2>Premium hooks</h2>
-        <p class="note">Custom watchlists, local alerts, email/SMS, webhooks, saved baselines and per-city signal monitors can become the paid layer. The free radar remains public-source and privacy-preserving.</p>
+        <p class="note">Paid layer idea: saved locations, alert thresholds, SMS/email/webhooks, daily local briefing, AI explanations and watchlists for custom sources.</p>
       </div>
     </section>
 
     <section>
-      <div class="panel score-panel">
-        <div class="dial" id="dial" style="--score:0"><div class="dial-inner"><div class="score"><span id="scoreNum">--</span><small>weirdness</small></div></div></div>
-        <div class="headline">
-          <h2 id="scoreLabel">Loading signals</h2>
-          <p id="scoreSummary">Checking public data sources now. This usually takes a few seconds.</p>
-          <div class="badges">
-            <span class="badge"><b id="lastUpdated">--</b> updated</span>
-            <span class="badge"><b id="sourceCount">0/6</b> sources reached</span>
-            <span class="badge"><b id="confidence">--</b> confidence</span>
+      <div class="score-grid">
+        <div class="panel score-panel">
+          <div class="dial" id="worldDial" style="--score:0"><div class="dial-inner"><div class="score"><span id="worldScore">--</span><small>world</small></div></div></div>
+          <div class="headline">
+            <h2 id="worldLabel">Loading</h2>
+            <p id="worldSummary">Checking global public signals.</p>
+            <div class="badges"><span class="badge"><b id="worldSources">0/5</b> sources</span></div>
+          </div>
+        </div>
+        <div class="panel score-panel">
+          <div class="dial" id="localDial" style="--score:0"><div class="dial-inner"><div class="score"><span id="localScore">--</span><small>local</small></div></div></div>
+          <div class="headline">
+            <h2 id="localLabel">Loading</h2>
+            <p id="localSummary">Checking local signals for <span id="placeLabel">Toronto</span>.</p>
+            <div class="badges"><span class="badge"><b id="localSources">0/7</b> sources</span></div>
           </div>
         </div>
       </div>
 
-      <div id="signals" class="signals"></div>
+      <h2 class="section-title">World radar</h2>
+      <div id="worldSignals" class="signals"></div>
+
+      <h2 class="section-title">Local radar</h2>
+      <div id="localSignals" class="signals"></div>
 
       <div class="log">
         <h2>Readable report</h2>
@@ -190,7 +196,7 @@
   </div>
 </main>
 
-<footer><div class="wrap">© 2026 NiftyTools Hub · a Voynich Tech project · niftytoolshub.com</div></footer>
+<footer><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
 
 <script>
   const $=id=>document.getElementById(id);
@@ -207,7 +213,16 @@
     'tokyo':['Tokyo, Japan',35.68,139.65],
     'sydney':['Sydney, Australia',-33.87,151.21]
   };
-  const WEIGHTS={space:0.15,quake:0.18,internet:0.16,news:0.17,market:0.14,air:0.20};
+  const AIRPORTS=[
+    ['YYZ','Toronto Pearson',43.68,-79.63],['JFK','New York JFK',40.64,-73.78],['LAX','Los Angeles',33.94,-118.41],
+    ['MEX','Mexico City',19.44,-99.07],['LHR','London Heathrow',51.47,-0.45],['MAD','Madrid Barajas',40.50,-3.57],
+    ['BOG','Bogota El Dorado',4.70,-74.15],['LIM','Lima Jorge Chavez',-12.02,-77.11],['GRU','Sao Paulo Guarulhos',-23.43,-46.47],
+    ['HND','Tokyo Haneda',35.55,139.78],['SYD','Sydney Kingsford Smith',-33.94,151.18],['YUL','Montreal Trudeau',45.47,-73.74],
+    ['ORD','Chicago O Hare',41.98,-87.91],['SFO','San Francisco',37.62,-122.38],['MIA','Miami',25.79,-80.29],
+    ['YVR','Vancouver',49.19,-123.18],['FRA','Frankfurt',50.04,8.56],['CDG','Paris Charles de Gaulle',49.01,2.55]
+  ];
+  const WORLD_WEIGHTS={space:.22,quakeWorld:.20,internet:.19,news:.20,market:.19};
+  const LOCAL_WEIGHTS={alerts:.16,quakeLocal:.18,air:.20,weather:.13,internetLocal:.11,newsLocal:.11,travel:.11};
   let latestSignals=[];
 
   function setPlace(){
@@ -215,24 +230,18 @@
     if(!p)return;
     $('lat').value=p[1];
     $('lon').value=p[2];
+    refreshSignals();
   }
-  function level(score){
-    if(score>=80)return 'critical';
-    if(score>=65)return 'severe';
-    if(score>=45)return 'elevated';
-    if(score>=25)return 'elevated';
-    return 'normal';
-  }
-  function label(score){
-    if(score>=80)return 'Critical';
-    if(score>=65)return 'Severe';
-    if(score>=45)return 'Weird';
-    if(score>=25)return 'Elevated';
-    return 'Normal';
-  }
-  function clamp(n){return Math.max(0,Math.min(100,Math.round(n||0)));}
+  function placeName(){const p=PLACES[$('place').value];return p?p[0]:'Manual location';}
+  function cityName(){return placeName().split(',')[0].trim();}
+  function countryName(){return (placeName().split(',')[1]||'').trim();}
+  function isLikelyUS(lat,lon){return lat>=18&&lat<=72&&lon>=-170&&lon<=-65;}
+  function level(score){if(score>=80)return 'critical';if(score>=65)return 'severe';if(score>=45)return 'elevated';if(score>=25)return 'elevated';return 'normal';}
+  function label(score){if(score>=80)return 'Critical';if(score>=65)return 'Severe';if(score>=45)return 'Weird';if(score>=25)return 'Elevated';return 'Normal';}
+  function clamp(n){return Math.max(0,Math.min(100,Math.round(Number(n)||0)));}
   function fmt(n,d=1){return Number.isFinite(Number(n))?Number(n).toFixed(d):'--';}
   function age(ts){return ts?new Date(ts).toLocaleString():'--';}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
   async function fetchJson(url,timeout=10000){
     const controller=new AbortController();
     const t=setTimeout(()=>controller.abort(),timeout);
@@ -242,23 +251,27 @@
       return await res.json();
     }finally{clearTimeout(t);}
   }
-  function unavailable(id,title,source,err){
-    return {id,title,score:12,status:'normal',confidence:'low',ok:false,updated:null,source,
+  function unavailable(id,title,scope,source,err){
+    return {id,title,scope,score:12,status:'normal',confidence:'low',ok:false,updated:null,source,
       why:'Source unavailable from this browser: '+(err&&err.message?err.message:'request failed')+'. The combined score treats this as neutral.',
-      metrics:{'source':'unavailable'}};
+      metrics:{source:'unavailable'}};
+  }
+  function neutralLocal(id,title,source,why,metrics={}){
+    return {id,title,scope:'local',score:12,status:'normal',confidence:'low',ok:true,updated:new Date().toISOString(),source,why,metrics};
   }
 
   async function loadSpace(){
-    const source='NOAA SWPC planetary K-index';
+    const source='NOAA SWPC Kp forecast';
     try{
-      const rows=await fetchJson('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json');
-      const latest=rows.filter(r=>Array.isArray(r)&&!isNaN(Number(r[1]))).pop();
-      const kp=Number(latest[1]);
-      const score=kp>=8?95:kp>=7?82:kp>=6?68:kp>=5?54:kp>=4?34:14;
-      return {id:'space',title:'Space Weather',score,status:level(score),confidence:'medium',ok:true,updated:latest[0],source,
-        why:kp>=5?'Geomagnetic activity is storm-level. GPS, radio and aurora conditions can change quickly.':'Geomagnetic activity is within the normal-to-active range.',
-        metrics:{'Kp index':kp,'signal':'geomagnetic activity'}};
-    }catch(err){return unavailable('space','Space Weather',source,err);}
+      const rows=await fetchJson('https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json');
+      const future=(rows||[]).filter(r=>new Date(String(r.time_tag)+'Z')>=new Date(Date.now()-3*3600*1000)).slice(0,12);
+      const max=Math.max(0,...future.map(r=>Number(r.kp)||0));
+      const peak=future.find(r=>Number(r.kp)===max)||future[0];
+      const score=max>=8?95:max>=7?82:max>=6?68:max>=5?54:max>=4?34:14;
+      return {id:'space',title:'Space Weather',scope:'world',score,status:level(score),confidence:'medium',ok:true,updated:peak&&peak.time_tag,source,
+        why:max>=5?'Geomagnetic storm conditions are forecast or observed. This can affect radio/GPS and expand aurora visibility.':'Geomagnetic activity is within the normal-to-active range.',
+        metrics:{'max Kp next 36h':fmt(max,1),'NOAA scale':peak&&peak.noaa_scale?peak.noaa_scale:'none'}};
+    }catch(err){return unavailable('space','Space Weather','world',source,err);}
   }
   async function loadQuakes(){
     const source='USGS earthquakes, past 24 hours';
@@ -269,12 +282,22 @@
       const maxMag=Math.max(0,...quakes.map(q=>q.mag));
       const m45=quakes.filter(q=>q.mag>=4.5).length;
       const m5=quakes.filter(q=>q.mag>=5).length;
-      const nearby=quakes.filter(q=>q.mag>=2.5&&distanceKm(lat,lon,q.coords[1],q.coords[0])<500).length;
-      const score=clamp((maxMag>=7?88:maxMag>=6?65:maxMag>=5?42:maxMag>=4.5?28:10)+Math.min(25,m5*6)+Math.min(18,nearby*4));
-      return {id:'quake',title:'Earthquake Cluster',score,status:level(score),confidence:'high',ok:true,updated:new Date(Math.max(...quakes.map(q=>q.time))).toISOString(),source,
-        why:m5||nearby?'Recent quake activity is above the quiet baseline, especially for larger or nearby events.':'No unusual large-earthquake clustering in the public USGS daily feed.',
-        metrics:{'max magnitude':fmt(maxMag,1),'M4.5+ count':m45,'M5+ count':m5,'nearby M2.5+':nearby}};
-    }catch(err){return unavailable('quake','Earthquake Cluster',source,err);}
+      const nearby=quakes.filter(q=>q.mag>=2.5&&distanceKm(lat,lon,q.coords[1],q.coords[0])<500);
+      const nearMax=Math.max(0,...nearby.map(q=>q.mag));
+      const worldScore=clamp((maxMag>=7?88:maxMag>=6?65:maxMag>=5?42:maxMag>=4.5?28:10)+Math.min(25,m5*6));
+      const localScore=clamp((nearMax>=6?85:nearMax>=5?62:nearMax>=4?44:nearMax>=3?28:10)+Math.min(24,nearby.length*5));
+      const updated=new Date(Math.max(...quakes.map(q=>q.time))).toISOString();
+      return [
+        {id:'quakeWorld',title:'Global Earthquake Cluster',scope:'world',score:worldScore,status:level(worldScore),confidence:'high',ok:true,updated,source,
+          why:m5?'The global daily feed includes notable M5+ activity.':'No unusual large-earthquake clustering in the global daily feed.',
+          metrics:{'max magnitude':fmt(maxMag,1),'M4.5+ count':m45,'M5+ count':m5}},
+        {id:'quakeLocal',title:'Nearby Earthquakes',scope:'local',score:localScore,status:level(localScore),confidence:'high',ok:true,updated,source,
+          why:nearby.length?'Recent M2.5+ quakes appeared within 500 km of '+placeName()+'.':'No M2.5+ quake cluster within 500 km of '+placeName()+'.',
+          metrics:{'nearby count':nearby.length,'nearby max':fmt(nearMax,1),'radius':'500 km'}}
+      ];
+    }catch(err){
+      return [unavailable('quakeWorld','Global Earthquake Cluster','world',source,err),unavailable('quakeLocal','Nearby Earthquakes','local',source,err)];
+    }
   }
   async function loadInternet(){
     const source='Public statuspage summaries';
@@ -286,54 +309,51 @@
     ];
     const settled=await Promise.allSettled(pages.map(async ([name,url])=>[name,await fetchJson(url,8000)]));
     const ok=settled.filter(r=>r.status==='fulfilled').map(r=>r.value);
-    if(!ok.length)return unavailable('internet','Internet Outage Pulse',source,new Error('all status sources blocked or unavailable'));
-    let incidents=0, degraded=0, names=[];
+    if(!ok.length)return unavailable('internet','Internet Outage Pulse','world',source,new Error('all status sources blocked or unavailable'));
+    let incidents=0,degraded=0,names=[];
     ok.forEach(([name,data])=>{
       const active=(data.incidents||[]).filter(i=>!['resolved','postmortem'].includes(String(i.status).toLowerCase()));
       const bad=(data.components||[]).filter(c=>!['operational'].includes(String(c.status).toLowerCase()));
-      incidents+=active.length; degraded+=bad.length;
+      incidents+=active.length;degraded+=bad.length;
       if(active.length||bad.length)names.push(name);
     });
     const score=clamp(10+incidents*22+degraded*5+(names.length>=2?18:0));
-    return {id:'internet',title:'Internet Outage Pulse',score,status:level(score),confidence:ok.length>=3?'medium':'low',ok:true,updated:new Date().toISOString(),source,
-      why:names.length?'Major public status pages are reporting active incidents or degraded components: '+names.join(', ')+'.':'Checked public status pages are mostly operational.',
+    return {id:'internet',title:'Internet Outage Pulse',scope:'world',score,status:level(score),confidence:ok.length>=3?'medium':'low',ok:true,updated:new Date().toISOString(),source,
+      why:names.length?'Major public status pages report active incidents or degraded components: '+names.join(', ')+'.':'Checked public status pages are mostly operational.',
       metrics:{'sources reached':ok.length+'/'+pages.length,'active incidents':incidents,'degraded components':degraded}};
   }
   async function loadNews(){
     const source='Wikimedia Pageviews API';
     const pages=['Nuclear_warfare','Bank_run','Cyberattack','Radiation_sickness','Iodine','State_of_emergency','Solar_flare'];
     try{
-      const end=new Date(); end.setUTCDate(end.getUTCDate()-1);
-      const start=new Date(end); start.setUTCDate(start.getUTCDate()-9);
-      const startS=ymd(start), endS=ymd(end);
+      const end=new Date();end.setUTCDate(end.getUTCDate()-1);
+      const start=new Date(end);start.setUTCDate(start.getUTCDate()-9);
       const rows=await Promise.all(pages.map(async p=>{
-        const url='https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/'+encodeURIComponent(p)+'/daily/'+startS+'/'+endS+'?origin=*';
+        const url='https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/'+encodeURIComponent(p)+'/daily/'+ymd(start)+'/'+ymd(end)+'?origin=*';
         const data=await fetchJson(url,8000);
         const counts=(data.items||[]).map(i=>i.views||0);
-        const last=counts[counts.length-1]||0;
-        const base=avg(counts.slice(0,-1))||1;
+        const last=counts[counts.length-1]||0, base=avg(counts.slice(0,-1))||1;
         return {page:p,last,base,ratio:last/base};
       }));
       const top=rows.sort((a,b)=>b.ratio-a.ratio)[0];
       const avgRatio=avg(rows.map(r=>r.ratio));
       const score=clamp(12+Math.min(48,(top.ratio-1)*18)+Math.min(28,(avgRatio-1)*16));
-      return {id:'news',title:'News Panic Meter',score,status:level(score),confidence:'medium',ok:true,updated:end.toISOString(),source,
-        why:top.ratio>1.8?'Public information-seeking jumped for '+top.page.replaceAll('_',' ')+', suggesting anxiety or attention around that topic.':'No broad spike in the watched public-information pages.',
+      return {id:'news',title:'News Panic Meter',scope:'world',score,status:level(score),confidence:'medium',ok:true,updated:end.toISOString(),source,
+        why:top.ratio>1.8?'Public information-seeking jumped for '+top.page.replaceAll('_',' ')+'.':'No broad spike in watched emergency-related public-information pages.',
         metrics:{'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x','average ratio':fmt(avgRatio,2)+'x'}};
-    }catch(err){return unavailable('news','News Panic Meter',source,err);}
+    }catch(err){return unavailable('news','News Panic Meter','world',source,err);}
   }
   async function loadMarkets(){
     const source='CoinGecko public market API';
     try{
       const data=await fetchJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin&vs_currencies=usd&include_24hr_change=true',9000);
-      const btc=Math.abs(data.bitcoin.usd_24h_change||0);
-      const eth=Math.abs(data.ethereum.usd_24h_change||0);
+      const btc=Math.abs(data.bitcoin.usd_24h_change||0), eth=Math.abs(data.ethereum.usd_24h_change||0);
       const peg=Math.max(Math.abs((data.tether.usd||1)-1),Math.abs((data['usd-coin'].usd||1)-1));
       const score=clamp(10+Math.max(btc,eth)*7+peg*2500);
-      return {id:'market',title:'Market Stress',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
-        why:score>=45?'Crypto volatility or stablecoin peg movement is elevated. Treat this as a market-stress proxy, not a full financial forecast.':'Crypto and stablecoin stress proxies are relatively calm.',
-        metrics:{'BTC 24h move':fmt(data.bitcoin.usd_24h_change,2)+'%','ETH 24h move':fmt(data.ethereum.usd_24h_change,2)+'%','stablecoin max drift':fmt(peg*100,2)+'%'}};
-    }catch(err){return unavailable('market','Market Stress',source,err);}
+      return {id:'market',title:'Market Stress',scope:'world',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
+        why:score>=45?'Crypto volatility or stablecoin peg movement is elevated. This is a market-stress proxy, not financial advice.':'Crypto and stablecoin stress proxies are relatively calm.',
+        metrics:{'BTC 24h move':fmt(data.bitcoin.usd_24h_change,2)+'%','ETH 24h move':fmt(data.ethereum.usd_24h_change,2)+'%','stablecoin drift':fmt(peg*100,2)+'%'}};
+    }catch(err){return unavailable('market','Market Stress','world',source,err);}
   }
   async function loadAir(){
     const source='Open-Meteo Air Quality API';
@@ -341,106 +361,245 @@
       const lat=Number($('lat').value), lon=Number($('lon').value);
       const url='https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+lat+'&longitude='+lon+'&current=us_aqi,pm2_5,pm10,carbon_monoxide,nitrogen_dioxide,ozone';
       const data=await fetchJson(url,9000);
-      const c=data.current||{};
-      const aqi=Number(c.us_aqi)||0;
-      const pm=Number(c.pm2_5)||0;
+      const c=data.current||{}, aqi=Number(c.us_aqi)||0, pm=Number(c.pm2_5)||0;
       const score=aqi>=200?92:aqi>=150?76:aqi>=100?58:aqi>=50?34:12;
-      return {id:'air',title:'Wildfire / Air Quality',score,status:level(score),confidence:'high',ok:true,updated:c.time,source,
-        why:aqi>=100?'Air quality is unhealthy or approaching unhealthy levels. PM2.5 can indicate smoke or pollution load.':'Local air quality is currently in the good-to-moderate range.',
+      return {id:'air',title:'Wildfire / Air Quality',scope:'local',score,status:level(score),confidence:'high',ok:true,updated:c.time,source,
+        why:aqi>=100?'Local air quality is unhealthy or approaching unhealthy levels. PM2.5 can indicate smoke or pollution load.':'Local air quality is currently good-to-moderate.',
         metrics:{'US AQI':aqi,'PM2.5':fmt(pm,1)+' ug/m3','PM10':fmt(c.pm10,1)+' ug/m3'}};
-    }catch(err){return unavailable('air','Wildfire / Air Quality',source,err);}
+    }catch(err){return unavailable('air','Wildfire / Air Quality','local',source,err);}
+  }
+  async function loadLocalWeather(){
+    const source='Open-Meteo forecast API';
+    try{
+      const lat=Number($('lat').value), lon=Number($('lon').value);
+      const url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&hourly=precipitation_probability,wind_gusts_10m,weather_code&forecast_hours=24&timezone=auto';
+      const data=await fetchJson(url,9000);
+      const h=data.hourly||{};
+      const precip=Math.max(0,...(h.precipitation_probability||[]).map(Number));
+      const gust=Math.max(0,...(h.wind_gusts_10m||[]).map(Number));
+      const bad=(h.weather_code||[]).filter(c=>Number(c)>=61||Number(c)===45||Number(c)===48||Number(c)>=95).length;
+      const score=clamp(10+precip*.45+Math.max(0,gust-35)*1.2+bad*6);
+      return {id:'weather',title:'Local Weather Friction',scope:'local',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
+        why:score>=45?'Local forecast has disruptive rain, fog, storms or strong gusts in the next 24 hours.':'Local forecast does not show a major short-term disruption signal.',
+        metrics:{'max precip chance':fmt(precip,0)+'%','max wind gust':fmt(gust,0)+' km/h','rough hours':bad}};
+    }catch(err){return unavailable('weather','Local Weather Friction','local',source,err);}
+  }
+  async function loadOfficialAlerts(){
+    const source='National Weather Service alerts API';
+    const lat=Number($('lat').value), lon=Number($('lon').value);
+    const country=countryName();
+    const canUseNws=country==='USA'||($('place').value==='manual'&&isLikelyUS(lat,lon));
+    if(!canUseNws){
+      return neutralLocal('alerts','Official Alerts','official alert source pending',
+        'Official browser-readable alert feed is not wired for '+placeName()+' yet. U.S. locations use NWS now; other regions stay neutral.',
+        {'coverage':'U.S. official now','active alerts':'not checked','next':'add country feeds'});
+    }
+    try{
+      const data=await fetchJson('https://api.weather.gov/alerts/active?point='+lat.toFixed(4)+','+lon.toFixed(4),9000);
+      const alerts=(data.features||[]).map(f=>f.properties||{});
+      const severityRank={Extreme:95,Severe:78,Moderate:55,Minor:32,Unknown:20};
+      const top=alerts.slice().sort((a,b)=>(severityRank[b.severity]||20)-(severityRank[a.severity]||20))[0];
+      const score=alerts.length?clamp((severityRank[top.severity]||30)+Math.min(15,(alerts.length-1)*5)):8;
+      return {id:'alerts',title:'Official Alerts',scope:'local',score,status:level(score),confidence:'high',ok:true,updated:new Date().toISOString(),source,
+        why:alerts.length?'Active official alert for '+placeName()+': '+(top.headline||top.event||top.severity)+'.':'No active NWS alert for this point.',
+        metrics:{'active alerts':alerts.length,'top severity':top?top.severity:'none','headline':top?(top.event||top.headline||'alert'):'none'}};
+    }catch(err){return unavailable('alerts','Official Alerts','local',source,err);}
+  }
+  async function loadLocalInternetHealth(){
+    const source='Browser probes from your current network';
+    const endpoints=[
+      ['Google','https://www.google.com/favicon.ico'],
+      ['Cloudflare','https://www.cloudflare.com/favicon.ico'],
+      ['Wikipedia','https://www.wikipedia.org/static/favicon/wikipedia.ico'],
+      ['Apple','https://www.apple.com/favicon.ico']
+    ];
+    try{
+      const probes=await Promise.all(endpoints.map(([name,url])=>probeEndpoint(name,url,4200)));
+      const failed=probes.filter(p=>!p.ok).length;
+      const slow=probes.filter(p=>p.ok&&p.ms>1800).length;
+      const avgMs=avg(probes.filter(p=>p.ok).map(p=>p.ms));
+      const score=clamp(8+failed*23+slow*11+(avgMs>1200?12:0));
+      return {id:'internetLocal',title:'Local Internet Health',scope:'local',score,status:level(score),confidence:'low',ok:true,updated:new Date().toISOString(),source,
+        why:failed||slow?'Your browser had trouble reaching multiple public endpoints. This reflects your current network, not an official citywide outage feed.':'Your browser reached the probe endpoints without obvious trouble. This is a local-network approximation.',
+        metrics:{'probes reached':(endpoints.length-failed)+'/'+endpoints.length,'failures':failed,'slow responses':slow,'avg response':fmt(avgMs,0)+' ms'}};
+    }catch(err){return unavailable('internetLocal','Local Internet Health','local',source,err);}
+  }
+  async function loadLocalNewsSpike(){
+    const source='GDELT DOC API';
+    const city=cityName(), country=countryName();
+    const emergencyTerms='(emergency OR evacuation OR outage OR wildfire OR earthquake OR flood OR flooding OR storm OR airport OR travel OR strike)';
+    const placeTerm=country?'"'+city+'" "'+country+'"':'"'+city+'"';
+    const query=placeTerm+' '+emergencyTerms;
+    try{
+      const recent=await fetchJson('https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=24h&maxrecords=50&sort=HybridRel',10000);
+      const week=await fetchJson('https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=150&sort=HybridRel',10000);
+      const recentArticles=recent.articles||[];
+      const weekArticles=week.articles||[];
+      const baseline=Math.max(1,weekArticles.length/7);
+      const ratio=recentArticles.length/baseline;
+      const theme=themeFromArticles(recentArticles);
+      const score=clamp(10+Math.min(48,(ratio-1)*16)+Math.min(28,recentArticles.length*2));
+      return {id:'newsLocal',title:'Local News Spike',scope:'local',score,status:level(score),confidence:recentArticles.length?'medium':'low',ok:true,updated:new Date().toISOString(),source,
+        why:recentArticles.length?'Local disruption-related news attention is around '+fmt(ratio,1)+'x the seven-day daily baseline. Top theme: '+theme+'.':'No strong local disruption-related news attention found by this public search.',
+        metrics:{'24h articles':recentArticles.length,'7d baseline/day':fmt(baseline,1),'top theme':theme}};
+    }catch(err){return unavailable('newsLocal','Local News Spike','local',source,err);}
+  }
+  async function loadAirportTravel(){
+    const source='Nearest-airport forecast estimate';
+    const airport=nearestAirport(Number($('lat').value),Number($('lon').value));
+    try{
+      const url='https://api.open-meteo.com/v1/forecast?latitude='+airport.lat+'&longitude='+airport.lon+'&hourly=precipitation_probability,wind_gusts_10m,weather_code,visibility&forecast_hours=24&timezone=auto';
+      const data=await fetchJson(url,9000);
+      const h=data.hourly||{};
+      const precip=Math.max(0,...(h.precipitation_probability||[]).map(Number));
+      const gust=Math.max(0,...(h.wind_gusts_10m||[]).map(Number));
+      const flags=(h.weather_code||[]).map(Number).filter(c=>c===45||c===48||c>=61||c>=95).length;
+      const visValues=(h.visibility||[]).map(Number).filter(Number.isFinite);
+      const minVis=visValues.length?Math.min(...visValues):null;
+      const score=clamp(8+precip*.36+Math.max(0,gust-35)*1.15+flags*6+(minVis!==null&&minVis<1000?22:minVis!==null&&minVis<3000?12:0));
+      return {id:'travel',title:'Airport / Travel Friction',scope:'local',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
+        why:score>=45?'Nearest-airport forecast shows weather that can create travel friction. Backend aviation feeds can make this official later.':'Nearest-airport forecast does not show a major weather-based travel friction signal.',
+        metrics:{'nearest airport':airport.code,'max precip chance':fmt(precip,0)+'%','max wind gust':fmt(gust,0)+' km/h','min visibility':minVis===null?'--':fmt(minVis/1000,1)+' km'}};
+    }catch(err){return unavailable('travel','Airport / Travel Friction','local',source,err);}
   }
 
   async function refreshSignals(){
     $('refreshBtn').disabled=true;
-    $('scoreLabel').textContent='Checking public signals';
-    $('scoreSummary').textContent='Fetching public data sources. Some cards may finish earlier than others.';
-    latestSignals=seedLoading();
-    renderSignals(latestSignals);
-    const loaders=[loadSpace,loadQuakes,loadInternet,loadNews,loadMarkets,loadAir];
-    latestSignals=await Promise.all(loaders.map(fn=>fn()));
-    renderSignals(latestSignals);
-    $('refreshBtn').disabled=false;
+    $('placeLabel').textContent=placeName().split(',')[0];
+    seedLoading();
+    try{
+      const [space,quakes,internet,news,market,alerts,air,weather,internetLocal,newsLocal,travel]=await Promise.all([
+        loadSpace(),loadQuakes(),loadInternet(),loadNews(),loadMarkets(),loadOfficialAlerts(),loadAir(),loadLocalWeather(),loadLocalInternetHealth(),loadLocalNewsSpike(),loadAirportTravel()
+      ]);
+      latestSignals=[space,quakes[0],internet,news,market,alerts,quakes[1],air,weather,internetLocal,newsLocal,travel];
+      renderSignals(latestSignals);
+    }finally{
+      $('refreshBtn').disabled=false;
+    }
   }
   function seedLoading(){
-    return [
-      ['space','Space Weather'],['quake','Earthquake Cluster'],['internet','Internet Outage Pulse'],
-      ['news','News Panic Meter'],['market','Market Stress'],['air','Wildfire / Air Quality']
-    ].map(([id,title])=>({id,title,score:0,status:'normal',confidence:'--',ok:false,updated:null,source:'loading',why:'Checking source...',metrics:{}}));
+    latestSignals=[
+      ['space','Space Weather','world'],['quakeWorld','Global Earthquake Cluster','world'],['internet','Internet Outage Pulse','world'],['news','News Panic Meter','world'],['market','Market Stress','world'],
+      ['alerts','Official Alerts','local'],['quakeLocal','Nearby Earthquakes','local'],['air','Wildfire / Air Quality','local'],['weather','Local Weather Friction','local'],
+      ['internetLocal','Local Internet Health','local'],['newsLocal','Local News Spike','local'],['travel','Airport / Travel Friction','local']
+    ].map(([id,title,scope])=>({id,title,scope,score:0,status:'normal',confidence:'--',ok:false,updated:null,source:'loading',why:'Checking source...',metrics:{}}));
+    renderSignals(latestSignals);
   }
   function renderSignals(signals){
-    $('signals').innerHTML=signals.map(renderCard).join('');
-    const reached=signals.filter(s=>s.ok).length;
-    const score=overallScore(signals);
-    $('dial').style.setProperty('--score',score);
-    $('scoreNum').textContent=score;
-    $('scoreLabel').textContent=label(score);
-    $('sourceCount').textContent=reached+'/6';
-    $('lastUpdated').textContent=new Date().toLocaleTimeString();
-    $('confidence').textContent=reached>=5?'good':reached>=3?'partial':'low';
-    const top=signals.slice().sort((a,b)=>b.score-a.score)[0];
-    $('scoreSummary').textContent=summaryFor(score,top,reached);
-    $('report').textContent=buildReport(signals,score,reached);
+    const world=signals.filter(s=>s.scope==='world'), local=signals.filter(s=>s.scope==='local');
+    $('worldSignals').innerHTML=world.map(renderCard).join('');
+    $('localSignals').innerHTML=local.map(renderCard).join('');
+    const worldScore=overallScore(world,WORLD_WEIGHTS), localScore=overallScore(local,LOCAL_WEIGHTS);
+    $('worldDial').style.setProperty('--score',worldScore);$('localDial').style.setProperty('--score',localScore);
+    $('worldScore').textContent=worldScore;$('localScore').textContent=localScore;
+    $('worldLabel').textContent=label(worldScore);$('localLabel').textContent=label(localScore);
+    $('worldSources').textContent=world.filter(s=>s.ok).length+'/'+world.length;
+    $('localSources').textContent=local.filter(s=>s.ok).length+'/'+local.length;
+    $('worldSummary').textContent=summaryFor(worldScore,world);
+    $('localSummary').textContent='For '+placeName()+': '+summaryFor(localScore,local);
+    $('report').textContent=buildReport(world,local,worldScore,localScore);
   }
   function renderCard(s){
     const lvl=level(s.score);
     const metrics=Object.entries(s.metrics||{}).map(([k,v])=>'<div class="metric"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>').join('');
-    return '<article class="signal" data-level="'+lvl+'">'+
-      '<div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill '+lvl+'">'+esc(label(s.score))+'</span></div>'+
+    return '<article class="signal" data-level="'+lvl+'"><div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill '+lvl+'">'+esc(label(s.score))+'</span></div>'+
       '<div class="signal-score">'+clamp(s.score)+'</div><div class="meter"><span style="width:'+clamp(s.score)+'%"></span></div>'+
       '<p>'+esc(s.why)+'</p><div class="metric-list">'+metrics+'</div>'+
-      '<div class="source">source: '+esc(s.source)+' · updated: '+esc(age(s.updated))+' · confidence: '+esc(s.confidence)+'</div>'+
-      '</article>';
+      '<div class="source">source: '+esc(s.source)+' - updated: '+esc(age(s.updated))+' - confidence: '+esc(s.confidence)+'</div></article>';
   }
-  function overallScore(signals){
-    const weighted=signals.reduce((sum,s)=>sum+s.score*(WEIGHTS[s.id]||0.15),0);
-    const severe=signals.filter(s=>s.score>=65).length;
-    const weird=signals.filter(s=>s.score>=45).length;
+  function overallScore(signals,weights){
+    const weighted=signals.reduce((sum,s)=>sum+s.score*(weights[s.id]||0),0);
+    const severe=signals.filter(s=>s.score>=65).length, weird=signals.filter(s=>s.score>=45).length;
     return clamp(weighted+(severe>=2?10:0)+(weird>=3?8:0));
   }
-  function summaryFor(score,top,reached){
+  function summaryFor(score,signals){
+    const reached=signals.filter(s=>s.ok).length;
+    const top=signals.slice().sort((a,b)=>b.score-a.score)[0];
     if(!reached)return 'No live sources answered yet. Try refresh, or check network access.';
-    if(score>=80)return 'Multiple public systems are flashing at once. Highest signal: '+top.title+'.';
-    if(score>=65)return 'Severe anomaly mix. Highest signal: '+top.title+'. Verify sources before acting.';
+    if(score>=80)return 'Multiple signals are flashing at once. Highest: '+top.title+'.';
+    if(score>=65)return 'Severe anomaly mix. Highest: '+top.title+'. Verify sources before acting.';
     if(score>=45)return 'Things are weird, mostly driven by '+top.title+'.';
     if(score>=25)return 'A few elevated signals, but no broad-system spike.';
     return 'Public signals are mostly quiet right now.';
   }
-  function buildReport(signals,score,reached){
+  function buildReport(world,local,worldScore,localScore){
     return [
       'NiftyTools Early Warning Radar',
-      'Weirdness score: '+score+' / 100 ('+label(score)+')',
-      'Sources reached: '+reached+' / 6',
+      'World weirdness: '+worldScore+' / 100 ('+label(worldScore)+')',
+      'Local watch: '+localScore+' / 100 ('+label(localScore)+') for '+placeName(),
       'Location reference: '+$('lat').value+', '+$('lon').value,
       'Updated: '+new Date().toLocaleString(),
       '',
-      ...signals.map(s=>'- '+s.title+': '+clamp(s.score)+' / 100 · '+label(s.score)+' · '+s.why)
+      'World signals:',
+      ...world.map(s=>'- '+s.title+': '+clamp(s.score)+' / 100 - '+label(s.score)+' - '+s.why),
+      '',
+      'Local signals:',
+      ...local.map(s=>'- '+s.title+': '+clamp(s.score)+' / 100 - '+label(s.score)+' - '+s.why)
     ].join('\n');
   }
   function copyReport(btn){
-    navigator.clipboard?.writeText($('report').textContent||'');
-    const old=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=old,1100);
+    if(navigator.clipboard)navigator.clipboard.writeText($('report').textContent||'');
+    const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1100);
   }
   function loadStressDemo(){
     latestSignals=[
-      {id:'space',title:'Space Weather',score:74,status:'severe',confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: geomagnetic storm-level Kp activity.',metrics:{'Kp index':6.7,'signal':'storm demo'}},
-      {id:'quake',title:'Earthquake Cluster',score:59,status:'elevated',confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: several M5+ earthquakes appeared in the daily feed.',metrics:{'max magnitude':'6.1','M5+ count':3,'nearby M2.5+':1}},
-      {id:'internet',title:'Internet Outage Pulse',score:68,status:'severe',confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: multiple major public status pages show active incidents.',metrics:{'sources reached':'4/4','active incidents':2,'degraded components':7}},
-      {id:'news',title:'News Panic Meter',score:57,status:'elevated',confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: public information-seeking jumped for emergency-related pages.',metrics:{'top page':'State of emergency','top ratio':'3.2x','average ratio':'1.8x'}},
-      {id:'market',title:'Market Stress',score:43,status:'elevated',confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: crypto volatility is elevated but stablecoins are holding.',metrics:{'BTC 24h move':'-5.7%','ETH 24h move':'-6.3%','stablecoin max drift':'0.15%'}},
-      {id:'air',title:'Wildfire / Air Quality',score:72,status:'severe',confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: AQI is unhealthy, consistent with smoke or heavy pollution.',metrics:{'US AQI':162,'PM2.5':'67.4 ug/m3','PM10':'91.0 ug/m3'}}
+      {id:'space',title:'Space Weather',scope:'world',score:74,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: geomagnetic storm-level Kp activity.',metrics:{'max Kp next 36h':'6.7','NOAA scale':'G2'}},
+      {id:'quakeWorld',title:'Global Earthquake Cluster',scope:'world',score:59,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: several M5+ earthquakes appeared in the daily feed.',metrics:{'max magnitude':'6.1','M5+ count':3}},
+      {id:'internet',title:'Internet Outage Pulse',scope:'world',score:68,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: multiple major public status pages show active incidents.',metrics:{'sources reached':'4/4','active incidents':2}},
+      {id:'news',title:'News Panic Meter',scope:'world',score:57,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: public information-seeking jumped for emergency-related pages.',metrics:{'top page':'State of emergency','top ratio':'3.2x'}},
+      {id:'market',title:'Market Stress',scope:'world',score:43,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: crypto volatility is elevated but stablecoins are holding.',metrics:{'BTC 24h move':'-5.7%'}},
+      {id:'alerts',title:'Official Alerts',scope:'local',score:78,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: severe official alert active near the selected location.',metrics:{'active alerts':2,'top severity':'Severe','headline':'Severe thunderstorm warning'}},
+      {id:'quakeLocal',title:'Nearby Earthquakes',scope:'local',score:38,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: minor nearby quake cluster within 500 km.',metrics:{'nearby count':4,'nearby max':'3.4'}},
+      {id:'air',title:'Wildfire / Air Quality',scope:'local',score:72,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: AQI is unhealthy, consistent with smoke or heavy pollution.',metrics:{'US AQI':162,'PM2.5':'67.4 ug/m3'}},
+      {id:'weather',title:'Local Weather Friction',scope:'local',score:61,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: storms and gusts could disrupt local movement.',metrics:{'max precip chance':'80%','max wind gust':'62 km/h'}},
+      {id:'internetLocal',title:'Local Internet Health',scope:'local',score:56,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: your browser probes saw multiple slow or failed endpoints.',metrics:{'probes reached':'2/4','failures':1,'slow responses':1}},
+      {id:'newsLocal',title:'Local News Spike',scope:'local',score:49,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: local disruption-related news attention is elevated.',metrics:{'24h articles':18,'7d baseline/day':'4.2','top theme':'transport'}},
+      {id:'travel',title:'Airport / Travel Friction',scope:'local',score:64,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: nearest-airport weather suggests delays could happen.',metrics:{'nearest airport':'YYZ','max precip chance':'85%','max wind gust':'68 km/h'}}
     ];
     renderSignals(latestSignals);
   }
+  async function probeEndpoint(name,url,timeout){
+    const started=performance.now();
+    const controller=new AbortController();
+    const t=setTimeout(()=>controller.abort(),timeout);
+    try{
+      await fetch(url+(url.includes('?')?'&':'?')+'nt='+Date.now(),{mode:'no-cors',cache:'no-store',signal:controller.signal});
+      clearTimeout(t);
+      return {name,ok:true,ms:Math.round(performance.now()-started)};
+    }catch(err){
+      clearTimeout(t);
+      return {name,ok:false,ms:timeout,error:err&&err.message};
+    }
+  }
+  function themeFromArticles(articles){
+    const text=(articles||[]).slice(0,20).map(a=>(a.title||'')+' '+(a.seendate||'')).join(' ').toLowerCase();
+    const themes=[
+      ['weather',['storm','rain','snow','flood','flooding','tornado','hurricane','heat','cold']],
+      ['fire / smoke',['wildfire','fire','smoke','evacuation']],
+      ['transport',['airport','flight','rail','train','traffic','travel','road']],
+      ['outage',['outage','power','internet','blackout']],
+      ['quake',['earthquake','quake','tremor']],
+      ['civic disruption',['strike','protest','emergency','police']]
+    ];
+    let best=['general',0];
+    themes.forEach(([name,words])=>{
+      const hits=words.reduce((sum,w)=>sum+(text.includes(w)?1:0),0);
+      if(hits>best[1])best=[name,hits];
+    });
+    return best[0];
+  }
+  function nearestAirport(lat,lon){
+    const best=AIRPORTS.map(([code,name,aLat,aLon])=>({code,name,lat:aLat,lon:aLon,km:distanceKm(lat,lon,aLat,aLon)})).sort((a,b)=>a.km-b.km)[0];
+    return best||{code:'--',name:'nearest airport',lat,lon,km:0};
+  }
   function distanceKm(lat1,lon1,lat2,lon2){
-    const R=6371, dLat=rad(lat2-lat1), dLon=rad(lon2-lon1);
+    const R=6371,dLat=rad(lat2-lat1),dLon=rad(lon2-lon1);
     const a=Math.sin(dLat/2)**2+Math.cos(rad(lat1))*Math.cos(rad(lat2))*Math.sin(dLon/2)**2;
     return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
   }
   function rad(n){return n*Math.PI/180;}
   function avg(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0;}
   function ymd(d){return d.toISOString().slice(0,10).replaceAll('-','');}
-  function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
   refreshSignals();
 </script>
 </body>
