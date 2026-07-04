@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Lab Pro | NiftyTools Hub</title>
+<meta name="description" content="A local math toolkit with scientific calculator, statistics, prime checker, factors, GCD, LCM, factorials, Fibonacci and quadratic solver.">
+<meta property="og:title" content="Math Lab Pro - NiftyTools Hub">
+<meta property="og:description" content="Scientific calculator, statistics, number theory and algebra helpers in one polished browser tool.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/math-tools.html">
+<style>
+  :root{
+    --bg:#020704;
+    --panel:#07120b;
+    --panel2:#0b1910;
+    --line:#173822;
+    --line2:#24663b;
+    --txt:#eafff1;
+    --mut:#91aa99;
+    --green:#38ff88;
+    --green2:#18c96a;
+    --amber:#ffd166;
+    --red:#ff5a6f;
+    --cyan:#69e8ff;
+    --shadow:0 0 38px rgba(56,255,136,.15);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(56,255,136,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(56,255,136,.035) 1px,transparent 1px),
+      radial-gradient(circle at 14% 0%,rgba(56,255,136,.13),transparent 34%),
+      radial-gradient(circle at 88% 12%,rgba(105,232,255,.10),transparent 30%),
+      var(--bg);
+    background-size:38px 38px,38px 38px,100% 100%,100% 100%,100% 100%;
+    color:var(--txt);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    letter-spacing:0;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.024) 50%,rgba(0,0,0,.09) 50%);
+    background-size:100% 4px;
+    mix-blend-mode:screen;
+    opacity:.30;
+    z-index:10;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    border-bottom:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.88);
+    backdrop-filter:blur(12px);
+  }
+  .nav{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;text-transform:uppercase}
+  .mark{width:34px;height:34px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.25)}
+  .navlinks{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .navlinks a{
+    border:1px solid rgba(56,255,136,.28);
+    color:var(--mut);
+    padding:9px 12px;
+    background:rgba(7,18,11,.64);
+    min-height:38px;
+  }
+  .navlinks a:hover{color:var(--green);border-color:var(--green)}
+  .hero{
+    position:relative;
+    min-height:420px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    align-items:center;
+    gap:34px;
+    padding:54px 0 32px;
+  }
+  #matrix{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.20;
+    pointer-events:none;
+    mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  }
+  .crumb{color:var(--green);font-size:13px;text-transform:uppercase;margin-bottom:18px}
+  h1{
+    position:relative;
+    margin:0;
+    font-size:clamp(40px,7vw,84px);
+    line-height:.92;
+    text-transform:uppercase;
+    text-shadow:0 0 18px rgba(56,255,136,.32);
+  }
+  .lead{color:var(--mut);font-size:clamp(15px,2vw,18px);line-height:1.75;max-width:760px;margin:22px 0 0}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:1px solid var(--green);
+    color:#011508;
+    background:var(--green);
+    padding:13px 18px;
+    min-height:46px;
+    font-weight:900;
+    box-shadow:0 0 18px rgba(56,255,136,.22);
+  }
+  .btn.secondary{background:transparent;color:var(--green)}
+  .btn:hover,.mini-btn:hover,.calc-key:hover{filter:brightness(1.08)}
+  .console{
+    position:relative;
+    border:1px solid rgba(56,255,136,.28);
+    background:linear-gradient(180deg,rgba(7,18,11,.88),rgba(4,10,6,.78));
+    padding:18px;
+    box-shadow:var(--shadow);
+    min-height:322px;
+    overflow:hidden;
+  }
+  .console:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(56,255,136,.06),transparent);
+    transform:translateX(-100%);
+    animation:sweep 5s linear infinite;
+  }
+  @keyframes sweep{to{transform:translateX(100%)}}
+  .console-inner{position:relative}
+  .status-row{display:flex;justify-content:space-between;gap:10px;color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:14px}
+  .answer-face{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.05) 0 1px,transparent 1px 20px),
+      #020704;
+    min-height:196px;
+    display:grid;
+    align-content:center;
+    padding:18px;
+    text-align:center;
+  }
+  .answer-face b{display:block;color:var(--green);font-size:clamp(32px,5vw,56px);line-height:1;word-break:break-word}
+  .answer-face span{display:block;color:var(--mut);font-size:13px;line-height:1.6;margin-top:12px}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .quick{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:82px;
+  }
+  .quick b{display:block;color:var(--green);font-size:18px;margin-bottom:5px;word-break:break-word}
+  .quick span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .pill{border:1px solid rgba(56,255,136,.22);color:var(--mut);padding:7px 9px;font-size:12px;background:rgba(0,0,0,.22)}
+  .layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding-bottom:58px}
+  .panel{
+    grid-column:span 6;
+    border:1px solid rgba(56,255,136,.22);
+    background:linear-gradient(180deg,rgba(7,18,11,.86),rgba(4,10,6,.78));
+    padding:18px;
+    min-height:280px;
+    box-shadow:0 0 24px rgba(0,0,0,.24);
+  }
+  .panel.wide{grid-column:span 12}
+  .panel.third{grid-column:span 4}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .panel-head h2{font-size:18px;margin:0;text-transform:uppercase}
+  .panel-head p{margin:4px 0 0;color:var(--mut);font-size:13px;line-height:1.5}
+  .badge{border:1px solid rgba(56,255,136,.35);color:var(--green);padding:6px 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+  label{display:block;color:var(--mut);font-size:12px;margin:0 0 6px;text-transform:uppercase}
+  input,select,textarea{
+    width:100%;
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    color:var(--txt);
+    padding:11px 12px;
+    outline:none;
+    min-height:44px;
+  }
+  textarea{resize:vertical;min-height:138px;line-height:1.55}
+  input:focus,select:focus,textarea:focus{border-color:var(--green)}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .mini-btn{
+    border:1px solid rgba(56,255,136,.34);
+    background:rgba(2,7,4,.72);
+    color:var(--txt);
+    padding:10px 12px;
+    min-height:40px;
+  }
+  .mini-btn.primary{border-color:var(--green);color:#021409;background:var(--green);font-weight:900}
+  .mini-btn.warn{border-color:rgba(255,209,102,.6);color:var(--amber)}
+  .result{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.035) 0 1px,transparent 1px 18px),
+      #020704;
+    min-height:136px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:18px;
+  }
+  .result-main{font-size:clamp(26px,5vw,48px);font-weight:900;color:var(--green);word-break:break-word}
+  .result-sub{color:var(--mut);font-size:13px;line-height:1.55;margin-top:8px}
+  .calc-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}
+  .calc-key{
+    border:1px solid rgba(56,255,136,.25);
+    background:rgba(0,0,0,.24);
+    color:var(--txt);
+    min-height:42px;
+    padding:8px;
+  }
+  .calc-key.op{color:var(--cyan);border-color:rgba(105,232,255,.32)}
+  .calc-key.fn{color:var(--amber);border-color:rgba(255,209,102,.32)}
+  .calc-key.equal{background:var(--green);color:#031508;font-weight:900}
+  .output-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .metric{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:92px;
+  }
+  .metric span{display:block;color:var(--mut);font-size:12px;line-height:1.35}
+  .metric b{display:block;color:var(--txt);font-size:18px;margin-top:8px;word-break:break-word}
+  .metric.good b{color:var(--green)}
+  .metric.warn b{color:var(--amber)}
+  .table-wrap{overflow:auto;border:1px solid rgba(56,255,136,.18)}
+  table{width:100%;border-collapse:collapse;min-width:760px;background:rgba(0,0,0,.20)}
+  th,td{border-bottom:1px solid rgba(56,255,136,.14);padding:12px;text-align:left;font-size:13px;vertical-align:top}
+  th{color:var(--green);text-transform:uppercase;background:rgba(56,255,136,.05)}
+  td{color:var(--txt)}
+  .muted{color:var(--mut);font-size:12px;line-height:1.6}
+  .history{
+    border:1px solid rgba(56,255,136,.16);
+    background:rgba(0,0,0,.20);
+    min-height:120px;
+    max-height:190px;
+    overflow:auto;
+    padding:10px;
+    font-size:12px;
+    color:var(--mut);
+  }
+  .history div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(56,255,136,.10);padding:7px 0}
+  .history b{color:var(--green);word-break:break-word}
+  .bar-list{display:grid;gap:8px}
+  .bar-row{display:grid;grid-template-columns:80px 1fr 54px;gap:10px;align-items:center}
+  .bar-row span{font-size:12px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar{height:12px;border:1px solid rgba(56,255,136,.22);background:#020704;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan))}
+  .footer{border-top:1px solid rgba(56,255,136,.14);color:var(--mut);padding:28px 0 42px;font-size:12px;line-height:1.7}
+  @media (max-width:940px){
+    .hero{grid-template-columns:1fr;min-height:0}
+    .panel,.panel.third{grid-column:span 12}
+    .output-grid,.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .form-grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:580px){
+    .wrap{width:min(100% - 22px,1180px)}
+    .nav{align-items:flex-start;flex-direction:column}
+    .navlinks{width:100%}
+    .navlinks a{flex:1;text-align:center}
+    .hero{padding-top:34px}
+    h1{font-size:42px}
+    .form-grid,.form-grid.three,.output-grid,.quick-grid{grid-template-columns:1fr}
+    .calc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .panel{padding:14px}
+    .panel-head{display:block}
+    .badge{display:inline-block;margin-top:10px}
+    .bar-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="mark">NT</span><span>NiftyTools Hub</span></a>
+    <div class="navlinks">
+      <a href="/">All tools</a>
+      <a href="#scientific">Scientific</a>
+      <a href="#statistics">Statistics</a>
+      <a href="#number-theory">Number theory</a>
+      <a href="#algebra">Algebra</a>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="wrap hero">
+    <canvas id="matrix" aria-hidden="true"></canvas>
+    <div>
+      <div class="crumb">// calculators / number theory / statistics</div>
+      <h1>Math Lab Pro</h1>
+      <p class="lead">A focused math workspace for scientific expressions, statistics, prime checks, factors, GCD/LCM, factorials, Fibonacci, combinations and quadratic equations.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#scientific">Open calculator</a>
+        <a class="btn secondary" href="#statistics">Analyze numbers</a>
+      </div>
+      <div class="pill-row">
+        <span class="pill">no raw eval</span>
+        <span class="pill">local browser math</span>
+        <span class="pill">copyable results</span>
+        <span class="pill">classroom + builder friendly</span>
+      </div>
+    </div>
+    <aside class="console">
+      <div class="console-inner">
+        <div class="status-row"><span>last answer</span><span id="angleLabel">degrees</span></div>
+        <div class="answer-face">
+          <b id="heroAnswer">42</b>
+          <span id="heroSub">Type an expression or run a lab module.</span>
+        </div>
+        <div class="quick-grid">
+          <div class="quick"><b id="heroMean">0</b><span>stats mean</span></div>
+          <div class="quick"><b id="heroPrime">ready</b><span>prime status</span></div>
+          <div class="quick"><b id="heroFib">F(12)</b><span>sequence lab</span></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="wrap layout">
+    <div id="scientific" class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Scientific Calculator</h2>
+          <p>Supports parentheses, powers, factorial, constants and common functions.</p>
+        </div>
+        <span class="badge">parser based</span>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="expr">Expression</label>
+          <input id="expr" value="sqrt(144)+sin(30)^2+5!" oninput="calculateExpression()">
+        </div>
+        <div>
+          <label for="angleMode">Angle mode</label>
+          <select id="angleMode" oninput="calculateExpression()">
+            <option value="deg" selected>Degrees</option>
+            <option value="rad">Radians</option>
+          </select>
+        </div>
+      </div>
+      <div class="calc-grid">
+        <button class="calc-key" onclick="appendExpr('7')">7</button>
+        <button class="calc-key" onclick="appendExpr('8')">8</button>
+        <button class="calc-key" onclick="appendExpr('9')">9</button>
+        <button class="calc-key op" onclick="appendExpr('/')">/</button>
+        <button class="calc-key fn" onclick="appendExpr('sqrt(')">sqrt</button>
+        <button class="calc-key fn" onclick="appendExpr('^')">pow</button>
+        <button class="calc-key" onclick="appendExpr('4')">4</button>
+        <button class="calc-key" onclick="appendExpr('5')">5</button>
+        <button class="calc-key" onclick="appendExpr('6')">6</button>
+        <button class="calc-key op" onclick="appendExpr('*')">*</button>
+        <button class="calc-key fn" onclick="appendExpr('sin(')">sin</button>
+        <button class="calc-key fn" onclick="appendExpr('cos(')">cos</button>
+        <button class="calc-key" onclick="appendExpr('1')">1</button>
+        <button class="calc-key" onclick="appendExpr('2')">2</button>
+        <button class="calc-key" onclick="appendExpr('3')">3</button>
+        <button class="calc-key op" onclick="appendExpr('-')">-</button>
+        <button class="calc-key fn" onclick="appendExpr('tan(')">tan</button>
+        <button class="calc-key fn" onclick="appendExpr('log(')">log</button>
+        <button class="calc-key" onclick="appendExpr('0')">0</button>
+        <button class="calc-key" onclick="appendExpr('.')">.</button>
+        <button class="calc-key" onclick="appendExpr('pi')">pi</button>
+        <button class="calc-key op" onclick="appendExpr('+')">+</button>
+        <button class="calc-key fn" onclick="appendExpr('ln(')">ln</button>
+        <button class="calc-key fn" onclick="appendExpr('!')">!</button>
+        <button class="calc-key op" onclick="appendExpr('(')">(</button>
+        <button class="calc-key op" onclick="appendExpr(')')">)</button>
+        <button class="calc-key" onclick="clearExpr()">Clear</button>
+        <button class="calc-key" onclick="backspaceExpr()">Back</button>
+        <button class="calc-key equal" onclick="calculateExpression(true)">Calculate</button>
+        <button class="calc-key" onclick="copyCalc(this)">Copy</button>
+      </div>
+      <div class="result" style="margin-top:14px">
+        <div>
+          <div class="result-main" id="exprResult">0</div>
+          <div class="result-sub" id="exprDetail">Ready.</div>
+        </div>
+      </div>
+      <div class="panel-head" style="margin-top:14px"><h2>History</h2><span class="badge">last 8</span></div>
+      <div class="history" id="calcHistory"></div>
+    </div>
+
+    <div id="statistics" class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Statistics Lab</h2>
+          <p>Paste numbers separated by spaces, commas, lines or tabs.</p>
+        </div>
+        <span class="badge">data set</span>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="statsInput">Numbers</label>
+          <textarea id="statsInput" oninput="statsCalc()">12, 15, 18, 22, 22, 25, 31, 35, 42, 55</textarea>
+        </div>
+        <div>
+          <label for="statsMode">Variance mode</label>
+          <select id="statsMode" oninput="statsCalc()">
+            <option value="sample" selected>Sample</option>
+            <option value="population">Population</option>
+          </select>
+          <div class="controls">
+            <button class="mini-btn primary" onclick="statsCalc()">Analyze</button>
+            <button class="mini-btn" onclick="loadStatsSample()">Load sample</button>
+            <button class="mini-btn" onclick="copyStats(this)">Copy summary</button>
+          </div>
+          <p class="muted">The lab ignores non-numeric words, so you can paste quick messy lists from notes or spreadsheets.</p>
+        </div>
+      </div>
+      <div class="output-grid" style="margin-top:14px">
+        <div class="metric good"><span>Count</span><b id="statCount">0</b></div>
+        <div class="metric"><span>Mean</span><b id="statMean">0</b></div>
+        <div class="metric"><span>Median</span><b id="statMedian">0</b></div>
+        <div class="metric"><span>Mode</span><b id="statModeOut">0</b></div>
+        <div class="metric"><span>Std deviation</span><b id="statStd">0</b></div>
+        <div class="metric"><span>Range</span><b id="statRange">0</b></div>
+      </div>
+      <div class="table-wrap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>Metric</th><th>Value</th><th>Notes</th></tr></thead>
+          <tbody id="statsTable"></tbody>
+        </table>
+      </div>
+      <div class="panel-head" style="margin-top:14px"><h2>Distribution</h2><span class="badge">quick bins</span></div>
+      <div class="bar-list" id="histogram"></div>
+    </div>
+
+    <div id="number-theory" class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Number Theory</h2>
+          <p>Prime status, factorization, divisors and digital root.</p>
+        </div>
+        <span class="badge">integers</span>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="ntNumber">Number</label>
+          <input id="ntNumber" type="number" step="1" value="360" oninput="numberTheory()">
+        </div>
+        <div>
+          <label for="factorLimit">Divisor display limit</label>
+          <input id="factorLimit" type="number" min="8" max="500" value="80" oninput="numberTheory()">
+        </div>
+      </div>
+      <div class="result" style="margin-top:14px">
+        <div>
+          <div class="result-main" id="primeStatus">Composite</div>
+          <div class="result-sub" id="ntSummary">Ready.</div>
+        </div>
+      </div>
+      <div class="output-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px">
+        <div class="metric"><span>Prime factors</span><b id="primeFactors">-</b></div>
+        <div class="metric"><span>Divisors</span><b id="divisorsOut">-</b></div>
+        <div class="metric"><span>Digital root</span><b id="digitalRoot">-</b></div>
+        <div class="metric"><span>Nearest primes</span><b id="nearestPrimes">-</b></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>GCD / LCM</h2>
+          <p>Paste a list of integers to find shared structure.</p>
+        </div>
+        <span class="badge">list math</span>
+      </div>
+      <label for="gcdInput">Integers</label>
+      <textarea id="gcdInput" oninput="gcdLcmCalc()">12, 18, 30, 42</textarea>
+      <div class="output-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px">
+        <div class="metric good"><span>GCD</span><b id="gcdOut">-</b></div>
+        <div class="metric good"><span>LCM</span><b id="lcmOut">-</b></div>
+        <div class="metric"><span>Reduced ratio</span><b id="ratioOut">-</b></div>
+        <div class="metric"><span>Numbers read</span><b id="gcdCount">0</b></div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn" onclick="setGcdSample('ratio')">Ratio sample</button>
+        <button class="mini-btn" onclick="setGcdSample('large')">Large sample</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Sequences + Combinatorics</h2>
+          <p>Factorials, Fibonacci, permutations and combinations.</p>
+        </div>
+        <span class="badge">counting</span>
+      </div>
+      <div class="form-grid three">
+        <div>
+          <label for="seqN">n</label>
+          <input id="seqN" type="number" min="0" max="500" step="1" value="12" oninput="sequenceCalc()">
+        </div>
+        <div>
+          <label for="seqR">r</label>
+          <input id="seqR" type="number" min="0" max="500" step="1" value="5" oninput="sequenceCalc()">
+        </div>
+        <div>
+          <label for="fibCount">Fibonacci terms</label>
+          <input id="fibCount" type="number" min="2" max="80" step="1" value="12" oninput="sequenceCalc()">
+        </div>
+      </div>
+      <div class="output-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px">
+        <div class="metric good"><span>n!</span><b id="factOut">-</b></div>
+        <div class="metric"><span>F(n)</span><b id="fibOut">-</b></div>
+        <div class="metric"><span>nCr</span><b id="ncrOut">-</b></div>
+        <div class="metric"><span>nPr</span><b id="nprOut">-</b></div>
+      </div>
+      <label for="fibList" style="margin-top:14px">Fibonacci list</label>
+      <textarea id="fibList" readonly></textarea>
+      <div class="controls">
+        <button class="mini-btn" onclick="copySequence(this)">Copy sequence</button>
+      </div>
+    </div>
+
+    <div id="algebra" class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Quadratic Solver</h2>
+          <p>Solve ax^2 + bx + c = 0 and inspect the vertex.</p>
+        </div>
+        <span class="badge">algebra</span>
+      </div>
+      <div class="form-grid three">
+        <div><label for="quadA">a</label><input id="quadA" type="number" value="1" step="0.1" oninput="quadraticCalc()"></div>
+        <div><label for="quadB">b</label><input id="quadB" type="number" value="-5" step="0.1" oninput="quadraticCalc()"></div>
+        <div><label for="quadC">c</label><input id="quadC" type="number" value="6" step="0.1" oninput="quadraticCalc()"></div>
+      </div>
+      <div class="result" style="margin-top:14px">
+        <div>
+          <div class="result-main" id="quadRoots">x = 2, 3</div>
+          <div class="result-sub" id="quadDetail">Discriminant and vertex appear below.</div>
+        </div>
+      </div>
+      <div class="output-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px">
+        <div class="metric"><span>Discriminant</span><b id="quadDisc">-</b></div>
+        <div class="metric"><span>Vertex</span><b id="quadVertex">-</b></div>
+        <div class="metric"><span>Axis</span><b id="quadAxis">-</b></div>
+        <div class="metric"><span>Opens</span><b id="quadDirection">-</b></div>
+      </div>
+    </div>
+
+    <div class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Clipboard Report</h2>
+          <p>Copy the current lab state for notes, homework checks or debugging.</p>
+        </div>
+        <span class="badge">shareable</span>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" onclick="copyFullReport(this)">Copy lab report</button>
+        <button class="mini-btn" onclick="resetLab()">Reset samples</button>
+      </div>
+      <p class="muted">Results are calculated locally in your browser. Very large factorials and combinations use BigInt when practical, then switch to compact notation for readability.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">NiftyTools Hub - Math Lab Pro runs locally in your browser.</div>
+</footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let calcHistory = [];
+
+function formatNumber(value, digits){
+  if(typeof value === "bigint") return value.toString();
+  if(!Number.isFinite(value)) return String(value);
+  const abs = Math.abs(value);
+  if(abs !== 0 && (abs >= 1e12 || abs < 1e-7)) return value.toExponential(8).replace(/0+e/,"e");
+  return Number(value.toFixed(digits == null ? 10 : digits)).toLocaleString(undefined,{maximumFractionDigits:digits == null ? 10 : digits});
+}
+
+function parseNumbers(text){
+  return (String(text || "").match(/[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi) || [])
+    .map(Number)
+    .filter(Number.isFinite);
+}
+
+function appendExpr(text){
+  const input = $("expr");
+  const start = input.selectionStart == null ? input.value.length : input.selectionStart;
+  const end = input.selectionEnd == null ? input.value.length : input.selectionEnd;
+  input.value = input.value.slice(0,start) + text + input.value.slice(end);
+  input.focus();
+  const pos = start + text.length;
+  input.setSelectionRange(pos,pos);
+  calculateExpression();
+}
+
+function clearExpr(){
+  $("expr").value = "";
+  calculateExpression();
+}
+
+function backspaceExpr(){
+  const input = $("expr");
+  const start = input.selectionStart == null ? input.value.length : input.selectionStart;
+  const end = input.selectionEnd == null ? input.value.length : input.selectionEnd;
+  if(start !== end) input.value = input.value.slice(0,start) + input.value.slice(end);
+  else if(start > 0) input.value = input.value.slice(0,start - 1) + input.value.slice(start);
+  const pos = Math.max(0,start - 1);
+  input.focus();
+  input.setSelectionRange(pos,pos);
+  calculateExpression();
+}
+
+function tokenizeExpression(input){
+  const src = String(input || "").replace(/\s+/g,"").toLowerCase();
+  const tokens = [];
+  let i = 0;
+  while(i < src.length){
+    const ch = src[i];
+    if(/[0-9.]/.test(ch)){
+      let j = i + 1;
+      while(j < src.length && /[0-9.e+-]/.test(src[j])){
+        if((src[j] === "+" || src[j] === "-") && src[j - 1] !== "e") break;
+        j++;
+      }
+      const raw = src.slice(i,j);
+      if(!/^(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/.test(raw)) throw new Error("Invalid number near " + raw);
+      tokens.push({type:"num",value:Number(raw),raw});
+      i = j;
+    }else if(/[a-z]/.test(ch)){
+      let j = i + 1;
+      while(j < src.length && /[a-z0-9_]/.test(src[j])) j++;
+      tokens.push({type:"id",value:src.slice(i,j)});
+      i = j;
+    }else if("+-*/%^!(),".includes(ch)){
+      tokens.push({type:ch,value:ch});
+      i++;
+    }else{
+      throw new Error("Unknown character: " + ch);
+    }
+  }
+  return tokens;
+}
+
+function ExpressionParser(tokens){
+  this.tokens = tokens;
+  this.pos = 0;
+}
+ExpressionParser.prototype.peek = function(){return this.tokens[this.pos];};
+ExpressionParser.prototype.take = function(type){
+  const token = this.peek();
+  if(token && token.type === type){this.pos++;return token;}
+  return null;
+};
+ExpressionParser.prototype.expect = function(type){
+  const token = this.take(type);
+  if(!token) throw new Error("Expected " + type);
+  return token;
+};
+ExpressionParser.prototype.parse = function(){
+  const value = this.expression();
+  if(this.peek()) throw new Error("Unexpected token: " + this.peek().value);
+  return value;
+};
+ExpressionParser.prototype.expression = function(){
+  let value = this.term();
+  while(this.peek() && (this.peek().type === "+" || this.peek().type === "-")){
+    const op = this.peek().type; this.pos++;
+    const rhs = this.term();
+    value = op === "+" ? value + rhs : value - rhs;
+  }
+  return value;
+};
+ExpressionParser.prototype.term = function(){
+  let value = this.power();
+  while(this.peek() && (this.peek().type === "*" || this.peek().type === "/" || this.peek().type === "%")){
+    const op = this.peek().type; this.pos++;
+    const rhs = this.power();
+    if(op === "*") value *= rhs;
+    if(op === "/") value /= rhs;
+    if(op === "%") value %= rhs;
+  }
+  return value;
+};
+ExpressionParser.prototype.power = function(){
+  let value = this.unary();
+  if(this.take("^")) value = Math.pow(value,this.power());
+  return value;
+};
+ExpressionParser.prototype.unary = function(){
+  if(this.take("+")) return this.unary();
+  if(this.take("-")) return -this.unary();
+  return this.postfix();
+};
+ExpressionParser.prototype.postfix = function(){
+  let value = this.primary();
+  while(this.take("!")) value = factorialNumber(value);
+  return value;
+};
+ExpressionParser.prototype.primary = function(){
+  const token = this.peek();
+  if(!token) throw new Error("Unexpected end");
+  if(this.take("num")) return token.value;
+  if(this.take("(")){
+    const value = this.expression();
+    this.expect(")");
+    return value;
+  }
+  if(token.type === "id"){
+    this.pos++;
+    const name = token.value;
+    if(name === "pi") return Math.PI;
+    if(name === "e") return Math.E;
+    if(name === "tau") return Math.PI * 2;
+    if(this.take("(")){
+      const args = [];
+      if(!this.take(")")){
+        do{args.push(this.expression());}while(this.take(","));
+        this.expect(")");
+      }
+      return callFunction(name,args);
+    }
+    throw new Error("Unknown constant or function: " + name);
+  }
+  throw new Error("Unexpected token: " + token.value);
+};
+
+function angleInRadians(value){
+  return $("angleMode").value === "deg" ? value * Math.PI / 180 : value;
+}
+
+function callFunction(name,args){
+  const one = () => {
+    if(args.length !== 1) throw new Error(name + " expects 1 argument");
+    return args[0];
+  };
+  const two = () => {
+    if(args.length !== 2) throw new Error(name + " expects 2 arguments");
+    return args;
+  };
+  if(name === "sqrt") return Math.sqrt(one());
+  if(name === "abs") return Math.abs(one());
+  if(name === "ln") return Math.log(one());
+  if(name === "log") return Math.log10(one());
+  if(name === "exp") return Math.exp(one());
+  if(name === "floor") return Math.floor(one());
+  if(name === "ceil") return Math.ceil(one());
+  if(name === "round") return Math.round(one());
+  if(name === "sin") return Math.sin(angleInRadians(one()));
+  if(name === "cos") return Math.cos(angleInRadians(one()));
+  if(name === "tan") return Math.tan(angleInRadians(one()));
+  if(name === "asin") return $("angleMode").value === "deg" ? Math.asin(one()) * 180 / Math.PI : Math.asin(one());
+  if(name === "acos") return $("angleMode").value === "deg" ? Math.acos(one()) * 180 / Math.PI : Math.acos(one());
+  if(name === "atan") return $("angleMode").value === "deg" ? Math.atan(one()) * 180 / Math.PI : Math.atan(one());
+  if(name === "pow"){const p = two(); return Math.pow(p[0],p[1]);}
+  if(name === "min") return Math.min.apply(null,args);
+  if(name === "max") return Math.max.apply(null,args);
+  throw new Error("Unknown function: " + name);
+}
+
+function factorialNumber(value){
+  if(!Number.isInteger(value) || value < 0) throw new Error("Factorial needs a non-negative integer");
+  if(value > 170) throw new Error("Use the sequence panel for very large factorials");
+  let out = 1;
+  for(let i=2;i<=value;i++) out *= i;
+  return out;
+}
+
+function evaluateExpression(src){
+  return new ExpressionParser(tokenizeExpression(src)).parse();
+}
+
+function calculateExpression(commit){
+  const expr = $("expr").value.trim();
+  $("angleLabel").textContent = $("angleMode").value === "deg" ? "degrees" : "radians";
+  if(!expr){
+    $("exprResult").textContent = "0";
+    $("exprDetail").textContent = "Enter an expression.";
+    return;
+  }
+  try{
+    const result = evaluateExpression(expr);
+    if(!Number.isFinite(result)) throw new Error("Result is not finite");
+    const formatted = formatNumber(result);
+    $("exprResult").textContent = formatted;
+    $("exprDetail").textContent = expr + " = " + formatted;
+    $("heroAnswer").textContent = formatted;
+    $("heroSub").textContent = "Scientific calculator result";
+    if(commit){
+      calcHistory.unshift({expr,result:formatted});
+      calcHistory = calcHistory.slice(0,8);
+      renderHistory();
+    }
+  }catch(err){
+    $("exprResult").textContent = "Check input";
+    $("exprDetail").textContent = err.message;
+  }
+}
+
+function renderHistory(){
+  $("calcHistory").innerHTML = calcHistory.length ? calcHistory.map((row) => {
+    return "<div><span>"+escapeHTML(row.expr)+"</span><b>"+escapeHTML(row.result)+"</b></div>";
+  }).join("") : "<span>No calculations yet.</span>";
+}
+
+function copyCalc(btn){
+  copyText($("exprDetail").textContent,btn,"Copied");
+}
+
+function statsCalc(){
+  const nums = parseNumbers($("statsInput").value).sort((a,b)=>a-b);
+  if(!nums.length){
+    ["statCount","statMean","statMedian","statModeOut","statStd","statRange"].forEach(id=>$(id).textContent="-");
+    $("statsTable").innerHTML = '<tr><td colspan="3">No numbers detected.</td></tr>';
+    $("histogram").innerHTML = "";
+    return;
+  }
+  const n = nums.length;
+  const sum = nums.reduce((a,b)=>a+b,0);
+  const mean = sum / n;
+  const median = n % 2 ? nums[(n-1)/2] : (nums[n/2 - 1] + nums[n/2]) / 2;
+  const min = nums[0], max = nums[n-1];
+  const varianceDenom = $("statsMode").value === "sample" ? Math.max(1,n - 1) : n;
+  const variance = nums.reduce((acc,x)=>acc + Math.pow(x - mean,2),0) / varianceDenom;
+  const std = Math.sqrt(variance);
+  const q1 = percentile(nums,25);
+  const q3 = percentile(nums,75);
+  const iqr = q3 - q1;
+  const modes = modesOf(nums);
+  $("statCount").textContent = n;
+  $("statMean").textContent = formatNumber(mean,6);
+  $("statMedian").textContent = formatNumber(median,6);
+  $("statModeOut").textContent = modes.length ? modes.map(x=>formatNumber(x,4)).join(", ") : "none";
+  $("statStd").textContent = formatNumber(std,6);
+  $("statRange").textContent = formatNumber(max - min,6);
+  $("heroMean").textContent = formatNumber(mean,4);
+  $("statsTable").innerHTML = [
+    ["Sum",sum,"Total of all values"],
+    ["Min / max",formatNumber(min)+" / "+formatNumber(max),"Smallest and largest values"],
+    ["Q1 / Q3",formatNumber(q1)+" / "+formatNumber(q3),"25th and 75th percentiles"],
+    ["IQR",iqr,"Middle-spread estimate"],
+    ["Variance",variance,$("statsMode").value + " variance"],
+    ["Outlier fences",formatNumber(q1 - 1.5 * iqr)+" to "+formatNumber(q3 + 1.5 * iqr),"Tukey rule of thumb"]
+  ].map(row=>"<tr><td>"+escapeHTML(row[0])+"</td><td>"+escapeHTML(formatMaybe(row[1]))+"</td><td>"+escapeHTML(row[2])+"</td></tr>").join("");
+  renderHistogram(nums);
+}
+
+function percentile(sorted,p){
+  if(!sorted.length) return 0;
+  const idx = (p / 100) * (sorted.length - 1);
+  const lo = Math.floor(idx), hi = Math.ceil(idx);
+  if(lo === hi) return sorted[lo];
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (idx - lo);
+}
+
+function modesOf(nums){
+  const counts = new Map();
+  nums.forEach(n=>counts.set(n,(counts.get(n)||0)+1));
+  const max = Math.max(...counts.values());
+  if(max <= 1) return [];
+  return [...counts.entries()].filter(([,c])=>c===max).map(([n])=>n).slice(0,5);
+}
+
+function renderHistogram(nums){
+  const min = nums[0], max = nums[nums.length - 1];
+  if(min === max){
+    $("histogram").innerHTML = '<div class="bar-row"><span>'+formatNumber(min)+'</span><div class="bar"><i style="width:100%"></i></div><span>'+nums.length+'</span></div>';
+    return;
+  }
+  const binCount = Math.min(8,Math.max(3,Math.ceil(Math.sqrt(nums.length))));
+  const bins = Array(binCount).fill(0);
+  nums.forEach((n)=>{
+    const idx = Math.min(binCount - 1,Math.floor((n - min) / (max - min) * binCount));
+    bins[idx]++;
+  });
+  const peak = Math.max(...bins);
+  $("histogram").innerHTML = bins.map((count,i)=>{
+    const start = min + (max - min) * i / binCount;
+    const end = min + (max - min) * (i + 1) / binCount;
+    const width = Math.max(4,Math.round(count / peak * 100));
+    return '<div class="bar-row"><span>'+formatNumber(start,2)+'-'+formatNumber(end,2)+'</span><div class="bar"><i style="width:'+width+'%"></i></div><span>'+count+'</span></div>';
+  }).join("");
+}
+
+function loadStatsSample(){
+  $("statsInput").value = "72, 68, 91, 88, 73, 84, 95, 77, 84, 90, 69, 88, 102, 75";
+  statsCalc();
+}
+
+function numberTheory(){
+  const n = Math.trunc(Number($("ntNumber").value) || 0);
+  const abs = Math.abs(n);
+  if(abs > 1000000000){
+    $("primeStatus").textContent = "Too large";
+    $("ntSummary").textContent = "Use an integer up to 1,000,000,000 for this browser helper.";
+    return;
+  }
+  const prime = isPrime(abs);
+  $("primeStatus").textContent = abs < 2 ? "Neither" : prime ? "Prime" : "Composite";
+  $("heroPrime").textContent = abs < 2 ? "none" : prime ? "prime" : "composite";
+  $("ntSummary").textContent = n + " is " + (n % 2 === 0 ? "even" : "odd") + "; absolute value " + abs + ".";
+  $("primeFactors").textContent = abs < 2 ? "-" : factorize(abs).map(([p,c])=>c>1?p+"^"+c:String(p)).join(" * ");
+  const divs = divisors(abs);
+  const limit = Math.max(8,Math.min(500,Math.trunc(Number($("factorLimit").value) || 80)));
+  $("divisorsOut").textContent = divs.slice(0,limit).join(", ") + (divs.length > limit ? " ... ("+divs.length+" total)" : "");
+  $("digitalRoot").textContent = abs ? digitalRoot(abs) : "0";
+  $("nearestPrimes").textContent = nearestPrime(abs,-1) + " / " + nearestPrime(abs,1);
+}
+
+function isPrime(n){
+  if(n < 2) return false;
+  if(n === 2 || n === 3) return true;
+  if(n % 2 === 0 || n % 3 === 0) return false;
+  for(let i=5;i*i<=n;i+=6){
+    if(n % i === 0 || n % (i+2) === 0) return false;
+  }
+  return true;
+}
+
+function factorize(n){
+  const factors = [];
+  let d = 2;
+  while(d*d <= n){
+    let c = 0;
+    while(n % d === 0){n /= d;c++;}
+    if(c) factors.push([d,c]);
+    d = d === 2 ? 3 : d + 2;
+  }
+  if(n > 1) factors.push([n,1]);
+  return factors;
+}
+
+function divisors(n){
+  if(n === 0) return [0];
+  const out = [];
+  for(let i=1;i*i<=n;i++){
+    if(n % i === 0){
+      out.push(i);
+      if(i !== n / i) out.push(n / i);
+    }
+  }
+  return out.sort((a,b)=>a-b);
+}
+
+function digitalRoot(n){
+  return n === 0 ? 0 : 1 + ((n - 1) % 9);
+}
+
+function nearestPrime(n,dir){
+  if(n < 2 && dir < 0) return "none";
+  let x = Math.max(2,n + dir);
+  while(x >= 2 && !isPrime(x)) x += dir;
+  return x >= 2 ? x : "none";
+}
+
+function gcd(a,b){
+  a = Math.abs(a); b = Math.abs(b);
+  while(b){const t=b;b=a%b;a=t;}
+  return a;
+}
+
+function lcm(a,b){
+  if(!a || !b) return 0;
+  return Math.abs(a / gcd(a,b) * b);
+}
+
+function gcdLcmCalc(){
+  const nums = parseNumbers($("gcdInput").value).map(n=>Math.trunc(n)).filter(n=>Number.isFinite(n));
+  $("gcdCount").textContent = nums.length;
+  if(!nums.length){
+    $("gcdOut").textContent = "-";
+    $("lcmOut").textContent = "-";
+    $("ratioOut").textContent = "-";
+    return;
+  }
+  const g = nums.reduce((a,b)=>gcd(a,b));
+  const l = nums.reduce((a,b)=>lcm(a,b));
+  $("gcdOut").textContent = formatNumber(g);
+  $("lcmOut").textContent = Math.abs(l) > 1e15 ? "very large" : formatNumber(l);
+  $("ratioOut").textContent = nums.map(n=>g ? n / g : n).join(":");
+}
+
+function setGcdSample(type){
+  $("gcdInput").value = type === "ratio" ? "1920, 1080" : "84, 126, 210, 630";
+  gcdLcmCalc();
+}
+
+function sequenceCalc(){
+  const n = Math.max(0,Math.trunc(Number($("seqN").value)||0));
+  const r = Math.max(0,Math.trunc(Number($("seqR").value)||0));
+  const fibCount = Math.max(2,Math.min(80,Math.trunc(Number($("fibCount").value)||12)));
+  $("factOut").textContent = compactBigInt(factorialBig(n));
+  $("fibOut").textContent = compactBigInt(fibBig(n));
+  $("ncrOut").textContent = r > n ? "0" : compactBigInt(combinationBig(n,r));
+  $("nprOut").textContent = r > n ? "0" : compactBigInt(permutationBig(n,r));
+  const list = [];
+  for(let i=0;i<fibCount;i++) list.push(compactBigInt(fibBig(i)));
+  $("fibList").value = list.join(", ");
+  $("heroFib").textContent = "F("+n+")";
+}
+
+function factorialBig(n){
+  let out = 1n;
+  for(let i=2n;i<=BigInt(n);i++) out *= i;
+  return out;
+}
+
+function fibBig(n){
+  let a = 0n, b = 1n;
+  for(let i=0;i<n;i++){const t=a+b;a=b;b=t;}
+  return a;
+}
+
+function combinationBig(n,r){
+  r = Math.min(r,n-r);
+  let num = 1n, den = 1n;
+  for(let i=1;i<=r;i++){
+    num *= BigInt(n - r + i);
+    den *= BigInt(i);
+  }
+  return num / den;
+}
+
+function permutationBig(n,r){
+  let out = 1n;
+  for(let i=0;i<r;i++) out *= BigInt(n - i);
+  return out;
+}
+
+function compactBigInt(value){
+  const s = value.toString();
+  if(s.length <= 24) return s;
+  return s.slice(0,12) + "..." + s.slice(-6) + " (" + s.length + " digits)";
+}
+
+function quadraticCalc(){
+  const a = Number($("quadA").value)||0;
+  const b = Number($("quadB").value)||0;
+  const c = Number($("quadC").value)||0;
+  if(a === 0){
+    if(b === 0){
+      $("quadRoots").textContent = c === 0 ? "All real x" : "No solution";
+      $("quadDetail").textContent = "Not a quadratic equation.";
+    }else{
+      $("quadRoots").textContent = "x = " + formatNumber(-c / b,8);
+      $("quadDetail").textContent = "Linear equation.";
+    }
+    $("quadDisc").textContent = "-";
+    $("quadVertex").textContent = "-";
+    $("quadAxis").textContent = "-";
+    $("quadDirection").textContent = "-";
+    return;
+  }
+  const d = b*b - 4*a*c;
+  $("quadDisc").textContent = formatNumber(d,8);
+  const vx = -b/(2*a);
+  const vy = a*vx*vx + b*vx + c;
+  $("quadVertex").textContent = "(" + formatNumber(vx,6) + ", " + formatNumber(vy,6) + ")";
+  $("quadAxis").textContent = "x = " + formatNumber(vx,6);
+  $("quadDirection").textContent = a > 0 ? "up" : "down";
+  if(d > 0){
+    const r1 = (-b - Math.sqrt(d))/(2*a);
+    const r2 = (-b + Math.sqrt(d))/(2*a);
+    $("quadRoots").textContent = "x = " + formatNumber(r1,8) + ", " + formatNumber(r2,8);
+    $("quadDetail").textContent = "Two real roots.";
+  }else if(d === 0){
+    $("quadRoots").textContent = "x = " + formatNumber(vx,8);
+    $("quadDetail").textContent = "One repeated real root.";
+  }else{
+    const real = -b/(2*a);
+    const imag = Math.sqrt(-d)/(2*Math.abs(a));
+    $("quadRoots").textContent = formatNumber(real,8) + " +/- " + formatNumber(imag,8) + "i";
+    $("quadDetail").textContent = "Two complex roots.";
+  }
+}
+
+function copyStats(btn){
+  const text = [
+    "Math Lab Pro - Statistics",
+    "Count: " + $("statCount").textContent,
+    "Mean: " + $("statMean").textContent,
+    "Median: " + $("statMedian").textContent,
+    "Std deviation: " + $("statStd").textContent,
+    "Range: " + $("statRange").textContent
+  ].join("\n");
+  copyText(text,btn,"Copied");
+}
+
+function copySequence(btn){
+  copyText($("fibList").value,btn,"Copied");
+}
+
+function copyFullReport(btn){
+  const text = [
+    "Math Lab Pro - NiftyTools Hub",
+    "Expression: " + $("expr").value,
+    "Expression result: " + $("exprResult").textContent,
+    "Stats count / mean: " + $("statCount").textContent + " / " + $("statMean").textContent,
+    "Prime status: " + $("ntNumber").value + " -> " + $("primeStatus").textContent,
+    "GCD / LCM: " + $("gcdOut").textContent + " / " + $("lcmOut").textContent,
+    "Quadratic roots: " + $("quadRoots").textContent
+  ].join("\n");
+  copyText(text,btn,"Copied");
+}
+
+function resetLab(){
+  $("expr").value = "sqrt(144)+sin(30)^2+5!";
+  $("statsInput").value = "12, 15, 18, 22, 22, 25, 31, 35, 42, 55";
+  $("ntNumber").value = "360";
+  $("gcdInput").value = "12, 18, 30, 42";
+  $("seqN").value = "12";
+  $("seqR").value = "5";
+  $("fibCount").value = "12";
+  $("quadA").value = "1";
+  $("quadB").value = "-5";
+  $("quadC").value = "6";
+  initCalcs();
+}
+
+function copyText(text,btn,label){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(()=>flash(btn,label));
+    return;
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-999px";
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try{document.execCommand("copy");flash(btn,label);}catch(err){flash(btn,"Copy failed");}
+  ta.remove();
+}
+
+function flash(btn,text){
+  if(!btn) return;
+  const old = btn.textContent;
+  btn.textContent = text;
+  setTimeout(()=>{btn.textContent = old;},1200);
+}
+
+function formatMaybe(value){
+  return typeof value === "number" ? formatNumber(value,8) : value;
+}
+
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g,(ch)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
+}
+
+function startMatrix(){
+  const canvas = $("matrix");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const glyphs = "MATHLABPRO0123456789+-*/=PISTATSGCDLCM";
+  let drops = [];
+  function resize(){
+    canvas.width = canvas.offsetWidth * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    drops = Array(Math.ceil(canvas.offsetWidth / 16)).fill(0).map(()=>Math.random() * -40);
+  }
+  function draw(){
+    ctx.fillStyle = "rgba(2,7,4,.16)";
+    ctx.fillRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+    ctx.fillStyle = "rgba(56,255,136,.55)";
+    ctx.font = "13px monospace";
+    drops.forEach((y,i)=>{
+      const char = glyphs[Math.floor(Math.random() * glyphs.length)];
+      ctx.fillText(char,i * 16,y * 16);
+      drops[i] = y * 16 > canvas.offsetHeight && Math.random() > .965 ? 0 : y + 1;
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  addEventListener("resize",resize);
+  draw();
+}
+
+function initCalcs(){
+  calculateExpression(true);
+  statsCalc();
+  numberTheory();
+  gcdLcmCalc();
+  sequenceCalc();
+  quadraticCalc();
+  renderHistory();
+}
+
+startMatrix();
+initCalcs();
+</script>
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>

@@ -14,6 +14,7 @@
     "image-tools": "Image Toolkit",
     "pdf-tools": "PDF Toolkit",
     "salary-tools": "Salary / Paycheck Calculator Pro",
+    "math-tools": "Math Lab Pro",
     "unit-tools": "Unit Converter Pro",
     "time-tools": "World Clock / Time Zone Studio",
     "device-tests": "Device Test Suite",
