@@ -332,7 +332,7 @@
     <div class="category-card" onclick="focusTool('salary')"><b>Finance & Business</b><span>Salary, mortgage, auto loan, receipts, percentages and business calculators.</span></div>
     <div class="category-card" onclick="jumpFilter('fun')"><b>Fun & Random</b><span>Random toolkit, tarot, zodiac, prank terminal, dice, coin flips and quick playful tools.</span></div>
     <div class="category-card" onclick="focusTool('zodiac')"><b>Mystic / Astrology</b><span>Tarot reader, birth chart toolkit, zodiac compatibility and gematria.</span></div>
-    <div class="category-card" onclick="jumpFilter('convert')"><b>Everyday Utilities</b><span>Unit converter, clocks, timers, text tools, lorem ipsum and days-lived calculators.</span></div>
+    <div class="category-card" onclick="jumpFilter('convert')"><b>Everyday Utilities</b><span>Unit converter, time zone studio, timers, text tools, lorem ipsum and days-lived calculators.</span></div>
     <div class="category-card" onclick="jumpFilter('screen')"><b>Device Tests</b><span>Webcam, microphone, speakers, screen, keyboard, mouse, typing and internet pulse tests.</span></div>
     <div class="category-card" onclick="jumpFilter('developer')"><b>Developer Tools</b><span>JSON, YAML, CSV, Base64, URL, JWT, hashes, UUIDs and regex helpers.</span></div>
   </div>
@@ -373,21 +373,13 @@
       <h3>Unit Converter Pro</h3><p>Convert measurements across 12 categories with formulas, batch mode and saved favorites.</p>
       <div class="open">Open full tool -></div>
     </div>
-    <!-- World clock: interactive -->
-    <div class="tool" data-tags="free time" data-name="world clock time zones countries">
-      <span class="badge free">Free</span>
-      <div class="ico">🌍</div>
-      <h3>World Clocks</h3>
-      <p>Live time across countries and time zones at a glance.</p>
-      <div class="mini collapsed" onclick="event.stopPropagation()">
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:70px">London</span><span class="clock" id="c-lon">--:--</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:70px">New York</span><span class="clock" id="c-ny">--:--</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:70px">Tokyo</span><span class="clock" id="c-tok">--:--</span></div>
-      </div>
-      <div class="open">Open tool →</div>
+
+    <!-- Time zone studio -->
+    <div class="tool" data-tags="free utility time timezone clock world clock meeting planner countdown utc sunrise sunset" data-name="world clock time zone studio timezone converter meeting planner countdown utc offset sunrise sunset city clocks" onclick="location.href='/time-tools.html'">
+      <span class="badge free">Free</span><div class="ico">TIME</div>
+      <h3>World Clock / Time Zone Studio</h3><p>Live city clocks, timezone converter, meeting planner, countdowns and UTC offset search.</p>
+      <div class="open">Open full tool -></div>
     </div>
-
-
     <!-- Device test suite -->
     <div class="tool" data-tags="free utility screen device test camera webcam microphone mic speaker audio keyboard mouse typing speed internet browser resolution" data-name="device test suite webcam microphone speaker screen keyboard mouse typing speed internet pulse browser hardware check" onclick="location.href='/device-tests.html'">
       <span class="badge free">Free</span><div class="ico">CHK</div>
