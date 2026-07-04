@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary / Paycheck Calculator Pro | NiftyTools Hub</title>
+<meta name="description" content="Estimate salary, hourly pay, overtime, paycheck take-home, raises and job offer comparisons locally in your browser.">
+<meta property="og:title" content="Salary / Paycheck Calculator Pro - NiftyTools Hub">
+<meta property="og:description" content="A polished pay calculator for gross-to-net estimates, deductions, overtime, raises and offer comparison.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/salary-tools.html">
+<style>
+  :root{
+    --bg:#020704;
+    --panel:#07120b;
+    --panel2:#0b1910;
+    --line:#173822;
+    --line2:#24663b;
+    --txt:#eafff1;
+    --mut:#91aa99;
+    --green:#38ff88;
+    --green2:#18c96a;
+    --amber:#ffd166;
+    --red:#ff5a6f;
+    --cyan:#69e8ff;
+    --shadow:0 0 38px rgba(56,255,136,.15);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      linear-gradient(rgba(56,255,136,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(56,255,136,.035) 1px,transparent 1px),
+      radial-gradient(circle at 16% 0%,rgba(56,255,136,.13),transparent 34%),
+      radial-gradient(circle at 88% 12%,rgba(105,232,255,.10),transparent 30%),
+      var(--bg);
+    background-size:38px 38px,38px 38px,100% 100%,100% 100%,100% 100%;
+    color:var(--txt);
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    letter-spacing:0;
+  }
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(rgba(255,255,255,.024) 50%,rgba(0,0,0,.09) 50%);
+    background-size:100% 4px;
+    mix-blend-mode:screen;
+    opacity:.30;
+    z-index:10;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  .wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    border-bottom:1px solid rgba(56,255,136,.18);
+    background:rgba(2,7,4,.88);
+    backdrop-filter:blur(12px);
+  }
+  .nav{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900;text-transform:uppercase}
+  .mark{width:34px;height:34px;border:1px solid var(--green);display:grid;place-items:center;color:var(--green);box-shadow:0 0 18px rgba(56,255,136,.25)}
+  .navlinks{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .navlinks a{
+    border:1px solid rgba(56,255,136,.28);
+    color:var(--mut);
+    padding:9px 12px;
+    background:rgba(7,18,11,.64);
+    min-height:38px;
+  }
+  .navlinks a:hover{color:var(--green);border-color:var(--green)}
+  .hero{
+    position:relative;
+    min-height:430px;
+    display:grid;
+    grid-template-columns:1.02fr .98fr;
+    align-items:center;
+    gap:28px;
+    padding:54px 0 34px;
+  }
+  #matrix{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:.20;
+    pointer-events:none;
+    mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  }
+  .crumb{color:var(--green);font-size:13px;text-transform:uppercase;margin-bottom:18px}
+  h1{
+    position:relative;
+    margin:0;
+    font-size:clamp(38px,7vw,82px);
+    line-height:.92;
+    text-transform:uppercase;
+    text-shadow:0 0 18px rgba(56,255,136,.32);
+  }
+  .lead{color:var(--mut);font-size:clamp(15px,2vw,18px);line-height:1.75;max-width:760px;margin:22px 0 0}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+  .btn{
+    border:1px solid var(--green);
+    color:#011508;
+    background:var(--green);
+    padding:13px 18px;
+    min-height:46px;
+    font-weight:900;
+    box-shadow:0 0 18px rgba(56,255,136,.22);
+  }
+  .btn.secondary{background:transparent;color:var(--green)}
+  .btn:hover,.mini-btn:hover,.chip:hover{filter:brightness(1.08)}
+  .console{
+    position:relative;
+    border:1px solid rgba(56,255,136,.28);
+    background:linear-gradient(180deg,rgba(7,18,11,.88),rgba(4,10,6,.78));
+    padding:18px;
+    box-shadow:var(--shadow);
+    min-height:334px;
+    overflow:hidden;
+  }
+  .console:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(56,255,136,.06),transparent);
+    transform:translateX(-100%);
+    animation:sweep 5s linear infinite;
+  }
+  @keyframes sweep{to{transform:translateX(100%)}}
+  .console-inner{position:relative}
+  .status-row{display:flex;justify-content:space-between;gap:10px;color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:14px}
+  .pay-face{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.05) 0 1px,transparent 1px 20px),
+      #020704;
+    min-height:198px;
+    display:grid;
+    align-content:center;
+    padding:18px;
+    text-align:center;
+  }
+  .pay-face b{display:block;color:var(--green);font-size:clamp(34px,6vw,62px);line-height:1;word-break:break-word}
+  .pay-face span{display:block;color:var(--mut);font-size:13px;line-height:1.6;margin-top:12px}
+  .quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+  .quick{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:82px;
+  }
+  .quick b{display:block;color:var(--green);font-size:18px;margin-bottom:5px;word-break:break-word}
+  .quick span{display:block;color:var(--mut);font-size:12px;line-height:1.4}
+  .layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;padding-bottom:58px}
+  .panel{
+    grid-column:span 6;
+    border:1px solid rgba(56,255,136,.22);
+    background:linear-gradient(180deg,rgba(7,18,11,.86),rgba(4,10,6,.78));
+    padding:18px;
+    min-height:260px;
+    box-shadow:0 0 24px rgba(0,0,0,.24);
+  }
+  .panel.wide{grid-column:span 12}
+  .panel.third{grid-column:span 4}
+  .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+  .panel-head h2{font-size:18px;margin:0;text-transform:uppercase}
+  .panel-head p{margin:4px 0 0;color:var(--mut);font-size:13px;line-height:1.5}
+  .badge{border:1px solid rgba(56,255,136,.35);color:var(--green);padding:6px 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+  label{display:block;color:var(--mut);font-size:12px;margin:0 0 6px;text-transform:uppercase}
+  input,select{
+    width:100%;
+    border:1px solid rgba(56,255,136,.22);
+    background:#020704;
+    color:var(--txt);
+    padding:11px 12px;
+    outline:none;
+    min-height:44px;
+  }
+  input:focus,select:focus{border-color:var(--green)}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .form-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .form-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .mini-btn{
+    border:1px solid rgba(56,255,136,.34);
+    background:rgba(2,7,4,.72);
+    color:var(--txt);
+    padding:10px 12px;
+    min-height:40px;
+  }
+  .mini-btn.primary{border-color:var(--green);color:#021409;background:var(--green);font-weight:900}
+  .mini-btn.warn{border-color:rgba(255,209,102,.6);color:var(--amber)}
+  .mini-btn.red{border-color:rgba(255,90,111,.6);color:var(--red)}
+  .result{
+    border:1px solid rgba(56,255,136,.20);
+    background:
+      repeating-linear-gradient(90deg,rgba(56,255,136,.035) 0 1px,transparent 1px 18px),
+      #020704;
+    min-height:150px;
+    display:grid;
+    place-items:center;
+    text-align:center;
+    padding:18px;
+  }
+  .result-main{font-size:clamp(28px,5vw,52px);font-weight:900;color:var(--green);word-break:break-word}
+  .result-sub{color:var(--mut);font-size:13px;line-height:1.55;margin-top:8px}
+  .output-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .money-card{
+    border:1px solid rgba(56,255,136,.18);
+    background:rgba(0,0,0,.24);
+    padding:12px;
+    min-height:94px;
+  }
+  .money-card span{display:block;color:var(--mut);font-size:12px;line-height:1.35}
+  .money-card b{display:block;color:var(--txt);font-size:18px;margin-top:8px;word-break:break-word}
+  .money-card.good b{color:var(--green)}
+  .money-card.warn b{color:var(--amber)}
+  .money-card.bad b{color:var(--red)}
+  .table-wrap{overflow:auto;border:1px solid rgba(56,255,136,.18)}
+  table{width:100%;border-collapse:collapse;min-width:760px;background:rgba(0,0,0,.20)}
+  th,td{border-bottom:1px solid rgba(56,255,136,.14);padding:12px;text-align:left;font-size:13px;vertical-align:top}
+  th{color:var(--green);text-transform:uppercase;background:rgba(56,255,136,.05)}
+  td{color:var(--txt)}
+  .muted{color:var(--mut);font-size:12px;line-height:1.55}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+  .pill{border:1px solid rgba(56,255,136,.22);color:var(--mut);padding:7px 9px;font-size:12px;background:rgba(0,0,0,.22)}
+  .bar{
+    height:12px;
+    border:1px solid rgba(56,255,136,.25);
+    background:#020704;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .2s ease}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .note{
+    border:1px solid rgba(255,209,102,.32);
+    color:var(--amber);
+    background:rgba(255,209,102,.06);
+    padding:12px;
+    font-size:12px;
+    line-height:1.6;
+  }
+  .footer{border-top:1px solid rgba(56,255,136,.14);color:var(--mut);padding:28px 0 42px;font-size:12px;line-height:1.7}
+  @media (max-width:920px){
+    .hero{grid-template-columns:1fr;min-height:0}
+    .panel,.panel.third{grid-column:span 12}
+    .output-grid,.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .form-grid.three,.form-grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .split{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .wrap{width:min(100% - 22px,1180px)}
+    .nav{align-items:flex-start;flex-direction:column}
+    .navlinks{width:100%}
+    .navlinks a{flex:1;text-align:center}
+    .hero{padding-top:34px}
+    h1{font-size:42px}
+    .form-grid,.form-grid.three,.form-grid.four,.output-grid,.quick-grid{grid-template-columns:1fr}
+    .panel{padding:14px}
+    .panel-head{display:block}
+    .badge{display:inline-block;margin-top:10px}
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="/"><span class="mark">NT</span><span>NiftyTools Hub</span></a>
+    <div class="navlinks">
+      <a href="/">All tools</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#compare">Compare offers</a>
+      <a href="#report">Report</a>
+    </div>
+  </div>
+</div>
+
+<main>
+  <section class="wrap hero">
+    <canvas id="matrix" aria-hidden="true"></canvas>
+    <div>
+      <div class="crumb">// finance utility / local estimate engine</div>
+      <h1>Salary / Paycheck Calculator Pro</h1>
+      <p class="lead">Convert hourly, salary, monthly and contract pay into paycheck estimates. Model overtime, deductions, raises and competing offers without sending your numbers anywhere.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#calculator">Run paycheck</a>
+        <a class="btn secondary" href="#compare">Compare offers</a>
+      </div>
+      <div class="pill-row">
+        <span class="pill">local only</span>
+        <span class="pill">editable rates</span>
+        <span class="pill">gross-to-net estimate</span>
+        <span class="pill">offer comparison</span>
+      </div>
+    </div>
+    <aside class="console">
+      <div class="console-inner">
+        <div class="status-row"><span>take-home signal</span><span id="heroFreq">biweekly</span></div>
+        <div class="pay-face">
+          <b id="heroNet">$0.00</b>
+          <span id="heroSub">Estimated net pay per period</span>
+        </div>
+        <div class="quick-grid">
+          <div class="quick"><b id="heroAnnual">$0</b><span>annual gross</span></div>
+          <div class="quick"><b id="heroMonthly">$0</b><span>net / month</span></div>
+          <div class="quick"><b id="heroRate">0%</b><span>withholding rate</span></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section id="calculator" class="wrap layout">
+    <div class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Paycheck Model</h2>
+          <p>Start with the money you know. Everything else updates live.</p>
+        </div>
+        <span class="badge">estimate mode</span>
+      </div>
+      <div class="form-grid four">
+        <div>
+          <label for="currency">Currency</label>
+          <select id="currency" oninput="calculateAll()">
+            <option value="USD">USD</option>
+            <option value="CAD">CAD</option>
+            <option value="GBP">GBP</option>
+            <option value="EUR">EUR</option>
+            <option value="MXN">MXN</option>
+          </select>
+        </div>
+        <div>
+          <label for="payMode">I earn</label>
+          <select id="payMode" oninput="calculateAll()">
+            <option value="annual">Per year</option>
+            <option value="hourly">Per hour</option>
+            <option value="monthly">Per month</option>
+            <option value="weekly">Per week</option>
+            <option value="biweekly">Every 2 weeks</option>
+            <option value="semimonthly">Twice a month</option>
+          </select>
+        </div>
+        <div>
+          <label for="baseAmount">Amount</label>
+          <input id="baseAmount" type="number" min="0" step="100" value="85000" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="payFrequency">Paycheck frequency</label>
+          <select id="payFrequency" oninput="calculateAll()">
+            <option value="weekly">Weekly</option>
+            <option value="biweekly" selected>Biweekly</option>
+            <option value="semimonthly">Semi-monthly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid four" style="margin-top:10px">
+        <div>
+          <label for="hoursWeek">Regular hours / week</label>
+          <input id="hoursWeek" type="number" min="0" step="0.5" value="40" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="weeksYear">Paid weeks / year</label>
+          <input id="weeksYear" type="number" min="1" max="53" step="1" value="52" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="bonusAnnual">Bonus / commission per year</label>
+          <input id="bonusAnnual" type="number" min="0" step="100" value="5000" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="filingPreset">Withholding preset</label>
+          <select id="filingPreset" oninput="applyPreset(this.value)">
+            <option value="custom">Custom</option>
+            <option value="light">Light estimate</option>
+            <option value="standard" selected>Standard estimate</option>
+            <option value="heavy">Heavy estimate</option>
+          </select>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" onclick="calculateAll()">Calculate</button>
+        <button class="mini-btn" onclick="loadExample('hourly')">Hourly example</button>
+        <button class="mini-btn" onclick="loadExample('salary')">Salary example</button>
+        <button class="mini-btn" onclick="loadExample('contract')">Contract style</button>
+      </div>
+      <div class="output-grid">
+        <div class="money-card good"><span>Net per paycheck</span><b id="netPerPay">$0</b></div>
+        <div class="money-card"><span>Gross per paycheck</span><b id="grossPerPay">$0</b></div>
+        <div class="money-card"><span>Annual gross</span><b id="annualGross">$0</b></div>
+        <div class="money-card"><span>Annual net estimate</span><b id="annualNet">$0</b></div>
+        <div class="money-card"><span>Hourly equivalent</span><b id="hourlyEq">$0</b></div>
+        <div class="money-card"><span>Monthly net</span><b id="monthlyNet">$0</b></div>
+        <div class="money-card warn"><span>Annual deductions</span><b id="annualDeductions">$0</b></div>
+        <div class="money-card"><span>Effective withholding</span><b id="effectiveRate">0%</b></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Deductions</h2>
+          <p>Use the preset as a starting point, then tune the numbers for your situation.</p>
+        </div>
+        <span class="badge">editable</span>
+      </div>
+      <div class="form-grid three">
+        <div>
+          <label for="fedRate">Income tax %</label>
+          <input id="fedRate" type="number" min="0" max="80" step="0.1" value="18" oninput="markCustom();calculateAll()">
+        </div>
+        <div>
+          <label for="stateRate">State / province %</label>
+          <input id="stateRate" type="number" min="0" max="80" step="0.1" value="5" oninput="markCustom();calculateAll()">
+        </div>
+        <div>
+          <label for="payrollRate">Payroll taxes %</label>
+          <input id="payrollRate" type="number" min="0" max="80" step="0.1" value="7.65" oninput="markCustom();calculateAll()">
+        </div>
+      </div>
+      <div class="form-grid three" style="margin-top:10px">
+        <div>
+          <label for="retireRate">Retirement %</label>
+          <input id="retireRate" type="number" min="0" max="80" step="0.1" value="5" oninput="markCustom();calculateAll()">
+        </div>
+        <div>
+          <label for="benefitsPerPay">Benefits / paycheck</label>
+          <input id="benefitsPerPay" type="number" min="0" step="10" value="120" oninput="markCustom();calculateAll()">
+        </div>
+        <div>
+          <label for="otherPerPay">Other / paycheck</label>
+          <input id="otherPerPay" type="number" min="0" step="10" value="0" oninput="markCustom();calculateAll()">
+        </div>
+      </div>
+      <div class="result" style="margin-top:14px">
+        <div>
+          <div class="result-main" id="takeHomeRatio">0%</div>
+          <div class="result-sub" id="takeHomeText">of gross pay reaches your paycheck in this estimate</div>
+          <div class="bar"><span id="takeHomeBar"></span></div>
+        </div>
+      </div>
+      <p class="muted">This is not tax advice. Real payroll can include progressive brackets, credits, caps, pretax benefits, local rules and employer-specific deductions.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Overtime + Extras</h2>
+          <p>For hourly roles, add overtime and unpaid time to see the real annual picture.</p>
+        </div>
+        <span class="badge">hourly aware</span>
+      </div>
+      <div class="form-grid three">
+        <div>
+          <label for="otHours">Overtime hours / week</label>
+          <input id="otHours" type="number" min="0" step="0.5" value="0" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="otMultiplier">Overtime multiplier</label>
+          <input id="otMultiplier" type="number" min="1" step="0.1" value="1.5" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="unpaidDays">Unpaid days / year</label>
+          <input id="unpaidDays" type="number" min="0" step="1" value="0" oninput="calculateAll()">
+        </div>
+      </div>
+      <div class="output-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px">
+        <div class="money-card"><span>Annual overtime gross</span><b id="otAnnual">$0</b></div>
+        <div class="money-card"><span>Unpaid time impact</span><b id="unpaidImpact">$0</b></div>
+        <div class="money-card"><span>Regular weekly gross</span><b id="weeklyRegular">$0</b></div>
+        <div class="money-card"><span>Total weekly gross</span><b id="weeklyTotal">$0</b></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Raise Calculator</h2>
+          <p>See what a raise changes per paycheck and per month.</p>
+        </div>
+        <span class="badge">negotiation</span>
+      </div>
+      <div class="form-grid three">
+        <div>
+          <label for="raiseMode">Raise type</label>
+          <select id="raiseMode" oninput="calculateAll()">
+            <option value="percent">Percent raise</option>
+            <option value="amount">Annual amount</option>
+            <option value="target">Target salary</option>
+          </select>
+        </div>
+        <div>
+          <label for="raiseValue">Raise value</label>
+          <input id="raiseValue" type="number" step="0.5" value="8" oninput="calculateAll()">
+        </div>
+        <div>
+          <label for="raiseTaxRate">Extra withholding %</label>
+          <input id="raiseTaxRate" type="number" min="0" max="80" step="0.1" value="30" oninput="calculateAll()">
+        </div>
+      </div>
+      <div class="output-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px">
+        <div class="money-card good"><span>New annual gross</span><b id="raiseNewGross">$0</b></div>
+        <div class="money-card"><span>Gross raise</span><b id="raiseGrossDelta">$0</b></div>
+        <div class="money-card"><span>Net raise / paycheck</span><b id="raiseNetPay">$0</b></div>
+        <div class="money-card"><span>Net raise / month</span><b id="raiseNetMonth">$0</b></div>
+      </div>
+    </div>
+
+    <div id="compare" class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Job Offer Comparison</h2>
+          <p>Compare total compensation after benefits, commuting costs and retirement match.</p>
+        </div>
+        <span class="badge">offer lab</span>
+      </div>
+      <div class="split">
+        <div>
+          <div class="panel-head" style="margin-bottom:10px"><h2>Offer A</h2></div>
+          <div class="form-grid three">
+            <div><label for="aSalary">Salary</label><input id="aSalary" type="number" value="85000" oninput="calculateAll()"></div>
+            <div><label for="aBonus">Bonus</label><input id="aBonus" type="number" value="5000" oninput="calculateAll()"></div>
+            <div><label for="aMatch">Retirement match %</label><input id="aMatch" type="number" value="4" step="0.1" oninput="calculateAll()"></div>
+            <div><label for="aBenefits">Benefits value / year</label><input id="aBenefits" type="number" value="3000" oninput="calculateAll()"></div>
+            <div><label for="aHealth">Benefits cost / month</label><input id="aHealth" type="number" value="180" oninput="calculateAll()"></div>
+            <div><label for="aCommute">Commute cost / day</label><input id="aCommute" type="number" value="12" oninput="calculateAll()"></div>
+            <div><label for="aDays">Office days / week</label><input id="aDays" type="number" value="3" min="0" max="7" oninput="calculateAll()"></div>
+            <div><label for="aTime">Commute minutes / day</label><input id="aTime" type="number" value="55" oninput="calculateAll()"></div>
+            <div><label for="aRemote">Remote value / year</label><input id="aRemote" type="number" value="0" oninput="calculateAll()"></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel-head" style="margin-bottom:10px"><h2>Offer B</h2></div>
+          <div class="form-grid three">
+            <div><label for="bSalary">Salary</label><input id="bSalary" type="number" value="95000" oninput="calculateAll()"></div>
+            <div><label for="bBonus">Bonus</label><input id="bBonus" type="number" value="2500" oninput="calculateAll()"></div>
+            <div><label for="bMatch">Retirement match %</label><input id="bMatch" type="number" value="3" step="0.1" oninput="calculateAll()"></div>
+            <div><label for="bBenefits">Benefits value / year</label><input id="bBenefits" type="number" value="2200" oninput="calculateAll()"></div>
+            <div><label for="bHealth">Benefits cost / month</label><input id="bHealth" type="number" value="260" oninput="calculateAll()"></div>
+            <div><label for="bCommute">Commute cost / day</label><input id="bCommute" type="number" value="6" oninput="calculateAll()"></div>
+            <div><label for="bDays">Office days / week</label><input id="bDays" type="number" value="1" min="0" max="7" oninput="calculateAll()"></div>
+            <div><label for="bTime">Commute minutes / day</label><input id="bTime" type="number" value="20" oninput="calculateAll()"></div>
+            <div><label for="bRemote">Remote value / year</label><input id="bRemote" type="number" value="1500" oninput="calculateAll()"></div>
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table>
+          <thead><tr><th>Metric</th><th>Offer A</th><th>Offer B</th><th>Difference</th></tr></thead>
+          <tbody id="compareBody"></tbody>
+        </table>
+      </div>
+      <div class="result" style="margin-top:14px">
+        <div>
+          <div class="result-main" id="winner">Offer B leads</div>
+          <div class="result-sub" id="winnerText">Comparison updates with your numbers.</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="report" class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Paycheck Breakdown</h2>
+          <p>Use this as a quick planning snapshot or copy it into notes.</p>
+        </div>
+        <span class="badge">shareable</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Line item</th><th>Per paycheck</th><th>Per month</th><th>Per year</th></tr></thead>
+          <tbody id="breakdownBody"></tbody>
+        </table>
+      </div>
+      <div class="controls">
+        <button class="mini-btn primary" onclick="copyReport(this)">Copy report</button>
+        <button class="mini-btn" onclick="saveScenario(this)">Save scenario</button>
+        <button class="mini-btn" onclick="loadSavedScenario(this)">Load saved</button>
+      </div>
+      <div class="note">Heads up: this tool is for planning and comparison only. It does not replace payroll software, a tax professional, or official government calculators.</div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">NiftyTools Hub - salary estimates run locally in your browser.</div>
+</footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const periods = {weekly:52,biweekly:26,semimonthly:24,monthly:12};
+const presets = {
+  light:{fedRate:12,stateRate:3,payrollRate:7.65,retireRate:3,benefitsPerPay:60,otherPerPay:0},
+  standard:{fedRate:18,stateRate:5,payrollRate:7.65,retireRate:5,benefitsPerPay:120,otherPerPay:0},
+  heavy:{fedRate:26,stateRate:8,payrollRate:7.65,retireRate:8,benefitsPerPay:180,otherPerPay:40}
+};
+let latest = null;
+
+function num(id){
+  const v = parseFloat($(id).value);
+  return Number.isFinite(v) ? v : 0;
+}
+
+function fmt(value, compact){
+  const currency = $('currency') ? $('currency').value : 'USD';
+  const abs = Math.abs(value || 0);
+  const digits = compact || abs >= 1000 ? 0 : 2;
+  try{
+    return new Intl.NumberFormat(undefined,{style:'currency',currency,maximumFractionDigits:digits,minimumFractionDigits:digits}).format(value || 0);
+  }catch(e){
+    return (value < 0 ? '-' : '') + '$' + abs.toLocaleString(undefined,{maximumFractionDigits:digits,minimumFractionDigits:digits});
+  }
+}
+
+function pct(value){
+  return (value || 0).toFixed(1).replace(/\.0$/,'') + '%';
+}
+
+function annualBasePay(){
+  const mode = $('payMode').value;
+  const amount = num('baseAmount');
+  const hours = Math.max(0,num('hoursWeek'));
+  const weeks = Math.max(1,num('weeksYear') || 52);
+  if(mode === 'hourly') return amount * hours * weeks;
+  if(mode === 'monthly') return amount * 12;
+  if(mode === 'weekly') return amount * 52;
+  if(mode === 'biweekly') return amount * 26;
+  if(mode === 'semimonthly') return amount * 24;
+  return amount;
+}
+
+function estimateFromAnnual(annualGross, options){
+  const freq = options && options.frequency ? options.frequency : $('payFrequency').value;
+  const payPeriods = periods[freq] || 26;
+  const rates = options && options.rates ? options.rates : currentRates();
+  const benefitsPerPay = options && 'benefitsPerPay' in options ? options.benefitsPerPay : num('benefitsPerPay');
+  const otherPerPay = options && 'otherPerPay' in options ? options.otherPerPay : num('otherPerPay');
+  const taxableRate = (rates.fed + rates.state + rates.payroll) / 100;
+  const retirement = annualGross * rates.retire / 100;
+  const tax = Math.max(0, annualGross * taxableRate);
+  const fixed = Math.max(0, benefitsPerPay + otherPerPay) * payPeriods;
+  const annualDeductions = Math.min(annualGross, tax + retirement + fixed);
+  const annualNet = Math.max(0, annualGross - annualDeductions);
+  return {
+    annualGross,
+    annualNet,
+    annualDeductions,
+    tax,
+    retirement,
+    fixed,
+    payPeriods,
+    grossPerPay: annualGross / payPeriods,
+    netPerPay: annualNet / payPeriods,
+    monthlyNet: annualNet / 12,
+    effectiveRate: annualGross > 0 ? annualDeductions / annualGross * 100 : 0,
+    takeHomeRate: annualGross > 0 ? annualNet / annualGross * 100 : 0
+  };
+}
+
+function currentRates(){
+  return {
+    fed:num('fedRate'),
+    state:num('stateRate'),
+    payroll:num('payrollRate'),
+    retire:num('retireRate')
+  };
+}
+
+function calculateAll(){
+  const weeks = Math.max(1,num('weeksYear') || 52);
+  const hours = Math.max(0,num('hoursWeek'));
+  const base = annualBasePay();
+  const hourly = hours > 0 ? base / (hours * weeks) : 0;
+  const otHours = Math.max(0,num('otHours'));
+  const otAnnual = $('payMode').value === 'hourly' ? hourly * Math.max(1,num('otMultiplier')) * otHours * weeks : 0;
+  const unpaidDays = Math.max(0,num('unpaidDays'));
+  const unpaidImpact = hourly * (hours / 5 || 8) * unpaidDays;
+  const annualGross = Math.max(0, base + num('bonusAnnual') + otAnnual - unpaidImpact);
+  const estimate = estimateFromAnnual(annualGross);
+  latest = {...estimate,hourly,base,otAnnual,unpaidImpact,weeklyRegular:hourly * hours,weeklyTotal:hourly * hours + (otAnnual / weeks)};
+  renderPaycheck(latest);
+  renderRaise(latest);
+  renderCompare();
+  renderBreakdown(latest);
+}
+
+function renderPaycheck(data){
+  $('heroNet').textContent = fmt(data.netPerPay);
+  $('heroFreq').textContent = $('payFrequency').selectedOptions[0].textContent.toLowerCase();
+  $('heroSub').textContent = 'Estimated net pay per ' + $('payFrequency').selectedOptions[0].textContent.toLowerCase() + ' period';
+  $('heroAnnual').textContent = fmt(data.annualGross,true);
+  $('heroMonthly').textContent = fmt(data.monthlyNet,true);
+  $('heroRate').textContent = pct(data.effectiveRate);
+  $('netPerPay').textContent = fmt(data.netPerPay);
+  $('grossPerPay').textContent = fmt(data.grossPerPay);
+  $('annualGross').textContent = fmt(data.annualGross,true);
+  $('annualNet').textContent = fmt(data.annualNet,true);
+  $('hourlyEq').textContent = fmt(data.hourly);
+  $('monthlyNet').textContent = fmt(data.monthlyNet);
+  $('annualDeductions').textContent = fmt(data.annualDeductions,true);
+  $('effectiveRate').textContent = pct(data.effectiveRate);
+  $('takeHomeRatio').textContent = pct(data.takeHomeRate);
+  $('takeHomeBar').style.width = Math.max(0,Math.min(100,data.takeHomeRate)) + '%';
+  $('otAnnual').textContent = fmt(data.otAnnual,true);
+  $('unpaidImpact').textContent = '-' + fmt(data.unpaidImpact,true);
+  $('weeklyRegular').textContent = fmt(data.weeklyRegular);
+  $('weeklyTotal').textContent = fmt(data.weeklyTotal);
+}
+
+function renderRaise(data){
+  const mode = $('raiseMode').value;
+  const value = num('raiseValue');
+  let newGross = data.annualGross;
+  if(mode === 'percent') newGross = data.annualGross * (1 + value / 100);
+  if(mode === 'amount') newGross = data.annualGross + value;
+  if(mode === 'target') newGross = value;
+  newGross = Math.max(0,newGross);
+  const grossDelta = newGross - data.annualGross;
+  const extraNetAnnual = grossDelta * (1 - num('raiseTaxRate') / 100);
+  $('raiseNewGross').textContent = fmt(newGross,true);
+  $('raiseGrossDelta').textContent = fmt(grossDelta,true);
+  $('raiseNetPay').textContent = fmt(extraNetAnnual / data.payPeriods);
+  $('raiseNetMonth').textContent = fmt(extraNetAnnual / 12);
+}
+
+function offer(prefix){
+  const salary = num(prefix + 'Salary');
+  const bonus = num(prefix + 'Bonus');
+  const gross = salary + bonus;
+  const estimate = estimateFromAnnual(gross);
+  const match = salary * num(prefix + 'Match') / 100;
+  const benefits = num(prefix + 'Benefits');
+  const health = num(prefix + 'Health') * 12;
+  const commute = num(prefix + 'Commute') * num(prefix + 'Days') * 52;
+  const commuteHours = num(prefix + 'Time') * num(prefix + 'Days') * 52 / 60;
+  const remote = num(prefix + 'Remote');
+  const totalValue = estimate.annualNet + match + benefits + remote - health - commute;
+  return {salary,bonus,gross,net:estimate.annualNet,match,benefits,health,commute,commuteHours,remote,totalValue};
+}
+
+function renderCompare(){
+  const a = offer('a');
+  const b = offer('b');
+  const rows = [
+    ['Annual gross',a.gross,b.gross,'money'],
+    ['Annual net estimate',a.net,b.net,'money'],
+    ['Retirement match',a.match,b.match,'money'],
+    ['Benefits value',a.benefits,b.benefits,'money'],
+    ['Benefits cost',-a.health,-b.health,'money'],
+    ['Commute cost',-a.commute,-b.commute,'money'],
+    ['Commute hours / year',a.commuteHours,b.commuteHours,'hours'],
+    ['Remote / flexibility value',a.remote,b.remote,'money'],
+    ['Estimated total value',a.totalValue,b.totalValue,'money']
+  ];
+  $('compareBody').innerHTML = rows.map(([label,av,bv,type]) => {
+    const diff = bv - av;
+    const f = type === 'hours' ? (v) => (v || 0).toFixed(1) + ' hrs' : (v) => fmt(v,true);
+    return '<tr><td>'+escapeHTML(label)+'</td><td>'+f(av)+'</td><td>'+f(bv)+'</td><td>'+f(diff)+'</td></tr>';
+  }).join('');
+  const lead = b.totalValue - a.totalValue;
+  $('winner').textContent = Math.abs(lead) < 1 ? 'Very close' : (lead > 0 ? 'Offer B leads' : 'Offer A leads');
+  $('winnerText').textContent = Math.abs(lead) < 1
+    ? 'The offers are basically tied after the modeled adjustments.'
+    : (lead > 0 ? 'Offer B is ahead by ' + fmt(lead,true) + ' per year.' : 'Offer A is ahead by ' + fmt(Math.abs(lead),true) + ' per year.');
+}
+
+function renderBreakdown(data){
+  const rows = [
+    ['Gross pay',data.grossPerPay,data.annualGross / 12,data.annualGross],
+    ['Estimated income + payroll taxes',data.tax / data.payPeriods,data.tax / 12,data.tax],
+    ['Retirement contribution',data.retirement / data.payPeriods,data.retirement / 12,data.retirement],
+    ['Benefits + other fixed deductions',data.fixed / data.payPeriods,data.fixed / 12,data.fixed],
+    ['Net pay estimate',data.netPerPay,data.monthlyNet,data.annualNet]
+  ];
+  $('breakdownBody').innerHTML = rows.map(([label,per,month,year]) => {
+    return '<tr><td>'+escapeHTML(label)+'</td><td>'+fmt(per)+'</td><td>'+fmt(month)+'</td><td>'+fmt(year,true)+'</td></tr>';
+  }).join('');
+}
+
+function applyPreset(name){
+  if(name === 'custom') return;
+  const preset = presets[name];
+  if(!preset) return;
+  for(const [id,value] of Object.entries(preset)){
+    $(id).value = value;
+  }
+  calculateAll();
+}
+
+function markCustom(){
+  $('filingPreset').value = 'custom';
+}
+
+function loadExample(type){
+  if(type === 'hourly'){
+    $('payMode').value = 'hourly';
+    $('baseAmount').value = 32;
+    $('hoursWeek').value = 40;
+    $('bonusAnnual').value = 0;
+    $('otHours').value = 5;
+  }
+  if(type === 'salary'){
+    $('payMode').value = 'annual';
+    $('baseAmount').value = 95000;
+    $('hoursWeek').value = 40;
+    $('bonusAnnual').value = 7500;
+    $('otHours').value = 0;
+  }
+  if(type === 'contract'){
+    $('payMode').value = 'hourly';
+    $('baseAmount').value = 85;
+    $('hoursWeek').value = 32;
+    $('weeksYear').value = 48;
+    $('bonusAnnual').value = 0;
+    $('benefitsPerPay').value = 0;
+    $('otherPerPay').value = 0;
+  }
+  calculateAll();
+}
+
+function copyReport(btn){
+  if(!latest) calculateAll();
+  const lines = [
+    'Salary / Paycheck Calculator Pro - NiftyTools Hub',
+    'Annual gross: ' + fmt(latest.annualGross,true),
+    'Net per paycheck: ' + fmt(latest.netPerPay),
+    'Monthly net: ' + fmt(latest.monthlyNet),
+    'Annual net: ' + fmt(latest.annualNet,true),
+    'Effective withholding: ' + pct(latest.effectiveRate),
+    'Pay frequency: ' + $('payFrequency').selectedOptions[0].textContent,
+    'Note: estimate only, not tax advice.'
+  ];
+  copyText(lines.join('\n'),btn,'Copied');
+}
+
+function scenarioValues(){
+  const ids = ['currency','payMode','baseAmount','payFrequency','hoursWeek','weeksYear','bonusAnnual','fedRate','stateRate','payrollRate','retireRate','benefitsPerPay','otherPerPay','otHours','otMultiplier','unpaidDays','raiseMode','raiseValue','raiseTaxRate'];
+  return Object.fromEntries(ids.map((id) => [id,$(id).value]));
+}
+
+function saveScenario(btn){
+  try{
+    localStorage.setItem('nifty_salary_scenario',JSON.stringify(scenarioValues()));
+    flash(btn,'Saved');
+  }catch(e){
+    flash(btn,'Could not save');
+  }
+}
+
+function loadSavedScenario(btn){
+  try{
+    const saved = JSON.parse(localStorage.getItem('nifty_salary_scenario') || '{}');
+    for(const [id,value] of Object.entries(saved)){
+      if($(id)) $(id).value = value;
+    }
+    calculateAll();
+    flash(btn,'Loaded');
+  }catch(e){
+    flash(btn,'No saved scenario');
+  }
+}
+
+function copyText(text,btn,label){
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(() => flash(btn,label));
+    return;
+  }
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-999px';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try{document.execCommand('copy');flash(btn,label);}catch(e){flash(btn,'Copy failed');}
+  ta.remove();
+}
+
+function flash(btn,text){
+  if(!btn) return;
+  const old = btn.textContent;
+  btn.textContent = text;
+  setTimeout(() => { btn.textContent = old; }, 1200);
+}
+
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g,(ch)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+
+function startMatrix(){
+  const canvas = $('matrix');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const glyphs = 'PAYCHECKNETGROSSRAISEOFFER401KTAX0123456789';
+  let drops = [];
+  function resize(){
+    canvas.width = canvas.offsetWidth * devicePixelRatio;
+    canvas.height = canvas.offsetHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    drops = Array(Math.ceil(canvas.offsetWidth / 16)).fill(0).map(() => Math.random() * -40);
+  }
+  function draw(){
+    ctx.fillStyle = 'rgba(2,7,4,.16)';
+    ctx.fillRect(0,0,canvas.offsetWidth,canvas.offsetHeight);
+    ctx.fillStyle = 'rgba(56,255,136,.55)';
+    ctx.font = '13px monospace';
+    drops.forEach((y,i) => {
+      const char = glyphs[Math.floor(Math.random() * glyphs.length)];
+      ctx.fillText(char,i * 16,y * 16);
+      drops[i] = y * 16 > canvas.offsetHeight && Math.random() > .965 ? 0 : y + 1;
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  addEventListener('resize',resize);
+  draw();
+}
+
+startMatrix();
+applyPreset('standard');
+</script>
+</body>
+</html>

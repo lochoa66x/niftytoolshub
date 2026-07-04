@@ -312,11 +312,13 @@
       <p>Merge, extract, optimize and create PDFs from images.</p>
       <span class="open">Open tool -></span>
     </a>
-    <a class="featured-card" href="#library" onclick="focusTool('salary');return false">
+
+
+    <a class="featured-card" href="/salary-tools.html">
       <span class="tag">Money</span>
-      <h3>Salary Calculator</h3>
-      <p>Convert pay between hourly, weekly, monthly and yearly.</p>
-      <span class="open">Find tool -></span>
+      <h3>Salary / Paycheck Pro</h3>
+      <p>Estimate take-home pay, overtime, raises and competing job offers.</p>
+      <span class="open">Open tool -></span>
     </a>
   </div>
 </section>
@@ -329,7 +331,7 @@
   <div class="category-grid">
     <div class="category-card" onclick="jumpFilter('signal')"><b>Signal Tools</b><span>Alerts, AI panic, meme warning, aurora, travel chaos and public anomaly radars.</span></div>
     <div class="category-card" onclick="jumpFilter('image')"><b>Image & Documents</b><span>Color palettes, image compression, file organizer, PDF tools, QR codes and receipts.</span></div>
-    <div class="category-card" onclick="focusTool('salary')"><b>Finance & Business</b><span>Salary, mortgage, auto loan, receipts, percentages and business calculators.</span></div>
+    <div class="category-card" onclick="focusTool('salary')"><b>Finance & Business</b><span>Salary / paycheck, mortgage, auto loan, receipts, percentages and business calculators.</span></div>
     <div class="category-card" onclick="jumpFilter('fun')"><b>Fun & Random</b><span>Random toolkit, tarot, zodiac, prank terminal, dice, coin flips and quick playful tools.</span></div>
     <div class="category-card" onclick="focusTool('zodiac')"><b>Mystic / Astrology</b><span>Tarot reader, birth chart toolkit, zodiac compatibility and gematria.</span></div>
     <div class="category-card" onclick="jumpFilter('convert')"><b>Everyday Utilities</b><span>Unit converter, time zone studio, timers, text tools, lorem ipsum and days-lived calculators.</span></div>
@@ -697,26 +699,13 @@ A- 3</textarea></div>
       <div class="open">Open tool →</div>
     </div>
 
-    <!-- Salary calculator -->
-    <div class="tool" data-tags="free utility convert" data-name="salary wage calculator hourly yearly weekly monthly biweekly income pay">
-      <span class="badge free">Free</span>
-      <div class="ico">💼</div>
-      <h3>Salary Calculator</h3>
-      <p>Convert pay between hourly, weekly, monthly and yearly (gross).</p>
-      <div class="mini collapsed" onclick="event.stopPropagation()">
-        <div class="row"><select id="salmode" onchange="salary()"><option value="hour">I earn per hour</option><option value="year">I earn per year</option></select></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Amount</span><input id="salamt" type="number" value="25" oninput="salary()"></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Hrs / week</span><input id="salhrs" type="number" value="40" oninput="salary()"></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Hourly</span><span class="out" id="salH" style="font-size:14px">—</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Weekly</span><span class="out" id="salW" style="font-size:14px">—</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Bi-weekly</span><span class="out" id="salB" style="font-size:14px">—</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Monthly</span><span class="out" id="salM" style="font-size:14px">—</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Yearly</span><span class="out" id="salY" style="font-size:14px">—</span></div>
-        <div class="row"><span style="color:var(--mut);font-size:11px">Before tax · assumes 52 weeks/year</span></div>
-      </div>
-      <div class="open">Open tool →</div>
-    </div>
 
+    <!-- Salary paycheck pro -->
+    <div class="tool" data-tags="free utility convert finance business salary paycheck hourly wage overtime raise job offer income tax estimate" data-name="salary paycheck calculator pro hourly yearly monthly biweekly wage overtime take home pay gross net deductions raise calculator job offer comparison income estimate" onclick="location.href='/salary-tools.html'">
+      <span class="badge free">Free</span><div class="ico">PAY</div>
+      <h3>Salary / Paycheck Calculator Pro</h3><p>Estimate take-home pay, overtime, deductions, raises and competing job offers.</p>
+      <div class="open">Open full tool -></div>
+    </div>
     <!-- Zodiac love match -->
     <div class="tool" data-tags="free utility fun" data-name="zodiac love compatibility match romance horoscope couple star sign">
       <span class="badge free">Free</span>
@@ -1198,14 +1187,7 @@ A- 3</textarea></div>
     document.getElementById('frout').textContent=b===0?'—':(a/b*100).toFixed(2)+'%';}
   frUpdate();
   // salary
-  function salary(){
-    const mode=gv('salmode'),amt=parseFloat(gv('salamt'))||0,H=parseFloat(gv('salhrs'))||40;
-    let hourly,yearly;
-    if(mode==='hour'){hourly=amt;yearly=amt*H*52;}
-    else{yearly=amt;hourly=H>0?amt/(H*52):0;}
-    const set=(id,val)=>document.getElementById(id).textContent=fmtMoney(val);
-    set('salH',hourly);set('salW',hourly*H);set('salB',hourly*H*2);set('salM',yearly/12);set('salY',yearly);
-  }
+  function salary(){}
   salary();
   // zodiac love match
   const LSIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
