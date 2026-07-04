@@ -160,6 +160,69 @@
   #pixel .hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
     background:rgba(0,0,0,.75);color:#fff;font-size:13px;padding:9px 16px;border-radius:10px;font-family:sans-serif}
   @media(max-width:680px){.plans{grid-template-columns:1fr}.navlinks{display:none}}
+
+  /* NT HOMEPAGE REFRESH START */
+  .navlinks a[href="#tools"]{display:none}
+  .navlinks a[href="#featured"]::before,.navlinks a[href="#categories"]::before,.navlinks a[href="#library"]::before{content:"./";color:var(--grnsoft)}
+  .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:26px;align-items:center;min-height:520px;margin-top:22px;padding:64px 30px 34px}
+  .hero-copy{position:relative;z-index:1;min-width:0}
+  .hero-visual{position:relative;min-height:360px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(12,18,12,.94),rgba(5,8,5,.96));overflow:hidden}
+  .hero-visual::before{content:"signal.visualizer";position:absolute;left:0;top:0;width:100%;height:30px;display:flex;align-items:center;padding:0 12px;background:#0e130e;border-bottom:1px solid var(--line);color:var(--grnsoft);font-size:11px;letter-spacing:1px}
+  .matrix-rain{position:absolute;inset:30px 0 0;opacity:.26;background:
+    repeating-linear-gradient(90deg,transparent 0 20px,rgba(70,224,122,.08) 20px 21px,transparent 21px 38px),
+    repeating-linear-gradient(180deg,rgba(70,224,122,.17) 0 1px,transparent 1px 22px);
+    animation:rainshift 9s linear infinite}
+  @keyframes rainshift{to{transform:translateY(72px)}}
+  .radar-ring{position:absolute;left:50%;top:55%;width:min(72%,300px);aspect-ratio:1;border:1px solid rgba(70,224,122,.32);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 40px rgba(70,224,122,.08),inset 0 0 24px rgba(70,224,122,.05)}
+  .radar-ring::before,.radar-ring::after{content:"";position:absolute;inset:18%;border:1px solid rgba(119,200,255,.2);border-radius:50%}
+  .radar-ring::after{inset:36%;border-color:rgba(255,180,84,.22)}
+  .radar-sweep{position:absolute;left:50%;top:55%;width:min(36%,148px);height:2px;transform-origin:left center;background:linear-gradient(90deg,var(--grn),transparent);animation:sweep 4.8s linear infinite;filter:drop-shadow(0 0 8px var(--grn))}
+  @keyframes sweep{to{transform:rotate(360deg)}}
+  .signal-lines{position:absolute;left:18px;right:18px;bottom:18px;display:grid;gap:7px;font-size:11.5px;color:var(--mut)}
+  .signal-lines span{display:flex;justify-content:space-between;gap:12px;border:1px solid rgba(70,224,122,.13);background:rgba(10,13,10,.78);padding:7px 9px;border-radius:3px}
+  .signal-lines b{color:var(--grn);font-weight:700}
+  .hero-kicker{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+  .hero h1{font-size:clamp(34px,5vw,58px);max-width:680px}
+  .hero .sub{max-width:680px;font-size:15px}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .ghost-link{font-family:var(--mono);border:1px solid var(--line);border-radius:var(--r);padding:9px 15px;font-size:13px;color:var(--txt);background:var(--bg)}
+  .ghost-link:hover{border-color:var(--grn);color:var(--grn);text-decoration:none}
+  .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px;max-width:650px}
+  .metric-box{border:1px solid var(--line);background:rgba(13,17,13,.86);border-radius:5px;padding:12px;min-width:0}
+  .metric-box b{display:block;color:var(--txt);font-size:22px;line-height:1}
+  .metric-box span{display:block;color:var(--dim);font-size:11px;margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:34px 0 16px}
+  .section-head h2{margin:0;font-size:22px;text-transform:uppercase;letter-spacing:.3px}
+  .section-head h2::before{content:"// ";color:var(--grnsoft)}
+  .section-head p{margin:0;color:var(--dim);font-size:12.5px;max-width:520px}
+  .featured-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .featured-card{position:relative;display:block;min-height:184px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,#0d120d,#0a0d0a);padding:18px;overflow:hidden}
+  .featured-card:hover{border-color:var(--grnsoft);box-shadow:0 0 0 1px var(--grnsoft),0 0 24px rgba(70,224,122,.12);text-decoration:none}
+  .featured-card::after{content:"";position:absolute;inset:auto -25% -45% 35%;height:110px;background:radial-gradient(circle,rgba(70,224,122,.14),transparent 62%);pointer-events:none}
+  .featured-card .tag{display:inline-flex;color:var(--grn);border:1px solid rgba(70,224,122,.28);border-radius:3px;padding:3px 7px;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;background:rgba(70,224,122,.05)}
+  .featured-card h3{font-size:16px;margin:20px 0 8px;color:var(--txt)}
+  .featured-card h3::before{content:"> ";color:var(--grn)}
+  .featured-card p{margin:0;color:var(--dim);font-size:12.5px;max-width:95%}
+  .featured-card .open{position:absolute;left:18px;bottom:16px;color:var(--grn);font-size:12px;font-weight:700}
+  .category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:28px}
+  .category-card{border:1px solid var(--line);border-radius:6px;background:var(--card);padding:16px;cursor:pointer;min-height:144px}
+  .category-card:hover{border-color:var(--grnsoft);box-shadow:0 0 18px rgba(70,224,122,.08)}
+  .category-card b{display:block;color:var(--txt);font-size:14px;margin-bottom:8px}
+  .category-card b::before{content:"[ ";color:var(--grnsoft)}
+  .category-card b::after{content:" ]";color:var(--grnsoft)}
+  .category-card span{display:block;color:var(--dim);font-size:12px;line-height:1.55}
+  .coming-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 34px}
+  .coming-strip span{border:1px dashed rgba(70,224,122,.22);border-radius:5px;background:rgba(70,224,122,.035);padding:10px 12px;color:var(--dim);font-size:12px}
+  .coming-strip b{color:var(--grn);font-weight:700}
+  .library-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-top:30px}
+  .library-head h2{margin:0;font-size:22px;text-transform:uppercase}
+  .library-head h2::before{content:"// ";color:var(--grnsoft)}
+  .library-head p{margin:0;color:var(--dim);font-size:12.5px;max-width:500px}
+  #tools{scroll-margin-top:82px}
+  @media(max-width:920px){.hero{grid-template-columns:1fr;min-height:auto}.hero-visual{min-height:300px}.featured-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.coming-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:620px){.hero{padding:54px 20px 24px}.featured-grid,.category-grid,.coming-strip,.metrics{grid-template-columns:1fr}.section-head,.library-head{display:block}.hero-actions .btn,.hero-actions .ghost-link{width:100%;text-align:center}.hero-visual{min-height:250px}}
+  /* NT HOMEPAGE REFRESH END */
+
 </style>
 </head>
 <body>
@@ -168,26 +231,122 @@
   <div class="wrap nav">
     <div class="logo"><div class="mark"></div> niftytoolshub</div>
     <nav class="navlinks">
-      <a href="#tools">Tools</a>
+      <a href="#featured">Featured</a>
+      <a href="#categories">Categories</a>
+      <a href="#library">All tools</a>
       <a href="#pricing" hidden data-hidden-until-launch="true">Pricing</a>
-      <a href="#">Monitoring</a>
-      <a href="#">About</a>
+      <a href="#featured">Signals</a>
+      <a href="#coming-next">Roadmap</a>
     </nav>
     <button class="btn" onclick="goPrem()" hidden data-hidden-until-launch="true">Go Premium · $10/mo</button>
   </div>
 </header>
 
 <section class="hero wrap">
-  <span class="pill"><span class="dot"></span> system online · 44+ tools loaded</span>
-  <h1>Every tool you need,<br><span class="grad">one terminal.</span></h1>
-  <p class="sub">// converters, clocks, screen tests, password tools — free, forever. New signal and monitoring tools are rolling out while we build.</p>
-  <div class="search">
-    <input id="q" placeholder="search_tools --query 'convert, clock, pixel'" oninput="search()">
-    <button class="btn" onclick="search()">Search</button>
+  <div class="hero-copy">
+    <div class="hero-kicker">
+      <span class="pill"><span class="dot"></span> system online · 44+ tools loaded</span>
+      <span class="pill">signal tools active</span>
+      <span class="pill">free while building</span>
+    </div>
+    <h1>Useful tools for<br><span class="grad">weird internet days.</span></h1>
+    <p class="sub">// signal radars, file utilities, calculators, document tools, playful experiments and everyday helpers. Built like a terminal, organized like a real toolbox.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#featured">Open featured tools</a>
+      <a class="ghost-link" href="#categories">Browse categories</a>
+    </div>
+    <div class="metrics">
+      <div class="metric-box"><b>6+</b><span>featured tools</span></div>
+      <div class="metric-box"><b>7</b><span>clean categories</span></div>
+      <div class="metric-box"><b>0</b><span>account needed</span></div>
+    </div>
+  </div>
+  <div class="hero-visual" aria-hidden="true">
+    <div class="matrix-rain"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-sweep"></div>
+    <div class="signal-lines">
+      <span><em>early-warning</em><b>online</b></span>
+      <span><em>aurora-watch</em><b>scanning</b></span>
+      <span><em>meme-radar</em><b>rising</b></span>
+      <span><em>tool-library</em><b>44+ ready</b></span>
+    </div>
   </div>
 </section>
 
-<section id="tools" class="wrap">
+<!-- NT LANDING REFRESH START -->
+<section id="featured" class="wrap">
+  <div class="section-head">
+    <h2>Featured Tools</h2>
+    <p>The main stuff: signal intelligence, file tools and money calculators. The tiny utilities still live in the full library below.</p>
+  </div>
+  <div class="featured-grid">
+    <a class="featured-card" href="/signal-watch.html">
+      <span class="tag">Signal radar</span>
+      <h3>Early Warning Radar</h3>
+      <p>World vs local anomaly signals: alerts, quakes, outages, markets, news and air quality.</p>
+      <span class="open">Open tool -></span>
+    </a>
+    
+    <a class="featured-card" href="/aurora-watch.html">
+      <span class="tag">Sky watch</span>
+      <h3>Aurora Watch</h3>
+      <p>Check whether northern or southern lights are worth chasing tonight.</p>
+      <span class="open">Open tool -></span>
+    </a>
+    <a class="featured-card" href="/meme-watch.html">
+      <span class="tag">Trend scout</span>
+      <h3>Meme Early Warning</h3>
+      <p>Spot rising phrases before mainstream coverage catches up.</p>
+      <span class="open">Open tool -></span>
+    </a>
+    <a class="featured-card" href="/image-tools.html">
+      <span class="tag">Images</span>
+      <h3>Image Toolkit</h3>
+      <p>Compress, resize, convert WebP/JPG/PNG and remove simple backgrounds.</p>
+      <span class="open">Open tool -></span>
+    </a>
+    <a class="featured-card" href="/pdf-tools.html">
+      <span class="tag">Documents</span>
+      <h3>PDF Toolkit</h3>
+      <p>Merge, extract, optimize and create PDFs from images.</p>
+      <span class="open">Open tool -></span>
+    </a>
+    <a class="featured-card" href="#library" onclick="focusTool('salary');return false">
+      <span class="tag">Money</span>
+      <h3>Salary Calculator</h3>
+      <p>Convert pay between hourly, weekly, monthly and yearly.</p>
+      <span class="open">Find tool -></span>
+    </a>
+  </div>
+</section>
+
+<section id="categories" class="wrap">
+  <div class="section-head">
+    <h2>Categories</h2>
+    <p>Less scrolling, more intent. Jump into a family, then open the full tool when you need power.</p>
+  </div>
+  <div class="category-grid">
+    <div class="category-card" onclick="jumpFilter('signal')"><b>Signal Tools</b><span>Alerts, AI panic, meme warning, aurora, travel chaos and public anomaly radars.</span></div>
+    <div class="category-card" onclick="jumpFilter('image')"><b>Image & Documents</b><span>Image compression, PDF tools, QR codes, receipts and upcoming organizers.</span></div>
+    <div class="category-card" onclick="focusTool('salary')"><b>Finance & Business</b><span>Salary, mortgage, auto loan, receipts, percentages and business calculators.</span></div>
+    <div class="category-card" onclick="jumpFilter('fun')"><b>Fun & Random</b><span>Tarot, zodiac, prank terminal, dice, coin flips and quick playful tools.</span></div>
+    <div class="category-card" onclick="focusTool('zodiac')"><b>Mystic / Astrology</b><span>Tarot reader, birth chart toolkit, zodiac compatibility and gematria.</span></div>
+    <div class="category-card" onclick="jumpFilter('convert')"><b>Everyday Utilities</b><span>Converters, clocks, timers, text tools, lorem ipsum and days-lived calculators.</span></div>
+    <div class="category-card" onclick="jumpFilter('screen')"><b>Device Tests</b><span>Screen checks now; webcam, microphone, typing and internet speed tests next.</span></div>
+    <div class="category-card" onclick="jumpFilter('developer')"><b>Developer Tools</b><span>JSON, YAML, CSV, Base64, URL, JWT, hashes, UUIDs and regex helpers.</span></div>
+  </div>
+  <div id="coming-next" class="coming-strip">
+    <span><b>Next:</b> fake hacker terminal</span>
+    <span><b>Next:</b> random toolkit</span>
+    <span><b>Next:</b> device test suite</span>
+    <span><b>Next:</b> file organizers</span>
+  </div>
+</section>
+<!-- NT LANDING REFRESH END -->
+
+<section id="tools" class="wrap tool-library">
+  <div id="library" class="library-head"><h2>All Tools</h2><p>Everything stays available here. Search or filter when you need a specific utility.</p></div>
   <div class="filters" id="filters">
     <div class="chip on" data-f="all" onclick="filter(this)">All</div>
     <div class="chip" data-f="free" onclick="filter(this)">Free</div>
@@ -1069,6 +1228,20 @@ A- 3</textarea></div>
   function demo(name){show(name,'This is a placeholder — in the live version, this tool opens right here on the page.');}
   function show(t,b){document.getElementById('m-title').textContent=t;document.getElementById('m-body').textContent=b;document.getElementById('modal').classList.add('show');}
   function closeM(){document.getElementById('modal').classList.remove('show');}
+
+  /* NT HOMEPAGE REFRESH SCRIPT START */
+  function jumpFilter(name){
+    const chip=document.querySelector('.chip[data-f="'+name+'"]');
+    if(chip)filter(chip);
+    document.getElementById('library')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function focusTool(query){
+    const input=document.getElementById('q');
+    if(input){input.value=query;search();}
+    document.getElementById('library')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  /* NT HOMEPAGE REFRESH SCRIPT END */
+
 </script>
 </body>
 </html>
