@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outage Radar - app, cloud, carrier and internet status map | NiftyTools Hub</title>
+<meta name="description" content="Track app, cloud, carrier and internet outage signals with official status feeds, local browser checks, public links and an animated world map.">
+<meta property="og:title" content="Outage Radar - NiftyTools Hub">
+<meta property="og:description" content="A live-style outage map for YouTube, AWS, Instagram, Facebook, Verizon, Bell, cellular services and internet infrastructure signals.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/outage-radar.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    --bg:#050905;--panel:#0b110c;--panel2:#101610;--txt:#dfeadf;--mut:#82907d;--dim:#a9b7a5;--line:#1b2b1e;
+    --grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--blue:#77c8ff;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
+    background:
+      linear-gradient(rgba(70,224,122,.026) 1px,transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,
+      radial-gradient(900px 560px at 78% -10%,rgba(99,230,255,.08),transparent 62%),
+      radial-gradient(720px 460px at 8% 8%,rgba(70,224,122,.07),transparent 58%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased}
+  body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.025) 50%) 0 0/100% 4px;mix-blend-mode:screen;opacity:.24}
+  body:after{content:"";position:fixed;inset:0;z-index:21;pointer-events:none;background:radial-gradient(circle at 50% 45%,transparent 0,transparent 64%,rgba(0,0,0,.42) 100%);opacity:.78}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+  header{position:sticky;top:0;z-index:8;border-bottom:1px solid var(--line);background:rgba(5,9,5,.86);backdrop-filter:blur(8px)}
+  .nav{height:62px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:9px;color:var(--txt);font-weight:800;font-size:15px}
+  .logo .mk{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}
+  .logo .mk:before{content:"NT";font-size:11px}
+  .nav a:last-child{font-size:13px;color:var(--mut)}
+  .crumb{margin:28px 0 6px;color:var(--mut);font-size:12.5px;text-transform:uppercase}
+  h1{margin:6px 0 12px;font-size:clamp(28px,5vw,48px);font-weight:800;letter-spacing:0;text-transform:uppercase;text-shadow:0 0 20px rgba(70,224,122,.14)}
+  h1:before{content:"> ";color:var(--grn)}
+  .lead{max-width:1060px;margin:0 0 20px;color:var(--mut);font-size:15px}
+  .toolbar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+  label{display:block;margin-bottom:5px;color:var(--mut);font-size:12px}
+  select,input{width:100%;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--txt);font:13px var(--mono);outline:0;caret-color:var(--grn)}
+  select:focus,input:focus{border-color:var(--grn)}
+  .select-wrap{min-width:216px}
+  .input-wrap{min-width:260px;flex:1}
+  .btn{font:700 13px var(--mono);border:1px solid var(--grn);border-radius:5px;background:transparent;color:var(--grn);padding:10px 14px;cursor:pointer;transition:.15s}
+  .btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38);text-decoration:none}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .badge{font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(5,9,5,.76)}
+  .badge b{color:var(--grn)}
+  .grid{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(330px,.58fr);gap:18px;align-items:start}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  .screen,.panel{position:relative;border:1px solid rgba(70,224,122,.28);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 42px rgba(70,224,122,.08),inset 0 0 28px rgba(70,224,122,.04);overflow:hidden}
+  .screen{min-height:650px;padding:18px}
+  .screen:before,.panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(99,230,255,.04),transparent);transform:translateX(-118%);animation:scanline 7s linear infinite}
+  @keyframes scanline{to{transform:translateX(118%)}}
+  .screen-head{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+  .kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+  .screen-title{font-size:clamp(20px,3vw,32px);font-weight:800;text-transform:uppercase;line-height:1.05}
+  .screen-time{font-size:11px;color:var(--mut);text-align:right;line-height:1.6}
+  .map-frame{position:absolute;inset:86px 16px 132px;border:1px solid rgba(70,224,122,.22);border-radius:7px;background:
+    linear-gradient(rgba(70,224,122,.034) 1px,transparent 1px) 0 0/100% 36px,
+    linear-gradient(90deg,rgba(70,224,122,.034) 1px,transparent 1px) 0 0/36px 100%,
+    radial-gradient(circle at 50% 52%,rgba(70,224,122,.11),transparent 49%),
+    #030804;overflow:hidden}
+  #outageMap{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .map-note{position:absolute;left:16px;top:16px;z-index:3;max-width:360px;color:var(--mut);font-size:11px;line-height:1.6;border:1px solid rgba(70,224,122,.22);background:rgba(3,7,4,.82);border-radius:4px;padding:10px 12px;box-shadow:0 0 22px rgba(70,224,122,.08)}
+  .map-note b{color:var(--grn)}
+  .map-tools{position:absolute;right:16px;top:16px;z-index:3;display:flex;gap:8px;align-items:center;border:1px solid rgba(70,224,122,.2);background:rgba(3,7,4,.82);border-radius:5px;padding:8px}
+  .map-tools button{font:700 11px var(--mono);border:1px solid rgba(70,224,122,.18);border-radius:4px;color:var(--txt);padding:6px 9px;background:rgba(1,8,4,.74);cursor:pointer}
+  .map-tools button.active{color:var(--grn);border-color:rgba(70,224,122,.44)}
+  .sweep-tag{position:absolute;right:18px;bottom:90px;z-index:3;border:1px solid rgba(70,224,122,.22);background:rgba(3,7,4,.86);border-radius:5px;color:var(--txt);font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:10px 14px}
+  .legend{position:absolute;left:16px;bottom:90px;z-index:3;display:flex;gap:10px;align-items:center;border:1px solid rgba(70,224,122,.2);background:rgba(3,7,4,.82);border-radius:5px;padding:9px 11px;color:var(--mut);font-size:11px}
+  .dot{width:9px;height:9px;border-radius:999px;display:inline-block;box-shadow:0 0 12px currentColor}
+  .dot.good{color:var(--grn);background:var(--grn)}
+  .dot.warn{color:var(--amber);background:var(--amber)}
+  .dot.bad{color:var(--red);background:var(--red)}
+  .readouts{position:absolute;left:18px;right:18px;bottom:18px;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .readout{border:1px solid rgba(70,224,122,.2);background:rgba(1,8,4,.82);padding:11px;border-radius:5px;min-width:0}
+  .readout span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
+  .readout b{display:block;margin-top:4px;color:var(--txt);font-size:clamp(17px,2.7vw,25px);line-height:1;word-break:break-word}
+  .green{color:var(--grn)!important}.cyan{color:var(--cyan)!important}.amber{color:var(--amber)!important}.red{color:var(--red)!important}
+  @media(max-width:680px){
+    .screen{min-height:760px}.map-frame{inset:112px 12px 244px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}
+    .screen-head{display:block}.screen-time{text-align:left;margin-top:8px}.map-tools{left:14px;right:auto;top:auto;bottom:18px;flex-wrap:wrap}.legend{left:14px;right:14px;bottom:92px;flex-wrap:wrap}.sweep-tag{bottom:154px;right:12px;left:12px;text-align:center}
+  }
+  .panel{padding:18px;margin-bottom:18px;min-width:0}
+  .panel h2,.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 14px}
+  .panel h2:before,.section-title:before{content:"// ";color:var(--grn)}
+  .stat-row{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.76);border-radius:5px;padding:12px;margin-bottom:10px}
+  .stat-row span{display:block;color:var(--mut);font-size:10.5px;text-transform:uppercase}
+  .stat-row b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35;word-break:break-word}
+  .meter{height:8px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden;margin-top:9px}
+  .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .35s ease}
+  .mini-list,.service-list{display:grid;gap:8px}
+  .mini-item,.service-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;font-size:12px;color:var(--mut)}
+  .mini-item b,.service-row b{color:var(--txt);text-align:right}
+  .service-row small{display:block;color:var(--mut);font-size:10.5px;margin-top:2px}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(70,224,122,.18);border-radius:999px;padding:3px 8px;color:var(--dim);font-size:10.5px;text-transform:uppercase;white-space:nowrap}
+  .pill.official{border-color:rgba(70,224,122,.34);color:var(--grn)}
+  .pill.local{border-color:rgba(99,230,255,.34);color:var(--cyan)}
+  .pill.manual{border-color:rgba(255,189,91,.34);color:var(--amber)}
+  .lower-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:18px}
+  @media(max-width:920px){.lower-grid{grid-template-columns:1fr}}
+  .event-log{display:grid;gap:8px;max-height:460px;overflow:auto;padding-right:4px}
+  .event{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.78);border-radius:5px;padding:10px;display:grid;grid-template-columns:78px 1fr auto;gap:10px;align-items:start;font-size:12px}
+  .event .time{color:var(--mut)}
+  .event .desc{color:var(--txt)}
+  .event .desc b{color:var(--grn)}
+  .event .sev{white-space:nowrap}
+  @media(max-width:620px){.event{grid-template-columns:1fr}.event .sev{white-space:normal}}
+  .link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .link-grid a{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;font-size:12px;color:var(--txt)}
+  .link-grid a span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
+  .truth{font-size:11.5px;color:var(--mut);line-height:1.65}
+  .truth b{color:var(--txt)}
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <a href="/">back to all tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb">Home / Signal Tools / Outage Radar</div>
+  <h1>Outage Radar</h1>
+  <p class="lead">Track app, cloud, carrier and internet-core disruption signals in one live-style map. Official status feeds get priority, local browser checks fill the gaps, and carrier pages stay clearly marked when they need your ZIP/postal code.</p>
+
+  <div class="toolbar">
+    <div class="select-wrap">
+      <label for="mode">Data mode</label>
+      <select id="mode">
+        <option value="live">Official feeds + local checks</option>
+        <option value="demo">Demo outage storm</option>
+      </select>
+    </div>
+    <div class="select-wrap">
+      <label for="category">Signal group</label>
+      <select id="category" onchange="setCategory(this.value)">
+        <option value="all">All signals</option>
+        <option value="cloud">Cloud + developer</option>
+        <option value="apps">Apps + social</option>
+        <option value="carrier">Carrier + cellular</option>
+        <option value="internet">Internet core</option>
+      </select>
+    </div>
+    <div class="input-wrap">
+      <label for="customTarget">Quick local check</label>
+      <input id="customTarget" placeholder="youtube.com, instagram.com, aws.amazon.com">
+    </div>
+    <button class="btn" onclick="refreshOutages()">Refresh radar</button>
+    <button class="btn ghost" onclick="checkCustomTarget()">Check site</button>
+    <button class="btn ghost" onclick="copyReport(this)">Copy report</button>
+  </div>
+
+  <div class="badge-row">
+    <span class="badge"><b>Official:</b> Cloudflare, OpenAI, GitHub, Google, Vercel, Discord style status feeds</span>
+    <span class="badge"><b>Local:</b> browser favicon reachability for YouTube, Meta apps and carriers</span>
+    <span class="badge"><b>Carrier:</b> Verizon, Bell, Rogers, AT&amp;T and T-Mobile links need location details</span>
+  </div>
+
+  <section class="grid">
+    <div class="screen">
+      <div class="screen-head">
+        <div>
+          <div class="kicker">PUBLIC OUTAGE SIGNAL ARRAY</div>
+          <div class="screen-title">Internet weather map</div>
+        </div>
+        <div class="screen-time">
+          <div id="updatedAt">sync pending</div>
+          <div id="sourceState">booting status sensors</div>
+        </div>
+      </div>
+      <div class="map-frame">
+        <canvas id="outageMap" aria-label="Animated public outage world map"></canvas>
+        <div class="map-note"><b>Field layer: service outage markers</b><br>Official incidents, local reachability checks and manual carrier links. Markers are signal estimates, not exact user counts.</div>
+        <div class="map-tools" id="mapTools">
+          <button class="active" onclick="setCategory('all')">All</button>
+          <button onclick="setCategory('apps')">Apps</button>
+          <button onclick="setCategory('cloud')">Cloud</button>
+          <button onclick="setCategory('carrier')">Cell</button>
+        </div>
+        <div class="legend"><span><i class="dot good"></i> normal</span><span><i class="dot warn"></i> degraded</span><span><i class="dot bad"></i> outage</span></div>
+        <div class="sweep-tag">Sweep 04 / outage cluster watch</div>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span>Outage score</span><b id="score" class="green">--</b></div>
+        <div class="readout"><span>Official signals</span><b id="officialCount" class="cyan">--</b></div>
+        <div class="readout"><span>Local checks</span><b id="localCount" class="amber">--</b></div>
+        <div class="readout"><span>Watch list</span><b id="watchCount" class="green">--</b></div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="panel">
+        <h2>Outage pulse</h2>
+        <div class="stat-row">
+          <span>Current read</span>
+          <b id="pulseLabel">Loading status feeds</b>
+          <div class="meter"><i id="pulseMeter"></i></div>
+        </div>
+        <div class="stat-row">
+          <span>Strongest signal</span>
+          <b id="topDriver">Waiting for official and local data</b>
+        </div>
+        <div class="stat-row">
+          <span>Source health</span>
+          <b id="healthText">Checking browser-readable feeds</b>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Services watched</h2>
+        <div class="service-list" id="serviceList"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Official links</h2>
+        <div class="link-grid" id="linkGrid"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="lower-grid">
+    <div class="panel">
+      <h2>Outage event log</h2>
+      <div class="event-log" id="eventLog"></div>
+    </div>
+    <div class="panel">
+      <h2>What this is</h2>
+      <p class="truth"><b>Outage Radar</b> prioritizes official provider feeds where they exist. Consumer apps and phone carriers often do not expose public outage APIs, so this tool labels those as local checks or manual regional links.</p>
+      <p class="truth"><b>Why this matters:</b> internet outages usually cascade. A Cloudflare, AWS, Google, Meta or carrier event can make unrelated apps look broken. This view helps separate platform trouble from your own connection.</p>
+      <p class="truth"><b>Next premium layer:</b> saved cities/providers, multi-region probes, SMS/email alerts, timeline history, and private status watches for your own sites.</p>
+      <div class="stat-row" style="margin-top:14px">
+        <span>Readable report</span>
+        <b id="reportText">Waiting for radar data.</b>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+
+<script>
+  const MAP_DATA_URL='https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
+
+  const STATUSPAGE_FEEDS=[
+    {name:'Cloudflare',category:'internet',lat:37.77,lon:-122.42,url:'https://www.cloudflarestatus.com/api/v2/summary.json',link:'https://www.cloudflarestatus.com/'},
+    {name:'OpenAI',category:'cloud',lat:37.78,lon:-122.42,url:'https://status.openai.com/api/v2/summary.json',link:'https://status.openai.com/'},
+    {name:'GitHub',category:'cloud',lat:37.79,lon:-122.40,url:'https://www.githubstatus.com/api/v2/summary.json',link:'https://www.githubstatus.com/'},
+    {name:'Vercel',category:'cloud',lat:40.72,lon:-74.00,url:'https://www.vercel-status.com/api/v2/summary.json',link:'https://www.vercel-status.com/'},
+    {name:'Discord',category:'apps',lat:37.77,lon:-122.42,url:'https://discordstatus.com/api/v2/summary.json',link:'https://discordstatus.com/'},
+    {name:'Meta Business',category:'apps',lat:37.45,lon:-122.18,url:'https://metastatus.com/api/v2/summary.json',link:'https://metastatus.com/'}
+  ];
+
+  const GOOGLE_FEEDS=[
+    {name:'Google Cloud',category:'cloud',lat:37.42,lon:-122.08,url:'https://status.cloud.google.com/incidents.json',link:'https://status.cloud.google.com/'},
+    {name:'Google Workspace',category:'apps',lat:37.42,lon:-122.08,url:'https://www.google.com/appsstatus/dashboard/incidents.json',link:'https://www.google.com/appsstatus/dashboard/'}
+  ];
+
+  const RSS_FEEDS=[
+    {name:'AWS',category:'cloud',lat:47.61,lon:-122.33,url:'https://status.aws.amazon.com/rss/all.rss',link:'https://health.aws.amazon.com/health/status'}
+  ];
+
+  const LOCAL_CHECKS=[
+    {name:'YouTube',category:'apps',lat:37.63,lon:-122.43,probe:'https://www.youtube.com/favicon.ico',link:'https://www.youtube.com/'},
+    {name:'Instagram',category:'apps',lat:37.45,lon:-122.18,probe:'https://www.instagram.com/favicon.ico',link:'https://www.instagram.com/'},
+    {name:'Facebook',category:'apps',lat:37.45,lon:-122.18,probe:'https://www.facebook.com/favicon.ico',link:'https://www.facebook.com/'},
+    {name:'WhatsApp Web',category:'apps',lat:37.45,lon:-122.18,probe:'https://web.whatsapp.com/favicon.ico',link:'https://web.whatsapp.com/'},
+    {name:'Verizon',category:'carrier',lat:40.74,lon:-74.36,probe:'https://www.verizon.com/favicon.ico',link:'https://www.verizon.com/support/residential/service-outage/'},
+    {name:'Bell Canada',category:'carrier',lat:45.50,lon:-73.57,probe:'https://www.bell.ca/favicon.ico',link:'https://support.bell.ca/outage-check'},
+    {name:'Rogers',category:'carrier',lat:43.65,lon:-79.38,probe:'https://www.rogers.com/favicon.ico',link:'https://www.rogers.com/support/outage'},
+    {name:'AT&T',category:'carrier',lat:32.78,lon:-96.80,probe:'https://www.att.com/favicon.ico',link:'https://www.att.com/outages/'},
+    {name:'T-Mobile',category:'carrier',lat:47.61,lon:-122.20,probe:'https://www.t-mobile.com/favicon.ico',link:'https://www.t-mobile.com/support/coverage/t-mobile-network'}
+  ];
+
+  const FALLBACK_WORLD=[
+    [[72,-168],[68,-132],[55,-92],[30,-83],[14,-95],[8,-78],[-12,-72],[-54,-70],[-56,-44],[-20,-35],[8,-50],[25,-78],[55,-60],[72,-54]],
+    [[72,-12],[70,45],[58,80],[34,104],[6,103],[-36,43],[-34,15],[4,-10],[38,-10]],
+    [[34,-18],[30,36],[8,50],[-35,34],[-35,15],[2,10],[10,-8]],
+    [[58,80],[66,150],[42,162],[8,142],[2,103],[34,104]],
+    [[-10,110],[-44,112],[-44,154],[-12,154]],
+    [[72,-52],[82,-20],[78,30],[72,45],[70,-10]]
+  ];
+
+  const state={
+    mode:'live',category:'all',events:[],services:[],links:[],errors:[],score:0,paused:false,t:0,
+    atlas:{countries:[],loaded:false,error:''},customChecks:[]
+  };
+
+  let canvas,ctx,rafId;
+
+  function $(id){return document.getElementById(id);}
+  function nowLabel(){return new Date().toLocaleString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  function cleanText(text){return String(text||'').replace(/\*\*/g,'').replace(/\s+/g,' ').trim();}
+  function ageLabel(date){
+    const ms=Date.now()-new Date(date).getTime();
+    if(!Number.isFinite(ms))return 'unknown';
+    const min=Math.max(0,Math.round(ms/60000));
+    if(min<60)return min+'m ago';
+    const hrs=Math.round(min/60);
+    if(hrs<48)return hrs+'h ago';
+    return Math.round(hrs/24)+'d ago';
+  }
+  function severityClass(sev){return sev>=75?'red':sev>=45?'amber':'green'}
+  function severityWord(sev){return sev>=75?'outage':sev>=45?'degraded':'normal'}
+  function impactToSeverity(indicator,impact,status){
+    const value=String(indicator||impact||status||'').toLowerCase();
+    if(value.includes('critical')||value.includes('major')||value.includes('outage'))return 88;
+    if(value.includes('partial')||value.includes('minor')||value.includes('degraded')||value.includes('disruption'))return 58;
+    if(value.includes('maintenance')||value.includes('information'))return 28;
+    return 12;
+  }
+
+  async function fetchWithTimeout(url,timeout=8500,type='json'){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeout);
+    try{
+      const res=await fetch(url,{cache:'no-store',signal:controller.signal});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      return type==='text'?await res.text():await res.json();
+    }finally{clearTimeout(timer)}
+  }
+
+  async function loadAtlas(){
+    if(state.atlas.loaded||state.atlas.loading)return;
+    state.atlas.loading=true;
+    try{
+      const topo=await fetchWithTimeout(MAP_DATA_URL,12000,'json');
+      state.atlas.countries=decodeTopoCountries(topo);
+      state.atlas.loaded=state.atlas.countries.length>0;
+    }catch(err){
+      state.atlas.error=err.message||'atlas blocked';
+    }finally{state.atlas.loading=false}
+  }
+
+  function decodeTopoCountries(topo){
+    const transform=topo.transform||{scale:[1,1],translate:[0,0]};
+    const arcs=topo.arcs||[];
+    function decodeArc(index){
+      const raw=arcs[Math.abs(index)];
+      if(!raw)return [];
+      let x=0,y=0;
+      const points=raw.map((pair)=>{
+        x+=pair[0];y+=pair[1];
+        return [x*transform.scale[0]+transform.translate[0],y*transform.scale[1]+transform.translate[1]];
+      });
+      return index<0?points.reverse():points;
+    }
+    function ringsFromArcs(arcRefs){
+      return arcRefs.map((ring)=>{
+        let points=[];
+        ring.forEach((arcIndex,i)=>{
+          const decoded=decodeArc(arcIndex);
+          points=points.concat(i?decoded.slice(1):decoded);
+        });
+        return points;
+      });
+    }
+    const geometries=topo.objects&&topo.objects.countries&&topo.objects.countries.geometries||[];
+    const countries=[];
+    geometries.forEach((geo)=>{
+      if(geo.type==='Polygon')countries.push(ringsFromArcs(geo.arcs));
+      if(geo.type==='MultiPolygon')geo.arcs.forEach((poly)=>countries.push(ringsFromArcs(poly)));
+    });
+    return countries;
+  }
+
+  function addService(svc){state.services.push(svc)}
+  function addEvent(evt){
+    state.events.push(Object.assign({time:new Date().toISOString(),confidence:'public',link:'#'},evt));
+  }
+
+  async function readStatusPage(feed){
+    try{
+      const json=await fetchWithTimeout(feed.url,9000,'json');
+      const indicator=json.status&&json.status.indicator||'none';
+      const description=json.status&&json.status.description||'Operational';
+      const sev=impactToSeverity(indicator,description);
+      const open=(json.incidents||[]).filter((i)=>String(i.status||'').toLowerCase()!=='resolved');
+      addService({name:feed.name,category:feed.category,source:'official',status:description,severity:Math.max(sev,open.length?55:12),lat:feed.lat,lon:feed.lon,link:feed.link});
+      if(indicator!=='none'||open.length){
+        const incident=open[0]||{};
+        addEvent({provider:feed.name,title:incident.name||description,category:feed.category,severity:Math.max(sev,55),lat:feed.lat,lon:feed.lon,confidence:'official',link:incident.shortlink||feed.link,time:incident.started_at||incident.created_at||new Date().toISOString()});
+      }
+      return true;
+    }catch(err){
+      state.errors.push(feed.name+': '+err.message);
+      addService({name:feed.name,category:feed.category,source:'official',status:'feed blocked in browser',severity:22,lat:feed.lat,lon:feed.lon,link:feed.link});
+      return false;
+    }
+  }
+
+  async function readGoogleFeed(feed){
+    try{
+      const list=await fetchWithTimeout(feed.url,9000,'json');
+      const cutoff=Date.now()-1000*60*60*24*10;
+      const recent=(Array.isArray(list)?list:[]).filter((i)=>{
+        const t=new Date(i.modified||i.begin||i.created||0).getTime();
+        return t>cutoff;
+      }).slice(0,4);
+      const active=recent.filter((i)=>!i.end||String(i.status_impact||'').toLowerCase().includes('disruption'));
+      const sev=active.length?impactToSeverity(active[0].severity,active[0].status_impact):recent.length?28:12;
+      addService({name:feed.name,category:feed.category,source:'official',status:active.length?'recent disruption':'recent history clean',severity:sev,lat:feed.lat,lon:feed.lon,link:feed.link});
+      recent.slice(0,2).forEach((incident)=>{
+        addEvent({provider:feed.name,title:cleanText(incident.external_desc||incident.service_name||'Recent status incident').slice(0,120),category:feed.category,severity:incident.end?Math.max(28,sev):Math.max(58,sev),lat:feed.lat,lon:feed.lon,confidence:'official',link:feed.link,time:incident.modified||incident.begin||incident.created});
+      });
+      return true;
+    }catch(err){
+      state.errors.push(feed.name+': '+err.message);
+      addService({name:feed.name,category:feed.category,source:'official',status:'feed blocked in browser',severity:22,lat:feed.lat,lon:feed.lon,link:feed.link});
+      return false;
+    }
+  }
+
+  async function readRss(feed){
+    try{
+      const text=await fetchWithTimeout(feed.url,9000,'text');
+      const xml=new DOMParser().parseFromString(text,'application/xml');
+      const items=[...xml.querySelectorAll('item')].slice(0,5);
+      const active=items.filter((item)=>/issue|degrad|outage|impact|interruption/i.test(item.textContent||''));
+      addService({name:feed.name,category:feed.category,source:'official',status:active.length?'public RSS issue text':'RSS readable',severity:active.length?52:12,lat:feed.lat,lon:feed.lon,link:feed.link});
+      active.slice(0,2).forEach((item)=>{
+        addEvent({provider:feed.name,title:cleanText(item.querySelector('title')&&item.querySelector('title').textContent||'AWS public health item'),category:feed.category,severity:52,lat:feed.lat,lon:feed.lon,confidence:'official',link:feed.link,time:item.querySelector('pubDate')&&item.querySelector('pubDate').textContent||new Date().toISOString()});
+      });
+      return true;
+    }catch(err){
+      state.errors.push(feed.name+': '+err.message);
+      addService({name:feed.name,category:feed.category,source:'official',status:'public page available, RSS blocked',severity:20,lat:feed.lat,lon:feed.lon,link:feed.link});
+      return false;
+    }
+  }
+
+  function probeImage(item){
+    return new Promise((resolve)=>{
+      const started=performance.now();
+      const img=new Image();
+      const timer=setTimeout(()=>finish(false),5200);
+      function finish(ok){
+        clearTimeout(timer);
+        img.onload=img.onerror=null;
+        const ms=Math.round(performance.now()-started);
+        resolve(Object.assign({},item,{ok,ms,severity:ok?(ms>2600?34:10):62,status:ok?(ms>2600?'slow local reachability':'reachable from this browser'):'local probe failed'}));
+      }
+      img.onload=()=>finish(true);
+      img.onerror=()=>finish(false);
+      img.referrerPolicy='no-referrer';
+      img.src=item.probe+(item.probe.includes('?')?'&':'?')+'nt='+Date.now()+Math.random();
+    });
+  }
+
+  async function runLocalChecks(){
+    const results=await Promise.all(LOCAL_CHECKS.map(probeImage));
+    results.concat(state.customChecks).forEach((result)=>{
+      addService({name:result.name,category:result.category||'apps',source:'local',status:result.status,severity:result.severity,lat:result.lat||20,lon:result.lon||0,link:result.link||result.probe});
+      if(result.severity>=34){
+        addEvent({provider:result.name,title:result.status+' ('+result.ms+'ms)',category:result.category||'apps',severity:result.severity,lat:result.lat||20,lon:result.lon||0,confidence:'local',link:result.link||result.probe,time:new Date().toISOString()});
+      }
+    });
+  }
+
+  function addManualCarrierNotes(){
+    const known=['Verizon','Bell Canada','Rogers','AT&T','T-Mobile'];
+    state.services.filter((s)=>known.includes(s.name)).forEach((svc)=>{
+      if(svc.source==='local'&&svc.severity<35){
+        addEvent({provider:svc.name,title:'regional outage check needs address or postal code',category:'carrier',severity:18,lat:svc.lat,lon:svc.lon,confidence:'manual',link:svc.link,time:new Date().toISOString()});
+      }
+    });
+  }
+
+  function buildDemo(){
+    [
+      ['YouTube playback errors reported in several regions','YouTube','apps',72,37.63,-122.43,'local','https://www.youtube.com/'],
+      ['AWS us-east latency spike watch','AWS','cloud',64,39.04,-77.49,'official','https://health.aws.amazon.com/health/status'],
+      ['Instagram login failures rising','Instagram','apps',58,37.45,-122.18,'local','https://www.instagram.com/'],
+      ['Verizon cellular reports concentrated in northeast','Verizon','carrier',69,40.74,-74.36,'manual','https://www.verizon.com/support/residential/service-outage/'],
+      ['Cloudflare edge issue resolved recently','Cloudflare','internet',43,37.77,-122.42,'official','https://www.cloudflarestatus.com/'],
+      ['Bell Canada local check normal, regional page available','Bell Canada','carrier',22,45.50,-73.57,'manual','https://support.bell.ca/outage-check']
+    ].forEach(([title,provider,category,severity,lat,lon,confidence,link])=>{
+      addService({name:provider,category,source:confidence,status:title,severity,lat,lon,link});
+      addEvent({title,provider,category,severity,lat,lon,confidence,link,time:new Date(Date.now()-Math.random()*7200000).toISOString()});
+    });
+  }
+
+  async function refreshOutages(){
+    state.mode=$('mode').value;
+    state.events=[];state.services=[];state.links=[];state.errors=[];
+    $('sourceState').textContent='syncing feeds...';
+    $('updatedAt').textContent='updated '+nowLabel();
+    if(state.mode==='demo'){
+      buildDemo();
+    }else{
+      const tasks=[
+        ...STATUSPAGE_FEEDS.map(readStatusPage),
+        ...GOOGLE_FEEDS.map(readGoogleFeed),
+        ...RSS_FEEDS.map(readRss),
+        runLocalChecks()
+      ];
+      await Promise.all(tasks);
+      addManualCarrierNotes();
+    }
+    buildLinks();
+    scoreSignals();
+    renderAll();
+  }
+
+  function scoreSignals(){
+    const visible=filteredEvents();
+    const sevMax=Math.max(0,...visible.map((e)=>e.severity));
+    const official=visible.filter((e)=>e.confidence==='official'&&e.severity>=35).length;
+    const local=visible.filter((e)=>e.confidence==='local'&&e.severity>=35).length;
+    state.score=Math.min(100,Math.round(sevMax*.72+official*8+local*6+visible.length*1.5));
+  }
+
+  function filteredEvents(){
+    return state.events.filter((e)=>state.category==='all'||e.category===state.category).sort((a,b)=>b.severity-a.severity||new Date(b.time)-new Date(a.time));
+  }
+  function filteredServices(){
+    return state.services.filter((s)=>state.category==='all'||s.category===state.category).sort((a,b)=>b.severity-a.severity||a.name.localeCompare(b.name));
+  }
+
+  function buildLinks(){
+    state.links=[
+      ...STATUSPAGE_FEEDS.map((f)=>({name:f.name,type:'official status',url:f.link})),
+      ...GOOGLE_FEEDS.map((f)=>({name:f.name,type:'official status',url:f.link})),
+      ...RSS_FEEDS.map((f)=>({name:f.name,type:'official status',url:f.link})),
+      ...LOCAL_CHECKS.filter((f)=>f.category==='carrier').map((f)=>({name:f.name,type:'regional check',url:f.link}))
+    ];
+  }
+
+  function renderAll(){
+    const events=filteredEvents();
+    const services=filteredServices();
+    const official=events.filter((e)=>e.confidence==='official').length;
+    const local=events.filter((e)=>e.confidence==='local').length;
+    $('score').textContent=state.score;
+    $('score').className=severityClass(state.score);
+    $('officialCount').textContent=official;
+    $('localCount').textContent=local;
+    $('watchCount').textContent=services.length;
+    $('pulseMeter').style.width=state.score+'%';
+    $('pulseLabel').textContent=state.score>=75?'Major outage risk signal':state.score>=45?'Degraded service watch':'Mostly normal service weather';
+    $('topDriver').textContent=events[0]?events[0].provider+' - '+events[0].title:'No outage events above baseline';
+    $('healthText').textContent=(state.errors.length?state.errors.length+' feeds blocked; ':'')+services.filter((s)=>s.source==='official').length+' official, '+services.filter((s)=>s.source==='local').length+' local checks';
+    $('sourceState').textContent=state.atlas.loaded?'world atlas online':'map fallback online';
+    renderServices(services);
+    renderEvents(events);
+    renderLinks();
+    renderReport(events,services);
+    updateFilterButtons();
+  }
+
+  function renderServices(services){
+    $('serviceList').innerHTML=services.slice(0,12).map((s)=>{
+      const cls=s.source==='official'?'official':s.source==='local'?'local':'manual';
+      return `<div class="service-row"><div><b>${s.name}</b><small>${s.status}</small></div><span class="pill ${cls}">${s.source}</span></div>`;
+    }).join('')||'<div class="mini-item"><span>No services visible for this filter.</span><b>--</b></div>';
+  }
+
+  function renderEvents(events){
+    $('eventLog').innerHTML=events.slice(0,18).map((e)=>{
+      const cls=severityClass(e.severity);
+      return `<div class="event"><div class="time">${ageLabel(e.time)}</div><div class="desc"><b>${e.provider}</b> ${e.title}</div><a class="sev ${cls}" href="${e.link}" target="_blank" rel="noreferrer">${e.confidence} / ${severityWord(e.severity)}</a></div>`;
+    }).join('')||'<div class="event"><div class="time">now</div><div class="desc"><b>Outage Radar</b> no current events visible for this filter.</div><div class="sev green">normal</div></div>';
+  }
+
+  function renderLinks(){
+    $('linkGrid').innerHTML=state.links.map((l)=>`<a href="${l.url}" target="_blank" rel="noreferrer"><span>${l.type}</span>${l.name}</a>`).join('');
+  }
+
+  function renderReport(events,services){
+    const top=events[0];
+    const report=top
+      ? `Outage Radar score ${state.score}/100. Strongest signal: ${top.provider} - ${top.title}. Watching ${services.length} services in ${state.category} mode.`
+      : `Outage Radar score ${state.score}/100. No active events above baseline for the selected filter. Watching ${services.length} services.`;
+    $('reportText').textContent=report;
+  }
+
+  function setCategory(category){
+    state.category=category;
+    $('category').value=category;
+    scoreSignals();
+    renderAll();
+  }
+
+  function updateFilterButtons(){
+    [...document.querySelectorAll('#mapTools button')].forEach((btn)=>{
+      const key=btn.textContent.trim().toLowerCase();
+      const map={all:'all',apps:'apps',cloud:'cloud',cell:'carrier'};
+      btn.classList.toggle('active',map[key]===state.category);
+    });
+  }
+
+  async function checkCustomTarget(){
+    const raw=$('customTarget').value.trim();
+    if(!raw)return;
+    const domain=raw.replace(/^https?:\/\//,'').replace(/\/.*$/,'');
+    const item={name:domain,category:'apps',probe:'https://'+domain+'/favicon.ico',link:'https://'+domain+'/',lat:20+Math.random()*25,lon:-30+Math.random()*80};
+    const result=await probeImage(item);
+    state.customChecks=[result].concat(state.customChecks).slice(0,4);
+    await refreshOutages();
+  }
+
+  async function copyReport(btn){
+    const text=$('reportText').textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+      const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1200);
+    }catch(_err){
+      window.prompt('Copy report',text);
+    }
+  }
+
+  function setupCanvas(){
+    canvas=$('outageMap');ctx=canvas.getContext('2d');
+    const resize=()=>{
+      const rect=canvas.getBoundingClientRect();
+      const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+      canvas.width=Math.floor(rect.width*dpr);
+      canvas.height=Math.floor(rect.height*dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    };
+    resize();
+    window.addEventListener('resize',resize);
+    loadAtlas();
+    animate();
+  }
+
+  function mapBox(w,h){return {x:Math.max(18,w*.06),y:Math.max(28,h*.11),w:w-Math.max(36,w*.12),h:h-Math.max(72,h*.22)}}
+  function project(lat,lon,w,h){
+    const box=mapBox(w,h);
+    const x=box.x+((lon+180)/360)*box.w;
+    const y=box.y+((90-lat)/180)*box.h;
+    return [x,y];
+  }
+
+  function draw(){
+    if(!ctx)return;
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    drawOceanGlow(w,h);
+    drawGrid(w,h);
+    drawCountries(w,h);
+    drawRadarOverlay(w,h);
+    drawEvents(w,h);
+    drawHud(w,h);
+  }
+
+  function drawOceanGlow(w,h){
+    const box=mapBox(w,h);
+    const grd=ctx.createRadialGradient(w*.5,h*.48,20,w*.5,h*.5,Math.max(w,h)*.55);
+    grd.addColorStop(0,'rgba(70,224,122,.11)');
+    grd.addColorStop(.45,'rgba(99,230,255,.045)');
+    grd.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=grd;ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='rgba(99,230,255,.08)';ctx.lineWidth=1;
+    for(let i=0;i<5;i++){
+      ctx.beginPath();
+      ctx.ellipse(w*.5,h*.5,box.w*(.22+i*.11),box.h*(.16+i*.075),0,0,Math.PI*2);
+      ctx.stroke();
+    }
+  }
+
+  function drawGrid(w,h){
+    ctx.strokeStyle='rgba(70,224,122,.08)';ctx.lineWidth=1;
+    for(let lon=-180;lon<=180;lon+=30){
+      const [x1,y1]=project(82,lon,w,h),[x2,y2]=project(-62,lon,w,h);
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    }
+    for(let lat=-60;lat<=75;lat+=20){
+      const [x1,y1]=project(lat,-170,w,h),[x2,y2]=project(lat,170,w,h);
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    }
+  }
+
+  function drawCountries(w,h){
+    ctx.save();
+    ctx.strokeStyle='rgba(70,224,122,.26)';
+    ctx.fillStyle='rgba(70,224,122,.075)';
+    ctx.lineWidth=1;
+    if(state.atlas.loaded){
+      state.atlas.countries.forEach((poly)=>{
+        ctx.beginPath();
+        poly.forEach((ring)=>{
+          ring.forEach((p,i)=>{
+            const [x,y]=project(p[1],p[0],w,h);
+            if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+          });
+          ctx.closePath();
+        });
+        ctx.fill();ctx.stroke();
+      });
+    }else{
+      FALLBACK_WORLD.forEach((poly)=>{
+        ctx.beginPath();
+        poly.forEach((p,i)=>{
+          const [x,y]=project(p[0],p[1],w,h);
+          if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+        });
+        ctx.closePath();ctx.fill();ctx.stroke();
+      });
+    }
+    ctx.restore();
+  }
+
+  function drawRadarOverlay(w,h){
+    const box=mapBox(w,h),cx=box.x+box.w*.5,cy=box.y+box.h*.5,r=Math.min(box.w,box.h)*.42;
+    ctx.save();
+    ctx.strokeStyle='rgba(70,224,122,.14)';ctx.lineWidth=1;
+    for(let i=1;i<=4;i++){ctx.beginPath();ctx.arc(cx,cy,r*i/4,0,Math.PI*2);ctx.stroke()}
+    const a=state.t*.012;
+    ctx.strokeStyle='rgba(70,224,122,.42)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);ctx.stroke();
+    ctx.fillStyle='rgba(70,224,122,.075)';
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a-.28,a);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+
+  function drawEvents(w,h){
+    const items=filteredEvents().slice(0,18);
+    const origin=project(25,-25,w,h);
+    items.forEach((e,i)=>{
+      const p=project(e.lat,e.lon,w,h);
+      const color=e.severity>=75?'255,101,114':e.severity>=45?'255,189,91':'70,224,122';
+      const alpha=.22+Math.min(.42,e.severity/220);
+      drawArc(origin,p,color,alpha,i);
+      drawMarker(p,color,e.severity,i);
+      if(i<5)drawLabel(p,e.provider,e.title,e.severity,i,w);
+    });
+    filteredServices().filter((s)=>!items.some((e)=>e.provider===s.name)).slice(0,22).forEach((s,i)=>{
+      const p=project(s.lat,s.lon,w,h);
+      const color=s.severity>=45?'255,189,91':'70,224,122';
+      drawMarker(p,color,Math.max(14,s.severity),i+20,true);
+    });
+  }
+
+  function drawArc(from,to,color,alpha,index){
+    const lift=50+index%5*16;
+    const mx=(from[0]+to[0])/2,my=(from[1]+to[1])/2-lift;
+    ctx.save();
+    ctx.strokeStyle=`rgba(${color},${alpha})`;ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(from[0],from[1]);ctx.quadraticCurveTo(mx,my,to[0],to[1]);ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawMarker(p,color,severity,index,small){
+    const pulse=(Math.sin(state.t*.045+index)+1)/2;
+    const r=small?3.5:5+severity/22;
+    ctx.save();
+    ctx.fillStyle=`rgba(${color},${small?.55:.9})`;
+    ctx.shadowColor=`rgba(${color},.95)`;ctx.shadowBlur=small?8:18;
+    ctx.beginPath();ctx.arc(p[0],p[1],r,0,Math.PI*2);ctx.fill();
+    if(!small){
+      ctx.shadowBlur=0;ctx.strokeStyle=`rgba(${color},${.24+pulse*.28})`;ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(p[0],p[1],r+10+pulse*18,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawLabel(p,provider,title,severity,index,w){
+    const text=provider+' - '+cleanText(title).slice(0,34);
+    ctx.save();
+    ctx.font='700 11px JetBrains Mono, monospace';
+    const tw=Math.min(ctx.measureText(text).width+18,260);
+    const x=Math.min(Math.max(12,p[0]+12),w-tw-12);
+    const y=p[1]-10-index%2*18;
+    ctx.fillStyle='rgba(3,7,4,.82)';
+    ctx.strokeStyle=severity>=75?'rgba(255,101,114,.36)':severity>=45?'rgba(255,189,91,.34)':'rgba(70,224,122,.34)';
+    roundRect(x,y-22,tw,28,5);ctx.fill();ctx.stroke();
+    ctx.fillStyle='rgba(223,234,223,.95)';
+    ctx.fillText(text,x+9,y-4);
+    ctx.restore();
+  }
+
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+  }
+
+  function drawHud(w,h){
+    ctx.save();
+    ctx.font='11px JetBrains Mono, monospace';
+    ctx.fillStyle='rgba(130,144,125,.9)';
+    ctx.fillText((state.atlas.loaded?'REAL WORLD ATLAS':'LOCAL MAP FALLBACK')+' / '+state.category.toUpperCase(),16,h-18);
+    ctx.textAlign='right';
+    ctx.fillText('EVENTS '+filteredEvents().length+' / SCORE '+state.score,w-16,h-18);
+    ctx.restore();
+  }
+
+  function animate(){
+    state.t++;
+    draw();
+    rafId=requestAnimationFrame(animate);
+  }
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden&&rafId)cancelAnimationFrame(rafId);
+    if(!document.hidden)animate();
+  });
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    setupCanvas();
+    refreshOutages();
+    setInterval(()=>{if($('mode').value==='live')refreshOutages()},1000*60*5);
+  });
+</script>
+</body>
+</html>
