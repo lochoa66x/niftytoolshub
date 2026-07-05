@@ -62,16 +62,20 @@
   .kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}
   .screen-title{font-size:clamp(18px,2.6vw,30px);font-weight:800;text-transform:uppercase;color:var(--txt);line-height:1.05}
   .screen-time{font-size:11px;color:var(--mut);text-align:right;line-height:1.6}
-  .map-frame{position:absolute;inset:84px 16px 126px;border:1px solid rgba(70,224,122,.18);border-radius:7px;background:
-    linear-gradient(rgba(70,224,122,.03) 1px,transparent 1px) 0 0/100% 34px,
-    linear-gradient(90deg,rgba(70,224,122,.03) 1px,transparent 1px) 0 0/34px 100%,
-    radial-gradient(circle at 50% 52%,rgba(70,224,122,.075),transparent 48%),
-    #020603;overflow:hidden}
+  .map-frame{position:absolute;inset:84px 16px 126px;border:1px solid rgba(70,224,122,.2);border-radius:7px;background:
+    linear-gradient(rgba(70,224,122,.032) 1px,transparent 1px) 0 0/100% 36px,
+    linear-gradient(90deg,rgba(70,224,122,.032) 1px,transparent 1px) 0 0/36px 100%,
+    radial-gradient(circle at 50% 52%,rgba(70,224,122,.11),transparent 49%),
+    #030804;overflow:hidden}
   #threatMap{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .map-note{position:absolute;left:16px;top:16px;z-index:3;max-width:360px;color:var(--mut);font-size:11px;line-height:1.6;border:1px solid rgba(70,224,122,.16);background:rgba(3,7,4,.76);border-radius:4px;padding:9px 10px}
+  .map-note{position:absolute;left:16px;top:16px;z-index:3;max-width:360px;color:var(--mut);font-size:11px;line-height:1.6;border:1px solid rgba(70,224,122,.22);background:rgba(3,7,4,.82);border-radius:4px;padding:10px 12px;box-shadow:0 0 22px rgba(70,224,122,.08)}
   .map-note b{color:var(--grn)}
+  .map-tools{position:absolute;right:16px;top:16px;z-index:3;display:flex;gap:8px;align-items:center;border:1px solid rgba(70,224,122,.2);background:rgba(3,7,4,.82);border-radius:5px;padding:8px}
+  .map-tools span{border:1px solid rgba(70,224,122,.18);border-radius:4px;color:var(--txt);padding:6px 9px;font-size:11px;background:rgba(1,8,4,.74)}
+  .map-tools span.hot{color:var(--grn);border-color:rgba(70,224,122,.38)}
+  .sweep-tag{position:absolute;right:18px;bottom:88px;z-index:3;border:1px solid rgba(70,224,122,.22);background:rgba(3,7,4,.86);border-radius:5px;color:var(--txt);font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:10px 14px}
   .readouts{position:absolute;left:18px;right:18px;bottom:18px;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-  @media(max-width:680px){.screen{min-height:680px}.map-frame{inset:104px 12px 210px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}.screen-head{display:block}.screen-time{text-align:left;margin-top:8px}}
+  @media(max-width:680px){.screen{min-height:720px}.map-frame{inset:104px 12px 232px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}.screen-head{display:block}.screen-time{text-align:left;margin-top:8px}.map-tools{left:16px;right:auto;top:auto;bottom:16px}.sweep-tag{bottom:178px;right:12px;left:12px;text-align:center}}
   .readout{border:1px solid rgba(70,224,122,.2);background:rgba(1,8,4,.82);padding:11px;border-radius:5px;min-width:0}
   .readout span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
   .readout b{display:block;margin-top:4px;color:var(--txt);font-size:clamp(17px,2.6vw,25px);line-height:1;word-break:break-word}
@@ -151,7 +155,9 @@
       </div>
       <div class="map-frame">
         <canvas id="threatMap" aria-label="Animated cyber threat world map"></canvas>
-        <div class="map-note"><b>Signal map</b><br>Arcs and dots are visualization of public feed signals or demo events. They are not exact attribution.</div>
+        <div class="map-note"><b>Field layer: public threat markers</b><br>Arcs and dots visualize public feed signals or demo events. They are not exact attribution.</div>
+        <div class="map-tools"><span class="hot">Markers</span><span>Source links</span><span>48h</span></div>
+        <div class="sweep-tag">Sweep 03 / public cluster watch</div>
       </div>
       <div class="readouts">
         <div class="readout"><span>Threat pulse</span><b id="pulseScore" class="green">--</b></div>
@@ -219,6 +225,7 @@
     infocon:'https://isc.sans.edu/api/infocon?json',
     kev:'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json'
   };
+  const MAP_DATA_URL='https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
   const CITIES=[
     {name:'Seattle edge',country:'US',lat:47.61,lon:-122.33},{name:'Virginia cloud',country:'US',lat:38.90,lon:-77.04},
     {name:'Toronto exchange',country:'CA',lat:43.65,lon:-79.38},{name:'London node',country:'GB',lat:51.51,lon:-0.13},
@@ -238,8 +245,16 @@
     {name:'open resolver noise',lat:-23.55,lon:-46.63,country:'BR'}
   ];
   const PORT_NAMES={22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',80:'HTTP',110:'POP3',143:'IMAP',443:'HTTPS',445:'SMB',3389:'RDP',5900:'VNC',6379:'Redis',8080:'HTTP-alt',8443:'HTTPS-alt'};
-  const WORLD=[[[ -168,72],[-52,72],[-52,15],[-84,8],[-100,18],[-124,32],[-168,52]],[[ -82,12],[-35,8],[-48,-55],[-76,-54],[-82,12]],[[ -12,35],[45,72],[150,70],[160,52],[120,30],[100,8],[70,20],[40,5],[8,28],[-12,35]],[[ -18,32],[50,30],[48,-34],[20,-35],[-5,-5],[-18,32]],[[ 112,-10],[154,-10],[154,-44],[112,-40],[112,-10]],[[ -45,75],[-15,72],[-20,60],[-48,60],[-45,75]]];
+  const FALLBACK_WORLD=[
+    [[-168,72],[-135,70],[-116,58],[-98,50],[-82,44],[-66,48],[-52,56],[-52,16],[-76,9],[-94,18],[-124,33],[-168,52]],
+    [[-83,12],[-62,8],[-50,-8],[-40,-25],[-48,-55],[-74,-54],[-78,-30],[-72,-8],[-83,12]],
+    [[-10,36],[18,58],[44,72],[105,72],[145,62],[160,48],[120,22],[98,8],[75,20],[52,10],[35,-2],[8,29],[-10,36]],
+    [[-18,34],[18,32],[48,12],[50,-32],[20,-35],[-5,-2],[-18,34]],
+    [[112,-10],[154,-10],[154,-44],[114,-40],[112,-10]],
+    [[-52,74],[-20,72],[-18,60],[-46,58],[-52,74]]
+  ];
   let state={events:[],templates:[],ports:[],kevs:[],score:0,health:'booting',mode:'demo',paused:false,frame:0,lastSpawn:0};
+  let atlas={countries:[],loaded:false,error:''};
   let ctx,canvas;
 
   function clamp(n){return Math.max(0,Math.min(100,Math.round(Number(n)||0)));}
@@ -262,6 +277,48 @@
     }
     if(Array.isArray(obj))return obj;
     return [];
+  }
+  async function loadAtlas(){
+    try{
+      const topo=await fetchJson(MAP_DATA_URL,12000);
+      atlas.countries=decodeTopoCountries(topo);
+      atlas.loaded=atlas.countries.length>20;
+      atlas.error=atlas.loaded?'':'map data incomplete';
+    }catch(err){
+      atlas.loaded=false;
+      atlas.error=err&&err.message?err.message:'map load failed';
+    }
+  }
+  function decodeTopoCountries(topo){
+    const scale=(topo.transform&&topo.transform.scale)||[1,1];
+    const translate=(topo.transform&&topo.transform.translate)||[0,0];
+    const arcs=(topo.arcs||[]).map(arc=>{
+      let x=0,y=0;
+      return arc.map(point=>{
+        x+=point[0];y+=point[1];
+        return [x*scale[0]+translate[0],y*scale[1]+translate[1]];
+      });
+    });
+    function arcPoints(index){
+      const id=index<0?~index:index;
+      const pts=arcs[id]||[];
+      return index<0?pts.slice().reverse():pts;
+    }
+    function ringPoints(indexes){
+      let points=[];
+      indexes.forEach((idx,i)=>{
+        const pts=arcPoints(idx);
+        points=points.concat(i?pts.slice(1):pts);
+      });
+      return points;
+    }
+    const geometries=topo.objects&&topo.objects.countries&&topo.objects.countries.geometries||[];
+    return geometries.filter(g=>g.properties&&g.properties.name!=='Antarctica').map(g=>{
+      const polygons=g.type==='Polygon'
+        ? [g.arcs.map(ringPoints)]
+        : (g.arcs||[]).map(poly=>poly.map(ringPoints));
+      return {name:g.properties&&g.properties.name||'',polygons};
+    });
   }
   function yesterday(){
     const d=new Date();
@@ -429,6 +486,7 @@
   }
   function setupCanvas(){
     canvas=$('threatMap');ctx=canvas.getContext('2d');
+    loadAtlas();
     function loop(t){
       resizeCanvas();
       if(!state.paused&&t-state.lastSpawn>1100){spawnEvent();computeScore();renderAll();state.lastSpawn=t;}
@@ -444,8 +502,12 @@
     if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
+  function mapBox(w,h){
+    return {x:w*.035,y:h*.07,width:w*.93,height:h*.78};
+  }
   function project(lat,lon,w,h){
-    return {x:(lon+180)/360*w,y:(90-lat)/180*h};
+    const b=mapBox(w,h);
+    return {x:b.x+(lon+180)/360*b.width,y:b.y+(85-lat)/170*b.height};
   }
   function draw(t){
     const w=canvas.clientWidth,h=canvas.clientHeight;
@@ -457,16 +519,96 @@
   }
   function drawWorld(w,h){
     ctx.save();
+    drawOceanGlow(w,h);
+    drawGraticule(w,h);
+    drawRadarOverlay(w,h,performance.now());
+    if(atlas.loaded)drawAtlasCountries(w,h);
+    else drawFallbackCountries(w,h);
+    ctx.restore();
+  }
+  function drawOceanGlow(w,h){
+    const b=mapBox(w,h);
+    ctx.save();
+    const g=ctx.createRadialGradient(w*.55,h*.45,20,w*.55,h*.45,Math.max(w,h)*.62);
+    g.addColorStop(0,'rgba(70,224,122,.065)');
+    g.addColorStop(.55,'rgba(70,224,122,.025)');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='rgba(70,224,122,.1)';
+    ctx.strokeRect(b.x,b.y,b.width,b.height);
+    ctx.restore();
+  }
+  function drawGraticule(w,h){
+    ctx.save();
     ctx.strokeStyle='rgba(70,224,122,.12)';
     ctx.lineWidth=1;
-    for(let lon=-150;lon<=150;lon+=30){const a=project(-70,lon,w,h),b=project(80,lon,w,h);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
-    for(let lat=-60;lat<=60;lat+=30){const a=project(lat,-180,w,h),b=project(lat,180,w,h);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
-    WORLD.forEach(poly=>{
+    for(let lon=-150;lon<=150;lon+=30){
+      const a=project(-70,lon,w,h),b=project(82,lon,w,h);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    }
+    for(let lat=-60;lat<=60;lat+=30){
+      const a=project(lat,-180,w,h),b=project(lat,180,w,h);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    }
+    ctx.restore();
+  }
+  function drawRadarOverlay(w,h,t){
+    const cx=w*.52,cy=h*.47,r=Math.min(w,h)*.52;
+    ctx.save();
+    ctx.strokeStyle='rgba(70,224,122,.12)';
+    ctx.lineWidth=1;
+    [r*.32,r*.55,r*.78,r].forEach(rad=>{ctx.beginPath();ctx.arc(cx,cy,rad,0,Math.PI*2);ctx.stroke();});
+    const angle=(t/5200)%(Math.PI*2);
+    const x=cx+Math.cos(angle)*r,y=cy+Math.sin(angle)*r;
+    ctx.strokeStyle='rgba(70,224,122,.28)';
+    ctx.shadowColor='rgba(70,224,122,.45)';
+    ctx.shadowBlur=12;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();
+    ctx.restore();
+  }
+  function traceLonLatRing(ring,w,h){
+    let started=false,prev=null;
+    ring.forEach(([lon,lat])=>{
+      if(lat<-70)return;
+      const p=project(lat,lon,w,h);
+      if(!started||prev&&Math.abs(p.x-prev.x)>w*.42){ctx.moveTo(p.x,p.y);started=true;}
+      else ctx.lineTo(p.x,p.y);
+      prev=p;
+    });
+  }
+  function drawAtlasCountries(w,h){
+    ctx.save();
+    ctx.lineJoin='round';
+    ctx.lineCap='round';
+    ctx.beginPath();
+    atlas.countries.forEach(country=>{
+      country.polygons.forEach(poly=>poly.forEach(ring=>traceLonLatRing(ring,w,h)));
+    });
+    ctx.fillStyle='rgba(70,224,122,.105)';
+    ctx.strokeStyle='rgba(100,242,158,.28)';
+    ctx.lineWidth=1;
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    atlas.countries.forEach(country=>{
+      country.polygons.forEach(poly=>poly.slice(0,1).forEach(ring=>traceLonLatRing(ring,w,h)));
+    });
+    ctx.strokeStyle='rgba(176,255,198,.18)';
+    ctx.lineWidth=1.4;
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawFallbackCountries(w,h){
+    ctx.save();
+    ctx.lineJoin='round';
+    FALLBACK_WORLD.forEach(poly=>{
       ctx.beginPath();
       poly.forEach(([lon,lat],i)=>{const p=project(lat,lon,w,h);if(i)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);});
       ctx.closePath();
-      ctx.fillStyle='rgba(70,224,122,.045)';
-      ctx.strokeStyle='rgba(70,224,122,.22)';
+      ctx.fillStyle='rgba(70,224,122,.09)';
+      ctx.strokeStyle='rgba(100,242,158,.24)';
+      ctx.lineWidth=1.3;
       ctx.fill();ctx.stroke();
     });
     ctx.restore();
@@ -477,7 +619,7 @@
     if(alpha<=0)return;
     const s=project(e.source.lat,e.source.lon,w,h),d=project(e.target.lat,e.target.lon,w,h);
     const mx=(s.x+d.x)/2,my=(s.y+d.y)/2-Math.min(150,Math.abs(d.x-s.x)*.22+40);
-    const color=e.severity>=70?'255,95,109':e.severity>=50?'255,180,84':'70,224,122';
+    const color=e.severity>=70?'98,255,151':e.severity>=50?'119,255,201':'70,224,122';
     ctx.save();
     ctx.globalAlpha=alpha*.85;
     ctx.strokeStyle='rgba('+color+',.72)';
@@ -496,12 +638,40 @@
     ctx.globalAlpha=alpha*.2;
     ctx.beginPath();ctx.arc(d.x,d.y,8+Math.sin(t/180+i)*4,0,Math.PI*2);ctx.fill();
     ctx.restore();
+    if(i<4)drawEventLabel(e,d.x,d.y,w,h,alpha);
+  }
+  function drawEventLabel(e,x,y,w,h,alpha){
+    const text=(e.service+' / '+e.target.country).slice(0,24);
+    const width=Math.min(180,Math.max(108,text.length*8+20));
+    const bx=Math.min(w-width-18,Math.max(18,x+12));
+    const by=Math.min(h-72,Math.max(18,y-46));
+    ctx.save();
+    ctx.globalAlpha=Math.min(.92,alpha);
+    ctx.fillStyle='rgba(3,7,4,.82)';
+    ctx.strokeStyle='rgba(70,224,122,.28)';
+    roundRect(ctx,bx,by,width,38,5);
+    ctx.fill();ctx.stroke();
+    ctx.font='700 11px JetBrains Mono, monospace';
+    ctx.fillStyle='rgba(220,232,220,.92)';
+    ctx.fillText(text,bx+10,by+16);
+    ctx.font='10px JetBrains Mono, monospace';
+    ctx.fillStyle='rgba(70,224,122,.78)';
+    ctx.fillText(e.type.toUpperCase(),bx+10,by+30);
+    ctx.restore();
+  }
+  function roundRect(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
+    c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
+    c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);
+    c.closePath();
   }
   function drawHud(w,h,t){
     ctx.save();
     ctx.font='11px JetBrains Mono, monospace';
     ctx.fillStyle='rgba(220,232,220,.45)';
-    ctx.fillText('PUBLIC SIGNAL MAP / '+String(state.mode).toUpperCase(),16,h-18);
+    ctx.fillText((atlas.loaded?'REAL WORLD ATLAS':'LOCAL MAP FALLBACK')+' / '+String(state.mode).toUpperCase(),16,h-18);
     ctx.fillText('EVENTS '+state.events.length+' / SCORE '+state.score,16,h-36);
     ctx.restore();
   }
