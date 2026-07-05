@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Network Pulse - Bitcoin and Ethereum network stress radar | NiftyTools Hub</title>
+<meta name="description" content="Track Bitcoin and Ethereum network activity, fee pressure, congestion and market-volume context with a terminal-style crypto signal dashboard.">
+<meta property="og:title" content="Crypto Network Pulse - NiftyTools Hub">
+<meta property="og:description" content="A signal radar for BTC and ETH network activity, fee pressure, gas pressure, congestion and anomaly scoring.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niftytoolshub.com/crypto-pulse.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#070b07">
+<link rel="canonical" href="https://niftytoolshub.com/crypto-pulse.html">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+:root{--bg:#050905;--panel:#0b110c;--panel2:#101610;--txt:#dfeadf;--mut:#82907d;--dim:#a9b7a5;--line:#1b2b1e;--line2:#29402d;--grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--violet:#a98cff;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);background:linear-gradient(rgba(70,224,122,.026) 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,radial-gradient(900px 560px at 78% -10%,rgba(99,230,255,.08),transparent 62%),radial-gradient(720px 460px at 8% 8%,rgba(70,224,122,.07),transparent 58%),var(--bg);-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.025) 50%) 0 0/100% 4px;mix-blend-mode:screen;opacity:.24}body:after{content:"";position:fixed;inset:0;z-index:21;pointer-events:none;background:radial-gradient(circle at 50% 45%,transparent 0,transparent 64%,rgba(0,0,0,.42) 100%);opacity:.78}
+a{color:var(--grn);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}.wrap{max-width:1280px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:8;border-bottom:1px solid var(--line);background:rgba(5,9,5,.86);backdrop-filter:blur(8px)}.nav{height:54px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{display:flex;align-items:center;gap:9px;color:var(--txt);font-weight:800;font-size:15px}.logo .mk{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}.logo .mk:before{content:"NT";font-size:11px}.navlinks{display:flex;gap:14px;color:var(--mut);font-size:12px}.navlinks a{color:var(--mut)}.navlinks a:hover{color:var(--grn)}
+main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px auto auto auto;align-items:end;gap:8px;margin:0 0 12px;padding:8px;border:1px solid rgba(70,224,122,.2);border-radius:6px;background:linear-gradient(180deg,rgba(9,16,10,.82),rgba(3,8,4,.78));box-shadow:inset 0 0 18px rgba(70,224,122,.035)}label{display:block;margin-bottom:5px;color:var(--mut);font-size:11px;text-transform:uppercase}select{width:100%;height:36px;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:rgba(3,8,4,.9);color:var(--txt);font-size:13px;outline:0}.btn{height:36px;font:700 13px var(--mono);border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.7);color:var(--grn);padding:7px 12px;cursor:pointer;transition:.15s;white-space:nowrap}.btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38);text-decoration:none}.btn.ghost{border-color:var(--line);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
+.hero{position:relative;border:1px solid rgba(70,224,122,.26);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 42px rgba(70,224,122,.08),inset 0 0 28px rgba(70,224,122,.04);overflow:hidden}.hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(99,230,255,.04),transparent);transform:translateX(-118%);animation:scanline 7s linear infinite}@keyframes scanline{to{transform:translateX(118%)}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;padding:18px}.kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}.title{font-size:clamp(30px,5vw,58px);font-weight:800;text-transform:uppercase;line-height:1.02;margin:4px 0 10px;text-shadow:0 0 20px rgba(70,224,122,.14)}.title span{color:var(--grn)}.lead{max-width:820px;color:var(--mut);font-size:14px;margin:0 0 14px}.source-row{display:flex;gap:8px;flex-wrap:wrap}.badge{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(5,9,5,.76)}.badge b{color:var(--grn)}
+.score-card{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:radial-gradient(circle at 72% 12%,rgba(99,230,255,.08),transparent 38%),rgba(3,8,4,.78);padding:14px;min-width:0}.score-card h2{margin:0 0 10px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.7px}.score-row{display:flex;align-items:flex-end;gap:10px}.score-row b{font-size:56px;line-height:.92;color:var(--grn)}.score-row span{margin-bottom:7px;color:var(--mut);font-size:12px;text-transform:uppercase}.meter{height:9px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .25s}.state-label{margin-top:9px;color:var(--dim);font-weight:800}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mini{border:1px solid rgba(223,234,223,.1);background:rgba(9,14,9,.8);border-radius:5px;padding:9px}.mini span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.mini b{display:block;margin-top:3px;color:var(--txt);font-size:17px}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:14px}.screen,.panel{position:relative;border:1px solid rgba(70,224,122,.24);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 34px rgba(70,224,122,.065),inset 0 0 24px rgba(70,224,122,.035);overflow:hidden}.screen{min-height:560px;padding:14px}.screen-head{position:relative;z-index:3;display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}.screen-title{font-size:clamp(22px,3.6vw,38px);font-weight:800;text-transform:uppercase;line-height:1.04}.screen-time{font-size:11px;color:var(--mut);text-align:right;line-height:1.6}.canvas-frame{position:absolute;inset:82px 14px 92px;border:1px solid rgba(70,224,122,.32);border-radius:7px;background:linear-gradient(rgba(70,224,122,.024) 1px,transparent 1px) 0 0/100% 42px,linear-gradient(90deg,rgba(70,224,122,.024) 1px,transparent 1px) 0 0/42px 100%,radial-gradient(circle at 48% 50%,rgba(99,230,255,.07),transparent 43%),radial-gradient(circle at 50% 54%,rgba(70,224,122,.12),transparent 54%),#030804;overflow:hidden;box-shadow:inset 0 0 44px rgba(70,224,122,.14),inset 0 -44px 80px rgba(0,0,0,.42),0 0 32px rgba(70,224,122,.1)}.canvas-frame:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.018) 50%,rgba(0,0,0,.018) 50%) 0 0/100% 3px,radial-gradient(ellipse at 50% 50%,transparent 0,transparent 55%,rgba(0,0,0,.62) 100%);opacity:.7}#pulseCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}.visual-note{position:absolute;left:14px;top:14px;z-index:3;color:var(--mut);font-size:10px;line-height:1.2;border:1px solid rgba(70,224,122,.2);background:rgba(3,7,4,.68);border-radius:999px;padding:6px 9px;backdrop-filter:blur(3px)}.visual-note b{color:var(--grn)}.network-tabs{position:absolute;right:14px;top:14px;z-index:3;display:flex;gap:6px;border:1px solid rgba(70,224,122,.18);background:rgba(3,7,4,.66);border-radius:5px;padding:6px}.network-tabs button{font:700 11px var(--mono);border:1px solid rgba(70,224,122,.18);border-radius:4px;color:var(--txt);padding:6px 9px;background:rgba(1,8,4,.74);cursor:pointer}.network-tabs button.active{color:var(--grn);border-color:rgba(70,224,122,.44)}.sweep-tag{position:absolute;right:14px;bottom:82px;z-index:3;border:1px solid rgba(70,224,122,.18);background:rgba(3,7,4,.7);border-radius:5px;color:var(--mut);font-size:10px;letter-spacing:1.6px;text-transform:uppercase;padding:7px 10px}.readouts{position:absolute;left:14px;right:14px;bottom:12px;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.readout{border:1px solid rgba(70,224,122,.2);background:rgba(1,8,4,.82);padding:8px 10px;border-radius:5px;min-width:0}.readout span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.readout b{display:block;margin-top:4px;color:var(--txt);font-size:clamp(16px,2.5vw,24px);line-height:1;word-break:break-word}.green{color:var(--grn)!important}.cyan{color:var(--cyan)!important}.amber{color:var(--amber)!important}.red{color:var(--red)!important}.violet{color:var(--violet)!important}
+.side{display:grid;gap:12px}.panel{padding:12px}.panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 10px}.panel h2:before{content:"// ";color:var(--grn)}.stat-row{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.76);border-radius:5px;padding:10px;margin-bottom:8px}.stat-row span{display:block;color:var(--mut);font-size:10.5px;text-transform:uppercase}.stat-row b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35}.signal-list{display:grid;gap:7px;max-height:270px;overflow:auto;padding-right:2px}.signal-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:8px 9px;font-size:12px;color:var(--mut)}.signal-row b{color:var(--txt)}.pill{display:inline-flex;align-items:center;border:1px solid rgba(70,224,122,.22);border-radius:999px;padding:3px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}.pill.warn{border-color:rgba(255,189,91,.36);color:var(--amber)}.pill.bad{border-color:rgba(255,101,114,.36);color:var(--red)}.pill.cyan{border-color:rgba(99,230,255,.36);color:var(--cyan)}.pill.violet{border-color:rgba(169,140,255,.36);color:var(--violet)}
+.network-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.net-card{border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.94),rgba(4,8,4,.96));box-shadow:inset 0 0 24px rgba(70,224,122,.025);padding:14px}.net-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:10px}.net-head h2{font-size:18px;margin:0;text-transform:uppercase}.net-head small{display:block;color:var(--mut);font-size:11px;margin-top:3px}.trend-bars{display:grid;gap:8px;margin-top:12px}.bar-row{display:grid;grid-template-columns:130px 1fr auto;gap:9px;align-items:center;color:var(--mut);font-size:12px}.bar{height:8px;border:1px solid var(--line2);border-radius:20px;background:#010502;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan))}.bar.warn i{background:linear-gradient(90deg,var(--amber),var(--red))}.report-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}.report-box{border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:180px}.source-log{display:grid;gap:7px}.source-log div{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:8px 9px;font-size:12px;color:var(--mut)}.source-log b{color:var(--txt)}.truth{font-size:11.5px;color:var(--mut);line-height:1.65}.truth b{color:var(--txt)}footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:980px){.toolbar{grid-template-columns:1fr 1fr}.main-grid,.hero-grid,.network-grid,.report-grid{grid-template-columns:1fr}.side{max-height:none}.screen{min-height:620px}}@media(max-width:620px){.wrap{padding:0 12px}.toolbar{grid-template-columns:1fr}.btn{width:100%}.screen{min-height:760px}.canvas-frame{inset:116px 12px 218px}.screen-head{display:block}.screen-time{text-align:left;margin-top:8px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}.network-tabs{left:14px;right:auto;top:auto;bottom:18px;flex-wrap:wrap}.visual-note{display:none}.sweep-tag{bottom:158px;left:12px;right:12px;text-align:center}.bar-row{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Crypto Network Pulse","url":"https://niftytoolshub.com/crypto-pulse.html","applicationCategory":"UtilityApplication","operatingSystem":"Any","description":"A browser-based signal dashboard for Bitcoin and Ethereum network activity, fee pressure, gas pressure and crypto network stress.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <nav class="navlinks">
+      <a href="/">home</a>
+      <a href="/signal-watch.html">early warning</a>
+      <a href="/outage-radar.html">outage radar</a>
+      <a href="/library.html">library</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Sample fallback</option></select></div>
+    <div><label for="network">Network view</label><select id="network"><option value="combined">Combined</option><option value="btc">BTC only</option><option value="eth">ETH only</option></select></div>
+    <button class="btn" type="button" onclick="refreshPulse(true)">Refresh pulse</button>
+    <button class="btn ghost" type="button" onclick="copyReport(this)">Copy report</button>
+    <button class="btn ghost" type="button" onclick="downloadSnapshot()">Download JSON</button>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">Crypto rail signal array</div>
+        <div class="title">Crypto <span>Network Pulse</span></div>
+        <p class="lead">// Track Bitcoin and Ethereum network activity, fee pressure, gas pressure and market-volume context. This is network weather, not trading advice.</p>
+        <div class="source-row">
+          <span class="badge"><b>BTC:</b> Blockchain.com charts + mempool.space fees</span>
+          <span class="badge"><b>ETH:</b> Etherscan when configured, otherwise sample signal</span>
+          <span class="badge"><b>Market:</b> CoinGecko context when available</span>
+        </div>
+      </div>
+      <aside class="score-card">
+        <h2>Combined network stress</h2>
+        <div class="score-row"><b id="combinedScore">0</b><span>/100</span></div>
+        <div class="meter"><i id="combinedBar"></i></div>
+        <div class="state-label" id="combinedState">booting pulse</div>
+        <div class="mini-grid">
+          <div class="mini"><span>BTC score</span><b id="miniBtc">--</b></div>
+          <div class="mini"><span>ETH score</span><b id="miniEth">--</b></div>
+          <div class="mini"><span>source mode</span><b id="miniMode">--</b></div>
+          <div class="mini"><span>updated</span><b id="miniUpdated">--</b></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="main-grid">
+    <div class="screen">
+      <div class="screen-head">
+        <div>
+          <div class="kicker">ON-CHAIN ACTIVITY SEISMOGRAPH</div>
+          <div class="screen-title">Network stress waveform</div>
+        </div>
+        <div class="screen-time">
+          <div id="updatedAt">sync pending</div>
+          <div id="sourceState">data probes booting</div>
+        </div>
+      </div>
+      <div class="canvas-frame">
+        <canvas id="pulseCanvas"></canvas>
+        <div class="visual-note"><b>signal:</b> tx volume + fee pressure + market context</div>
+        <div class="network-tabs">
+          <button type="button" data-view="combined" class="active">All</button>
+          <button type="button" data-view="btc">BTC</button>
+          <button type="button" data-view="eth">ETH</button>
+        </div>
+      </div>
+      <div class="sweep-tag" id="sweepTag">sweep 01 / network pulse watch</div>
+      <div class="readouts">
+        <div class="readout"><span>BTC tx/day</span><b id="btcTx">--</b></div>
+        <div class="readout"><span>BTC fee pressure</span><b id="btcFees">--</b></div>
+        <div class="readout"><span>ETH tx/day</span><b id="ethTx">--</b></div>
+        <div class="readout"><span>ETH gas pressure</span><b id="ethGas">--</b></div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="panel">
+        <h2>Pulse read</h2>
+        <div class="stat-row"><span>current read</span><b id="readText">Booting crypto pulse sensors</b><div class="meter"><i id="readMeter"></i></div></div>
+        <div class="stat-row"><span>strongest signal</span><b id="strongestSignal">--</b></div>
+        <div class="stat-row"><span>data source status</span><b id="sourceHealth">--</b></div>
+      </div>
+      <div class="panel">
+        <h2>Anomaly badges</h2>
+        <div class="signal-list" id="badges"></div>
+      </div>
+      <div class="panel">
+        <h2>Source probes</h2>
+        <div class="source-log" id="sourceLog"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="network-grid">
+    <article class="net-card" id="btcCard">
+      <div class="net-head"><div><h2>Bitcoin Network Pulse</h2><small>Transactions, estimated on-chain value, mempool and fees.</small></div><span class="pill" id="btcState">--</span></div>
+      <div class="result-grid readouts" style="position:static;display:grid">
+        <div class="readout"><span>7-day trend</span><b id="btcTrend">--</b></div>
+        <div class="readout"><span>on-chain volume</span><b id="btcVolume">--</b></div>
+        <div class="readout"><span>mempool count</span><b id="btcMempool">--</b></div>
+        <div class="readout"><span>market 24h vol</span><b id="btcMarket">--</b></div>
+      </div>
+      <div class="trend-bars" id="btcBars"></div>
+    </article>
+    <article class="net-card" id="ethCard">
+      <div class="net-head"><div><h2>Ethereum Network Pulse</h2><small>Transactions, gas pressure and market context. Etherscan live mode needs a key.</small></div><span class="pill violet" id="ethState">--</span></div>
+      <div class="result-grid readouts" style="position:static;display:grid">
+        <div class="readout"><span>7-day trend</span><b id="ethTrend">--</b></div>
+        <div class="readout"><span>gas used</span><b id="ethGasUsed">--</b></div>
+        <div class="readout"><span>gas oracle</span><b id="ethGasOracle">--</b></div>
+        <div class="readout"><span>market 24h vol</span><b id="ethMarket">--</b></div>
+      </div>
+      <div class="trend-bars" id="ethBars"></div>
+    </article>
+  </section>
+
+  <section class="report-grid">
+    <article class="panel">
+      <h2>Readable report</h2>
+      <div class="report-box" id="reportText"></div>
+    </article>
+    <article class="panel">
+      <h2>What this is</h2>
+      <p class="truth"><b>Crypto Network Pulse</b> watches aggregate public network signals: transaction activity, fee/gas pressure, mempool congestion and market-volume context. It does not inspect wallets, addresses, transaction hashes or private activity.</p>
+      <p class="truth"><b>Live mode:</b> browser APIs can be blocked by CORS, API keys or rate limits. When that happens, the tool clearly falls back to sample signal data so the dashboard remains usable.</p>
+      <p class="truth"><b>Not financial advice:</b> this is operational network weather, not a buy/sell signal.</p>
+    </article>
+  </section>
+</main>
+
+<footer>2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</footer>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const SAMPLE = buildSample();
+  const pendingTracks = [];
+  let flushTimer = 0;
+  let latest = null;
+  let anim = { score: 38, view:"combined", t:0 };
+
+  function track(name, props){
+    try{
+      const payload = Object.assign({ tool:"Crypto Network Pulse" }, props || {});
+      if (window.ntTrack) window.ntTrack(name, payload);
+      else {
+        pendingTracks.push([name, payload]);
+        if (!flushTimer) {
+          flushTimer = setInterval(() => {
+            if (!window.ntTrack) return;
+            while (pendingTracks.length) {
+              const item = pendingTracks.shift();
+              window.ntTrack(item[0], item[1]);
+            }
+            clearInterval(flushTimer);
+            flushTimer = 0;
+          }, 250);
+        }
+      }
+    }catch(_err){}
+  }
+  function fmt(n){
+    if (!Number.isFinite(Number(n))) return "--";
+    n = Number(n);
+    if (Math.abs(n) >= 1e12) return (n/1e12).toFixed(1) + "T";
+    if (Math.abs(n) >= 1e9) return (n/1e9).toFixed(1) + "B";
+    if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(1) + "M";
+    if (Math.abs(n) >= 1e3) return (n/1e3).toFixed(1) + "K";
+    return Math.round(n).toLocaleString();
+  }
+  function usd(n){
+    if (!Number.isFinite(Number(n))) return "--";
+    return "$" + fmt(n);
+  }
+  function pct(n){
+    if (!Number.isFinite(Number(n))) return "--";
+    return (n > 0 ? "+" : "") + n.toFixed(1) + "%";
+  }
+  function avg(arr){
+    const clean = arr.filter((n) => Number.isFinite(Number(n))).map(Number);
+    return clean.length ? clean.reduce((a,b) => a + b, 0) / clean.length : 0;
+  }
+  function trend(values){
+    if (!values || values.length < 8) return 0;
+    const recent = avg(values.slice(-3));
+    const base = avg(values.slice(-10, -3));
+    return base ? ((recent - base) / base) * 100 : 0;
+  }
+  function clamp(n, min, max){return Math.max(min, Math.min(max, n));}
+  function stateFromScore(score){
+    if (score >= 82) return "fee storm";
+    if (score >= 65) return "congested";
+    if (score >= 45) return "busy";
+    if (score >= 25) return "normal";
+    return "quiet";
+  }
+  function stateClass(score){
+    if (score >= 82) return "bad";
+    if (score >= 65) return "warn";
+    if (score >= 45) return "cyan";
+    return "";
+  }
+  function scoreBucket(score){
+    return Math.floor(score / 10) * 10;
+  }
+  function todayMinus(days){
+    const date = new Date();
+    date.setUTCDate(date.getUTCDate() - days);
+    return date.toISOString().slice(0,10);
+  }
+  function buildSample(){
+    const btcTx = [], btcVol = [], ethTx = [], ethGas = [];
+    for (let i=0;i<30;i++){
+      const wave = Math.sin(i / 3) * 0.08 + Math.cos(i / 5) * 0.05;
+      btcTx.push(Math.round(440000 * (1 + wave) + (i > 23 ? i * 2100 : 0)));
+      btcVol.push(Math.round(7800000000 * (1 + wave * 1.8) + (i > 25 ? 1200000000 : 0)));
+      ethTx.push(Math.round(1260000 * (1 + Math.sin(i / 4) * 0.09) + (i > 22 ? i * 5800 : 0)));
+      ethGas.push(Math.round(92 + Math.sin(i / 3) * 10 + (i > 24 ? 24 : 0)));
+    }
+    return {
+      btc:{tx:btcTx,volumeUsd:btcVol,feeFast:34,feeHour:18,mempoolCount:128000,marketVolumeUsd:31500000000,price:109200,change24h:1.8},
+      eth:{tx:ethTx,gasUsed:ethGas,gasGwei:31,marketVolumeUsd:18600000000,price:3820,change24h:-0.7}
+    };
+  }
+  function timeoutFetch(url, ms){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms || 8000);
+    return fetch(url, { signal:controller.signal, cache:"no-store" }).then((res) => {
+      clearTimeout(timer);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }).catch((err) => {
+      clearTimeout(timer);
+      throw err;
+    });
+  }
+  function chartValues(payload){
+    return (payload && payload.values || []).map((point) => Number(point.y)).filter((n) => Number.isFinite(n));
+  }
+  async function getBtcLive(log){
+    const btc = JSON.parse(JSON.stringify(SAMPLE.btc));
+    const txUrl = "https://api.blockchain.info/charts/n-transactions?timespan=30days&format=json&cors=true";
+    const volUrl = "https://api.blockchain.info/charts/estimated-transaction-volume-usd?timespan=30days&format=json&cors=true";
+    const feeUrl = "https://mempool.space/api/v1/fees/recommended";
+    const mempoolUrl = "https://mempool.space/api/mempool";
+    const tx = await probe("Blockchain.com BTC transactions", txUrl, log);
+    if (tx.ok && chartValues(tx.data).length) btc.tx = chartValues(tx.data);
+    const vol = await probe("Blockchain.com BTC volume", volUrl, log);
+    if (vol.ok && chartValues(vol.data).length) btc.volumeUsd = chartValues(vol.data);
+    const fee = await probe("mempool.space fee pressure", feeUrl, log);
+    if (fee.ok && fee.data) {
+      btc.feeFast = Number(fee.data.fastestFee || fee.data.halfHourFee || btc.feeFast);
+      btc.feeHour = Number(fee.data.hourFee || btc.feeHour);
+    }
+    const mp = await probe("mempool.space mempool", mempoolUrl, log);
+    if (mp.ok && mp.data) btc.mempoolCount = Number(mp.data.count || btc.mempoolCount);
+    return btc;
+  }
+  async function getEthLive(log){
+    const eth = JSON.parse(JSON.stringify(SAMPLE.eth));
+    const key = window.NIFTY_ETHERSCAN_KEY || "";
+    if (!key) {
+      log.push({ source:"Etherscan ETH probes", status:"sample", detail:"No browser API key configured" });
+      return eth;
+    }
+    const start = todayMinus(30);
+    const end = todayMinus(0);
+    const txUrl = "https://api.etherscan.io/api?module=stats&action=dailytx&startdate=" + encodeURIComponent(start) + "&enddate=" + encodeURIComponent(end) + "&sort=asc&apikey=" + encodeURIComponent(key);
+    const gasUrl = "https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=" + encodeURIComponent(key);
+    const tx = await probe("Etherscan daily transactions", txUrl, log);
+    if (tx.ok && Array.isArray(tx.data.result)) {
+      const values = tx.data.result.map((row) => Number(row.transactionCount)).filter((n) => Number.isFinite(n));
+      if (values.length) eth.tx = values;
+    }
+    const gas = await probe("Etherscan gas oracle", gasUrl, log);
+    if (gas.ok && gas.data && gas.data.result) eth.gasGwei = Number(gas.data.result.ProposeGasPrice || gas.data.result.SafeGasPrice || eth.gasGwei);
+    return eth;
+  }
+  async function getMarket(log){
+    const market = { btc:{}, eth:{} };
+    const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_vol=true&include_24hr_change=true";
+    const res = await probe("CoinGecko market context", url, log);
+    if (res.ok && res.data) {
+      if (res.data.bitcoin) {
+        market.btc.price = Number(res.data.bitcoin.usd);
+        market.btc.marketVolumeUsd = Number(res.data.bitcoin.usd_24h_vol);
+        market.btc.change24h = Number(res.data.bitcoin.usd_24h_change);
+      }
+      if (res.data.ethereum) {
+        market.eth.price = Number(res.data.ethereum.usd);
+        market.eth.marketVolumeUsd = Number(res.data.ethereum.usd_24h_vol);
+        market.eth.change24h = Number(res.data.ethereum.usd_24h_change);
+      }
+    }
+    return market;
+  }
+  async function probe(name, url, log){
+    try{
+      const data = await timeoutFetch(url, 7500);
+      log.push({ source:name, status:"live", detail:"ok" });
+      return { ok:true, data:data };
+    }catch(err){
+      log.push({ source:name, status:"blocked", detail:String(err && err.message || err).slice(0,80) });
+      track("crypto_pulse_error", { mode:currentMode(), network:currentNetwork(), source_status:"blocked", source:name });
+      return { ok:false, error:err };
+    }
+  }
+  function currentMode(){return $("mode").value;}
+  function currentNetwork(){return $("network").value;}
+  function computePulse(data, log){
+    const btcTrend = trend(data.btc.tx);
+    const ethTrend = trend(data.eth.tx);
+    const feeScore = clamp((data.btc.feeFast || 0) * 1.55 + (data.btc.mempoolCount || 0) / 4200, 0, 100);
+    const btcActivity = clamp(38 + btcTrend * 1.8, 0, 100);
+    const btcScore = Math.round(clamp(feeScore * .58 + btcActivity * .42, 0, 100));
+    const gasScore = clamp((data.eth.gasGwei || 0) * 2.35, 0, 100);
+    const ethActivity = clamp(36 + ethTrend * 1.7, 0, 100);
+    const ethScore = Math.round(clamp(gasScore * .54 + ethActivity * .46, 0, 100));
+    const combined = Math.round((btcScore + ethScore) / 2);
+    const liveCount = log.filter((item) => item.status === "live").length;
+    const blockedCount = log.filter((item) => item.status === "blocked").length;
+    return { btcTrend, ethTrend, btcScore, ethScore, combined, liveCount, blockedCount };
+  }
+  function render(data, log){
+    const pulse = computePulse(data, log);
+    latest = { data:data, log:log, pulse:pulse, updated:new Date().toISOString(), mode:currentMode(), network:currentNetwork() };
+    anim.score = currentNetwork() === "btc" ? pulse.btcScore : currentNetwork() === "eth" ? pulse.ethScore : pulse.combined;
+    anim.view = currentNetwork();
+
+    $("combinedScore").textContent = pulse.combined;
+    $("combinedBar").style.width = pulse.combined + "%";
+    $("combinedState").textContent = stateFromScore(pulse.combined);
+    $("miniBtc").textContent = pulse.btcScore + " / " + stateFromScore(pulse.btcScore);
+    $("miniEth").textContent = pulse.ethScore + " / " + stateFromScore(pulse.ethScore);
+    $("miniMode").textContent = currentMode() === "live" ? "live/safe" : "sample";
+    $("miniUpdated").textContent = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+    $("updatedAt").textContent = "updated " + new Date().toLocaleTimeString();
+    $("sourceState").textContent = pulse.liveCount ? pulse.liveCount + " live probes / " + pulse.blockedCount + " blocked" : "sample fallback online";
+    $("readText").textContent = stateFromScore(pulse.combined) + " crypto rail signal";
+    $("readMeter").style.width = pulse.combined + "%";
+    $("strongestSignal").textContent = pulse.btcScore >= pulse.ethScore ? "Bitcoin fee / mempool pressure" : "Ethereum gas / activity pressure";
+    $("sourceHealth").textContent = pulse.liveCount + " live; " + pulse.blockedCount + " blocked; " + log.filter((x) => x.status === "sample").length + " sample";
+
+    $("btcTx").textContent = fmt(data.btc.tx[data.btc.tx.length - 1]);
+    $("btcFees").textContent = fmt(data.btc.feeFast) + " sat/vB";
+    $("ethTx").textContent = fmt(data.eth.tx[data.eth.tx.length - 1]);
+    $("ethGas").textContent = fmt(data.eth.gasGwei) + " gwei";
+    $("btcState").textContent = stateFromScore(pulse.btcScore);
+    $("btcState").className = "pill " + stateClass(pulse.btcScore);
+    $("ethState").textContent = stateFromScore(pulse.ethScore);
+    $("ethState").className = "pill violet " + stateClass(pulse.ethScore);
+    $("btcTrend").textContent = pct(pulse.btcTrend);
+    $("btcVolume").textContent = usd(data.btc.volumeUsd[data.btc.volumeUsd.length - 1]);
+    $("btcMempool").textContent = fmt(data.btc.mempoolCount);
+    $("btcMarket").textContent = usd(data.btc.marketVolumeUsd);
+    $("ethTrend").textContent = pct(pulse.ethTrend);
+    $("ethGasUsed").textContent = fmt(data.eth.gasUsed[data.eth.gasUsed.length - 1]) + "B";
+    $("ethGasOracle").textContent = fmt(data.eth.gasGwei) + " gwei";
+    $("ethMarket").textContent = usd(data.eth.marketVolumeUsd);
+    $("sweepTag").textContent = "sweep " + String(Math.max(1, Math.round(pulse.combined / 18))).padStart(2,"0") + " / network pulse watch";
+    renderBars("btcBars", [
+      ["Transaction trend", Math.abs(pulse.btcTrend), pulse.btcTrend > 18],
+      ["Fee pressure", data.btc.feeFast, data.btc.feeFast > 45],
+      ["Mempool pressure", data.btc.mempoolCount / 2200, data.btc.mempoolCount > 180000],
+      ["Market context", Math.abs(data.btc.change24h || 0) * 8, Math.abs(data.btc.change24h || 0) > 5]
+    ]);
+    renderBars("ethBars", [
+      ["Transaction trend", Math.abs(pulse.ethTrend), pulse.ethTrend > 15],
+      ["Gas pressure", data.eth.gasGwei * 1.5, data.eth.gasGwei > 45],
+      ["Gas used", data.eth.gasUsed[data.eth.gasUsed.length - 1] / 1.6, false],
+      ["Market context", Math.abs(data.eth.change24h || 0) * 8, Math.abs(data.eth.change24h || 0) > 5]
+    ]);
+    renderBadges(data, pulse);
+    renderSourceLog(log);
+    $("reportText").textContent = reportText();
+  }
+  function renderBars(id, rows){
+    $(id).innerHTML = rows.map((row) => {
+      const width = clamp(row[1], 4, 100);
+      return '<div class="bar-row"><span>' + row[0] + '</span><div class="bar ' + (row[2] ? "warn" : "") + '"><i style="width:' + width + '%"></i></div><b>' + Math.round(width) + '</b></div>';
+    }).join("");
+  }
+  function renderBadges(data, pulse){
+    const badges = [];
+    if (pulse.btcScore >= 65) badges.push(["BTC congestion", "fee / mempool pressure elevated", "warn"]);
+    if (pulse.ethScore >= 65) badges.push(["ETH gas pressure", "gas signal elevated", "violet"]);
+    if (pulse.btcTrend > 18) badges.push(["BTC tx spike", pct(pulse.btcTrend) + " vs baseline", "cyan"]);
+    if (pulse.ethTrend > 15) badges.push(["ETH tx spike", pct(pulse.ethTrend) + " vs baseline", "cyan"]);
+    if (pulse.combined >= 82) badges.push(["Fee storm watch", "combined score above 82", "bad"]);
+    if (!badges.length) badges.push(["Normal rails", "no major anomaly badge", ""]);
+    $("badges").innerHTML = badges.map((item) => '<div class="signal-row"><div><b>' + item[0] + '</b><br>' + item[1] + '</div><span class="pill ' + item[2] + '">' + (item[2] || "normal") + '</span></div>').join("");
+  }
+  function renderSourceLog(log){
+    $("sourceLog").innerHTML = log.map((item) => '<div><b>' + item.source + '</b><br><span class="pill ' + (item.status === "blocked" ? "bad" : item.status === "sample" ? "warn" : "cyan") + '">' + item.status + '</span> ' + item.detail + '</div>').join("");
+  }
+  function reportText(){
+    if (!latest) return "Crypto Network Pulse report loading.";
+    const p = latest.pulse;
+    return [
+      "Crypto Network Pulse report",
+      "Mode: " + latest.mode + " / view: " + latest.network,
+      "Combined stress: " + p.combined + "/100 - " + stateFromScore(p.combined),
+      "BTC: " + p.btcScore + "/100, tx/day " + fmt(latest.data.btc.tx[latest.data.btc.tx.length - 1]) + ", fee pressure " + fmt(latest.data.btc.feeFast) + " sat/vB, trend " + pct(p.btcTrend),
+      "ETH: " + p.ethScore + "/100, tx/day " + fmt(latest.data.eth.tx[latest.data.eth.tx.length - 1]) + ", gas pressure " + fmt(latest.data.eth.gasGwei) + " gwei, trend " + pct(p.ethTrend),
+      "Source status: " + p.liveCount + " live probes, " + p.blockedCount + " blocked probes.",
+      "Interpretation: " + (p.combined >= 65 ? "Crypto rails are busy enough to watch fees before moving funds." : "Crypto rails look usable; still check fees before sending transactions."),
+      "Note: network weather only, not financial advice."
+    ].join("\n");
+  }
+  async function refreshPulse(manual){
+    const mode = currentMode();
+    const log = [];
+    let data = JSON.parse(JSON.stringify(SAMPLE));
+    if (mode === "live") {
+      const btc = await getBtcLive(log).catch(() => JSON.parse(JSON.stringify(SAMPLE.btc)));
+      const eth = await getEthLive(log).catch(() => JSON.parse(JSON.stringify(SAMPLE.eth)));
+      const market = await getMarket(log).catch(() => ({btc:{},eth:{}}));
+      data = { btc:Object.assign({}, data.btc, btc, market.btc || {}), eth:Object.assign({}, data.eth, eth, market.eth || {}) };
+    } else {
+      log.push({ source:"Sample signal pack", status:"sample", detail:"local fallback data active" });
+    }
+    render(data, log);
+    if (manual) track("crypto_pulse_refresh", { mode:mode, network:currentNetwork(), score_bucket:scoreBucket(latest.pulse.combined), source_status:latest.pulse.liveCount ? "mixed" : "sample" });
+  }
+  async function copyReport(button){
+    const text = reportText();
+    try{
+      await navigator.clipboard.writeText(text);
+      const old = button.textContent;
+      button.textContent = "Copied";
+      setTimeout(() => { button.textContent = old; }, 1200);
+    }catch(_err){
+      window.prompt("Copy report", text);
+    }
+    track("crypto_pulse_copy_report", { mode:currentMode(), network:currentNetwork(), score_bucket:latest ? scoreBucket(latest.pulse.combined) : 0 });
+  }
+  window.copyReport = copyReport;
+  function downloadSnapshot(){
+    const snapshot = latest || { data:SAMPLE, pulse:computePulse(SAMPLE, []), mode:currentMode(), network:currentNetwork(), updated:new Date().toISOString() };
+    const safe = {
+      created:new Date().toISOString(),
+      mode:snapshot.mode,
+      network:snapshot.network,
+      pulse:snapshot.pulse,
+      data:{
+        btc:{ tx:snapshot.data.btc.tx, volumeUsd:snapshot.data.btc.volumeUsd, feeFast:snapshot.data.btc.feeFast, feeHour:snapshot.data.btc.feeHour, mempoolCount:snapshot.data.btc.mempoolCount, marketVolumeUsd:snapshot.data.btc.marketVolumeUsd, price:snapshot.data.btc.price, change24h:snapshot.data.btc.change24h },
+        eth:{ tx:snapshot.data.eth.tx, gasUsed:snapshot.data.eth.gasUsed, gasGwei:snapshot.data.eth.gasGwei, marketVolumeUsd:snapshot.data.eth.marketVolumeUsd, price:snapshot.data.eth.price, change24h:snapshot.data.eth.change24h }
+      }
+    };
+    const blob = new Blob([JSON.stringify(safe, null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "crypto-network-pulse.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    track("crypto_pulse_export", { mode:currentMode(), network:currentNetwork(), score_bucket:latest ? scoreBucket(latest.pulse.combined) : 0, format:"json" });
+  }
+  window.downloadSnapshot = downloadSnapshot;
+  window.refreshPulse = refreshPulse;
+  function bind(){
+    $("mode").addEventListener("change", () => {
+      track("crypto_pulse_mode_change", { mode:currentMode(), network:currentNetwork() });
+      refreshPulse(true);
+    });
+    $("network").addEventListener("change", () => {
+      document.querySelectorAll("[data-view]").forEach((button) => button.classList.toggle("active", button.dataset.view === currentNetwork()));
+      track("crypto_pulse_mode_change", { mode:currentMode(), network:currentNetwork() });
+      if (latest) render(latest.data, latest.log);
+    });
+    document.querySelectorAll("[data-view]").forEach((button) => button.addEventListener("click", () => {
+      $("network").value = button.dataset.view;
+      $("network").dispatchEvent(new Event("change"));
+    }));
+  }
+  function draw(){
+    const canvas = $("pulseCanvas");
+    if (!canvas) return;
+    const frame = canvas.parentElement;
+    const rect = frame.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const w = rect.width, h = rect.height;
+    ctx.clearRect(0,0,w,h);
+    anim.t += 0.018;
+    const stress = clamp(anim.score / 100, .05, 1);
+    ctx.strokeStyle = "rgba(70,224,122,.16)";
+    ctx.lineWidth = 1;
+    for (let i=1;i<5;i++){
+      const y = h * i / 5;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
+    }
+    for (let i=1;i<8;i++){
+      const x = w * i / 8;
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+    }
+    drawWave(ctx,w,h,stress,"rgba(70,224,122,.95)",0, anim.view === "eth" ? .45 : 1);
+    drawWave(ctx,w,h,stress * .82,"rgba(99,230,255,.85)",1.7, anim.view === "btc" ? .35 : 1);
+    drawWave(ctx,w,h,stress * .65,"rgba(255,189,91,.65)",3.1, anim.score > 62 ? 1 : .45);
+    const x = (anim.t * 90) % w;
+    ctx.fillStyle = "rgba(70,224,122,.06)";
+    ctx.fillRect(x - 20, 0, 40, h);
+    ctx.strokeStyle = "rgba(70,224,122,.45)";
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+    requestAnimationFrame(draw);
+  }
+  function drawWave(ctx,w,h,stress,color,phase,alpha){
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x=0;x<=w;x+=3){
+      const n = Math.sin(x * .025 + anim.t * 8 + phase) + Math.sin(x * .069 + anim.t * 3.2 + phase) * .35;
+      const spike = Math.sin(x * .013 - anim.t * 11 + phase) > .985 ? stress * h * .26 : 0;
+      const y = h * .5 + n * h * .12 * stress - spike;
+      if (x === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  bind();
+  render(JSON.parse(JSON.stringify(SAMPLE)), [{ source:"Sample signal pack", status:"sample", detail:"boot fallback data active" }]);
+  refreshPulse(false);
+  requestAnimationFrame(draw);
+  track("crypto_pulse_open", { mode:currentMode(), network:currentNetwork() });
+})();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>

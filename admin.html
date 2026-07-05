@@ -382,6 +382,7 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
+  "Crypto Network Pulse",
   "Prepper Toolkit Pro",
   "Early Warning Radar","Aurora Watch","Meme Early Warning","Outage Radar","Cyber Threat Radar","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro","Math Lab Pro",
   "Unit Converter Pro","World Clock / Time Zone Studio","Device Test Suite","File Organizer Toolkit","Color Palette Studio","QR Code Toolkit Pro",
@@ -389,6 +390,9 @@ const catalog = [
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
 ];
 const toolAliases = {
+  "crypto-pulse":"Crypto Network Pulse",
+  "crypto network pulse":"Crypto Network Pulse",
+  "btc eth pulse":"Crypto Network Pulse",
   "prepper-tools":"Prepper Toolkit Pro",
   "prepper toolkit":"Prepper Toolkit Pro",
   "prepper toolkit pro":"Prepper Toolkit Pro",
@@ -444,6 +448,22 @@ function escapeHTML(value){
   return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
 }
 const eventLabels = {
+  "crypto_pulse_open":"Crypto Pulse opened",
+  "crypto_pulse_refresh":"Crypto Pulse refresh",
+  "crypto_pulse_mode_change":"Crypto Pulse mode change",
+  "crypto_pulse_copy_report":"Crypto Pulse report copy",
+  "crypto_pulse_export":"Crypto Pulse export",
+  "crypto_pulse_error":"Crypto Pulse source error",
+  "prepper_open":"Prepper opened",
+  "prepper_calculate":"Prepper calculation",
+  "prepper_tab_open":"Prepper tab opened",
+  "prepper_score_level":"Prepper readiness score",
+  "prepper_export":"Prepper export",
+  "prepper_inventory_add":"Prepper inventory add",
+  "prepper_family_plan_copy":"Prepper family plan copy",
+  "prepper_checklist_copy":"Prepper checklist copy",
+  "prepper_print":"Prepper print",
+  "prepper_reset":"Prepper reset",
   "prepper_open":"Prepper opened",
   "prepper_calculate":"Prepper calculation",
   "prepper_tab_open":"Prepper tab opened",
@@ -461,10 +481,11 @@ function label(value){
 }
 function eventKind(event){
   const name = event && event.event || "";
-  if(name === "prepper_open" || name === "tool_open" || name === "tool_page_view") return "open";
-  if(/prepper_checklist_copy|prepper_family_plan_copy/.test(name) || name === "copy") return "copy";
-  if(/prepper_export|prepper_print/.test(name) || /download|share/.test(name)) return "export";
-  if(/prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|tool_action/.test(name)) return "action";
+  if(/^(prepper_open|crypto_pulse_open|tool_open|tool_page_view)$/.test(name)) return "open";
+  if(/^(prepper_checklist_copy|prepper_family_plan_copy|crypto_pulse_copy_report|copy)$/.test(name)) return "copy";
+  if(/^(prepper_export|prepper_print|crypto_pulse_export|download|share)$/.test(name)) return "export";
+  if(/^(prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|crypto_pulse_refresh|crypto_pulse_mode_change|tool_action)$/.test(name)) return "action";
+  if(/error/.test(name)) return "error";
   if(/slow|large/.test(name)) return "perf";
   if(name === "error") return "error";
   if(name === "search") return "search";
@@ -474,6 +495,11 @@ function isOpenEvent(event){return eventKind(event) === "open";}
 function isActionEvent(event){return /^(action|copy|export)$/.test(eventKind(event));}
 function friendlyAction(event){
   const name = event.event || "";
+  if(name === "crypto_pulse_refresh") return "Crypto: refresh pulse";
+  if(name === "crypto_pulse_mode_change") return "Crypto: mode " + (event.mode || "change");
+  if(name === "crypto_pulse_copy_report") return "Crypto: copy report";
+  if(name === "crypto_pulse_export") return "Crypto: export " + (event.format || "snapshot");
+  if(name === "crypto_pulse_error") return "Crypto: source error";
   if(name === "prepper_calculate") return "Prepper: calculate supplies";
   if(name === "prepper_tab_open") return "Prepper: opened " + (event.tab || "tab");
   if(name === "prepper_score_level") return "Prepper: score " + (event.score_level || event.label || "level");
@@ -570,7 +596,7 @@ function renderIssues(events){
   }
   $("issueBody").innerHTML = rows.map(function(e){
     const detail = e.message || e.url || e.action || e.target || e.type || e.mb || e.bytes || "";
-    const impact = e.event === "error" ? "check now" : e.event === "slow_page" ? "performance" : e.event === "large_page" ? "page weight" : "watch";
+    const impact = /error/.test(e.event || "") ? "check now" : e.event === "slow_page" ? "performance" : e.event === "large_page" ? "page weight" : "watch";
     return '<tr><td>'+new Date(e.ts).toLocaleString()+'</td><td>'+label(e.event)+'</td><td>'+escapeHTML(e.page || e.path || "")+'</td><td>'+escapeHTML(detail)+'</td><td>'+impact+'</td></tr>';
   }).join("");
 }
@@ -585,7 +611,7 @@ function renderAttention(events){
     byTool[match] = byTool[match] || {tool:match,opens:0,actions:0,errors:0,slow:0,prepperLow:0};
     if(isOpenEvent(e)) byTool[match].opens++;
     if(isActionEvent(e)) byTool[match].actions++;
-    if(e.event === "error") byTool[match].errors++;
+    if(/error/.test(e.event || "")) byTool[match].errors++;
     if(/slow|large/.test(e.event || "")) byTool[match].slow++;
     if(e.event === "prepper_score_level" && /getting_started|decent/.test(e.score_level || "")) byTool[match].prepperLow++;
   });
@@ -645,7 +671,7 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Prepper Toolkit Pro","Library","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
+  const tools = ["Crypto Network Pulse","Prepper Toolkit Pro","Library","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];
@@ -657,6 +683,10 @@ function loadDemoData(){
   events.push({event:"error",type:"fetch_failed",message:"NOAA feed timeout",page:"aurora-watch",tool:"Aurora Watch",session:"demo-err",ts:new Date(now - 7200000).toISOString()});
   events.push({event:"slow_page",load_ms:4100,dom_ms:1900,page:"pdf-tools",tool:"PDF Toolkit",session:"demo-slow",ts:new Date(now - 10800000).toISOString()});
   events.push({event:"large_page",mb:2.4,page:"tarot-tools",tool:"Tarot Card Reader",session:"demo-large",ts:new Date(now - 16600000).toISOString()});
+  events.push({event:"crypto_pulse_open",tool:"Crypto Network Pulse",page:"crypto-pulse",mode:"live",network:"combined",session:"demo-crypto",ts:new Date(now - 2400000).toISOString()});
+  events.push({event:"crypto_pulse_refresh",tool:"Crypto Network Pulse",page:"crypto-pulse",mode:"live",network:"combined",score_bucket:60,source_status:"mixed",session:"demo-crypto",ts:new Date(now - 2200000).toISOString()});
+  events.push({event:"crypto_pulse_error",tool:"Crypto Network Pulse",page:"crypto-pulse",mode:"live",network:"eth",source_status:"blocked",session:"demo-crypto",ts:new Date(now - 2100000).toISOString()});
+  events.push({event:"crypto_pulse_export",tool:"Crypto Network Pulse",page:"crypto-pulse",format:"json",score_bucket:60,session:"demo-crypto",ts:new Date(now - 1900000).toISOString()});
   events.push({event:"prepper_open",tool:"Prepper Toolkit Pro",page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3600000).toISOString()});
   events.push({event:"prepper_calculate",tool:"Prepper Toolkit Pro",people:4,days:7,page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3300000).toISOString()});
   events.push({event:"prepper_score_level",tool:"Prepper Toolkit Pro",score_level:"decent",score_bucket:40,page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3100000).toISOString()});

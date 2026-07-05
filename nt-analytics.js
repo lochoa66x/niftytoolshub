@@ -7,6 +7,7 @@
   var MAX_EVENTS = 800;
   var searchTimers = new WeakMap();
   var TOOL_NAMES = {
+    "crypto-pulse": "Crypto Network Pulse",
     "prepper-tools": "Prepper Toolkit Pro",
     "signal-watch": "Early Warning Radar",
     "aurora-watch": "Aurora Watch",
@@ -192,7 +193,7 @@
     if (/download|export|save file/.test(text)) return "download";
     if (/copy|clipboard/.test(text)) return "copy";
     if (/share/.test(text)) return "share";
-    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness/.test(text)) return "tool_action";
+    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness|pulse|refresh/.test(text)) return "tool_action";
     return "";
   }
 
