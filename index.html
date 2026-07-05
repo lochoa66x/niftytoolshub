@@ -221,6 +221,38 @@
   #tools{scroll-margin-top:82px}
   @media(max-width:920px){.hero{grid-template-columns:1fr;min-height:auto}.hero-visual{min-height:300px}.featured-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.coming-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:620px){.hero{padding:54px 20px 24px}.featured-grid,.category-grid,.coming-strip,.metrics{grid-template-columns:1fr}.section-head,.library-head{display:block}.hero-actions .btn,.hero-actions .ghost-link{width:100%;text-align:center}.hero-visual{min-height:250px}}
+
+  /* NT HOMEPAGE RADAR TEASER FIX START */
+  .hero-visual.radar-teaser{display:block;color:inherit;text-decoration:none;min-height:410px;cursor:pointer;border-color:rgba(70,224,122,.26);background:
+    radial-gradient(circle at 50% 43%,rgba(70,224,122,.12),transparent 40%),
+    linear-gradient(180deg,rgba(9,18,10,.96),rgba(3,7,4,.98))}
+  .hero-visual.radar-teaser:hover{border-color:var(--grnsoft);box-shadow:0 0 0 1px rgba(70,224,122,.22),0 0 34px rgba(70,224,122,.12)}
+  .hero-visual.radar-teaser::before{content:"early-warning.preview";height:34px;color:var(--grn);background:#0d130d}
+  .radar-head{position:absolute;z-index:2;top:48px;left:18px;right:18px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+  .radar-head span{color:var(--grn)}
+  .radar-head b{color:var(--txt);font-weight:700;text-align:right}
+  .radar-core{position:absolute;left:50%;top:47%;width:min(70%,330px);aspect-ratio:1;transform:translate(-50%,-50%)}
+  .radar-core::before,.radar-core::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid rgba(119,200,255,.2);transform:translateX(-50%)}
+  .radar-core::after{top:50%;left:0;right:0;bottom:auto;border-left:0;border-top:1px solid rgba(119,200,255,.2);transform:none}
+  .radar-core .radar-ring{left:0;top:0;width:100%;height:100%;transform:none;border-color:rgba(70,224,122,.45);box-shadow:0 0 45px rgba(70,224,122,.11),inset 0 0 28px rgba(70,224,122,.06)}
+  .radar-core .radar-ring::before{inset:22%;border-color:rgba(119,200,255,.22)}
+  .radar-core .radar-ring::after{inset:42%;border-color:rgba(255,180,84,.24)}
+  .radar-core .radar-sweep{left:50%;top:50%;width:50%;height:3px;transform-origin:left center;background:linear-gradient(90deg,var(--grn),rgba(70,224,122,.38),transparent);z-index:1}
+  .blip{position:absolute;z-index:2;width:11px;height:11px;border-radius:50%;background:var(--grn);box-shadow:0 0 18px var(--grn)}
+  .blip::after{content:"";position:absolute;inset:-9px;border-radius:50%;background:currentColor;opacity:.13}
+  .blip.b1{left:61%;top:29%;color:var(--grn)}
+  .blip.b2{left:32%;top:58%;color:#77c8ff;background:#77c8ff;box-shadow:0 0 18px #77c8ff}
+  .blip.b3{left:70%;top:64%;color:var(--amber);background:var(--amber);box-shadow:0 0 18px var(--amber)}
+  .blip.b4{left:42%;top:36%;color:#77c8ff;background:#77c8ff;box-shadow:0 0 18px #77c8ff}
+  .radar-readouts{bottom:18px;grid-template-columns:1fr 1fr}
+  .radar-readouts span{min-height:42px;align-items:center;border-color:rgba(70,224,122,.2)}
+  .radar-readouts em{font-style:normal;color:var(--mut)}
+  .radar-readouts b.risk{color:var(--amber)}
+  .radar-cta{position:absolute;right:18px;bottom:144px;z-index:3;border:1px solid rgba(70,224,122,.32);background:rgba(10,13,10,.86);color:var(--grn);border-radius:3px;padding:7px 10px;font-size:11px;font-weight:800;text-transform:uppercase}
+  @media(max-width:920px){.hero-visual.radar-teaser{min-height:380px}.radar-core{top:45%;width:min(76%,320px)}}
+  @media(max-width:620px){.hero-visual.radar-teaser{min-height:390px}.radar-readouts{grid-template-columns:1fr}.radar-cta{bottom:184px}.radar-core{width:min(82%,280px);top:43%}}
+  /* NT HOMEPAGE RADAR TEASER FIX END */
+
   /* NT HOMEPAGE REFRESH END */
 
 </style>
@@ -246,7 +278,7 @@
   <div class="hero-copy">
     <div class="hero-kicker">
       <span class="pill"><span class="dot"></span> system online · 50+ tools loaded</span>
-      <span class="pill">signal tools active</span>
+      <span class="pill">early warning radar active</span>
       <span class="pill">free while building</span>
     </div>
     <h1>Useful tools for<br><span class="grad">weird internet days.</span></h1>
@@ -261,17 +293,28 @@
       <div class="metric-box"><b>0</b><span>account needed</span></div>
     </div>
   </div>
-  <div class="hero-visual" aria-hidden="true">
+  <a class="hero-visual radar-teaser" href="/signal-watch.html" aria-label="Open Early Warning Radar">
     <div class="matrix-rain"></div>
-    <div class="radar-ring"></div>
-    <div class="radar-sweep"></div>
-    <div class="signal-lines">
-      <span><em>early-warning</em><b>online</b></span>
-      <span><em>aurora-watch</em><b>scanning</b></span>
-      <span><em>meme-radar</em><b>rising</b></span>
-      <span><em>tool-library</em><b>50+ ready</b></span>
+    <div class="radar-head">
+      <span>world/local signal window</span>
+      <b>canonical radar: early warning</b>
     </div>
-  </div>
+    <div class="radar-core">
+      <div class="radar-ring"></div>
+      <div class="radar-sweep"></div>
+      <i class="blip b1"></i>
+      <i class="blip b2"></i>
+      <i class="blip b3"></i>
+      <i class="blip b4"></i>
+    </div>
+    <div class="radar-cta">Open Early Warning Radar -></div>
+    <div class="signal-lines radar-readouts">
+      <span><em>world score</em><b>live</b></span>
+      <span><em>local score</em><b>by place</b></span>
+      <span><em>signal sources</em><b>12 feeds</b></span>
+      <span><em>peak driver</em><b class="risk">watch</b></span>
+    </div>
+  </a>
 </section>
 
 <!-- NT LANDING REFRESH START -->
