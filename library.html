@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secondary Tool Library - calculators, converters and utilities | NiftyTools Hub</title>
+<meta name="description" content="Search the full NiftyTools Hub library: calculators, converters, device tests, PDF, image, text, developer, signal, prepper and playful tools.">
+<meta property="og:title" content="NiftyTools Hub Secondary Tool Library">
+<meta property="og:description" content="The full searchable library of calculators, converters, signal dashboards, file tools and useful utilities.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niftytoolshub.com/library.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0a0d0a">
+<link rel="canonical" href="https://niftytoolshub.com/library.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    /* terminal palette — remapped onto the original variable names so inline styles keep working */
+    --bg:#0a0d0a; --bg2:#0e120e; --card:#0d110d; --card2:#0d110d;
+    --txt:#d6e2d6; --mut:#74856f; --line:#1b241c;
+    --acc:#46e07a; --acc2:#46e07a; --gold:#ffb454;
+    --grn:#46e07a; --grnsoft:#2f9d57; --amber:#ffb454; --dim:#74856f;
+    --shadow:0 0 22px rgba(70,224,122,.12);
+    --r:5px;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; font-family:var(--mono); font-size:14px; line-height:1.55;
+    color:var(--txt); -webkit-font-smoothing:antialiased;
+    background:
+      linear-gradient(rgba(70,224,122,.022) 1px,transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg,rgba(70,224,122,.022) 1px,transparent 1px) 0 0/32px 100%,
+      radial-gradient(900px 520px at 82% -12%, rgba(70,224,122,.06), transparent 60%),
+      var(--bg);
+  }
+  /* faint CRT scanlines */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px);opacity:.45}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--grn);color:#06120a}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:30;backdrop-filter:blur(8px);
+    background:rgba(10,13,10,.85);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:.5px;font-size:15px;color:var(--txt)}
+  .logo .mark{width:11px;height:17px;border-radius:0;background:var(--grn);
+    box-shadow:0 0 10px var(--grn);animation:blink 1.1s steps(1) infinite}
+  @keyframes blink{50%{opacity:.12}}
+  .navlinks{display:flex;gap:20px;color:var(--mut);font-size:13px}
+  .navlinks a::before{content:"./";color:var(--grnsoft)}
+  .navlinks a:hover{color:var(--grn)}
+  .btn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;
+    border-radius:var(--r);padding:9px 15px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
+  .btn:hover{background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.4)}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover{background:transparent;border-color:var(--grn);color:var(--grn);box-shadow:none}
+
+  /* Hero — terminal window */
+  .hero{position:relative;margin:30px auto 26px;border:1px solid var(--line);border-radius:6px;
+    background:linear-gradient(180deg,#0d110d,#0a0d0a);padding:56px 30px 34px;text-align:left;overflow:hidden}
+  .hero::before{content:"\25CF \25CF \25CF    niftytoolshub: ~/run";position:absolute;left:0;top:0;width:100%;height:32px;
+    display:flex;align-items:center;padding:0 14px;background:#0e130e;border-bottom:1px solid var(--line);
+    color:var(--grnsoft);font-size:12px;letter-spacing:1px}
+  .pill{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);
+    border:1px solid var(--line);padding:5px 11px;border-radius:3px;background:var(--bg)}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 8px var(--grn)}
+  h1{font-size:clamp(30px,5vw,50px);line-height:1.08;margin:18px 0 14px;font-weight:800;letter-spacing:-1px;text-transform:uppercase}
+  h1 .grad{color:var(--grn);text-shadow:0 0 18px rgba(70,224,122,.35)}
+  h1 .grad::after{content:"\2588";margin-left:4px;animation:blink 1.1s steps(1) infinite}
+  .sub{color:var(--dim);font-size:15px;max-width:600px;margin:0 0 22px}
+  .search{display:flex;align-items:center;max-width:500px;margin:0;background:var(--bg);
+    border:1px solid var(--line);border-radius:4px;padding:4px 4px 4px 12px}
+  .search:focus-within{border-color:var(--grnsoft)}
+  .search::before{content:"$";color:var(--grnsoft);margin-right:8px}
+  .search input{flex:1;font-family:var(--mono);background:transparent;border:0;outline:0;color:var(--txt);font-size:14px;caret-color:var(--grn)}
+  .search .btn{padding:9px 14px}
+
+  /* Filters */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;margin:26px 0 6px}
+  .chip{cursor:pointer;font-family:var(--mono);font-size:12.5px;color:var(--dim);border:1px solid var(--line);
+    background:var(--bg);padding:6px 11px;border-radius:3px;transition:.12s}
+  .chip::before{content:"[";color:var(--grnsoft);margin-right:4px}
+  .chip::after{content:"]";color:var(--grnsoft);margin-left:4px}
+  .chip:hover{color:var(--grn);border-color:var(--grnsoft)}
+  .chip.on{background:var(--grn);color:#06120a;border-color:var(--grn)}
+  .chip.on::before,.chip.on::after{color:#06120a}
+
+  /* Grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px;margin:24px 0 56px}
+  .tool{position:relative;background:var(--card);
+    border:1px solid var(--line);border-radius:5px;padding:18px;cursor:pointer;transition:.15s}
+  .tool:hover{transform:translateY(-2px);border-color:var(--grnsoft);
+    box-shadow:0 0 0 1px var(--grnsoft),0 0 22px rgba(70,224,122,.12)}
+  .tool .ico{width:40px;height:40px;border-radius:4px;display:grid;place-items:center;font-size:18px;
+    background:var(--bg);border:1px solid var(--line);margin-bottom:12px;color:var(--grn)}
+  .tool h3{margin:0 0 5px;font-size:14.5px;font-weight:700;color:var(--txt)}
+  .tool h3::before{content:"> ";color:var(--grn)}
+  .tool p{margin:0;color:var(--dim);font-size:12.5px;min-height:36px}
+  .badge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;letter-spacing:.5px;
+    padding:2px 7px;border-radius:3px;text-transform:uppercase;border:1px solid}
+  .free{background:rgba(70,224,122,.07);color:var(--grn);border-color:var(--grnsoft)}
+  .tool .open{margin-top:12px;font-size:12.5px;color:var(--grn);font-weight:700;opacity:0;transition:.15s}
+  .tool .open::before{content:"$ ";color:var(--grnsoft)}
+  .tool:hover .open{opacity:1}
+  .hidden{display:none!important}
+
+  /* mini interactive area */
+  .mini{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+  .mini.collapsed{display:none}
+  .row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .mini input,.mini select{font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--txt);
+    border-radius:3px;padding:7px 9px;font-size:12.5px;width:100%;outline:0;caret-color:var(--grn)}
+  .mini textarea{font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--txt);
+    border-radius:3px;padding:7px 9px;font-size:12.5px;width:100%;outline:0;resize:vertical;caret-color:var(--grn)}
+  .mini input:focus,.mini select:focus,.mini textarea:focus{border-color:var(--grnsoft)}
+  .mini label{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
+  .mini .out{font-weight:700;font-size:17px;color:var(--grn)}
+  .clock{font-variant-numeric:tabular-nums;font-weight:700;font-size:19px;letter-spacing:1px;color:var(--grn)}
+  .smallbtn{font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:3px;
+    padding:7px 11px;font-size:12.5px;cursor:pointer}
+  .smallbtn:hover{border-color:var(--grn);color:var(--grn)}
+
+  .library-search{margin:12px 0 0}.library-search label{display:block;color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:7px}.tool-library{padding-bottom:10px}.tool-library .grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.tool-library .tool p{min-height:0}.tool-library .tool .open{opacity:1;color:var(--grnsoft)}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;color:var(--dim);font-size:12px;text-align:center}
+
+  /* dead pixel fullscreen */
+  #pixel{position:fixed;inset:0;background:#fff;z-index:99;display:none}
+  #pixel .hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:rgba(0,0,0,.75);color:#fff;font-size:13px;padding:9px 16px;border-radius:10px;font-family:sans-serif}
+  @media(max-width:680px){.plans{grid-template-columns:1fr}.navlinks{display:none}}
+
+  /* NT HOMEPAGE REFRESH START */
+  .navlinks a[href="#tools"]{display:none}
+  .navlinks a[href="#featured"]::before,.navlinks a[href="#categories"]::before,.navlinks a[href="#library"]::before{content:"./";color:var(--grnsoft)}
+  .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(280px,.95fr);gap:26px;align-items:center;min-height:520px;margin-top:22px;padding:64px 30px 34px}
+  .hero-copy{position:relative;z-index:1;min-width:0}
+  .hero-visual{position:relative;min-height:360px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(12,18,12,.94),rgba(5,8,5,.96));overflow:hidden}
+  .hero-visual::before{content:"signal.visualizer";position:absolute;left:0;top:0;width:100%;height:30px;display:flex;align-items:center;padding:0 12px;background:#0e130e;border-bottom:1px solid var(--line);color:var(--grnsoft);font-size:11px;letter-spacing:1px}
+  .matrix-rain{position:absolute;inset:30px 0 0;opacity:.26;background:
+    repeating-linear-gradient(90deg,transparent 0 20px,rgba(70,224,122,.08) 20px 21px,transparent 21px 38px),
+    repeating-linear-gradient(180deg,rgba(70,224,122,.17) 0 1px,transparent 1px 22px);
+    animation:rainshift 9s linear infinite}
+  @keyframes rainshift{to{transform:translateY(72px)}}
+  .radar-ring{position:absolute;left:50%;top:55%;width:min(72%,300px);aspect-ratio:1;border:1px solid rgba(70,224,122,.32);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 40px rgba(70,224,122,.08),inset 0 0 24px rgba(70,224,122,.05)}
+  .radar-ring::before,.radar-ring::after{content:"";position:absolute;inset:18%;border:1px solid rgba(119,200,255,.2);border-radius:50%}
+  .radar-ring::after{inset:36%;border-color:rgba(255,180,84,.22)}
+  .radar-sweep{position:absolute;left:50%;top:55%;width:min(36%,148px);height:2px;transform-origin:left center;background:linear-gradient(90deg,var(--grn),transparent);animation:sweep 4.8s linear infinite;filter:drop-shadow(0 0 8px var(--grn))}
+  @keyframes sweep{to{transform:rotate(360deg)}}
+  .signal-lines{position:absolute;left:18px;right:18px;bottom:18px;display:grid;gap:7px;font-size:11.5px;color:var(--mut)}
+  .signal-lines span{display:flex;justify-content:space-between;gap:12px;border:1px solid rgba(70,224,122,.13);background:rgba(10,13,10,.78);padding:7px 9px;border-radius:3px}
+  .signal-lines b{color:var(--grn);font-weight:700}
+  .hero-kicker{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+  .hero h1{font-size:clamp(34px,5vw,58px);max-width:680px}
+  .hero .sub{max-width:680px;font-size:15px}
+  .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .ghost-link{font-family:var(--mono);border:1px solid var(--line);border-radius:var(--r);padding:9px 15px;font-size:13px;color:var(--txt);background:var(--bg)}
+  .ghost-link:hover{border-color:var(--grn);color:var(--grn);text-decoration:none}
+  .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px;max-width:650px}
+  .metric-box{border:1px solid var(--line);background:rgba(13,17,13,.86);border-radius:5px;padding:12px;min-width:0}
+  .metric-box b{display:block;color:var(--txt);font-size:22px;line-height:1}
+  .metric-box span{display:block;color:var(--dim);font-size:11px;margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:34px 0 16px}
+  .section-head h2{margin:0;font-size:22px;text-transform:uppercase;letter-spacing:.3px}
+  .section-head h2::before{content:"// ";color:var(--grnsoft)}
+  .section-head p{margin:0;color:var(--dim);font-size:12.5px;max-width:520px}
+  .featured-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .featured-card{position:relative;display:block;min-height:184px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,#0d120d,#0a0d0a);padding:18px;overflow:hidden}
+  .featured-card:hover{border-color:var(--grnsoft);box-shadow:0 0 0 1px var(--grnsoft),0 0 24px rgba(70,224,122,.12);text-decoration:none}
+  .featured-card::after{content:"";position:absolute;inset:auto -25% -45% 35%;height:110px;background:radial-gradient(circle,rgba(70,224,122,.14),transparent 62%);pointer-events:none}
+  .featured-card .tag{display:inline-flex;color:var(--grn);border:1px solid rgba(70,224,122,.28);border-radius:3px;padding:3px 7px;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;background:rgba(70,224,122,.05)}
+  .featured-card h3{font-size:16px;margin:20px 0 8px;color:var(--txt)}
+  .featured-card h3::before{content:"> ";color:var(--grn)}
+  .featured-card p{margin:0;color:var(--dim);font-size:12.5px;max-width:95%}
+  .featured-card .open{position:absolute;left:18px;bottom:16px;color:var(--grn);font-size:12px;font-weight:700}
+  .category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:28px}
+  .category-card{border:1px solid var(--line);border-radius:6px;background:var(--card);padding:16px;cursor:pointer;min-height:144px}
+  .category-card:hover{border-color:var(--grnsoft);box-shadow:0 0 18px rgba(70,224,122,.08)}
+  .category-card b{display:block;color:var(--txt);font-size:14px;margin-bottom:8px}
+  .category-card b::before{content:"[ ";color:var(--grnsoft)}
+  .category-card b::after{content:" ]";color:var(--grnsoft)}
+  .category-card span{display:block;color:var(--dim);font-size:12px;line-height:1.55}
+  .coming-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 34px}
+  .coming-strip span{border:1px dashed rgba(70,224,122,.22);border-radius:5px;background:rgba(70,224,122,.035);padding:10px 12px;color:var(--dim);font-size:12px}
+  .coming-strip b{color:var(--grn);font-weight:700}
+  .library-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-top:30px}
+  .library-head h2{margin:0;font-size:22px;text-transform:uppercase}
+  .library-head h2::before{content:"// ";color:var(--grnsoft)}
+  .library-head p{margin:0;color:var(--dim);font-size:12.5px;max-width:500px}
+  #tools{scroll-margin-top:82px}
+  @media(max-width:920px){.hero{grid-template-columns:1fr;min-height:auto}.hero-visual{min-height:300px}.featured-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.coming-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:620px){.hero{padding:54px 20px 24px}.featured-grid,.category-grid,.coming-strip,.metrics{grid-template-columns:1fr}.section-head,.library-head{display:block}.hero-actions .btn,.hero-actions .ghost-link{width:100%;text-align:center}.hero-visual{min-height:250px}}
+
+  /* NT HOMEPAGE RADAR TEASER FIX START */
+  .hero-visual.radar-teaser{display:block;color:inherit;text-decoration:none;min-height:410px;cursor:pointer;border-color:rgba(70,224,122,.26);background:
+    radial-gradient(circle at 50% 43%,rgba(70,224,122,.12),transparent 40%),
+    linear-gradient(180deg,rgba(9,18,10,.96),rgba(3,7,4,.98))}
+  .hero-visual.radar-teaser:hover{border-color:var(--grnsoft);box-shadow:0 0 0 1px rgba(70,224,122,.22),0 0 34px rgba(70,224,122,.12)}
+  .hero-visual.radar-teaser::before{content:"early-warning.preview";height:34px;color:var(--grn);background:#0d130d}
+  .radar-head{position:absolute;z-index:2;top:48px;left:18px;right:18px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+  .radar-head span{color:var(--grn)}
+  .radar-head b{color:var(--txt);font-weight:700;text-align:right}
+  .radar-core{position:absolute;left:50%;top:47%;width:min(70%,330px);aspect-ratio:1;transform:translate(-50%,-50%)}
+  .radar-core::before,.radar-core::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid rgba(119,200,255,.2);transform:translateX(-50%)}
+  .radar-core::after{top:50%;left:0;right:0;bottom:auto;border-left:0;border-top:1px solid rgba(119,200,255,.2);transform:none}
+  .radar-core .radar-ring{left:0;top:0;width:100%;height:100%;transform:none;border-color:rgba(70,224,122,.45);box-shadow:0 0 45px rgba(70,224,122,.11),inset 0 0 28px rgba(70,224,122,.06)}
+  .radar-core .radar-ring::before{inset:22%;border-color:rgba(119,200,255,.22)}
+  .radar-core .radar-ring::after{inset:42%;border-color:rgba(255,180,84,.24)}
+  .radar-core .radar-sweep{left:50%;top:50%;width:50%;height:3px;transform-origin:left center;background:linear-gradient(90deg,var(--grn),rgba(70,224,122,.38),transparent);z-index:1}
+  .blip{position:absolute;z-index:2;width:11px;height:11px;border-radius:50%;background:var(--grn);box-shadow:0 0 18px var(--grn)}
+  .blip::after{content:"";position:absolute;inset:-9px;border-radius:50%;background:currentColor;opacity:.13}
+  .blip.b1{left:61%;top:29%;color:var(--grn)}
+  .blip.b2{left:32%;top:58%;color:#77c8ff;background:#77c8ff;box-shadow:0 0 18px #77c8ff}
+  .blip.b3{left:70%;top:64%;color:var(--amber);background:var(--amber);box-shadow:0 0 18px var(--amber)}
+  .blip.b4{left:42%;top:36%;color:#77c8ff;background:#77c8ff;box-shadow:0 0 18px #77c8ff}
+  .radar-readouts{bottom:18px;grid-template-columns:1fr 1fr}
+  .radar-readouts span{min-height:42px;align-items:center;border-color:rgba(70,224,122,.2)}
+  .radar-readouts em{font-style:normal;color:var(--mut)}
+  .radar-readouts b.risk{color:var(--amber)}
+  .radar-cta{position:absolute;right:18px;bottom:144px;z-index:3;border:1px solid rgba(70,224,122,.32);background:rgba(10,13,10,.86);color:var(--grn);border-radius:3px;padding:7px 10px;font-size:11px;font-weight:800;text-transform:uppercase}
+  @media(max-width:920px){.hero-visual.radar-teaser{min-height:380px}.radar-core{top:45%;width:min(76%,320px)}}
+  @media(max-width:620px){.hero-visual.radar-teaser{min-height:390px}.radar-readouts{grid-template-columns:1fr}.radar-cta{bottom:184px}.radar-core{width:min(82%,280px);top:43%}}
+  /* NT HOMEPAGE RADAR TEASER FIX END */
+
+  /* NT HOMEPAGE REFRESH END */
+
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"NiftyTools Hub Secondary Tool Library","url":"https://niftytoolshub.com/library.html","description":"A searchable library of NiftyTools Hub calculators, converters, tests, file tools, signal dashboards and playful utilities."}</script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><div class="mark"></div> niftytoolshub</a>
+    <nav class="navlinks">
+      <a href="/">Home</a>
+      <a href="/library.html">Library</a>
+      <a href="/prepper-tools.html">Prepper</a>
+      <a href="/signal-watch.html">Signals</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero wrap" style="display:block;min-height:0;padding:58px 30px 28px">
+  <div class="hero-copy">
+    <div class="hero-kicker">
+      <span class="pill"><span class="dot"></span> secondary library online</span>
+      <span class="pill">no account needed</span>
+      <span class="pill">local-first tools</span>
+    </div>
+    <h1>Secondary<br><span class="grad">Tool Library.</span></h1>
+    <p class="sub">// The full toolbox lives here: calculators, converters, file helpers, writing utilities, dev tools, signal dashboards and weird little helpers.</p>
+  </div>
+</section>
+
+<section id="tools" class="wrap tool-library">
+  <div id="library" class="library-head"><h2>Secondary Tool Library</h2><p>Search the full toolbox: calculators, converters, device tests, writing utilities, playful tools, signal dashboards and preparedness helpers.</p></div>
+  <div class="library-search">
+    <label for="q">Search tools</label>
+    <div class="search"><input id="q" type="search" placeholder="search prepper, pdf, salary, tarot, json..." oninput="search()"><button class="btn" onclick="clearSearch()">Clear</button></div>
+  </div>
+  <div class="filters" id="filters">
+    <div class="chip on" data-f="all" onclick="filter(this)">All</div>
+    <div class="chip" data-f="free" onclick="filter(this)">Free</div>
+        <div class="chip" data-f="convert" onclick="filter(this)">Converters</div>
+    <div class="chip" data-f="image" onclick="filter(this)">Images</div>
+    <div class="chip" data-f="pdf" onclick="filter(this)">PDF</div>
+    <div class="chip" data-f="developer" onclick="filter(this)">Developer</div>
+    <div class="chip" data-f="text" onclick="filter(this)">Text</div>
+    <div class="chip" data-f="fun" onclick="filter(this)">Fun</div>
+    <div class="chip" data-f="time" onclick="filter(this)">Time</div>
+    <div class="chip" data-f="screen" onclick="filter(this)">Screen</div>
+    <div class="chip" data-f="monitor" onclick="filter(this)">Monitoring</div>
+    <div class="chip" data-f="signal" onclick="filter(this)">Signals</div>
+    <div class="chip" data-f="prepper" onclick="filter(this)">Preparedness</div>
+    <div class="chip" data-f="utility" onclick="filter(this)">Utilities</div>
+  </div>
+
+  <div class="grid" id="grid">
+
+
+    <!-- Unit converter pro -->
+    <div class="tool" data-tags="free utility convert unit measurement length area volume mass temperature speed time data pressure energy power angle" data-name="unit converter pro measurement studio length area volume mass temperature speed time data pressure energy power angle batch formula" onclick="location.href='/unit-tools.html'">
+      <span class="badge free">Free</span><div class="ico">UNIT</div>
+      <h3>Unit Converter Pro</h3><p>Convert measurements across 12 categories with formulas, batch mode and saved favorites.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+
+    <!-- Time zone studio -->
+    <div class="tool" data-tags="free utility time timezone clock world clock meeting planner countdown utc sunrise sunset" data-name="world clock time zone studio timezone converter meeting planner countdown utc offset sunrise sunset city clocks" onclick="location.href='/time-tools.html'">
+      <span class="badge free">Free</span><div class="ico">TIME</div>
+      <h3>World Clock / Time Zone Studio</h3><p>Live city clocks, timezone converter, meeting planner, countdowns and UTC offset search.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Device test suite -->
+    <div class="tool" data-tags="free utility screen device test camera webcam microphone mic speaker audio keyboard mouse typing speed internet browser resolution" data-name="device test suite webcam microphone speaker screen keyboard mouse typing speed internet pulse browser hardware check" onclick="location.href='/device-tests.html'">
+      <span class="badge free">Free</span><div class="ico">CHK</div>
+      <h3>Device Test Suite</h3><p>Test webcam, mic, speakers, keyboard, mouse, screen, typing speed and internet pulse.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Dead pixel: interactive -->
+    <div class="tool" data-tags="free screen" data-name="dead pixel test white screen">
+      <span class="badge free">Free</span>
+      <div class="ico">🖥️</div>
+      <h3>Dead Pixel Test</h3>
+      <p>Full-screen solid colours to spot stuck or dead pixels.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <button class="smallbtn" onclick="deadPixel()">Launch white screen →</button>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Gematria: interactive -->
+    <div class="tool" data-tags="free utility" data-name="gematria numerology calculator name number cipher">
+      <span class="badge free">Free</span>
+      <div class="ico">🔢</div>
+      <h3>Gematria Calculator</h3>
+      <p>Turn any word or name into its number across several ciphers.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><input id="gtext" placeholder="Type a word or name…" value="Voynich" oninput="gem()"></div>
+        <div class="row">
+          <select id="gcipher" onchange="gem()">
+            <option value="ord">English Ordinal (A=1…Z=26)</option>
+            <option value="red">Full Reduction (1–9)</option>
+            <option value="six">English Gematria (×6)</option>
+          </select>
+        </div>
+        <div class="row"><span class="out" id="gout">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Zodiac: interactive -->
+    <div class="tool" data-tags="free utility fun" data-name="zodiac star sign chinese horoscope birthday astrology">
+      <span class="badge free">Free</span>
+      <div class="ico">♌</div>
+      <h3>Zodiac Finder</h3>
+      <p>Your star sign and Chinese zodiac animal from your birth date.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><input id="zdate" type="date" value="1990-08-12" onchange="zod()" oninput="zod()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Star sign</span><span class="out" id="zsun" style="font-size:16px">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Chinese</span><span class="out" id="zchi" style="font-size:16px">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Days lived: interactive -->
+    <div class="tool" data-tags="free utility" data-name="days lived age calculator born death date how many days alive">
+      <span class="badge free">Free</span>
+      <div class="ico">📅</div>
+      <h3>Days Lived</h3>
+      <p>Count the days since a birth date — leave the end blank for today.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Born</span><input id="dlb" type="date" value="1990-08-12" oninput="daysLived()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">End</span><input id="dle" type="date" oninput="daysLived()"></div>
+        <div class="row"><span class="out" id="dlout">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px" id="dlsub"></span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Tip calculator: interactive -->
+    <div class="tool" data-tags="free utility convert" data-name="tip calculator gratuity tax bill restaurant split">
+      <span class="badge free">Free</span>
+      <div class="ico">🧾</div>
+      <h3>Tip Calculator</h3>
+      <p>Work out the tip before or after tax — set your own percentages.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Bill</span><input id="tpb" type="number" value="50" oninput="tipCalc()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Tax %</span><input id="tpt" type="number" value="13" oninput="tipCalc()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Tip %</span><input id="tpp" type="number" value="18" oninput="tipCalc()"></div>
+        <div class="row"><select id="tpm" onchange="tipCalc()"><option value="pre">Tip on bill (before tax)</option><option value="post">Tip on total (after tax)</option></select></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Tip</span><span class="out" id="tptip" style="font-size:17px">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Total</span><span class="out" id="tptot" style="font-size:17px">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Base converter: interactive -->
+    <div class="tool" data-tags="free utility convert" data-name="binary hexadecimal decimal octal base number converter programmer">
+      <span class="badge free">Free</span>
+      <div class="ico">0b1</div>
+      <h3>Number Base Converter</h3>
+      <p>Convert between binary, decimal, hexadecimal and octal at once.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row">
+          <input id="nbv" value="255" oninput="baseConv()" placeholder="Enter a number…">
+          <select id="nbf" onchange="baseConv()" style="width:auto"><option value="10">Dec</option><option value="2">Bin</option><option value="16">Hex</option><option value="8">Oct</option></select>
+        </div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:50px">DEC</span><span class="out" id="nbDec" style="font-size:15px">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:50px">BIN</span><span class="out" id="nbBin" style="font-size:15px;word-break:break-all">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:50px">HEX</span><span class="out" id="nbHex" style="font-size:15px">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:50px">OCT</span><span class="out" id="nbOct" style="font-size:15px">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Morse code: interactive -->
+    <div class="tool" data-tags="free utility convert" data-name="morse code converter translator dots dashes text">
+      <span class="badge free">Free</span>
+      <div class="ico">··−</div>
+      <h3>Morse Code Converter</h3>
+      <p>Translate text to Morse code and back, instantly.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><select id="msdir" onchange="morse()"><option value="enc">Text → Morse</option><option value="dec">Morse → Text</option></select></div>
+        <div class="row"><input id="msin" value="SOS" placeholder="Type here…" oninput="morse()"></div>
+        <div class="row"><span class="out" id="msout" style="font-size:16px;word-break:break-all">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+
+
+    <!-- Random toolkit pro -->
+    <div class="tool" data-tags="free utility fun random dice coin lottery picker decision countdown timer lorem ipsum password passphrase birthday age days lived" data-name="random toolkit pro coin flip dice roller lottery number generator random picker yes no decision countdown timer days lived lorem ipsum password passphrase" onclick="location.href='/random-tools.html'">
+      <span class="badge free">Free</span><div class="ico">RNG</div>
+      <h3>Random Toolkit Pro</h3><p>Coin flips, dice, lottery numbers, random picker, countdown timer, lorem ipsum and life stats.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Fake hacker terminal -->
+    <div class="tool" data-tags="free utility fun prank screen" data-name="fake hacker terminal prank console movie hacking simulator matrix system access fullscreen harmless" onclick="location.href='/fake-hacker.html'">
+      <span class="badge free">Free</span><div class="ico">&gt;_</div>
+      <h3>Fake Hacker Terminal</h3><p>Run a cinematic, harmless movie-terminal simulation for pranks, streams and presentations.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Magic 8-ball -->
+    <div class="tool" data-tags="free utility fun" data-name="magic 8 ball fortune yes no decision answer random">
+      <span class="badge free">Free</span>
+      <div class="ico">🎱</div>
+      <h3>Magic 8-Ball</h3>
+      <p>Ask a yes/no question and let the ball decide.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><input id="m8q" placeholder="Ask a question…" value="Will this app make money?"></div>
+        <div class="row"><button class="smallbtn" onclick="shake8()">🎱 Shake</button></div>
+        <div class="row"><span class="out" id="m8a" style="font-size:15px">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Random picker -->
+    <div class="tool" data-tags="free utility" data-name="random picker name drawer wheel spinner giveaway raffle">
+      <span class="badge free">Free</span>
+      <div class="ico">🎯</div>
+      <h3>Random Picker</h3>
+      <p>Drop in names and draw a winner — great for giveaways.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><textarea id="rpin" rows="3" placeholder="One name per line…">Alice
+Bob
+Charlie
+Dana</textarea></div>
+        <div class="row"><button class="smallbtn" onclick="pickRandom()">🎯 Draw</button></div>
+        <div class="row"><span class="out" id="rpout" style="font-size:16px">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Scratchpad -->
+    <div class="tool" data-tags="free utility" data-name="notepad scratchpad notes quick save browser">
+      <span class="badge free">Free</span>
+      <div class="ico">📝</div>
+      <h3>Scratchpad</h3>
+      <p>Jot quick notes — saved in your browser automatically.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><textarea id="npad" rows="4" placeholder="Start typing…" oninput="saveNote()"></textarea></div>
+        <div class="row"><span style="color:var(--mut);font-size:11px" id="npstatus">Saves automatically on this device</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Barcode generator -->
+    <div class="tool" data-tags="free utility" data-name="barcode generator maker code128 ean upc reader scanner">
+      <span class="badge free">Free</span>
+      <div class="ico">|‖|</div>
+      <h3>Barcode Generator</h3>
+      <p>Make a scannable barcode from text or numbers.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row">
+          <input id="bcin" value="VOYNICH123" placeholder="Text or numbers…" oninput="makeBarcode()">
+          <select id="bctype" onchange="makeBarcode()" style="width:auto"><option value="128">Code 128</option><option value="ean13">EAN-13</option><option value="39">Code 39</option></select>
+        </div>
+        <div class="row" style="justify-content:center"><img id="bcimg" alt="Barcode" style="max-width:100%;height:70px;background:#fff;border-radius:8px;padding:6px"></div>
+        <div class="row"><span style="color:var(--mut);font-size:11px">Camera scanning comes with the live site.</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Debt payoff -->
+    <div class="tool" data-tags="free utility convert" data-name="debt payoff repayment calculator time interest loan credit card">
+      <span class="badge free">Free</span>
+      <div class="ico">💸</div>
+      <h3>Debt Payoff</h3>
+      <p>See how long it takes to clear a balance at a set payment.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Balance</span><input id="dpbal" type="number" value="5000" oninput="debtPayoff()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Interest %</span><input id="dprate" type="number" value="19.9" oninput="debtPayoff()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Pay / mo</span><input id="dppay" type="number" value="200" oninput="debtPayoff()"></div>
+        <div class="row"><span class="out" id="dpout">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:11px" id="dpsub"></span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Loan / mortgage -->
+    <div class="tool" data-tags="free utility convert" data-name="mortgage loan auto car payment calculator amortization monthly refinance">
+      <span class="badge free">Free</span>
+      <div class="ico">🏠</div>
+      <h3>Loan & Mortgage</h3>
+      <p>Monthly payment for a mortgage, auto or personal loan.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Amount</span><input id="lnamt" type="number" value="300000" oninput="loanCalc()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Rate %</span><input id="lnrate" type="number" value="5.5" oninput="loanCalc()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:78px">Years</span><input id="lnyrs" type="number" value="25" oninput="loanCalc()"></div>
+        <div class="row"><span class="out" id="lnout">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:11px" id="lnsub"></span></div>
+        <div class="row"><a href="/mortgage.html" style="color:var(--grn);font-size:12px;font-weight:700">→ Full mortgage calculator (amortization, extra payments, US/Canada)</a></div>
+        <div class="row"><a href="/auto-loan.html" style="color:var(--grn);font-size:12px;font-weight:700">→ Full auto loan calculator (trade-in, tax, amortization)</a></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+
+
+    <!-- Math lab pro -->
+    <div class="tool" data-tags="free utility convert math calculator scientific statistics prime factorial fibonacci gcd lcm algebra quadratic combinatorics" data-name="math lab pro scientific calculator statistics prime checker factorization gcd lcm factorial fibonacci quadratic solver combinations permutations number theory" onclick="location.href='/math-tools.html'">
+      <span class="badge free">Free</span><div class="ico">MATH</div>
+      <h3>Math Lab Pro</h3><p>Scientific calculator, statistics, prime checks, factors, GCD/LCM, factorials, Fibonacci and quadratic solver.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Percentage -->
+    <div class="tool" data-tags="free utility convert" data-name="percentage percent calculator of increase discount">
+      <span class="badge free">Free</span>
+      <div class="ico">%</div>
+      <h3>Percentage Calc</h3>
+      <p>Quick percentage answers, two common ways.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><select id="pctmode" onchange="pct()"><option value="of">A% of B</option><option value="iswhat">A is what % of B</option></select></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:30px">A</span><input id="pca" type="number" value="15" oninput="pct()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:30px">B</span><input id="pcb" type="number" value="200" oninput="pct()"></div>
+        <div class="row"><span class="out" id="pctout">—</span></div>
+        <div class="row"><a href="/percentage.html" style="color:var(--grn);font-size:12px;font-weight:700">→ Full percentage calculator (4 modes + formulas)</a></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Case converter -->
+    <div class="tool" data-tags="free utility convert text" data-name="upper lower case converter title sentence text capitalize">
+      <span class="badge free">Free</span>
+      <div class="ico">Aa</div>
+      <h3>Case Converter</h3>
+      <p>Switch text between UPPER, lower, Title and Sentence case.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><textarea id="ccin" rows="2" placeholder="Type or paste text…" oninput="caseConv(lastCase)">The quick brown fox.</textarea></div>
+        <div class="row" style="flex-wrap:wrap"><button class="smallbtn" onclick="caseConv('upper')">UPPER</button><button class="smallbtn" onclick="caseConv('lower')">lower</button><button class="smallbtn" onclick="caseConv('title')">Title</button><button class="smallbtn" onclick="caseConv('sentence')">Sentence</button></div>
+        <div class="row"><span class="out" id="ccout" style="font-size:13px;word-break:break-word">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Compound interest -->
+    <div class="tool" data-tags="free utility convert" data-name="interest compound calculator savings investment growth finance">
+      <span class="badge free">Free</span>
+      <div class="ico">📈</div>
+      <h3>Compound Interest</h3>
+      <p>Grow a principal over time with compounding.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Principal</span><input id="ciP" type="number" value="1000" oninput="compInt()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Rate %</span><input id="ciR" type="number" value="5" oninput="compInt()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Years</span><input id="ciY" type="number" value="10" oninput="compInt()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:84px">Compounds</span><select id="ciN" onchange="compInt()"><option value="1">Yearly</option><option value="12" selected>Monthly</option><option value="365">Daily</option></select></div>
+        <div class="row"><span class="out" id="ciout">—</span></div>
+        <div class="row"><span style="color:var(--mut);font-size:11px" id="cisub"></span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Timestamp -->
+    <div class="tool" data-tags="free utility convert" data-name="timestamp unix epoch converter date time">
+      <span class="badge free">Free</span>
+      <div class="ico">🕓</div>
+      <h3>Timestamp Converter</h3>
+      <p>Convert between Unix timestamps and readable dates.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><select id="tsdir" onchange="tstamp()"><option value="u2d">Unix → Date</option><option value="d2u">Date → Unix</option></select></div>
+        <div class="row"><input id="tsin" value="1700000000" placeholder="timestamp or date…" oninput="tstamp()"></div>
+        <div class="row"><button class="smallbtn" onclick="tsNow()">Now</button><span class="out" id="tsout" style="font-size:12.5px;word-break:break-word">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- GPA -->
+    <div class="tool" data-tags="free utility" data-name="gpa grade point average calculator school college credits">
+      <span class="badge free">Free</span>
+      <div class="ico">🎓</div>
+      <h3>GPA Calculator</h3>
+      <p>One course per line: grade then credits (e.g. A 3).</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><textarea id="gpain" rows="4" placeholder="A 3" oninput="gpaCalc()">A 3
+B+ 4
+A- 3</textarea></div>
+        <div class="row"><span class="out" id="gpaout" style="font-size:15px">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Finance ratios -->
+    <div class="tool" data-tags="free utility convert" data-name="finance ratios roi roe roa profit margin return investment accounting business">
+      <span class="badge free">Free</span>
+      <div class="ico">📊</div>
+      <h3>Finance Ratios</h3>
+      <p>ROI, ROE, ROA and net margin in one place.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><select id="frmode" onchange="frUpdate()"><option value="roi">ROI</option><option value="roe">ROE</option><option value="roa">ROA</option><option value="margin">Net margin</option></select></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:128px" id="frla">Net profit</span><input id="fra" type="number" value="20000" oninput="frCalc()"></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:128px" id="frlb">Investment</span><input id="frb" type="number" value="100000" oninput="frCalc()"></div>
+        <div class="row"><span class="out" id="frout">—</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+
+    <!-- Salary paycheck pro -->
+    <div class="tool" data-tags="free utility convert finance business salary paycheck hourly wage overtime raise job offer income tax estimate" data-name="salary paycheck calculator pro hourly yearly monthly biweekly wage overtime take home pay gross net deductions raise calculator job offer comparison income estimate" onclick="location.href='/salary-tools.html'">
+      <span class="badge free">Free</span><div class="ico">PAY</div>
+      <h3>Salary / Paycheck Calculator Pro</h3><p>Estimate take-home pay, overtime, deductions, raises and competing job offers.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Zodiac love match -->
+    <div class="tool" data-tags="free utility fun" data-name="zodiac love compatibility match romance horoscope couple star sign">
+      <span class="badge free">Free</span>
+      <div class="ico">💞</div>
+      <h3>Zodiac Love Match</h3>
+      <p>Check the cosmic chemistry between two star signs.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:48px">You</span><select id="lvA" onchange="loveMatch()"><option value="0">Aries</option><option value="1">Taurus</option><option value="2">Gemini</option><option value="3">Cancer</option><option value="4" selected>Leo</option><option value="5">Virgo</option><option value="6">Libra</option><option value="7">Scorpio</option><option value="8">Sagittarius</option><option value="9">Capricorn</option><option value="10">Aquarius</option><option value="11">Pisces</option></select></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:48px">Them</span><select id="lvB" onchange="loveMatch()"><option value="0">Aries</option><option value="1">Taurus</option><option value="2">Gemini</option><option value="3">Cancer</option><option value="4">Leo</option><option value="5">Virgo</option><option value="6" selected>Libra</option><option value="7">Scorpio</option><option value="8">Sagittarius</option><option value="9">Capricorn</option><option value="10">Aquarius</option><option value="11">Pisces</option></select></div>
+        <div class="row"><span class="out" id="lvScore" style="font-size:24px">—</span><span style="font-size:13px;color:var(--grn)" id="lvHead"></span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px;line-height:1.55" id="lvText"></span></div>
+        <div class="row"><button class="smallbtn" onclick="copyLove(this)">Copy result</button><span style="color:var(--mut);font-size:10px">for fun ✨</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Static cards -->
+    <div class="tool" data-tags="free utility" data-name="password generator strong random secure">
+      <span class="badge free">Free</span><div class="ico">🔑</div>
+      <h3>Password Generator</h3><p>Strong, random passwords with length and symbol control.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><span style="color:var(--mut);font-size:12px;width:64px">Length</span><input id="pglen" type="number" value="16" min="4" max="64" oninput="genPass()"></div>
+        <div class="row" style="font-size:12.5px;color:var(--mut);gap:16px">
+          <label><input type="checkbox" id="pgnum" checked onchange="genPass()" style="width:auto"> Numbers</label>
+          <label><input type="checkbox" id="pgsym" checked onchange="genPass()" style="width:auto"> Symbols</label>
+        </div>
+        <div class="row"><span class="out" id="pgout" style="font-size:14px;word-break:break-all">—</span></div>
+        <div class="row"><button class="smallbtn" onclick="genPass()">↻ New</button><button class="smallbtn" onclick="copyPass(this)">Copy</button></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility convert" data-name="qr code toolkit pro generator maker link wifi vcard email sms phone event branded png svg" onclick="location.href='/qr-tools.html'">
+      <span class="badge free">Free</span><div class="ico">▦</div>
+      <h3>QR Code Toolkit Pro</h3><p>URL, text, Wi-Fi, vCard, email, SMS, phone and event QR codes with PNG/SVG export.</p>
+      <div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility finance business" data-name="receipt generator invoice maker printable pdf tax discount payment line items business" onclick="location.href='/receipt-tools.html'">
+      <span class="badge free">Free</span><div class="ico">🧾</div>
+      <h3>Receipt Generator</h3><p>Create printable receipts with line items, tax, discounts, payment details and PDF-ready layout.</p>
+      <div class="open">Open full tool →</div>
+    </div>
+
+    <div class="tool" data-tags="free utility monitor signal fun trend" data-name="meme early warning viral trend scout memes mainstream saturation social tags hn gdelt wikipedia" onclick="location.href='/meme-watch.html'">
+      <span class="badge free">Free</span><div class="ico">#</div>
+      <h3>Meme Early Warning</h3><p>Spot rising phrases and internet jokes before mainstream coverage catches up.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+
+    <!-- Prepper toolkit -->
+    <div class="tool" data-tags="free utility prepper preparedness emergency outage survival checklist water food power inventory go bag communications planning" data-name="prepper toolkit emergency preparedness 72 hour kit water food outage power go bag checklist inventory expiry watch family communications card printable plan" onclick="location.href='/prepper-tools.html'">
+      <span class="badge free">Free</span><div class="ico">PREP</div>
+      <h3>Prepper Toolkit</h3><p>Build a practical household readiness plan: water, food, outage power, go-bag, inventory and comms card.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <div class="tool" data-tags="free utility monitor signal" data-name="early warning radar high resolution command center world local signal watch space weather earthquake cluster internet outage news panic market stress wildfire air quality official alerts local internet health news spike airport travel" onclick="location.href='/signal-watch.html'">
+      <span class="badge free">Free</span><div class="ico">📡</div>
+      <h3>Early Warning Radar</h3><p>High-resolution command radar for world vs local anomaly signals: alerts, quakes, outages, news panic, markets, travel and air quality.</p>
+      <div class="open">Open full tool →</div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Outage radar -->
+    <div class="tool" data-tags="free utility monitor signal outage status downtime cloud apps carrier cellular internet youtube aws instagram facebook whatsapp verizon bell rogers att tmobile cloudflare openai github google" data-name="outage radar app cloud carrier internet status map youtube aws instagram facebook verizon bell cellular outage checker official feeds local checks" onclick="location.href='/outage-radar.html'">
+      <span class="badge free">Free</span><div class="ico">OUT</div>
+      <h3>Outage Radar</h3><p>Live-style outage map for apps, cloud platforms, carriers and internet-core status signals.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <!-- Cyber threat radar -->
+    <div class="tool" data-tags="free utility monitor signal security cyber threat map attack radar public intel dshield sans cisa kev ports vulnerabilities" data-name="cyber threat radar public attack map dshield sans isc cisa kev top ports vulnerability exploit signals live demo" onclick="location.href='/cyber-threat.html'">
+      <span class="badge free">Free</span><div class="ico">CYB</div>
+      <h3>Cyber Threat Radar</h3><p>Animated public threat-signal map with source/target arcs, top ports, CISA KEV pulse and live-style log.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <div class="tool" data-tags="free utility monitor signal fun weather" data-name="aurora watch northern lights tonight forecast kp cloud cover sky visibility" onclick="location.href='/aurora-watch.html'">
+      <span class="badge free">Free</span><div class="ico">✦</div>
+      <h3>Aurora Watch</h3><p>See if northern or southern lights are worth chasing tonight using NOAA and local sky data.</p>
+      <div class="open">Open full tool →</div>
+    </div>
+
+    <!-- File organizer toolkit -->
+    <div class="tool" data-tags="free utility image pdf document organizer file duplicate rename csv json local" data-name="file organizer toolkit documents images duplicate finder batch rename plan json csv local browser" onclick="location.href='/file-organizer.html'">
+      <span class="badge free">Free</span><div class="ico">ORG</div>
+      <h3>File Organizer Toolkit</h3><p>Group files, spot duplicates, preview batch renames and export a local organization plan.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    <div class="tool" data-tags="free utility convert image" data-name="image compressor resize webp jpg png converter background remover" onclick="location.href='/image-tools.html'">
+      <span class="badge free">Free</span><div class="ico">🖼️</div>
+      <h3>Image Toolkit</h3><p>Compress, resize, convert WebP/JPG/PNG, and remove simple backgrounds.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free time" data-name="stopwatch timer pomodoro focus">
+      <span class="badge free">Free</span><div class="ico">⏱️</div>
+      <h3>Timer & Stopwatch</h3><p>Stopwatch and a 25-minute Pomodoro focus timer.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row" style="justify-content:center"><span class="clock" id="swdisp" style="font-size:26px">00:00.0</span></div>
+        <div class="row"><button class="smallbtn" id="swbtn" onclick="swToggle()">Start</button><button class="smallbtn" onclick="swReset()">Reset</button><button class="smallbtn" onclick="startPomodoro()">Pomodoro</button></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+    
+    <div class="tool" data-tags="free utility text" data-name="word character counter reading time">
+      <span class="badge free">Free</span><div class="ico">🔤</div>
+      <h3>Word Counter</h3><p>Count words, characters and reading time as you type.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><textarea id="wcin" rows="3" placeholder="Paste or type text…" oninput="wordCount()"></textarea></div>
+        <div class="row" style="gap:18px;font-size:13.5px"><span>Words <b id="wcw" style="color:var(--acc2)">0</b></span><span>Chars <b id="wcc" style="color:var(--acc2)">0</b></span></div>
+        <div class="row"><span style="color:var(--mut);font-size:12px" id="wcr">0 min read</span></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+
+    <!-- Color palette studio -->
+    <div class="tool" data-tags="free utility image screen design color palette gradient contrast css hex rgb hsl hsv" data-name="color palette studio generator image extractor contrast checker gradient css variables tailwind hex rgb hsl hsv" onclick="location.href='/color-tools.html'">
+      <span class="badge free">Free</span><div class="ico">HSL</div>
+      <h3>Color Palette Studio</h3><p>Generate palettes, extract colors from images, check contrast and export CSS variables.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+    
+    
+    
+    <div class="tool" data-tags="free utility" data-name="json formatter prettify minify validate developer">
+      <span class="badge free">Free</span><div class="ico">{ }</div>
+      <h3>JSON Formatter</h3><p>Prettify, validate and minify JSON in a click.</p>
+      <div class="mini collapsed" onclick="event.stopPropagation()">
+        <div class="row"><textarea id="jsin" rows="3" placeholder='{"hello":"world"}'>{"name":"Voynich","tools":["morse","gpa"],"free":true}</textarea></div>
+        <div class="row"><button class="smallbtn" onclick="jsonFmt('pretty')">Prettify</button><button class="smallbtn" onclick="jsonFmt('min')">Minify</button></div>
+        <div class="row"><textarea id="jsout" rows="3" readonly placeholder="result…"></textarea></div>
+      </div>
+      <div class="open">Open tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility convert pdf" data-name="pdf toolkit merge split extract compress optimize jpg png convert images" onclick="location.href='/pdf-tools.html'">
+      <span class="badge free">Free</span><div class="ico">📄</div>
+      <h3>PDF Toolkit</h3><p>Merge, extract pages, optimize, make PDFs from images, and export pages as images.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility convert developer" data-name="developer toolkit json yaml csv base64 url jwt hash uuid regex timestamp" onclick="location.href='/dev-tools.html'">
+      <span class="badge free">Free</span><div class="ico">&lt;/&gt;</div>
+      <h3>Developer Toolkit</h3><p>JSON, YAML, CSV, Base64, URL, JWT, hashes, UUIDs, regex and timestamps.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility convert text writing markdown prompt cleaner diff slug readability case csv list" data-name="text writing toolkit pro word counter readability case converter slug generator markdown preview text diff prompt cleaner csv list cleanup" onclick="location.href='/text-tools.html'">
+      <span class="badge free">Free</span><div class="ico">TXT</div>
+      <h3>Text & Writing Toolkit Pro</h3><p>Analyze, clean, format, diff, preview Markdown and tighten AI prompts locally.</p><div class="open">Open full tool -></div>
+    </div>
+    <div class="tool" data-tags="free utility fun" data-name="tarot card reader daily draw astrology fortune cards spread love career decision" onclick="location.href='/tarot-tools.html'">
+      <span class="badge free">Free</span><div class="ico">☾</div>
+      <h3>Tarot Card Reader</h3><p>Daily draws, quick answers, spreads, reversals, and reflective interpretations.</p><div class="open">Open full tool →</div>
+    </div>
+    <div class="tool" data-tags="free utility fun" data-name="birth chart zodiac astrology toolkit sun moon rising compatibility numerology lucky color number horoscope" onclick="location.href='/astrology-tools.html'">
+      <span class="badge free">Free</span><div class="ico">♌</div>
+      <h3>Birth Chart / Zodiac Toolkit</h3><p>Sun, moon, rising, compatibility, numerology, daily vibe, lucky color and number.</p><div class="open">Open full tool →</div>
+    </div>
+
+  </div>
+</section>
+
+
+
+<footer>
+  <div class="wrap">© 2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div>
+</footer>
+
+<!-- Dead pixel screen -->
+<div id="pixel" onclick="closePixel()"><div class="hint">Click anywhere to exit · look for spots that don't turn white</div>
+<script>
+  // expand mini tools on card click
+  document.querySelectorAll('.tool').forEach(t=>{
+    t.addEventListener('click',()=>{
+      const m=t.querySelector('.mini');
+      if(m){m.classList.toggle('collapsed');}
+    });
+  });
+
+  // filtering
+  function activeFilter(){return document.querySelector('.chip.on')?.dataset.f || 'all';}
+  function filter(el){
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    el.classList.add('on');
+    applyLibraryFilters();
+    if(window.ntTrack)window.ntTrack('tool_action',{tool:'Library',action:'filter',filter:el.dataset.f});
+  }
+  // search
+  function search(){
+    applyLibraryFilters();
+    const q=document.getElementById('q')?.value.toLowerCase().trim();
+    if(q&&window.ntTrack)window.ntTrack('search',{tool:'Library',query:q});
+  }
+  function applyLibraryFilters(){
+    const q=(document.getElementById('q')?.value||'').toLowerCase().trim();
+    const f=activeFilter();
+    document.querySelectorAll('.tool').forEach(t=>{
+      const tags=t.dataset.tags||'';
+      const hay=(t.dataset.name+' '+t.querySelector('h3').textContent).toLowerCase();
+      const matchFilter=f==='all'||tags.includes(f);
+      const matchSearch=!q||hay.includes(q);
+      t.classList.toggle('hidden', !(matchFilter&&matchSearch));
+    });
+  }
+  function clearSearch(){const q=document.getElementById('q');if(q){q.value='';applyLibraryFilters();q.focus();}}
+  // converter
+  function conv(){
+    const v=parseFloat(document.getElementById('uv').value||0);
+    const f=document.getElementById('uf').value; let o='';
+    if(f==='km')o=(v*0.621371).toFixed(2)+' mi';
+    else if(f==='m')o=(v*3.28084).toFixed(2)+' ft';
+    else if(f==='kg')o=(v*2.20462).toFixed(2)+' lb';
+    else if(f==='c')o=(v*9/5+32).toFixed(1)+' °F';
+    document.getElementById('uout').textContent=o;
+  }
+  // clocks
+  function clocks(){
+    const f=(tz)=>new Date().toLocaleTimeString('en-GB',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    const set=(id,tz)=>{const e=document.getElementById(id); if(e)e.textContent=f(tz);};
+    set('c-lon','Europe/London'); set('c-ny','America/New_York'); set('c-tok','Asia/Tokyo');
+  }
+  setInterval(clocks,1000); clocks();
+  // gematria
+  function gem(){
+    const t=(document.getElementById('gtext').value||'').toLowerCase();
+    const c=document.getElementById('gcipher').value;
+    const red=[1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8]; // a..z reduced
+    let total=0;
+    for(const ch of t){
+      const i=ch.charCodeAt(0)-97;
+      if(i<0||i>25)continue;
+      if(c==='ord')total+=i+1;
+      else if(c==='red')total+=red[i];
+      else if(c==='six')total+=(i+1)*6;
+    }
+    document.getElementById('gout').textContent= t.trim()? total : '—';
+  }
+  gem();
+  // zodiac
+  function zod(){
+    const val=document.getElementById('zdate').value;
+    if(!val)return;
+    const d=new Date(val+'T00:00:00');
+    const m=d.getMonth()+1, day=d.getDate(), y=d.getFullYear();
+    // western sun sign
+    const signs=[
+      ['Capricorn','♑',1,19],['Aquarius','♒',2,18],['Pisces','♓',3,20],
+      ['Aries','♈',4,19],['Taurus','♉',5,20],['Gemini','♊',6,20],
+      ['Cancer','♋',7,22],['Leo','♌',8,22],['Virgo','♍',9,22],
+      ['Libra','♎',10,22],['Scorpio','♏',11,21],['Sagittarius','♐',12,21]
+    ];
+    let s=signs[m-1];
+    if(day>s[3]) s=signs[m%12]; // after cut-off → next sign
+    document.getElementById('zsun').textContent=s[1]+' '+s[0];
+    // chinese animal (by year)
+    const animals=['🐀 Rat','🐂 Ox','🐅 Tiger','🐇 Rabbit','🐉 Dragon','🐍 Snake','🐎 Horse','🐐 Goat','🐒 Monkey','🐓 Rooster','🐕 Dog','🐖 Pig'];
+    document.getElementById('zchi').textContent=animals[((y-4)%12+12)%12];
+  }
+  zod();
+  // days lived
+  function daysLived(){
+    const bv=document.getElementById('dlb').value;
+    const ev=document.getElementById('dle').value;
+    const out=document.getElementById('dlout'), sub=document.getElementById('dlsub');
+    if(!bv){out.textContent='—';sub.textContent='';return;}
+    const b=new Date(bv+'T00:00:00');
+    const e=ev?new Date(ev+'T00:00:00'):new Date();
+    const days=Math.floor((e-b)/86400000);
+    if(isNaN(days)||days<0){out.textContent='—';sub.textContent='Check the dates';return;}
+    out.textContent=days.toLocaleString()+' days';
+    const yrs=Math.floor(days/365.25);
+    const wks=Math.floor(days/7);
+    sub.textContent='≈ '+yrs+' years · '+wks.toLocaleString()+' weeks'+(ev?'':' (to today)');
+  }
+  daysLived();
+  // tip calculator
+  function tipCalc(){
+    const bill=parseFloat(document.getElementById('tpb').value)||0;
+    const taxP=parseFloat(document.getElementById('tpt').value)||0;
+    const tipP=parseFloat(document.getElementById('tpp').value)||0;
+    const mode=document.getElementById('tpm').value;
+    const tax=bill*taxP/100;
+    const base=mode==='pre'?bill:bill+tax;
+    const tip=base*tipP/100;
+    const total=bill+tax+tip;
+    document.getElementById('tptip').textContent='$'+tip.toFixed(2);
+    document.getElementById('tptot').textContent='$'+total.toFixed(2);
+  }
+  tipCalc();
+  // number base converter
+  function baseConv(){
+    const raw=(document.getElementById('nbv').value||'').trim().replace(/^0x|^0b|^0o/i,'');
+    const from=parseInt(document.getElementById('nbf').value,10);
+    const set=(id,v)=>document.getElementById(id).textContent=v;
+    const blank=()=>{set('nbBin','—');set('nbHex','—');set('nbOct','—');};
+    if(!raw){set('nbDec','—');blank();return;}
+    // every character must be a valid digit for the chosen base
+    const ok=raw.toLowerCase().split('').every(c=>{const d=parseInt(c,36);return !isNaN(d)&&d<from;});
+    if(!ok){set('nbDec','invalid for this base');blank();return;}
+    const n=parseInt(raw,from);
+    set('nbDec',n.toString(10));
+    set('nbBin',n.toString(2));
+    set('nbHex',n.toString(16).toUpperCase());
+    set('nbOct',n.toString(8));
+  }
+  baseConv();
+  // morse code
+  const MORSE={a:'.-',b:'-...',c:'-.-.',d:'-..',e:'.',f:'..-.',g:'--.',h:'....',i:'..',j:'.---',k:'-.-',l:'.-..',m:'--',n:'-.',o:'---',p:'.--.',q:'--.-',r:'.-.',s:'...',t:'-',u:'..-',v:'...-',w:'.--',x:'-..-',y:'-.--',z:'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.','.':'.-.-.-',',':'--..--','?':'..--..',"'":'.----.','!':'-.-.--','/':'-..-.','(':'-.--.',')':'-.--.-','&':'.-...',':':'---...',';':'-.-.-.','=':'-...-','+':'.-.-.','-':'-....-','_':'..--.-','"':'.-..-.','@':'.--.-.'};
+  const UNMORSE=Object.fromEntries(Object.entries(MORSE).map(([k,v])=>[v,k]));
+  function morse(){
+    const dir=document.getElementById('msdir').value;
+    const t=(document.getElementById('msin').value||'');
+    let o='';
+    if(dir==='enc'){
+      o=t.toLowerCase().split('').map(c=>c===' '?'/':(MORSE[c]||'')).join(' ').replace(/\s*\/\s*/g,' / ').trim();
+    }else{
+      o=t.trim().split(' / ').map(w=>w.split(/\s+/).map(code=>UNMORSE[code]||'').join('')).join(' ').toUpperCase();
+    }
+    document.getElementById('msout').textContent= t.trim()? (o||'—') : '—';
+  }
+  morse();
+  // password generator
+  function genPass(){
+    const len=Math.max(4,Math.min(64,parseInt(document.getElementById('pglen').value)||16));
+    let chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if(document.getElementById('pgnum').checked)chars+='0123456789';
+    if(document.getElementById('pgsym').checked)chars+='!@#$%^&*()-_=+[]{}';
+    const arr=new Uint32Array(len);crypto.getRandomValues(arr);
+    let p='';for(let i=0;i<len;i++)p+=chars[arr[i]%chars.length];
+    document.getElementById('pgout').textContent=p;
+  }
+  function copyPass(btn){const v=document.getElementById('pgout').textContent;
+    if(navigator.clipboard){navigator.clipboard.writeText(v);const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1200);}}
+  genPass();
+  // word counter
+  function wordCount(){
+    const t=document.getElementById('wcin').value||'';
+    const w=(t.trim().match(/\S+/g)||[]).length;
+    document.getElementById('wcw').textContent=w;
+    document.getElementById('wcc').textContent=t.length;
+    document.getElementById('wcr').textContent=(w?('~'+Math.ceil(w/200)):'0')+' min read';
+  }
+  wordCount();
+  // stopwatch / pomodoro
+  let swInt=null,swStart=0,swElapsed=0,swMode='up',swRemain=0;
+  function swFmt(ms){const t=Math.max(0,ms);const m=Math.floor(t/60000);const s=Math.floor(t%60000/1000);const d=Math.floor(t%1000/100);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+d;}
+  function swTick(){
+    if(swMode==='up'){document.getElementById('swdisp').textContent=swFmt(swElapsed+(Date.now()-swStart));}
+    else{const r=swRemain-(Date.now()-swStart);document.getElementById('swdisp').textContent=swFmt(r);
+      if(r<=0){clearInterval(swInt);swInt=null;document.getElementById('swbtn').textContent='Start';document.getElementById('swdisp').textContent='00:00.0';swMode='up';swElapsed=0;}}
+  }
+  function swToggle(){const b=document.getElementById('swbtn');
+    if(swInt){clearInterval(swInt);swInt=null;if(swMode==='up')swElapsed+=Date.now()-swStart;else swRemain-=Date.now()-swStart;b.textContent='Start';}
+    else{swStart=Date.now();swInt=setInterval(swTick,100);b.textContent='Pause';}}
+  function swReset(){clearInterval(swInt);swInt=null;swMode='up';swElapsed=0;document.getElementById('swbtn').textContent='Start';document.getElementById('swdisp').textContent='00:00.0';}
+  function startPomodoro(){clearInterval(swInt);swMode='down';swRemain=25*60000;swStart=Date.now();document.getElementById('swdisp').textContent=swFmt(swRemain);swInt=setInterval(swTick,100);document.getElementById('swbtn').textContent='Pause';}
+  // magic 8-ball
+  const M8=['It is certain','Without a doubt','Yes — definitely','Most likely','Signs point to yes','Reply hazy, try again','Ask again later','Better not tell you now','Cannot predict now','Don’t count on it','My reply is no','Very doubtful'];
+  function shake8(){document.getElementById('m8a').textContent='🎱 '+M8[Math.floor(Math.random()*M8.length)];}
+  // random picker
+  function pickRandom(){
+    const lines=(document.getElementById('rpin').value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    document.getElementById('rpout').textContent=lines.length?('🎉 '+lines[Math.floor(Math.random()*lines.length)]):'—';
+  }
+  // barcode generator
+  function makeBarcode(){
+    const t=encodeURIComponent((document.getElementById('bcin').value||' ').trim());
+    const ty=document.getElementById('bctype').value;
+    document.getElementById('bcimg').src='https://barcodeapi.org/api/'+ty+'/'+t;
+  }
+  makeBarcode();
+  // scratchpad
+  function saveNote(){try{localStorage.setItem('vt_note',document.getElementById('npad').value);}catch(e){}}
+  (function(){try{const v=localStorage.getItem('vt_note');if(v!=null)document.getElementById('npad').value=v;}catch(e){}})();
+  // ---- calculators ----
+  const gv=id=>document.getElementById(id).value;
+  const fmtMoney=x=>'$'+(Math.round(x*100)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  // debt payoff
+  function debtPayoff(){
+    const bal=parseFloat(gv('dpbal'))||0,r=(parseFloat(gv('dprate'))||0)/100/12,pay=parseFloat(gv('dppay'))||0;
+    const out=document.getElementById('dpout'),sub=document.getElementById('dpsub');
+    if(bal<=0||pay<=0){out.textContent='—';sub.textContent='';return;}
+    if(r>0&&pay<=bal*r){out.textContent='Never';sub.textContent='Payment doesn’t cover the monthly interest — raise it.';return;}
+    const months=r===0?Math.ceil(bal/pay):Math.ceil(-Math.log(1-(bal*r)/pay)/Math.log(1+r));
+    const yrs=Math.floor(months/12),mo=months%12;
+    out.textContent=(yrs?yrs+'y ':'')+mo+'m';
+    sub.textContent='≈ '+months+' payments · interest '+fmtMoney(pay*months-bal);
+  }
+  debtPayoff();
+  // loan / mortgage
+  function loanCalc(){
+    const amt=parseFloat(gv('lnamt'))||0,r=(parseFloat(gv('lnrate'))||0)/100/12,n=(parseFloat(gv('lnyrs'))||0)*12;
+    const out=document.getElementById('lnout'),sub=document.getElementById('lnsub');
+    if(amt<=0||n<=0){out.textContent='—';sub.textContent='';return;}
+    const pay=r===0?amt/n:amt*r/(1-Math.pow(1+r,-n));
+    out.textContent=fmtMoney(pay)+' /mo';
+    sub.textContent='total '+fmtMoney(pay*n)+' · interest '+fmtMoney(pay*n-amt);
+  }
+  loanCalc();
+  // percentage
+  function pct(){
+    const mode=gv('pctmode'),a=parseFloat(gv('pca'))||0,b=parseFloat(gv('pcb'))||0;
+    document.getElementById('pctout').textContent=mode==='of'?(a/100*b).toLocaleString():(b===0?'—':(a/b*100).toFixed(2)+'%');
+  }
+  pct();
+  // case converter
+  let lastCase='upper';
+  function caseConv(k){lastCase=k;const t=document.getElementById('ccin').value||'';let o=t;
+    if(k==='upper')o=t.toUpperCase();
+    else if(k==='lower')o=t.toLowerCase();
+    else if(k==='title')o=t.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());
+    else if(k==='sentence')o=t.toLowerCase().replace(/(^\s*\w|[.!?]\s+\w)/g,c=>c.toUpperCase());
+    document.getElementById('ccout').textContent=o||'—';}
+  // compound interest
+  function compInt(){
+    const P=parseFloat(gv('ciP'))||0,r=(parseFloat(gv('ciR'))||0)/100,t=parseFloat(gv('ciY'))||0,n=parseFloat(gv('ciN'))||1;
+    const out=document.getElementById('ciout'),sub=document.getElementById('cisub');
+    if(P<=0||t<=0){out.textContent='—';sub.textContent='';return;}
+    const A=P*Math.pow(1+r/n,n*t);
+    out.textContent=fmtMoney(A);sub.textContent='interest earned '+fmtMoney(A-P);
+  }
+  compInt();
+  // timestamp
+  function tstamp(){
+    const dir=gv('tsdir'),raw=(gv('tsin')||'').trim(),out=document.getElementById('tsout');
+    if(!raw){out.textContent='—';return;}
+    if(dir==='u2d'){const n=parseInt(raw,10);if(isNaN(n)){out.textContent='invalid';return;}
+      out.textContent=new Date(raw.length>10?n:n*1000).toUTCString();}
+    else{const d=new Date(raw);if(isNaN(d.getTime())){out.textContent='invalid date';return;}
+      out.textContent=Math.floor(d.getTime()/1000)+' (unix)';}
+  }
+  function tsNow(){document.getElementById('tsdir').value='u2d';document.getElementById('tsin').value=Math.floor(Date.now()/1000);tstamp();}
+  tstamp();
+  // json formatter
+  function jsonFmt(k){const ta=document.getElementById('jsin'),out=document.getElementById('jsout');
+    try{const o=JSON.parse(ta.value);out.value=k==='min'?JSON.stringify(o):JSON.stringify(o,null,2);}
+    catch(e){out.value='✗ Invalid JSON: '+e.message;}}
+  // gpa
+  const GR={'a+':4,'a':4,'a-':3.7,'b+':3.3,'b':3,'b-':2.7,'c+':2.3,'c':2,'c-':1.7,'d+':1.3,'d':1,'d-':0.7,'f':0};
+  function gpaCalc(){
+    const lines=(document.getElementById('gpain').value||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    let pts=0,cr=0;
+    for(const ln of lines){const p=ln.split(/[\s,]+/);if(p.length<2)continue;
+      const g=p[0].toLowerCase();const gp=(g in GR)?GR[g]:parseFloat(g);const c=parseFloat(p[1]);
+      if(isNaN(gp)||isNaN(c))continue;pts+=gp*c;cr+=c;}
+    document.getElementById('gpaout').textContent=cr?((pts/cr).toFixed(2)+' GPA · '+cr+' credits'):'—';
+  }
+  gpaCalc();
+  // finance ratios
+  const FR={roi:['Net profit','Investment'],roe:['Net income','Shareholder equity'],roa:['Net income','Total assets'],margin:['Net income','Revenue']};
+  function frUpdate(){const m=gv('frmode');document.getElementById('frla').textContent=FR[m][0];document.getElementById('frlb').textContent=FR[m][1];frCalc();}
+  function frCalc(){const a=parseFloat(gv('fra'))||0,b=parseFloat(gv('frb'))||0;
+    document.getElementById('frout').textContent=b===0?'—':(a/b*100).toFixed(2)+'%';}
+  frUpdate();
+  // salary
+  function salary(){}
+  salary();
+  // zodiac love match
+  const LSIGNS=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const LELEM=['Fire','Earth','Air','Water','Fire','Earth','Air','Water','Fire','Earth','Air','Water'];
+  function elemScore(a,b){
+    const e1=LELEM[a],e2=LELEM[b];
+    if(e1===e2)return 90;
+    const k=[e1,e2].sort().join('+');
+    return ({'Air+Fire':86,'Earth+Water':85,'Air+Water':63,'Air+Earth':58,'Earth+Fire':55,'Fire+Water':50})[k]||60;
+  }
+  function loveMatch(){
+    const a=+document.getElementById('lvA').value,b=+document.getElementById('lvB').value;
+    let s=elemScore(a,b);
+    if(a===b)s+=4;                 // same sign, kindred spirits
+    if(Math.abs(a-b)===6)s+=8;     // opposite signs attract
+    s+=((a+b)%5)-2;                // small deterministic flavour
+    s=Math.max(48,Math.min(98,Math.round(s)));
+    let head,body;
+    if(s>=85){head='🔥 Power couple';body='Strong, natural chemistry — you click on a deep level and bring out the best in each other.';}
+    else if(s>=70){head='💞 Sweet harmony';body='Plenty of spark and common ground. A promising, easy-flowing match with real staying power.';}
+    else if(s>=58){head='✨ Opposites at work';body='Different rhythms, but the friction can be electric if you both stay curious and lean in.';}
+    else{head='🌗 Slow burn';body='You will need patience and compromise — but unlikely pairs sometimes surprise everyone, including themselves.';}
+    document.getElementById('lvScore').textContent=s+'%';
+    document.getElementById('lvHead').textContent=head;
+    document.getElementById('lvText').textContent=LSIGNS[a]+' ('+LELEM[a]+') + '+LSIGNS[b]+' ('+LELEM[b]+'): '+body;
+  }
+  function copyLove(btn){
+    const a=+document.getElementById('lvA').value,b=+document.getElementById('lvB').value;
+    const txt=LSIGNS[a]+' ❤ '+LSIGNS[b]+' — '+document.getElementById('lvScore').textContent+' '+document.getElementById('lvHead').textContent+' · niftytoolshub.com';
+    if(navigator.clipboard){navigator.clipboard.writeText(txt);const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,1200);}
+  }
+  loveMatch();
+  // dead pixel
+  function deadPixel(){document.getElementById('pixel').style.display='block';}
+  function closePixel(){document.getElementById('pixel').style.display='none';}
+  function bootLibraryFromUrl(){
+    const params=new URLSearchParams(location.search);
+    const filterName=params.get('filter');
+    const query=params.get('q');
+    if(filterName){
+      const chip=document.querySelector('.chip[data-f="'+filterName+'"]');
+      if(chip)filter(chip);
+    }
+    if(query){
+      const input=document.getElementById('q');
+      if(input){input.value=query;search();}
+    }
+  }
+  bootLibraryFromUrl();
+
+</script>
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>

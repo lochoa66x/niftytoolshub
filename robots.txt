@@ -2,3 +2,5 @@ User-agent: *
 
 # NiftyTools hidden admin route
 Disallow: /admin.html
+
+Sitemap: https://niftytoolshub.com/sitemap.xml
