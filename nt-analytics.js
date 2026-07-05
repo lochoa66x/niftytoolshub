@@ -7,6 +7,7 @@
   var MAX_EVENTS = 800;
   var searchTimers = new WeakMap();
   var TOOL_NAMES = {
+    "prepper-tools": "Prepper Toolkit Pro",
     "signal-watch": "Early Warning Radar",
     "aurora-watch": "Aurora Watch",
     "meme-watch": "Meme Early Warning",
