@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Threat Radar - public attack map and threat pulse | NiftyTools Hub</title>
+<meta name="description" content="A browser-based cyber threat radar with an animated world map, public threat-signal log, DShield/SANS ISC feed attempts, CISA KEV pulse and demo fallback.">
+<meta property="og:title" content="Cyber Threat Radar - NiftyTools Hub">
+<meta property="og:description" content="Watch public cyber threat signals on a map with source/target arcs, ports, vulnerable products and a live-style event log.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/cyber-threat.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    --bg:#050905; --panel:#0b110c; --panel2:#0f1710; --txt:#dce8dc; --mut:#7f917b; --line:#1b2b1e;
+    --grn:#46e07a; --grnsoft:#2f9d57; --amber:#ffb454; --bad:#ff5f6d; --blue:#77c8ff;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
+    background:
+      linear-gradient(rgba(70,224,122,.024) 1px,transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,
+      radial-gradient(900px 540px at 80% -12%,rgba(119,200,255,.08),transparent 62%),
+      radial-gradient(640px 420px at 8% 6%,rgba(255,180,84,.05),transparent 58%),
+      var(--bg);
+    -webkit-font-smoothing:antialiased}
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.02) 50%) 0 0/100% 4px;mix-blend-mode:screen;opacity:.28}
+  body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:21;background:radial-gradient(circle at 50% 42%,transparent 0,transparent 62%,rgba(0,0,0,.38) 100%);opacity:.75}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1220px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--line);background:rgba(5,9,5,.86);position:sticky;top:0;z-index:8;backdrop-filter:blur(8px)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--txt)}
+  .logo .mk{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}
+  .logo .mk:before{content:"NT";font-size:11px}
+  .crumb{color:var(--mut);font-size:12.5px;margin:28px 0 6px;text-transform:uppercase}
+  h1{font-size:clamp(28px,5vw,48px);font-weight:800;letter-spacing:0;margin:6px 0 12px;text-transform:uppercase;text-shadow:0 0 20px rgba(70,224,122,.15)}
+  h1:before{content:"> ";color:var(--grn)}
+  .lead{color:var(--mut);font-size:15px;max-width:1040px;margin:0 0 22px}
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+  label{display:block;font-size:12px;color:var(--mut);margin-bottom:5px}
+  select,input,textarea{width:100%;font-family:var(--mono);background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:4px;padding:9px 11px;font-size:13px;outline:0;caret-color:var(--grn);min-width:0}
+  select:focus,input:focus,textarea:focus{border-color:var(--grnsoft)}
+  .select-wrap{min-width:220px}
+  .btn{font-family:var(--mono);border:1px solid var(--grn);cursor:pointer;font-weight:700;border-radius:5px;padding:10px 14px;font-size:13px;background:transparent;color:var(--grn);transition:.15s}
+  .btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--grn);color:var(--grn);box-shadow:none}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .badge{font-size:11.5px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(5,9,5,.76)}
+  .badge b{color:var(--grn)}
+  .command-grid{display:grid;grid-template-columns:minmax(0,1.42fr) minmax(320px,.58fr);gap:18px;align-items:stretch}
+  @media(max-width:980px){.command-grid{grid-template-columns:1fr}}
+  .screen,.panel{position:relative;border:1px solid rgba(70,224,122,.28);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 42px rgba(70,224,122,.09),inset 0 0 28px rgba(70,224,122,.04);overflow:hidden}
+  .screen{min-height:610px;padding:18px}
+  .screen:before,.panel:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(119,200,255,.045),transparent);transform:translateX(-118%);animation:scanline 7s linear infinite;pointer-events:none}
+  @keyframes scanline{to{transform:translateX(118%)}}
+  .screen-head{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+  .kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+  .screen-title{font-size:clamp(18px,2.6vw,30px);font-weight:800;text-transform:uppercase;color:var(--txt);line-height:1.05}
+  .screen-time{font-size:11px;color:var(--mut);text-align:right;line-height:1.6}
+  .map-frame{position:absolute;inset:84px 16px 126px;border:1px solid rgba(70,224,122,.18);border-radius:7px;background:
+    linear-gradient(rgba(70,224,122,.03) 1px,transparent 1px) 0 0/100% 34px,
+    linear-gradient(90deg,rgba(70,224,122,.03) 1px,transparent 1px) 0 0/34px 100%,
+    radial-gradient(circle at 50% 52%,rgba(70,224,122,.075),transparent 48%),
+    #020603;overflow:hidden}
+  #threatMap{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .map-note{position:absolute;left:16px;top:16px;z-index:3;max-width:360px;color:var(--mut);font-size:11px;line-height:1.6;border:1px solid rgba(70,224,122,.16);background:rgba(3,7,4,.76);border-radius:4px;padding:9px 10px}
+  .map-note b{color:var(--grn)}
+  .readouts{position:absolute;left:18px;right:18px;bottom:18px;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  @media(max-width:680px){.screen{min-height:680px}.map-frame{inset:104px 12px 210px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}.screen-head{display:block}.screen-time{text-align:left;margin-top:8px}}
+  .readout{border:1px solid rgba(70,224,122,.2);background:rgba(1,8,4,.82);padding:11px;border-radius:5px;min-width:0}
+  .readout span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
+  .readout b{display:block;margin-top:4px;color:var(--txt);font-size:clamp(17px,2.6vw,25px);line-height:1;word-break:break-word}
+  .readout b.green{color:var(--grn)}
+  .readout b.blue{color:var(--blue)}
+  .readout b.amber{color:var(--amber)}
+  .readout b.red{color:var(--bad)}
+  .panel{padding:18px;margin-bottom:18px;min-width:0}
+  .panel h2,.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 14px}
+  .panel h2:before,.section-title:before{content:"// ";color:var(--grnsoft)}
+  .side-stack{display:grid;align-content:start;gap:14px}
+  .stat-row{border:1px solid rgba(214,232,214,.1);background:rgba(5,9,5,.78);border-radius:5px;padding:12px}
+  .stat-row span{display:block;font-size:10.5px;color:var(--mut);text-transform:uppercase}
+  .stat-row b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35;word-break:break-word}
+  .meter{height:8px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden;margin-top:9px}
+  .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--blue),var(--amber),var(--bad));transition:width .35s ease}
+  .mini-list{display:grid;gap:8px}
+  .mini-item{display:flex;justify-content:space-between;gap:12px;border:1px solid rgba(214,232,214,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;font-size:12px;color:var(--mut)}
+  .mini-item b{color:var(--txt);text-align:right}
+  .lower-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:18px;margin-top:18px}
+  @media(max-width:920px){.lower-grid{grid-template-columns:1fr}}
+  .log-list{display:grid;gap:8px;max-height:430px;overflow:auto;padding-right:4px}
+  .event{border:1px solid rgba(214,232,214,.1);background:rgba(5,9,5,.78);border-radius:5px;padding:10px;display:grid;grid-template-columns:76px 1fr auto;gap:10px;align-items:start;font-size:12px}
+  .event .time{color:var(--mut)}
+  .event .desc{color:var(--txt)}
+  .event .desc b{color:var(--grn)}
+  .event .sev{color:var(--amber);white-space:nowrap}
+  @media(max-width:620px){.event{grid-template-columns:1fr}.event .sev{white-space:normal}}
+  .truth{font-size:11.5px;color:var(--mut);line-height:1.65}
+  .truth b{color:var(--txt)}
+  footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <a href="/" style="color:var(--mut);font-size:13px">back to all tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="crumb">Home / Signal Tools / Cyber Threat Radar</div>
+  <h1>Cyber Threat Radar</h1>
+  <p class="lead">A public threat-signal map inspired by classic cyber attack visualizers. It shows public feed activity, top ports, known exploited vulnerabilities and a live-style log without claiming to see every attack on Earth.</p>
+
+  <div class="toolbar">
+    <div class="select-wrap">
+      <label for="mode">Data mode</label>
+      <select id="mode">
+        <option value="live">Try public feeds first</option>
+        <option value="demo">Demo simulation</option>
+      </select>
+    </div>
+    <button class="btn" id="refreshBtn" onclick="refreshThreats()">Refresh radar</button>
+    <button class="btn ghost" id="pauseBtn" onclick="togglePause()">Pause animation</button>
+    <button class="btn ghost" onclick="copyReport(this)">Copy report</button>
+  </div>
+
+  <div class="badge-row">
+    <span class="badge"><b>Sources:</b> SANS ISC/DShield, CISA KEV, local demo fallback</span>
+    <span class="badge"><b>Map:</b> approximate public-signal visualization</span>
+    <span class="badge"><b>Safety:</b> masked IPs, no exploitation instructions</span>
+  </div>
+
+  <section class="command-grid">
+    <div class="screen">
+      <div class="screen-head">
+        <div>
+          <div class="kicker">PUBLIC CYBER SIGNAL ARRAY</div>
+          <div class="screen-title">Attack map window</div>
+        </div>
+        <div class="screen-time">
+          <div id="updatedAt">sync pending</div>
+          <div id="sourceState">booting sensors</div>
+        </div>
+      </div>
+      <div class="map-frame">
+        <canvas id="threatMap" aria-label="Animated cyber threat world map"></canvas>
+        <div class="map-note"><b>Signal map</b><br>Arcs and dots are visualization of public feed signals or demo events. They are not exact attribution.</div>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span>Threat pulse</span><b id="pulseScore" class="green">--</b></div>
+        <div class="readout"><span>Events loaded</span><b id="eventCount" class="blue">--</b></div>
+        <div class="readout"><span>Top port</span><b id="topPort" class="amber">--</b></div>
+        <div class="readout"><span>KEV pulse</span><b id="kevPulse" class="red">--</b></div>
+      </div>
+    </div>
+
+    <aside class="side-stack">
+      <div class="panel">
+        <h2>Threat pulse</h2>
+        <div class="stat-row">
+          <span>Current read</span>
+          <b id="pulseLabel">Loading public signals</b>
+          <div class="meter"><i id="pulseMeter"></i></div>
+        </div>
+        <div class="stat-row">
+          <span>Top driver</span>
+          <b id="topDriver">Waiting for feed data</b>
+        </div>
+        <div class="stat-row">
+          <span>Source health</span>
+          <b id="healthText">Checking browser-readable feeds</b>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Top ports</h2>
+        <div class="mini-list" id="portsList"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Recent exploited vulns</h2>
+        <div class="mini-list" id="kevList"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="lower-grid">
+    <div class="panel">
+      <h2>Attack event log</h2>
+      <div class="log-list" id="eventLog"></div>
+    </div>
+    <div class="panel">
+      <h2>What this is</h2>
+      <p class="truth"><b>Cyber Threat Radar</b> is a public-signal visualizer. Live mode tries public SANS ISC/DShield and CISA KEV feeds. If those feeds are blocked by CORS, rate limits or browser policy, the tool uses demo events so the map still works.</p>
+      <p class="truth"><b>Why this is honest:</b> classic cyber attack maps usually depend on private honeypots and vendor telemetry. This version does not claim exact origin, attacker identity or full internet coverage.</p>
+      <p class="truth"><b>Future premium layer:</b> saved watchlists, organization-specific ports, alert thresholds, webhook/email summaries and a backend feed cache.</p>
+      <div class="stat-row" style="margin-top:14px">
+        <span>Readable report</span>
+        <b id="reportText">Waiting for radar data.</b>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
+
+<script>
+  const $=id=>document.getElementById(id);
+  const FEEDS={
+    topPorts:'https://isc.sans.edu/api/topports/records/12?json',
+    sources:'https://isc.sans.edu/api/sources/attacks/24?json',
+    infocon:'https://isc.sans.edu/api/infocon?json',
+    kev:'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json'
+  };
+  const CITIES=[
+    {name:'Seattle edge',country:'US',lat:47.61,lon:-122.33},{name:'Virginia cloud',country:'US',lat:38.90,lon:-77.04},
+    {name:'Toronto exchange',country:'CA',lat:43.65,lon:-79.38},{name:'London node',country:'GB',lat:51.51,lon:-0.13},
+    {name:'Frankfurt hub',country:'DE',lat:50.11,lon:8.68},{name:'Amsterdam IX',country:'NL',lat:52.37,lon:4.89},
+    {name:'Sao Paulo relay',country:'BR',lat:-23.55,lon:-46.63},{name:'Singapore POP',country:'SG',lat:1.35,lon:103.82},
+    {name:'Tokyo node',country:'JP',lat:35.68,lon:139.65},{name:'Sydney edge',country:'AU',lat:-33.87,lon:151.21},
+    {name:'Mumbai route',country:'IN',lat:19.08,lon:72.88},{name:'Seoul exchange',country:'KR',lat:37.57,lon:126.98}
+  ];
+  const SOURCE_LABELS=[
+    {name:'scan source cluster',lat:39.90,lon:116.40,country:'CN'},
+    {name:'botnet relay',lat:55.75,lon:37.62,country:'RU'},
+    {name:'credential spray node',lat:52.37,lon:4.89,country:'NL'},
+    {name:'malware host',lat:50.45,lon:30.52,country:'UA'},
+    {name:'proxy chain',lat:1.35,lon:103.82,country:'SG'},
+    {name:'scanner pool',lat:37.57,lon:126.98,country:'KR'},
+    {name:'exploit probe',lat:28.61,lon:77.21,country:'IN'},
+    {name:'open resolver noise',lat:-23.55,lon:-46.63,country:'BR'}
+  ];
+  const PORT_NAMES={22:'SSH',23:'Telnet',25:'SMTP',53:'DNS',80:'HTTP',110:'POP3',143:'IMAP',443:'HTTPS',445:'SMB',3389:'RDP',5900:'VNC',6379:'Redis',8080:'HTTP-alt',8443:'HTTPS-alt'};
+  const WORLD=[[[ -168,72],[-52,72],[-52,15],[-84,8],[-100,18],[-124,32],[-168,52]],[[ -82,12],[-35,8],[-48,-55],[-76,-54],[-82,12]],[[ -12,35],[45,72],[150,70],[160,52],[120,30],[100,8],[70,20],[40,5],[8,28],[-12,35]],[[ -18,32],[50,30],[48,-34],[20,-35],[-5,-5],[-18,32]],[[ 112,-10],[154,-10],[154,-44],[112,-40],[112,-10]],[[ -45,75],[-15,72],[-20,60],[-48,60],[-45,75]]];
+  let state={events:[],templates:[],ports:[],kevs:[],score:0,health:'booting',mode:'demo',paused:false,frame:0,lastSpawn:0};
+  let ctx,canvas;
+
+  function clamp(n){return Math.max(0,Math.min(100,Math.round(Number(n)||0)));}
+  function fmt(n){return Number.isFinite(Number(n))?Number(n).toLocaleString():'--';}
+  function escapeHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+  async function fetchJson(url,timeout=9000){
+    const controller=new AbortController();
+    const t=setTimeout(()=>controller.abort(),timeout);
+    try{
+      const res=await fetch(url,{signal:controller.signal,cache:'no-store'});
+      if(!res.ok)throw new Error(res.status+' '+res.statusText);
+      return await res.json();
+    }finally{clearTimeout(t);}
+  }
+  function arrayFromFeed(obj,names){
+    for(const name of names){
+      const value=name.split('.').reduce((v,k)=>v&&v[k],obj);
+      if(Array.isArray(value))return value;
+      if(value&&typeof value==='object')return Object.values(value);
+    }
+    if(Array.isArray(obj))return obj;
+    return [];
+  }
+  function yesterday(){
+    const d=new Date();
+    d.setDate(d.getDate()-1);
+    return d.toISOString().slice(0,10);
+  }
+  async function loadLive(){
+    const date=yesterday();
+    const urls={
+      topPorts:'https://isc.sans.edu/api/topports/records/12/'+date+'?json',
+      sources:'https://isc.sans.edu/api/sources/attacks/24/'+date+'?json',
+      infocon:FEEDS.infocon,
+      kev:FEEDS.kev
+    };
+    const [ports,sources,info,kev]=await Promise.allSettled([
+      fetchJson(urls.topPorts),fetchJson(urls.sources),fetchJson(urls.infocon,7000),fetchJson(urls.kev,10000)
+    ]);
+    const portRows=ports.status==='fulfilled'?arrayFromFeed(ports.value,['topports.port','port','data']):[];
+    const sourceRows=sources.status==='fulfilled'?arrayFromFeed(sources.value,['sources.data','data']):[];
+    const kevRows=kev.status==='fulfilled'?(kev.value.vulnerabilities||[]):[];
+    const infocon=info.status==='fulfilled'?(info.value.status||info.value.infocon?.status||'green'):'unknown';
+    if(!portRows.length&&!sourceRows.length&&!kevRows.length)throw new Error('public feeds unavailable from this browser');
+    const parsedPorts=normalizePorts(portRows);
+    const parsedKev=normalizeKev(kevRows);
+    const templates=buildEventsFromFeeds(sourceRows,parsedPorts,parsedKev);
+    return {mode:'live',templates,ports:parsedPorts,kevs:parsedKev,health:'DShield '+(sourceRows.length||portRows.length?'online':'limited')+' / CISA '+(parsedKev.length?'online':'limited')+' / Infocon '+infocon};
+  }
+  function normalizePorts(rows){
+    return rows.slice(0,12).map((r,i)=>{
+      const port=Number(r.targetport||r.port||r.number||r.portin||[445,22,80,443,3389,23][i%6]);
+      const records=Number(String(r.records||r.reports||r.count||0).replace(/,/g,''))||Math.round(90000/(i+1));
+      const sources=Number(String(r.sources||r.source||0).replace(/,/g,''))||Math.round(14000/(i+1));
+      return {port,service:PORT_NAMES[port]||'port '+port,records,sources};
+    });
+  }
+  function normalizeKev(rows){
+    return rows.slice().sort((a,b)=>String(b.dateAdded||'').localeCompare(String(a.dateAdded||''))).slice(0,8).map(v=>({
+      cve:v.cveID||v.cve||'CVE',
+      vendor:v.vendorProject||v.vendor||'unknown vendor',
+      product:v.product||'unknown product',
+      name:v.vulnerabilityName||'known exploited vulnerability',
+      date:v.dateAdded||''
+    }));
+  }
+  function buildEventsFromFeeds(sourceRows,ports,kevs){
+    const portList=ports.length?ports:demoPorts();
+    const rows=sourceRows.length?sourceRows.slice(0,24):SOURCE_LABELS.map((s,i)=>({ip:'demo-'+i,attacks:18000/(i+1),count:22000/(i+1)}));
+    return rows.map((r,i)=>{
+      const src=SOURCE_LABELS[hashString(r.ip||r.source||i)%SOURCE_LABELS.length];
+      const tgt=CITIES[(i*3+2)%CITIES.length];
+      const port=portList[i%portList.length];
+      const kev=kevs[i%Math.max(1,kevs.length)];
+      const count=Number(String(r.attacks||r.count||r.reports||port.records||1000).replace(/,/g,''))||1000;
+      return {
+        id:'live-'+i+'-'+Date.now(),source:src,target:tgt,port:port.port,service:port.service,
+        severity:clamp(28+Math.log10(count+1)*12+(kev?8:0)),type:kev?'exploit probe':'scan burst',
+        label:maskIp(r.ip||r.source||'public feed source'),details:kev?kev.cve+' '+kev.vendor+' '+kev.product:'DShield public signal'
+      };
+    });
+  }
+  function demoPorts(){
+    return [
+      {port:445,service:'SMB',records:601032,sources:70889},{port:22,service:'SSH',records:312441,sources:42091},
+      {port:3389,service:'RDP',records:188220,sources:18741},{port:23,service:'Telnet',records:129004,sources:24018},
+      {port:80,service:'HTTP',records:110844,sources:16009},{port:443,service:'HTTPS',records:90831,sources:12021}
+    ];
+  }
+  function demoKev(){
+    return [
+      {cve:'CVE-2026-DEMO1',vendor:'Edge Device',product:'Gateway',name:'Command injection exploit signal',date:new Date().toISOString().slice(0,10)},
+      {cve:'CVE-2026-DEMO2',vendor:'CMS Platform',product:'Plugin',name:'Auth bypass actively exploited',date:new Date(Date.now()-86400000).toISOString().slice(0,10)},
+      {cve:'CVE-2026-DEMO3',vendor:'VPN Appliance',product:'Remote access',name:'Path traversal exploited in wild',date:new Date(Date.now()-2*86400000).toISOString().slice(0,10)}
+    ];
+  }
+  function demoTemplates(){
+    const ports=demoPorts(),kevs=demoKev();
+    return Array.from({length:22},(_,i)=>{
+      const src=SOURCE_LABELS[i%SOURCE_LABELS.length],tgt=CITIES[(i*5+1)%CITIES.length],port=ports[i%ports.length],kev=kevs[i%kevs.length];
+      return {id:'demo-'+i,source:src,target:tgt,port:port.port,service:port.service,severity:clamp(35+(i%7)*8),type:i%3?'scan burst':'exploit probe',label:src.name,details:i%3?port.service+' exposure noise':kev.cve+' '+kev.vendor+' '+kev.product};
+    });
+  }
+  async function refreshThreats(){
+    $('refreshBtn').disabled=true;
+    $('sourceState').textContent='refreshing feeds';
+    state.mode=$('mode').value;
+    try{
+      let data;
+      if(state.mode==='live')data=await loadLive();
+      else data={mode:'demo',templates:demoTemplates(),ports:demoPorts(),kevs:demoKev(),health:'demo simulation active'};
+      state.templates=data.templates.length?data.templates:demoTemplates();
+      state.ports=data.ports.length?data.ports:demoPorts();
+      state.kevs=data.kevs.length?data.kevs:demoKev();
+      state.health=data.health;
+      state.events=[];
+      for(let i=0;i<12;i++)spawnEvent(true);
+      computeScore();
+      renderAll();
+    }catch(err){
+      state.mode='demo';
+      state.templates=demoTemplates();
+      state.ports=demoPorts();
+      state.kevs=demoKev();
+      state.health='public feeds blocked or unavailable; demo fallback active';
+      state.events=[];
+      for(let i=0;i<12;i++)spawnEvent(true);
+      computeScore();
+      renderAll();
+    }finally{
+      $('refreshBtn').disabled=false;
+    }
+  }
+  function spawnEvent(backfill=false){
+    const base=state.templates[Math.floor(Math.random()*state.templates.length)]||demoTemplates()[0];
+    const e=Object.assign({},base,{id:Math.random().toString(16).slice(2),created:performance.now()-(backfill?Math.random()*9000:0),clock:new Date(Date.now()-(backfill?Math.random()*90000:0))});
+    state.events.unshift(e);
+    if(state.events.length>90)state.events.length=90;
+  }
+  function computeScore(){
+    const sev=state.events.slice(0,24).reduce((sum,e)=>sum+e.severity,0)/Math.max(1,Math.min(24,state.events.length));
+    const kevBoost=Math.min(22,state.kevs.length*3);
+    const portBoost=Math.min(16,(state.ports[0]?.records||0)/50000);
+    state.score=clamp(sev*.72+kevBoost+portBoost);
+  }
+  function labelScore(n){return n>=80?'critical pulse':n>=65?'high activity':n>=45?'elevated noise':n>=25?'watching': 'quiet';}
+  function renderAll(){
+    const top=state.ports[0]||{port:'--',service:'--'};
+    $('updatedAt').textContent='updated '+new Date().toLocaleTimeString();
+    $('sourceState').textContent=state.mode==='live'?'public feed mode':'demo mode';
+    $('pulseScore').textContent=state.score;
+    $('eventCount').textContent=state.events.length;
+    $('topPort').textContent=top.port;
+    $('kevPulse').textContent=state.kevs.length;
+    $('pulseLabel').textContent=labelScore(state.score);
+    $('pulseMeter').style.width=state.score+'%';
+    $('topDriver').textContent=(top.service||'port')+' on port '+top.port+' leads current feed mix';
+    $('healthText').textContent=state.health;
+    $('portsList').innerHTML=state.ports.slice(0,6).map(p=>'<div class="mini-item"><span>'+escapeHtml(p.service)+' : '+escapeHtml(p.port)+'</span><b>'+fmt(p.records)+'</b></div>').join('');
+    $('kevList').innerHTML=state.kevs.slice(0,5).map(v=>'<div class="mini-item"><span>'+escapeHtml(v.cve)+'</span><b>'+escapeHtml(v.vendor)+'</b></div>').join('');
+    $('eventLog').innerHTML=state.events.slice(0,24).map(renderEvent).join('');
+    $('reportText').textContent=buildReport();
+  }
+  function renderEvent(e){
+    return '<div class="event"><div class="time">'+e.clock.toLocaleTimeString()+'</div><div class="desc"><b>'+escapeHtml(e.type)+'</b> '+escapeHtml(e.source.country)+' -> '+escapeHtml(e.target.country)+' / '+escapeHtml(e.service)+' / '+escapeHtml(e.label)+'<br><span style="color:var(--mut)">'+escapeHtml(e.details)+'</span></div><div class="sev">'+e.severity+'/100</div></div>';
+  }
+  function buildReport(){
+    const top=state.ports[0]||{port:'--',service:'--'};
+    return 'Cyber Threat Radar | '+labelScore(state.score)+' | score '+state.score+'/100 | events '+state.events.length+' | top port '+top.port+' '+top.service+' | KEV items '+state.kevs.length+' | '+state.health;
+  }
+  function copyReport(btn){
+    navigator.clipboard?.writeText(buildReport());
+    const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1100);
+  }
+  function togglePause(){
+    state.paused=!state.paused;
+    $('pauseBtn').textContent=state.paused?'Resume animation':'Pause animation';
+  }
+  function maskIp(ip){
+    const text=String(ip||'');
+    const parts=text.match(/\d+/g);
+    if(parts&&parts.length>=4)return parts[0]+'.'+parts[1]+'.x.x';
+    return text.slice(0,16)||'masked source';
+  }
+  function hashString(str){
+    let h=0;String(str||'').split('').forEach(ch=>{h=(h*31+ch.charCodeAt(0))|0;});return Math.abs(h);
+  }
+  function setupCanvas(){
+    canvas=$('threatMap');ctx=canvas.getContext('2d');
+    function loop(t){
+      resizeCanvas();
+      if(!state.paused&&t-state.lastSpawn>1100){spawnEvent();computeScore();renderAll();state.lastSpawn=t;}
+      draw(t);
+      state.frame=requestAnimationFrame(loop);
+    }
+    loop(performance.now());
+  }
+  function resizeCanvas(){
+    const rect=canvas.getBoundingClientRect();
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));
+    if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function project(lat,lon,w,h){
+    return {x:(lon+180)/360*w,y:(90-lat)/180*h};
+  }
+  function draw(t){
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    drawWorld(w,h);
+    const active=state.events.slice(0,34);
+    active.forEach((e,i)=>drawArc(e,w,h,t,i));
+    drawHud(w,h,t);
+  }
+  function drawWorld(w,h){
+    ctx.save();
+    ctx.strokeStyle='rgba(70,224,122,.12)';
+    ctx.lineWidth=1;
+    for(let lon=-150;lon<=150;lon+=30){const a=project(-70,lon,w,h),b=project(80,lon,w,h);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+    for(let lat=-60;lat<=60;lat+=30){const a=project(lat,-180,w,h),b=project(lat,180,w,h);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+    WORLD.forEach(poly=>{
+      ctx.beginPath();
+      poly.forEach(([lon,lat],i)=>{const p=project(lat,lon,w,h);if(i)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);});
+      ctx.closePath();
+      ctx.fillStyle='rgba(70,224,122,.045)';
+      ctx.strokeStyle='rgba(70,224,122,.22)';
+      ctx.fill();ctx.stroke();
+    });
+    ctx.restore();
+  }
+  function drawArc(e,w,h,t,i){
+    const age=(performance.now()-e.created)/1000;
+    const alpha=Math.max(0,1-age/12);
+    if(alpha<=0)return;
+    const s=project(e.source.lat,e.source.lon,w,h),d=project(e.target.lat,e.target.lon,w,h);
+    const mx=(s.x+d.x)/2,my=(s.y+d.y)/2-Math.min(150,Math.abs(d.x-s.x)*.22+40);
+    const color=e.severity>=70?'255,95,109':e.severity>=50?'255,180,84':'70,224,122';
+    ctx.save();
+    ctx.globalAlpha=alpha*.85;
+    ctx.strokeStyle='rgba('+color+',.72)';
+    ctx.lineWidth=1.4+Math.min(2,e.severity/55);
+    ctx.beginPath();
+    ctx.moveTo(s.x,s.y);
+    ctx.quadraticCurveTo(mx,my,d.x,d.y);
+    ctx.stroke();
+    const p=(age%1.8)/1.8;
+    const x=(1-p)*(1-p)*s.x+2*(1-p)*p*mx+p*p*d.x;
+    const y=(1-p)*(1-p)*s.y+2*(1-p)*p*my+p*p*d.y;
+    ctx.fillStyle='rgba('+color+',.95)';
+    ctx.shadowColor='rgba('+color+',.9)';
+    ctx.shadowBlur=14;
+    ctx.beginPath();ctx.arc(x,y,3+e.severity/40,0,Math.PI*2);ctx.fill();
+    ctx.globalAlpha=alpha*.2;
+    ctx.beginPath();ctx.arc(d.x,d.y,8+Math.sin(t/180+i)*4,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+  function drawHud(w,h,t){
+    ctx.save();
+    ctx.font='11px JetBrains Mono, monospace';
+    ctx.fillStyle='rgba(220,232,220,.45)';
+    ctx.fillText('PUBLIC SIGNAL MAP / '+String(state.mode).toUpperCase(),16,h-18);
+    ctx.fillText('EVENTS '+state.events.length+' / SCORE '+state.score,16,h-36);
+    ctx.restore();
+  }
+  setupCanvas();
+  refreshThreats();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>

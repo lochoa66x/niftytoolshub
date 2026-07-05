@@ -10,6 +10,7 @@
     "signal-watch": "Early Warning Radar",
     "aurora-watch": "Aurora Watch",
     "meme-watch": "Meme Early Warning",
+    "cyber-threat": "Cyber Threat Radar",
     "ai-panic": "AI Panic Meter",
     "image-tools": "Image Toolkit",
     "pdf-tools": "PDF Toolkit",
