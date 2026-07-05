@@ -277,7 +277,8 @@
 <section class="hero wrap">
   <div class="hero-copy">
     <div class="hero-kicker">
-      <span class="pill"><span class="dot"></span> system online · 52+ tools loaded</span>
+      <span class="pill"><span class="dot"></span> system online · 53+ tools loaded</span>
+      <span class="pill">prepper toolkit active</span>
       <span class="pill">early warning radar active</span>
       <span class="pill">free while building</span>
     </div>
@@ -288,8 +289,8 @@
       <a class="ghost-link" href="#categories">Browse categories</a>
     </div>
     <div class="metrics">
-      <div class="metric-box"><b>6+</b><span>featured tools</span></div>
-      <div class="metric-box"><b>7</b><span>clean categories</span></div>
+      <div class="metric-box"><b>7+</b><span>featured tools</span></div>
+      <div class="metric-box"><b>8</b><span>clean categories</span></div>
       <div class="metric-box"><b>0</b><span>account needed</span></div>
     </div>
   </div>
@@ -321,7 +322,7 @@
 <section id="featured" class="wrap">
   <div class="section-head">
     <h2>Featured Tools</h2>
-    <p>The main stuff: signal intelligence, file tools and money calculators. The tiny utilities still live in the full library below.</p>
+    <p>The main stuff: preparedness, signal intelligence, file tools and money calculators. The tiny utilities still live in the secondary library below.</p>
   </div>
   <div class="featured-grid">
     <a class="featured-card" href="/signal-watch.html">
@@ -331,6 +332,13 @@
       <span class="open">Open tool -></span>
     </a>
     
+
+    <a class="featured-card" href="/prepper-tools.html">
+      <span class="tag">Preparedness</span>
+      <h3>Prepper Toolkit</h3>
+      <p>Plan a 72-hour kit, water, food, outage power, go-bag, inventory, comms card and printable report.</p>
+      <span class="open">Open tool -></span>
+    </a>
     <a class="featured-card" href="/aurora-watch.html">
       <span class="tag">Sky watch</span>
       <h3>Aurora Watch</h3>
@@ -372,6 +380,7 @@
     <p>Less scrolling, more intent. Jump into a family, then open the full tool when you need power.</p>
   </div>
   <div class="category-grid">
+    <div class="category-card" onclick="jumpFilter('prepper')"><b>Preparedness</b><span>Prepper toolkit, readiness plans, outage supplies, go-bags, inventory checks and emergency comms.</span></div>
     <div class="category-card" onclick="jumpFilter('signal')"><b>Signal Tools</b><span>Early warning, outage radar, cyber threat radar, AI panic, meme warning, aurora and public anomaly radars.</span></div>
     <div class="category-card" onclick="jumpFilter('image')"><b>Image & Documents</b><span>Color palettes, image compression, file organizer, PDF tools, QR codes and receipts.</span></div>
     <div class="category-card" onclick="focusTool('salary')"><b>Finance & Business</b><span>Salary / paycheck, mortgage, auto loan, receipts, percentages and business calculators.</span></div>
@@ -385,13 +394,13 @@
     <span><b>Live:</b> fake hacker terminal</span>
     <span><b>Live:</b> random toolkit</span>
     <span><b>Live:</b> device test suite</span>
-    <span><b>Live:</b> file organizers</span>
+    <span><b>Live:</b> prepper toolkit</span>
   </div>
 </section>
 <!-- NT LANDING REFRESH END -->
 
 <section id="tools" class="wrap tool-library">
-  <div id="library" class="library-head"><h2>All Tools</h2><p>Everything stays available here. Search or filter when you need a specific utility.</p></div>
+  <div id="library" class="library-head"><h2>Secondary Tool Library</h2><p>The hero tools live above. The smaller calculators, converters, tests and quick utilities stay searchable here.</p></div>
   <div class="filters" id="filters">
     <div class="chip on" data-f="all" onclick="filter(this)">All</div>
     <div class="chip" data-f="free" onclick="filter(this)">Free</div>
@@ -406,6 +415,7 @@
     <div class="chip" data-f="screen" onclick="filter(this)">Screen</div>
     <div class="chip" data-f="monitor" onclick="filter(this)">Monitoring</div>
     <div class="chip" data-f="signal" onclick="filter(this)">Signals</div>
+    <div class="chip" data-f="prepper" onclick="filter(this)">Preparedness</div>
     <div class="chip" data-f="utility" onclick="filter(this)">Utilities</div>
   </div>
 
@@ -811,6 +821,13 @@ A- 3</textarea></div>
     <div class="tool" data-tags="free utility monitor signal fun trend" data-name="meme early warning viral trend scout memes mainstream saturation social tags hn gdelt wikipedia" onclick="location.href='/meme-watch.html'">
       <span class="badge free">Free</span><div class="ico">#</div>
       <h3>Meme Early Warning</h3><p>Spot rising phrases and internet jokes before mainstream coverage catches up.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+
+    <!-- Prepper toolkit -->
+    <div class="tool" data-tags="free utility prepper preparedness emergency outage survival checklist water food power inventory go bag communications planning" data-name="prepper toolkit emergency preparedness 72 hour kit water food outage power go bag checklist inventory expiry watch family communications card printable plan" onclick="location.href='/prepper-tools.html'">
+      <span class="badge free">Free</span><div class="ico">PREP</div>
+      <h3>Prepper Toolkit</h3><p>Build a practical household readiness plan: water, food, outage power, go-bag, inventory and comms card.</p>
       <div class="open">Open full tool -></div>
     </div>
     <div class="tool" data-tags="free utility monitor signal" data-name="early warning radar high resolution command center world local signal watch space weather earthquake cluster internet outage news panic market stress wildfire air quality official alerts local internet health news spike airport travel" onclick="location.href='/signal-watch.html'">

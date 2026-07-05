@@ -388,6 +388,9 @@ const catalog = [
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
 ];
 const toolAliases = {
+  "prepper-tools":"Prepper Toolkit",
+  "prepper toolkit":"Prepper Toolkit",
+  "preparedness":"Prepper Toolkit",
   "outage-radar":"Outage Radar",
   "outage radar":"Outage Radar",
   "cyber-threat":"Cyber Threat Radar",
@@ -593,7 +596,7 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
+  const tools = ["Prepper Toolkit","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio","Prepper Toolkit"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];

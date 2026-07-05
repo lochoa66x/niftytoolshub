@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prepper Toolkit - emergency planning calculators | NiftyTools Hub</title>
+<meta name="description" content="Plan a practical 72-hour emergency kit: water, food, outage power, go-bag checklist, home inventory, family communications card and printable report.">
+<meta property="og:title" content="Prepper Toolkit - NiftyTools Hub">
+<meta property="og:description" content="A practical emergency preparedness toolkit for water, food, outage power, go-bags, inventory and family plans.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://niftytoolshub.com/prepper-tools.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+  :root{
+    --bg:#070b07;--panel:#0d120d;--panel2:#111911;--txt:#dfeadf;--mut:#82907d;--dim:#a9b7a5;--line:#1e2e20;
+    --grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--blue:#77c8ff;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);
+    background:
+      linear-gradient(rgba(70,224,122,.026) 1px,transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,
+      radial-gradient(900px 540px at 78% -12%,rgba(99,230,255,.08),transparent 62%),
+      radial-gradient(640px 460px at 4% 8%,rgba(70,224,122,.08),transparent 58%),
+      var(--bg);-webkit-font-smoothing:antialiased}
+  body:before{content:"";position:fixed;inset:0;z-index:30;pointer-events:none;background:linear-gradient(rgba(255,255,255,.022) 50%,rgba(0,0,0,.025) 50%) 0 0/100% 4px;opacity:.24}
+  body:after{content:"";position:fixed;inset:0;z-index:31;pointer-events:none;background:radial-gradient(circle at 50% 44%,transparent 0,transparent 66%,rgba(0,0,0,.46) 100%);opacity:.76}
+  a{color:var(--grn);text-decoration:none}
+  a:hover{text-decoration:underline}
+  button,input,select,textarea{font:inherit}
+  .wrap{max-width:1220px;margin:0 auto;padding:0 18px}
+  header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:rgba(7,11,7,.86);backdrop-filter:blur(8px)}
+  .nav{height:54px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:10px;color:var(--txt);font-weight:800;font-size:15px}
+  .logo .mk{width:31px;height:31px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}
+  .logo .mk:before{content:"NT";font-size:11px}
+  .nav a:last-child{font-size:13px;color:var(--mut)}
+  main{padding:24px 0 36px}
+  .hero{position:relative;border:1px solid rgba(70,224,122,.26);border-radius:8px;background:linear-gradient(180deg,rgba(13,18,13,.96),rgba(5,8,5,.98));box-shadow:0 0 44px rgba(70,224,122,.08),inset 0 0 30px rgba(70,224,122,.04);overflow:hidden;padding:22px}
+  .hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:
+    radial-gradient(circle at 75% 20%,rgba(99,230,255,.08),transparent 30%),
+    linear-gradient(110deg,transparent 0,transparent 48%,rgba(99,230,255,.05) 50%,transparent 56%,transparent 100%)}
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:stretch}
+  .crumb{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  h1{font-size:clamp(30px,5vw,56px);line-height:1.02;margin:0 0 12px;text-transform:uppercase;letter-spacing:0;text-shadow:0 0 22px rgba(70,224,122,.16)}
+  h1 span{color:var(--grn)}
+  .lead{max-width:760px;color:var(--dim);font-size:15px;margin:0 0 18px}
+  .hero-actions{display:flex;gap:9px;flex-wrap:wrap}
+  .btn{height:38px;border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.72);color:var(--grn);font-weight:800;padding:8px 13px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.34);text-decoration:none}
+  .btn.ghost{border-color:var(--line);color:var(--txt)}
+  .btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
+  .score-box{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:rgba(3,8,4,.76);padding:15px;min-width:0}
+  .score-box h2{margin:0 0 10px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.7px}
+  .score{display:flex;align-items:end;gap:10px;margin-bottom:10px}
+  .score b{font-size:54px;line-height:.9;color:var(--grn)}
+  .score span{color:var(--mut);font-size:12px;text-transform:uppercase;margin-bottom:5px}
+  .meter{height:9px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),var(--amber),var(--cyan),var(--grn));transition:width .25s}
+  .mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+  .mini-stat{border:1px solid rgba(223,234,223,.1);background:rgba(9,14,9,.8);border-radius:5px;padding:9px}
+  .mini-stat span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
+  .mini-stat b{display:block;margin-top:3px;color:var(--txt);font-size:17px}
+  .notice{margin-top:10px;color:var(--mut);font-size:11px;line-height:1.5}
+  .controls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:14px 0}
+  label{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;margin-bottom:5px}
+  input,select,textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:5px;background:rgba(3,8,4,.88);color:var(--txt);padding:9px 10px;outline:0;caret-color:var(--grn)}
+  input:focus,select:focus,textarea:focus{border-color:var(--grn)}
+  .panel-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:14px;align-items:start}
+  .panel{position:relative;border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(12,18,12,.96),rgba(4,8,4,.98));box-shadow:0 0 34px rgba(70,224,122,.055),inset 0 0 26px rgba(70,224,122,.035);padding:16px;overflow:hidden}
+  .panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(99,230,255,.035),transparent);transform:translateX(-120%);animation:scan 8s linear infinite}
+  @keyframes scan{to{transform:translateX(120%)}}
+  .panel>*{position:relative;z-index:1}
+  .panel h2{margin:0 0 12px;font-size:15px;text-transform:uppercase;letter-spacing:.4px}
+  .panel h2:before{content:"// ";color:var(--grn)}
+  .panel p.help{margin:-6px 0 12px;color:var(--mut);font-size:12px}
+  .calc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+  .result{border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(4,9,5,.78);padding:10px;min-height:76px}
+  .result span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
+  .result b{display:block;margin-top:6px;color:var(--txt);font-size:clamp(18px,3vw,28px);line-height:1}
+  .result b.good{color:var(--grn)}.result b.warn{color:var(--amber)}.result b.bad{color:var(--red)}.result b.cyan{color:var(--cyan)}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .tab{border:1px solid var(--line);border-radius:4px;background:rgba(3,8,4,.82);color:var(--dim);padding:7px 9px;font-size:12px;font-weight:800;cursor:pointer}
+  .tab.active{color:#06120a;background:var(--grn);border-color:var(--grn)}
+  .check-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .check{display:flex;gap:8px;align-items:flex-start;border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(4,9,5,.72);padding:8px;color:var(--dim);font-size:12px;min-height:48px}
+  .check input{width:auto;margin-top:2px;accent-color:var(--grn)}
+  .check b{display:block;color:var(--txt);font-size:12px}
+  .progress-line{display:flex;justify-content:space-between;gap:12px;margin:8px 0 10px;color:var(--mut);font-size:12px}
+  .inventory{display:grid;gap:7px}
+  .inv-row{display:grid;grid-template-columns:1.4fr .6fr .8fr auto;gap:7px;align-items:center}
+  .inv-row button{height:36px}
+  .inv-list{display:grid;gap:7px;max-height:280px;overflow:auto;padding-right:2px;margin-top:10px}
+  .inv-item,.plan-line{display:grid;grid-template-columns:1fr auto;gap:10px;border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(4,9,5,.72);padding:8px;color:var(--dim);font-size:12px}
+  .inv-item b,.plan-line b{color:var(--txt)}
+  .tag{display:inline-flex;align-items:center;border:1px solid rgba(70,224,122,.2);border-radius:999px;padding:3px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}
+  .tag.warn{border-color:rgba(255,189,91,.32);color:var(--amber)}.tag.bad{border-color:rgba(255,101,114,.32);color:var(--red)}.tag.cyan{border-color:rgba(99,230,255,.32);color:var(--cyan)}
+  .comms-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .card-preview{margin-top:10px;border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:128px}
+  .playbook-list{display:grid;gap:7px}
+  .report-box{border:1px solid rgba(223,234,223,.12);background:rgba(3,8,4,.76);border-radius:6px;padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:180px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  footer{border-top:1px solid var(--line);margin-top:28px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+  @media(max-width:980px){.hero-grid,.panel-grid,.two-col{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr 1fr}.score-box{max-width:none}}
+  @media(max-width:640px){.wrap{padding:0 12px}.hero{padding:16px}.controls,.calc-grid,.result-grid,.check-grid,.comms-grid{grid-template-columns:1fr}.inv-row{grid-template-columns:1fr 72px 1fr}.inv-row button{grid-column:1/-1}.hero-actions .btn{width:100%}}
+  @media print{
+    header,.hero-actions,.controls,.tabs,.btn,.inventory,.notice,footer{display:none!important}
+    body{background:#fff;color:#111;font-family:Arial,sans-serif}
+    .wrap{max-width:none}.hero,.panel{border:1px solid #999;box-shadow:none;background:#fff;color:#111;break-inside:avoid}
+    .panel:before,.hero:before,body:before,body:after{display:none}.panel-grid,.two-col,.hero-grid{grid-template-columns:1fr}
+    .report-box,.card-preview{color:#111;background:#fff;border-color:#aaa}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <a href="/">back to all tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="crumb">Home / Preparedness / Prepper Toolkit</div>
+        <h1>Prepper <span>Toolkit</span></h1>
+        <p class="lead">// A practical household readiness planner for boring-but-important emergencies: outages, storms, smoke days, evacuations and "the stores are weirdly empty" weeks.</p>
+        <div class="hero-actions">
+          <button class="btn" onclick="copyReport(this)">Copy readiness report</button>
+          <button class="btn ghost" onclick="downloadPlan()">Export JSON</button>
+          <button class="btn ghost" onclick="window.print()">Print plan</button>
+          <button class="btn ghost" onclick="resetPrep()">Reset demo</button>
+        </div>
+        <p class="notice">Planning helper only. Follow official local emergency guidance, product labels and medical advice for real incidents.</p>
+      </div>
+      <aside class="score-box">
+        <h2>Household readiness score</h2>
+        <div class="score"><b id="score">0</b><span>/100 ready</span></div>
+        <div class="meter"><i id="scoreBar"></i></div>
+        <div class="mini-stats">
+          <div class="mini-stat"><span>water target</span><b id="miniWater">--</b></div>
+          <div class="mini-stat"><span>checklist</span><b id="miniChecklist">--</b></div>
+          <div class="mini-stat"><span>power need</span><b id="miniPower">--</b></div>
+          <div class="mini-stat"><span>inventory</span><b id="miniInventory">--</b></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="controls" aria-label="Planning inputs">
+    <div><label for="people">People</label><input id="people" type="number" min="1" max="20" value="4" oninput="updateAll()"></div>
+    <div><label for="pets">Pets</label><input id="pets" type="number" min="0" max="20" value="1" oninput="updateAll()"></div>
+    <div><label for="days">Target days</label><input id="days" type="number" min="1" max="30" value="3" oninput="updateAll()"></div>
+    <div><label for="climate">Climate load</label><select id="climate" onchange="updateAll()"><option value="normal">Normal</option><option value="hot">Hot / humid</option><option value="cold">Cold / winter</option><option value="smoke">Smoke / air quality</option></select></div>
+    <div><label for="cooking">Cooking</label><select id="cooking" onchange="updateAll()"><option value="limited">Limited cooking</option><option value="none">No cooking</option><option value="normal">Stove available</option></select></div>
+    <div><label for="scenario">Focus</label><select id="scenario" onchange="renderPlaybook()"><option value="outage">Power outage</option><option value="winter">Winter storm</option><option value="smoke">Wildfire smoke</option><option value="evac">Evacuation</option><option value="heat">Heat wave</option><option value="flood">Flood risk</option></select></div>
+  </section>
+
+  <section class="panel-grid">
+    <article class="panel">
+      <h2>72-hour supply calculator</h2>
+      <p class="help">A simple baseline for water, meals and ready-to-eat coverage. Adjust for local advice and household needs.</p>
+      <div class="result-grid">
+        <div class="result"><span>water storage</span><b class="cyan" id="waterOut">--</b></div>
+        <div class="result"><span>food calories</span><b id="calOut">--</b></div>
+        <div class="result"><span>ready meals</span><b class="good" id="mealOut">--</b></div>
+      </div>
+      <div class="result-grid">
+        <div class="result"><span>pet water</span><b id="petWaterOut">--</b></div>
+        <div class="result"><span>food style</span><b class="amber" id="foodStyle">--</b></div>
+        <div class="result"><span>rotation reminder</span><b id="rotationOut">--</b></div>
+      </div>
+    </article>
+
+    <article class="panel">
+      <h2>Outage power planner</h2>
+      <p class="help">Estimate watt-hours for phones, lights, radio and one medical/critical device.</p>
+      <div class="calc-grid">
+        <div><label for="phones">Phones</label><input id="phones" type="number" min="0" value="4" oninput="updateAll()"></div>
+        <div><label for="lightHours">Light hrs/day</label><input id="lightHours" type="number" min="0" value="5" oninput="updateAll()"></div>
+        <div><label for="criticalHours">Critical device hrs/day</label><input id="criticalHours" type="number" min="0" value="0" oninput="updateAll()"></div>
+      </div>
+      <div class="result-grid">
+        <div class="result"><span>estimated need</span><b class="cyan" id="powerOut">--</b></div>
+        <div class="result"><span>250Wh packs</span><b id="packOut">--</b></div>
+        <div class="result"><span>priority</span><b class="amber" id="powerPriority">--</b></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="two-col">
+    <article class="panel">
+      <h2>Go-bag checklist</h2>
+      <p class="help">Tap items as packed. Saved locally in this browser.</p>
+      <div class="tabs" id="checkTabs"></div>
+      <div class="progress-line"><span id="checkProgress">0 packed</span><span id="checkNeeded">0 priority items left</span></div>
+      <div class="meter"><i id="checkBar"></i></div>
+      <div class="check-grid" id="checkList"></div>
+    </article>
+
+    <article class="panel">
+      <h2>Home inventory and expiry watch</h2>
+      <p class="help">Track the small things that quietly expire: water, batteries, meds, filters and documents.</p>
+      <div class="inventory">
+        <div class="inv-row">
+          <input id="invName" placeholder="Item name">
+          <input id="invQty" placeholder="Qty" value="1">
+          <input id="invExpiry" type="date">
+          <button class="btn ghost" onclick="addInventory()">Add</button>
+        </div>
+      </div>
+      <div class="inv-list" id="inventoryList"></div>
+    </article>
+  </section>
+
+  <section class="two-col">
+    <article class="panel">
+      <h2>Family communications card</h2>
+      <p class="help">Fill once, print or copy. Keep a paper copy in wallets, backpacks and the car.</p>
+      <div class="comms-grid">
+        <div><label for="homeBase">Home base</label><input id="homeBase" placeholder="Address or neighborhood" oninput="updateComms()"></div>
+        <div><label for="meetPoint">Meet point</label><input id="meetPoint" placeholder="Library, school, friend" oninput="updateComms()"></div>
+        <div><label for="outContact">Out-of-area contact</label><input id="outContact" placeholder="Name + phone" oninput="updateComms()"></div>
+        <div><label for="localContact">Local contact</label><input id="localContact" placeholder="Name + phone" oninput="updateComms()"></div>
+      </div>
+      <div class="card-preview" id="commsCard"></div>
+    </article>
+
+    <article class="panel">
+      <h2>Situation playbook</h2>
+      <p class="help">Quick first moves for common disruptions. Keep it boring, calm and local.</p>
+      <div class="playbook-list" id="playbook"></div>
+    </article>
+  </section>
+
+  <section class="panel" style="margin-top:14px">
+    <h2>Readable prep report</h2>
+    <p class="help">Use this as a shopping list, household briefing or fridge-note draft.</p>
+    <div class="report-box" id="reportText"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const STORE='nifty-prepper-toolkit-v1';
+const CATS=['core','water','food','power','medical','docs','comfort'];
+const CHECKS=[
+  ['water','Drinking water stored','One gallon / 3.8L per person per day baseline',true],
+  ['water','Portable water filter','Backup for boil/filter advisories',false],
+  ['food','Ready-to-eat meals','No-cook meals for the target window',true],
+  ['food','Manual can opener','Tiny item, huge annoyance if missing',true],
+  ['power','Flashlights or headlamps','One per adult plus spares',true],
+  ['power','Batteries / power bank','Charged and labeled',true],
+  ['power','Battery radio','Weather or emergency updates',false],
+  ['medical','First-aid kit','Bandages, antiseptic, pain relief',true],
+  ['medical','Prescription buffer','Follow medical guidance for storage',true],
+  ['docs','ID and insurance copies','Paper or encrypted offline copy',true],
+  ['docs','Cash in small bills','Useful if card networks fail',false],
+  ['core','Meet-up plan','Where to meet if phones fail',true],
+  ['core','Out-of-area contact','One person everyone can message',true],
+  ['core','Car fuel / transit plan','Keep options open before a storm',false],
+  ['comfort','Warm layer / rain shell','Seasonal clothing',false],
+  ['comfort','Hygiene kit','Wipes, sanitizer, bags, toiletries',false],
+  ['comfort','Pet kit','Food, leash, carrier, meds if needed',false]
+].map((x,i)=>({id:'c'+i,cat:x[0],name:x[1],note:x[2],priority:x[3]}));
+const PLAYBOOKS={
+  outage:['Charge phones and power banks before weather arrives.','Move flashlights to obvious places; avoid candles where possible.','Keep fridge/freezer closed; note outage start time.','Use generators outdoors only and away from windows.','Check on neighbors who rely on powered medical devices.'],
+  winter:['Stage warm layers, blankets and a safe indoor room.','Fill vehicle fuel or charge EV before storm peak.','Protect pipes and know the water shutoff location.','Keep ice melt, shovel and boots near the exit.','Avoid unnecessary travel until roads are cleared.'],
+  smoke:['Check local air quality and official fire updates.','Close windows and set HVAC to recirculate if safe.','Run air purifier or DIY box fan filter if available.','Prepare N95/KN95 masks for outdoor trips.','Plan a cleaner-air location if indoor air gets bad.'],
+  evac:['Pack IDs, meds, chargers, cash, water and pet supplies first.','Choose two routes and one out-of-area contact.','Photograph key documents and home condition if time allows.','Shut windows, unplug nonessential devices and lock up.','Leave early when official alerts advise evacuation.'],
+  heat:['Identify a cool room or public cooling center.','Store extra water and electrolyte options.','Check fans, shade and battery-powered cooling options.','Watch for heat illness symptoms and call local help if needed.','Avoid peak afternoon errands when possible.'],
+  flood:['Move valuables and documents above likely water level.','Avoid basements and never drive through floodwater.','Charge phones and keep footwear ready.','Know local shelter and evacuation routes.','Turn off utilities only if instructed or safe to do so.']
+};
+let state={
+  checked:{},
+  activeCat:'core',
+  inventory:[
+    {name:'Stored water',qty:'12 gal',expiry:addMonths(6)},
+    {name:'AA batteries',qty:'24',expiry:addMonths(18)},
+    {name:'First-aid supplies',qty:'1 kit',expiry:addMonths(10)},
+    {name:'N95 masks',qty:'10',expiry:addMonths(24)}
+  ],
+  comms:{homeBase:'',meetPoint:'',outContact:'',localContact:''}
+};
+
+function addMonths(n){const d=new Date();d.setMonth(d.getMonth()+n);return d.toISOString().slice(0,10)}
+function num(id){return Math.max(0,parseFloat($(id).value)||0)}
+function fmt(n){return Math.round(n).toLocaleString()}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch(_err){}}
+function load(){
+  try{
+    const raw=localStorage.getItem(STORE);
+    if(raw)state=Object.assign(state,JSON.parse(raw));
+  }catch(_err){}
+  Object.entries(state.comms||{}).forEach(([k,v])=>{if($(k))$(k).value=v||''});
+}
+function track(action,props){
+  if(window.ntTrack)window.ntTrack(action,Object.assign({tool:'Prepper Toolkit'},props||{}));
+}
+
+function supplyCalc(){
+  const people=Math.max(1,num('people')),pets=num('pets'),days=Math.max(1,num('days'));
+  const climate=$('climate').value,cooking=$('cooking').value;
+  const climateFactor=climate==='hot'?1.35:climate==='cold'?1.15:climate==='smoke'?1.2:1;
+  const waterGal=people*days*1*climateFactor;
+  const petGal=pets*days*.5;
+  const calories=people*days*(cooking==='none'?2200:2000);
+  const meals=people*days*3;
+  $('waterOut').textContent=fmt(waterGal)+' gal';
+  $('petWaterOut').textContent=pets?fmt(petGal)+' gal':'none';
+  $('calOut').textContent=fmt(calories);
+  $('mealOut').textContent=fmt(meals);
+  $('foodStyle').textContent=cooking==='none'?'no-cook':cooking==='limited'?'low-cook':'normal';
+  $('rotationOut').textContent=climate==='hot'?'3-6 mo':'6-12 mo';
+  $('miniWater').textContent=fmt(waterGal+petGal)+' gal';
+  return {people,pets,days,waterGal,petGal,calories,meals,climate,cooking};
+}
+
+function powerCalc(){
+  const days=Math.max(1,num('days')),phones=num('phones'),lightHours=num('lightHours'),criticalHours=num('criticalHours');
+  const phoneWh=phones*12*2*days;
+  const lightWh=8*lightHours*days;
+  const radioWh=5*4*days;
+  const criticalWh=35*criticalHours*days;
+  const total=phoneWh+lightWh+radioWh+criticalWh;
+  $('powerOut').textContent=fmt(total)+' Wh';
+  $('packOut').textContent=Math.max(1,Math.ceil(total/250));
+  $('powerPriority').textContent=criticalHours>0?'critical':'comms';
+  $('miniPower').textContent=fmt(total)+' Wh';
+  return {phoneWh,lightWh,radioWh,criticalWh,total};
+}
+
+function renderChecklist(){
+  $('checkTabs').innerHTML=CATS.map(cat=>`<button class="tab ${state.activeCat===cat?'active':''}" onclick='setCat("${cat}")'>${cat}</button>`).join('');
+  const list=CHECKS.filter(c=>c.cat===state.activeCat);
+  $('checkList').innerHTML=list.map(c=>`
+    <label class="check">
+      <input type="checkbox" ${state.checked[c.id]?'checked':''} onchange='toggleCheck("${c.id}",this.checked)'>
+      <span><b>${c.name}</b>${c.note}${c.priority?' <span class="tag warn">priority</span>':''}</span>
+    </label>`).join('');
+  const done=CHECKS.filter(c=>state.checked[c.id]).length;
+  const priorityLeft=CHECKS.filter(c=>c.priority&&!state.checked[c.id]).length;
+  $('checkProgress').textContent=done+' / '+CHECKS.length+' packed';
+  $('checkNeeded').textContent=priorityLeft+' priority left';
+  $('checkBar').style.width=Math.round(done/CHECKS.length*100)+'%';
+  $('miniChecklist').textContent=done+'/'+CHECKS.length;
+}
+function setCat(cat){state.activeCat=cat;renderChecklist();save()}
+function toggleCheck(id,checked){state.checked[id]=checked;save();renderChecklist();updateScore();updateReport();track('tool_action',{action:'prep_checklist_toggle',item:id,checked})}
+
+function addInventory(){
+  const name=$('invName').value.trim(),qty=$('invQty').value.trim(),expiry=$('invExpiry').value;
+  if(!name)return;
+  state.inventory.unshift({name,qty:qty||'1',expiry:expiry||''});
+  $('invName').value='';$('invQty').value='1';$('invExpiry').value='';
+  save();renderInventory();updateScore();updateReport();track('tool_action',{action:'prep_inventory_add',item:name});
+}
+function removeInventory(i){state.inventory.splice(i,1);save();renderInventory();updateScore();updateReport()}
+function expiryTag(expiry){
+  if(!expiry)return '<span class="tag cyan">no date</span>';
+  const days=Math.ceil((new Date(expiry+'T00:00:00')-new Date())/86400000);
+  if(days<0)return '<span class="tag bad">expired</span>';
+  if(days<=45)return '<span class="tag warn">'+days+'d left</span>';
+  return '<span class="tag">'+days+'d left</span>';
+}
+function renderInventory(){
+  $('inventoryList').innerHTML=state.inventory.map((it,i)=>`
+    <div class="inv-item"><div><b>${escapeHtml(it.name)}</b><br>${escapeHtml(it.qty||'1')} ${it.expiry?' - expires '+it.expiry:''}</div><div>${expiryTag(it.expiry)} <button class="btn ghost" style="height:28px;padding:4px 8px;margin-left:5px" onclick='removeInventory(${i})'>x</button></div></div>
+  `).join('')||'<div class="inv-item"><div><b>No inventory yet</b><br>Add a few critical items to start.</div><span class="tag warn">empty</span></div>';
+  $('miniInventory').textContent=state.inventory.length+' items';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function updateComms(){
+  state.comms={homeBase:$('homeBase').value,meetPoint:$('meetPoint').value,outContact:$('outContact').value,localContact:$('localContact').value};
+  const lines=[
+    'HOUSEHOLD EMERGENCY CARD',
+    'Home base: '+(state.comms.homeBase||'________________'),
+    'Meet point: '+(state.comms.meetPoint||'________________'),
+    'Out-of-area contact: '+(state.comms.outContact||'________________'),
+    'Local contact: '+(state.comms.localContact||'________________'),
+    'Text first if networks are busy. Keep messages short.'
+  ];
+  $('commsCard').textContent=lines.join('\n');
+  save();updateScore();updateReport();
+}
+
+function renderPlaybook(){
+  const key=$('scenario').value;
+  const actions=PLAYBOOKS[key]||PLAYBOOKS.outage;
+  $('playbook').innerHTML=actions.map((a,i)=>`<div class="plan-line"><b>${String(i+1).padStart(2,'0')}</b><span>${a}</span></div>`).join('');
+  updateReport();track('tool_action',{action:'prep_playbook_change',scenario:key});
+}
+
+function updateScore(){
+  const supply=supplyCalc(),power=powerCalc();
+  const checked=CHECKS.filter(c=>state.checked[c.id]).length/CHECKS.length;
+  const priorityDone=CHECKS.filter(c=>c.priority&&state.checked[c.id]).length/CHECKS.filter(c=>c.priority).length;
+  const inv=Math.min(1,state.inventory.length/8);
+  const comms=Object.values(state.comms||{}).filter(Boolean).length/4;
+  const powerScore=power.total>0?1:.4;
+  const score=Math.round(checked*32+priorityDone*28+inv*18+comms*14+powerScore*8);
+  $('score').textContent=score;
+  $('scoreBar').style.width=score+'%';
+  return {score,supply,power,checked,priorityDone,inv,comms};
+}
+
+function updateReport(){
+  const data=updateScore();
+  const scenario=$('scenario').selectedOptions[0].textContent;
+  const priorityLeft=CHECKS.filter(c=>c.priority&&!state.checked[c.id]).map(c=>c.name);
+  const expiring=state.inventory.filter(i=>i.expiry&&Math.ceil((new Date(i.expiry+'T00:00:00')-new Date())/86400000)<=45).map(i=>i.name);
+  $('reportText').textContent=[
+    'Prepper Toolkit readiness report',
+    'Score: '+data.score+'/100',
+    'Household: '+data.supply.people+' people, '+data.supply.pets+' pets, '+data.supply.days+' days',
+    'Water target: '+fmt(data.supply.waterGal+data.supply.petGal)+' gallons total ('+fmt((data.supply.waterGal+data.supply.petGal)*3.785)+' liters)',
+    'Food target: '+fmt(data.supply.calories)+' calories / '+fmt(data.supply.meals)+' meals',
+    'Outage power estimate: '+fmt(data.power.total)+' Wh, about '+Math.max(1,Math.ceil(data.power.total/250))+' x 250Wh battery packs',
+    'Current focus: '+scenario,
+    'Priority gaps: '+(priorityLeft.length?priorityLeft.join(', '):'none'),
+    'Expiry watch: '+(expiring.length?expiring.join(', '):'no urgent expiries'),
+    'Comms card: '+(Object.values(state.comms||{}).filter(Boolean).length===4?'complete':'incomplete'),
+    'Reminder: verify against local official emergency guidance.'
+  ].join('\n');
+}
+function updateAll(){supplyCalc();powerCalc();updateScore();updateReport();save()}
+
+async function copyReport(btn){
+  const text=$('reportText').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    const old=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=old,1200);
+    track('copy',{tool:'Prepper Toolkit',target:'report'});
+  }catch(_err){window.prompt('Copy report',text)}
+}
+function downloadPlan(){
+  const payload={created:new Date().toISOString(),inputs:{people:$('people').value,pets:$('pets').value,days:$('days').value,climate:$('climate').value,cooking:$('cooking').value,scenario:$('scenario').value},state,report:$('reportText').textContent};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='prepper-toolkit-plan.json';a.click();URL.revokeObjectURL(a.href);
+  track('download',{tool:'Prepper Toolkit',format:'json'});
+}
+function resetPrep(){
+  if(!confirm('Reset the local prepper toolkit demo data?'))return;
+  try{localStorage.removeItem(STORE)}catch(_err){}
+  location.reload();
+}
+
+load();
+renderChecklist();
+renderInventory();
+updateComms();
+renderPlaybook();
+updateAll();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>
