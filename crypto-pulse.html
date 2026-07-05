@@ -28,6 +28,60 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px
 .network-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.net-card{border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.94),rgba(4,8,4,.96));box-shadow:inset 0 0 24px rgba(70,224,122,.025);padding:14px}.net-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:10px}.net-head h2{font-size:18px;margin:0;text-transform:uppercase}.net-head small{display:block;color:var(--mut);font-size:11px;margin-top:3px}.trend-bars{display:grid;gap:8px;margin-top:12px}.bar-row{display:grid;grid-template-columns:130px 1fr auto;gap:9px;align-items:center;color:var(--mut);font-size:12px}.bar{height:8px;border:1px solid var(--line2);border-radius:20px;background:#010502;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan))}.bar.warn i{background:linear-gradient(90deg,var(--amber),var(--red))}.report-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}.report-box{border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:180px}.source-log{display:grid;gap:7px}.source-log div{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:8px 9px;font-size:12px;color:var(--mut)}.source-log b{color:var(--txt)}.truth{font-size:11.5px;color:var(--mut);line-height:1.65}.truth b{color:var(--txt)}footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
 @media(max-width:980px){.toolbar{grid-template-columns:1fr 1fr}.main-grid,.hero-grid,.network-grid,.report-grid{grid-template-columns:1fr}.side{max-height:none}.screen{min-height:620px}}@media(max-width:620px){.wrap{padding:0 12px}.toolbar{grid-template-columns:1fr}.btn{width:100%}.screen{min-height:760px}.canvas-frame{inset:116px 12px 218px}.screen-head{display:block}.screen-time{text-align:left;margin-top:8px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}.network-tabs{left:14px;right:auto;top:auto;bottom:18px;flex-wrap:wrap}.visual-note{display:none}.sweep-tag{bottom:158px;left:12px;right:12px;text-align:center}.bar-row{grid-template-columns:1fr}}
 </style>
+<style>
+/* Crypto Pulse polish: calmer screen, data-driven chart, less eye strain. */
+body:before{opacity:.11}body:after{opacity:.62}
+.hero:before{animation-duration:12s;opacity:.5}
+.screen{min-height:500px}
+.canvas-frame{inset:88px 14px 114px;background:linear-gradient(rgba(70,224,122,.014) 1px,transparent 1px) 0 0/100% 70px,linear-gradient(90deg,rgba(99,230,255,.012) 1px,transparent 1px) 0 0/96px 100%,radial-gradient(ellipse at 50% 54%,rgba(70,224,122,.12),transparent 60%),linear-gradient(180deg,rgba(7,19,10,.92),rgba(2,6,4,.98));box-shadow:inset 0 0 28px rgba(70,224,122,.11),inset 0 -34px 62px rgba(0,0,0,.38),0 0 26px rgba(70,224,122,.08)}
+.canvas-frame:after{background:radial-gradient(ellipse at 50% 52%,transparent 0,transparent 58%,rgba(0,0,0,.55) 100%),linear-gradient(rgba(255,255,255,.012) 50%,rgba(0,0,0,.012) 50%) 0 0/100% 6px;opacity:.42}
+.visual-note{border-radius:5px;background:rgba(2,8,4,.8);box-shadow:0 0 18px rgba(70,224,122,.08)}
+.network-tabs{background:rgba(2,8,4,.82);box-shadow:0 0 18px rgba(70,224,122,.08)}
+.sweep-tag{bottom:124px;background:rgba(2,8,4,.84)}
+@media(max-width:980px){.screen{min-height:560px}.canvas-frame{inset:92px 14px 118px}}
+@media(max-width:620px){.screen{min-height:720px}.canvas-frame{inset:128px 12px 224px}.sweep-tag{bottom:164px}}
+</style>
+<style>
+/* Crypto Pulse clarity pass: replace the abstract waveform with a readable pressure board. */
+.crypto-board-screen{min-height:auto;padding:14px;overflow:hidden}
+.crypto-board-screen:before{content:"";position:absolute;inset:-35% -20% auto auto;width:360px;height:360px;background:radial-gradient(circle,rgba(99,230,255,.09),transparent 64%);pointer-events:none}
+.crypto-board-screen .screen-head{margin-bottom:12px}
+.crypto-board-screen .screen-title{font-size:clamp(24px,3.2vw,42px)}
+.pulse-layout{position:relative;z-index:2;border:1px solid rgba(70,224,122,.26);border-radius:7px;background:linear-gradient(rgba(70,224,122,.018) 1px,transparent 1px) 0 0/100% 42px,linear-gradient(90deg,rgba(70,224,122,.014) 1px,transparent 1px) 0 0/64px 100%,radial-gradient(ellipse at 50% 18%,rgba(70,224,122,.13),transparent 58%),linear-gradient(180deg,rgba(8,18,10,.9),rgba(2,7,4,.98));box-shadow:inset 0 0 26px rgba(70,224,122,.08);padding:10px}
+.pulse-board-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.board-note{display:inline-flex;align-items:center;min-height:34px;border:1px solid rgba(70,224,122,.2);background:rgba(2,8,4,.76);border-radius:999px;padding:7px 12px;color:var(--mut);font-size:11px}
+.board-note b{color:var(--grn)}
+.network-toggle-bar{display:flex;gap:6px;border:1px solid rgba(70,224,122,.18);background:rgba(2,8,4,.82);border-radius:6px;padding:6px;box-shadow:0 0 18px rgba(70,224,122,.08)}
+.network-toggle-bar button{font:800 11px var(--mono);border:1px solid rgba(70,224,122,.18);border-radius:4px;color:var(--txt);padding:7px 10px;background:rgba(1,8,4,.74);cursor:pointer}
+.network-toggle-bar button.active{color:var(--grn);border-color:rgba(70,224,122,.5);box-shadow:0 0 14px rgba(70,224,122,.16)}
+.pulse-board{display:grid;gap:9px}
+.pulse-row{display:grid;grid-template-columns:160px minmax(0,1fr) 96px 152px;gap:12px;align-items:center;border:1px solid rgba(223,234,223,.1);border-radius:6px;background:linear-gradient(90deg,rgba(70,224,122,.055),rgba(3,8,4,.84) 38%,rgba(3,8,4,.94));padding:11px 12px;min-width:0}
+.pulse-row.eth{background:linear-gradient(90deg,rgba(99,230,255,.05),rgba(3,8,4,.84) 38%,rgba(3,8,4,.94))}
+.pulse-row.fee{background:linear-gradient(90deg,rgba(255,189,91,.055),rgba(3,8,4,.84) 38%,rgba(3,8,4,.94))}
+.pulse-name b{display:block;color:var(--txt);font-size:15px;text-transform:uppercase}
+.pulse-name span,.pressure-head span,.pulse-score span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase;line-height:1.35}
+.pressure-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px;color:var(--mut);font-size:11px}
+.pressure-head b{color:var(--dim);font-size:11px;text-align:right}
+.pressure-rail{height:12px;border:1px solid rgba(70,224,122,.24);border-radius:999px;background:rgba(1,5,2,.86);overflow:hidden}
+.pressure-rail i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .28s ease}
+.pressure-rail.cyan i{background:linear-gradient(90deg,var(--cyan),var(--grn),var(--amber))}
+.pressure-rail.amber i{background:linear-gradient(90deg,var(--amber),var(--red))}
+.pulse-score{text-align:right}
+.pulse-score b{display:block;color:var(--grn);font-size:22px;line-height:1}
+.pulse-row.eth .pulse-score b{color:var(--cyan)}
+.pulse-row.fee .pulse-score b{color:var(--amber)}
+.spark{height:42px;display:flex;align-items:flex-end;gap:3px;padding:6px;border:1px solid rgba(223,234,223,.08);border-radius:5px;background:rgba(1,5,2,.55);overflow:hidden}
+.spark span{flex:1;min-width:2px;border-radius:2px 2px 0 0;background:var(--grn);box-shadow:0 0 8px rgba(70,224,122,.28);opacity:.85}
+.spark.cyan span{background:var(--cyan);box-shadow:0 0 8px rgba(99,230,255,.24)}
+.spark.amber span{background:var(--amber);box-shadow:0 0 8px rgba(255,189,91,.24)}
+.source-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.source-strip span{border:1px solid rgba(70,224,122,.16);background:rgba(1,8,4,.72);border-radius:5px;padding:8px 10px;color:var(--mut);font-size:10px;text-transform:uppercase}
+.source-strip b{color:var(--grn)}
+.crypto-board-screen .readouts{position:static;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.crypto-board-screen .readout{min-height:66px}
+@media(max-width:980px){.crypto-board-screen{min-height:auto}.pulse-row{grid-template-columns:150px minmax(0,1fr) 86px}.spark{grid-column:1/-1}.source-strip{grid-template-columns:1fr}}
+@media(max-width:620px){.crypto-board-screen{min-height:auto}.pulse-board-head{display:block}.network-toggle-bar{margin-top:8px;width:max-content}.pulse-row{grid-template-columns:1fr;gap:8px}.pulse-score{text-align:left}.crypto-board-screen .readouts{grid-template-columns:1fr 1fr}.board-note{border-radius:6px;width:100%}}
+</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Crypto Network Pulse","url":"https://niftytoolshub.com/crypto-pulse.html","applicationCategory":"UtilityApplication","operatingSystem":"Any","description":"A browser-based signal dashboard for Bitcoin and Ethereum network activity, fee pressure, gas pressure and crypto network stress.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
@@ -80,27 +134,61 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px
   </section>
 
   <section class="main-grid">
-    <div class="screen">
+    <div class="screen crypto-board-screen">
       <div class="screen-head">
         <div>
-          <div class="kicker">ON-CHAIN ACTIVITY SEISMOGRAPH</div>
-          <div class="screen-title">Network stress waveform</div>
+          <div class="kicker">ON-CHAIN ACTIVITY + FEE PRESSURE</div>
+          <div class="screen-title">Network pressure board</div>
         </div>
         <div class="screen-time">
           <div id="updatedAt">sync pending</div>
           <div id="sourceState">data probes booting</div>
         </div>
       </div>
-      <div class="canvas-frame">
-        <canvas id="pulseCanvas"></canvas>
-        <div class="visual-note"><b>signal:</b> tx volume + fee pressure + market context</div>
-        <div class="network-tabs">
-          <button type="button" data-view="combined" class="active">All</button>
-          <button type="button" data-view="btc">BTC</button>
-          <button type="button" data-view="eth">ETH</button>
+      <div class="pulse-layout">
+        <div class="pulse-board-head">
+          <div class="board-note"><b>signal:</b>&nbsp;live where possible, sample fallback when blocked</div>
+          <div class="network-toggle-bar" aria-label="Network view">
+            <button type="button" data-view="combined" class="active">All</button>
+            <button type="button" data-view="btc">BTC</button>
+            <button type="button" data-view="eth">ETH</button>
+          </div>
+        </div>
+        <div class="pulse-board">
+          <article class="pulse-row btc">
+            <div class="pulse-name"><b>Bitcoin</b><span>tx/day, mempool and sat/vB fees</span></div>
+            <div>
+              <div class="pressure-head"><span>Network pressure</span><b id="btcBoardMeta">--</b></div>
+              <div class="pressure-rail"><i id="btcPressureRail"></i></div>
+            </div>
+            <div class="pulse-score"><b id="btcBoardScore">--</b><span>BTC score</span></div>
+            <div class="spark green" id="btcSpark" aria-hidden="true"></div>
+          </article>
+          <article class="pulse-row eth">
+            <div class="pulse-name"><b>Ethereum</b><span>tx/day, gas used and gwei pressure</span></div>
+            <div>
+              <div class="pressure-head"><span>Network pressure</span><b id="ethBoardMeta">--</b></div>
+              <div class="pressure-rail cyan"><i id="ethPressureRail"></i></div>
+            </div>
+            <div class="pulse-score"><b id="ethBoardScore">--</b><span>ETH score</span></div>
+            <div class="spark cyan" id="ethSpark" aria-hidden="true"></div>
+          </article>
+          <article class="pulse-row fee">
+            <div class="pulse-name"><b>Fee pain</b><span>combined send-cost warning</span></div>
+            <div>
+              <div class="pressure-head"><span>Move-funds friction</span><b id="combinedBoardMeta">--</b></div>
+              <div class="pressure-rail amber"><i id="feePressureRail"></i></div>
+            </div>
+            <div class="pulse-score"><b id="combinedBoardScore">--</b><span>total score</span></div>
+            <div class="spark amber" id="feeSpark" aria-hidden="true"></div>
+          </article>
+        </div>
+        <div class="source-strip">
+          <span><b id="sweepTag">sweep 01</b> / network watch</span>
+          <span><b id="liveProbeMini">0</b> live probes</span>
+          <span><b id="blockedProbeMini">0</b> blocked probes</span>
         </div>
       </div>
-      <div class="sweep-tag" id="sweepTag">sweep 01 / network pulse watch</div>
       <div class="readouts">
         <div class="readout"><span>BTC tx/day</span><b id="btcTx">--</b></div>
         <div class="readout"><span>BTC fee pressure</span><b id="btcFees">--</b></div>
@@ -357,6 +445,31 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px
     const blockedCount = log.filter((item) => item.status === "blocked").length;
     return { btcTrend, ethTrend, btcScore, ethScore, combined, liveCount, blockedCount };
   }
+  function setText(id, value){
+    const el = $(id);
+    if (el) el.textContent = value;
+  }
+  function setWidth(id, value){
+    const el = $(id);
+    if (el) el.style.width = clamp(Number(value) || 0, 0, 100) + "%";
+  }
+  function renderSpark(id, values){
+    const el = $(id);
+    if (!el) return;
+    const clean = (values || []).slice(-24).map(Number).filter((n) => Number.isFinite(n));
+    if (!clean.length) {
+      el.innerHTML = "";
+      return;
+    }
+    const min = Math.min.apply(null, clean);
+    const max = Math.max.apply(null, clean);
+    const span = Math.max(1, max - min);
+    el.innerHTML = clean.map((value, index) => {
+      const height = Math.round(18 + ((value - min) / span) * 74);
+      const opacity = index === clean.length - 1 ? 1 : .58 + (index / clean.length) * .34;
+      return '<span style="height:' + height + '%;opacity:' + opacity.toFixed(2) + '"></span>';
+    }).join("");
+  }
   function render(data, log){
     const pulse = computePulse(data, log);
     latest = { data:data, log:log, pulse:pulse, updated:new Date().toISOString(), mode:currentMode(), network:currentNetwork() };
@@ -381,6 +494,20 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px
     $("btcFees").textContent = fmt(data.btc.feeFast) + " sat/vB";
     $("ethTx").textContent = fmt(data.eth.tx[data.eth.tx.length - 1]);
     $("ethGas").textContent = fmt(data.eth.gasGwei) + " gwei";
+    setText("btcBoardScore", pulse.btcScore + "/100");
+    setText("ethBoardScore", pulse.ethScore + "/100");
+    setText("combinedBoardScore", pulse.combined + "/100");
+    setText("btcBoardMeta", fmt(data.btc.mempoolCount) + " mempool / " + pct(pulse.btcTrend));
+    setText("ethBoardMeta", fmt(data.eth.gasGwei) + " gwei / " + pct(pulse.ethTrend));
+    setText("combinedBoardMeta", stateFromScore(pulse.combined) + " / " + pulse.liveCount + " live");
+    setText("liveProbeMini", String(pulse.liveCount));
+    setText("blockedProbeMini", String(pulse.blockedCount));
+    setWidth("btcPressureRail", pulse.btcScore);
+    setWidth("ethPressureRail", pulse.ethScore);
+    setWidth("feePressureRail", pulse.combined);
+    renderSpark("btcSpark", data.btc.tx);
+    renderSpark("ethSpark", data.eth.tx);
+    renderSpark("feeSpark", pressureSeries(data));
     $("btcState").textContent = stateFromScore(pulse.btcScore);
     $("btcState").className = "pill " + stateClass(pulse.btcScore);
     $("ethState").textContent = stateFromScore(pulse.ethScore);
@@ -522,41 +649,161 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px
     ctx.setTransform(dpr,0,0,dpr,0,0);
     const w = rect.width, h = rect.height;
     ctx.clearRect(0,0,w,h);
-    anim.t += 0.018;
-    const stress = clamp(anim.score / 100, .05, 1);
-    ctx.strokeStyle = "rgba(70,224,122,.16)";
-    ctx.lineWidth = 1;
-    for (let i=1;i<5;i++){
-      const y = h * i / 5;
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke();
-    }
-    for (let i=1;i<8;i++){
-      const x = w * i / 8;
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
-    }
-    drawWave(ctx,w,h,stress,"rgba(70,224,122,.95)",0, anim.view === "eth" ? .45 : 1);
-    drawWave(ctx,w,h,stress * .82,"rgba(99,230,255,.85)",1.7, anim.view === "btc" ? .35 : 1);
-    drawWave(ctx,w,h,stress * .65,"rgba(255,189,91,.65)",3.1, anim.score > 62 ? 1 : .45);
-    const x = (anim.t * 90) % w;
-    ctx.fillStyle = "rgba(70,224,122,.06)";
-    ctx.fillRect(x - 20, 0, 40, h);
-    ctx.strokeStyle = "rgba(70,224,122,.45)";
-    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+    const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    anim.t += reduceMotion ? 0.0015 : 0.006;
+    const stress = clamp(anim.score / 100, .08, 1);
+    const chart = chartPayload();
+    drawGrid(ctx,w,h,stress);
+    drawLegend(ctx,w,h);
+    drawSeries(ctx,w,h,chart.btc,"rgba(70,224,122,.94)","BTC tx",anim.view === "eth" ? .22 : 1);
+    drawSeries(ctx,w,h,chart.eth,"rgba(99,230,255,.88)","ETH tx",anim.view === "btc" ? .22 : 1);
+    drawSeries(ctx,w,h,chart.pressure,"rgba(255,189,91,.76)","fees/gas",anim.view === "combined" ? .68 : .42);
+    drawCursor(ctx,w,h,stress);
     requestAnimationFrame(draw);
   }
-  function drawWave(ctx,w,h,stress,color,phase,alpha){
+  function chartPayload(){
+    const data = latest && latest.data ? latest.data : SAMPLE;
+    const btc = (data.btc.tx || []).slice(-30);
+    const eth = (data.eth.tx || []).slice(-30);
+    return {
+      btc:btc,
+      eth:eth,
+      pressure:pressureSeries(data).slice(-30)
+    };
+  }
+  function pressureSeries(data){
+    const base = (data.eth.gasUsed && data.eth.gasUsed.length ? data.eth.gasUsed : data.eth.tx || []).slice(-30);
+    const feeBase = Math.max(10, Number(data.btc.feeFast || 0) * 1.4 + Number(data.eth.gasGwei || 0) * 2.1);
+    const baseAvg = avg(base) || 1;
+    const series = base.map((value, i) => {
+      const motion = Math.sin(i * .55) * .05 + Math.cos(i * .29) * .04;
+      const relative = ((Number(value) || baseAvg) / baseAvg - 1) * .22;
+      return feeBase * (1 + motion + relative);
+    });
+    while (series.length < 30) series.unshift(series[0] || feeBase);
+    return series;
+  }
+  function norm(values){
+    const clean = values.map(Number).filter((n) => Number.isFinite(n));
+    const min = Math.min.apply(null, clean);
+    const max = Math.max.apply(null, clean);
+    const span = Math.max(1, max - min);
+    return clean.map((value) => (value - min) / span);
+  }
+  function plotBox(w,h){
+    const left = Math.min(74, Math.max(52, w * .07));
+    const right = 28;
+    const top = 58;
+    const bottom = 42;
+    return { left:left, top:top, width:Math.max(120, w - left - right), height:Math.max(120, h - top - bottom) };
+  }
+  function drawGrid(ctx,w,h,stress){
+    const box = plotBox(w,h);
+    ctx.save();
+    ctx.fillStyle = "rgba(70,224,122," + (.018 + stress * .018).toFixed(3) + ")";
+    ctx.fillRect(box.left, box.top, box.width, box.height * .24);
+    ctx.strokeStyle = "rgba(70,224,122,.14)";
+    ctx.lineWidth = 1;
+    for (let i=0;i<=4;i++){
+      const y = box.top + box.height * i / 4;
+      ctx.beginPath(); ctx.moveTo(box.left,y); ctx.lineTo(box.left + box.width,y); ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(99,230,255,.09)";
+    for (let i=0;i<=6;i++){
+      const x = box.left + box.width * i / 6;
+      ctx.beginPath(); ctx.moveTo(x,box.top); ctx.lineTo(x,box.top + box.height); ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(223,234,223,.5)";
+    ctx.font = "11px JetBrains Mono, monospace";
+    ctx.fillText("HOT", 18, box.top + 5);
+    ctx.fillText("NORMAL", 18, box.top + box.height * .53);
+    ctx.fillText("QUIET", 18, box.top + box.height + 3);
+    ctx.fillStyle = "rgba(130,144,125,.54)";
+    ctx.textAlign = "right";
+    ctx.fillText("30d", box.left + box.width, box.top + box.height + 24);
+    ctx.textAlign = "left";
+    ctx.fillText("now", box.left, box.top + box.height + 24);
+    ctx.restore();
+  }
+  function drawLegend(ctx,w,h){
+    ctx.save();
+    const items = [
+      ["BTC tx","rgba(70,224,122,.94)"],
+      ["ETH tx","rgba(99,230,255,.88)"],
+      ["fees/gas","rgba(255,189,91,.76)"]
+    ];
+    let x = Math.min(350, Math.max(132, w * .13));
+    const y = 30;
+    ctx.font = "12px JetBrains Mono, monospace";
+    items.forEach((item) => {
+      ctx.fillStyle = item[1];
+      ctx.fillRect(x, y - 8, 18, 3);
+      ctx.fillStyle = "rgba(223,234,223,.72)";
+      ctx.fillText(item[0], x + 26, y - 4);
+      x += 108;
+    });
+    ctx.restore();
+  }
+  function drawSeries(ctx,w,h,values,color,label,alpha){
+    const normalized = norm(values);
+    if (!normalized.length) return;
+    const box = plotBox(w,h);
+    ctx.save();
     ctx.globalAlpha = alpha;
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.6;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 10;
+    const points = normalized.map((value, i) => {
+      const x = box.left + (normalized.length === 1 ? 0 : box.width * i / (normalized.length - 1));
+      const y = box.top + box.height - (value * box.height * .78 + box.height * .1);
+      return [x,y];
+    });
     ctx.beginPath();
-    for (let x=0;x<=w;x+=3){
-      const n = Math.sin(x * .025 + anim.t * 8 + phase) + Math.sin(x * .069 + anim.t * 3.2 + phase) * .35;
-      const spike = Math.sin(x * .013 - anim.t * 11 + phase) > .985 ? stress * h * .26 : 0;
-      const y = h * .5 + n * h * .12 * stress - spike;
-      if (x === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
+    points.forEach((point, i) => {
+      if (i === 0) ctx.moveTo(point[0], point[1]);
+      else {
+        const prev = points[i - 1];
+        const midX = (prev[0] + point[0]) / 2;
+        ctx.quadraticCurveTo(prev[0], prev[1], midX, (prev[1] + point[1]) / 2);
+      }
+    });
+    const last = points[points.length - 1];
+    ctx.lineTo(last[0], last[1]);
     ctx.stroke();
-    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = alpha * .12;
+    ctx.lineTo(last[0], box.top + box.height);
+    ctx.lineTo(points[0][0], box.top + box.height);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(last[0], last[1], 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(223,234,223,.65)";
+    ctx.font = "11px JetBrains Mono, monospace";
+    ctx.fillText(label, Math.min(last[0] + 10, w - 82), Math.max(box.top + 14, last[1] - 7));
+    ctx.restore();
+  }
+  function drawCursor(ctx,w,h,stress){
+    const box = plotBox(w,h);
+    const x = box.left + ((anim.t * 42) % box.width);
+    ctx.save();
+    ctx.strokeStyle = "rgba(70,224,122," + (.16 + stress * .12).toFixed(3) + ")";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x,box.top); ctx.lineTo(x,box.top + box.height); ctx.stroke();
+    const y = box.top + box.height * (.62 - stress * .2);
+    const glow = ctx.createRadialGradient(x,y,0,x,y,28);
+    glow.addColorStop(0,"rgba(70,224,122,.34)");
+    glow.addColorStop(1,"rgba(70,224,122,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(x,y,28,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(70,224,122,.82)";
+    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    ctx.restore();
   }
   bind();
   render(JSON.parse(JSON.stringify(SAMPLE)), [{ source:"Sample signal pack", status:"sample", detail:"boot fallback data active" }]);
