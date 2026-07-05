@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Shortage Watch - commodity, recall and pantry stress radar | NiftyTools Hub</title>
+<meta name="description" content="Track food supply pressure with commodity stress, FDA recall signals, pantry impact categories and calm preparedness guidance.">
+<meta property="og:title" content="Food Shortage Watch - NiftyTools Hub">
+<meta property="og:description" content="A calm food-supply signal dashboard for commodity pressure, recalls and pantry impact planning.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niftytoolshub.com/food-watch.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#070b07">
+<link rel="canonical" href="https://niftytoolshub.com/food-watch.html">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+:root{--bg:#050905;--panel:#0b110c;--txt:#dfeadf;--mut:#82907d;--dim:#a9b7a5;--line:#1b2b1e;--line2:#29402d;--grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--soil:#d0a85d;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);background:linear-gradient(rgba(70,224,122,.026) 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,radial-gradient(900px 560px at 78% -10%,rgba(99,230,255,.08),transparent 62%),radial-gradient(700px 460px at 4% 4%,rgba(255,189,91,.07),transparent 58%),var(--bg);-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.025) 50%) 0 0/100% 4px;mix-blend-mode:screen;opacity:.24}body:after{content:"";position:fixed;inset:0;z-index:21;pointer-events:none;background:radial-gradient(circle at 50% 45%,transparent 0,transparent 64%,rgba(0,0,0,.43) 100%);opacity:.78}
+a{color:var(--grn);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}.wrap{max-width:1280px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:8;border-bottom:1px solid var(--line);background:rgba(5,9,5,.86);backdrop-filter:blur(8px)}.nav{height:54px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{display:flex;align-items:center;gap:9px;color:var(--txt);font-weight:800;font-size:15px}.logo .mk{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}.logo .mk:before{content:"NT";font-size:11px}.navlinks{display:flex;gap:14px;color:var(--mut);font-size:12px}.navlinks a{color:var(--mut)}.navlinks a:hover{color:var(--grn)}
+main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 180px 180px auto auto auto;align-items:end;gap:8px;margin:0 0 12px;padding:8px;border:1px solid rgba(70,224,122,.2);border-radius:6px;background:linear-gradient(180deg,rgba(9,16,10,.82),rgba(3,8,4,.78));box-shadow:inset 0 0 18px rgba(70,224,122,.035)}label{display:block;margin-bottom:5px;color:var(--mut);font-size:11px;text-transform:uppercase}select{width:100%;height:36px;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:rgba(3,8,4,.9);color:var(--txt);font-size:13px;outline:0}.btn{height:36px;font:700 13px var(--mono);border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.7);color:var(--grn);padding:7px 12px;cursor:pointer;transition:.15s;white-space:nowrap}.btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38);text-decoration:none}.btn.ghost{border-color:var(--line);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
+.hero{position:relative;border:1px solid rgba(70,224,122,.26);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 42px rgba(70,224,122,.08),inset 0 0 28px rgba(70,224,122,.04);overflow:hidden}.hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,189,91,.045),transparent);transform:translateX(-118%);animation:scanline 7s linear infinite}@keyframes scanline{to{transform:translateX(118%)}}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;padding:18px}.kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}.title{font-size:clamp(30px,5vw,58px);font-weight:800;text-transform:uppercase;line-height:1.02;margin:4px 0 10px;text-shadow:0 0 20px rgba(70,224,122,.14)}.title span{color:var(--soil)}.lead{max-width:850px;color:var(--mut);font-size:14px;margin:0 0 14px}.source-row{display:flex;gap:8px;flex-wrap:wrap}.badge{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(5,9,5,.76)}.badge b{color:var(--grn)}
+.score-card{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:radial-gradient(circle at 72% 12%,rgba(255,189,91,.08),transparent 38%),rgba(3,8,4,.78);padding:14px;min-width:0}.score-card h2{margin:0 0 10px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.7px}.score-row{display:flex;align-items:flex-end;gap:10px}.score-row b{font-size:56px;line-height:.92;color:var(--amber)}.score-row span{margin-bottom:7px;color:var(--mut);font-size:12px;text-transform:uppercase}.meter{height:9px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .25s}.state-label{margin-top:9px;color:var(--dim);font-weight:800}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mini{border:1px solid rgba(223,234,223,.1);background:rgba(9,14,9,.8);border-radius:5px;padding:9px}.mini span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.mini b{display:block;margin-top:3px;color:var(--txt);font-size:17px}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:14px}.screen,.panel{position:relative;border:1px solid rgba(70,224,122,.24);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 34px rgba(70,224,122,.065),inset 0 0 24px rgba(70,224,122,.035);overflow:hidden}.screen{min-height:560px;padding:14px}.screen-head{position:relative;z-index:3;display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}.screen-title{font-size:clamp(22px,3.6vw,38px);font-weight:800;text-transform:uppercase;line-height:1.04}.screen-time{font-size:11px;color:var(--mut);text-align:right;line-height:1.6}.canvas-frame{position:absolute;inset:82px 14px 92px;border:1px solid rgba(70,224,122,.32);border-radius:7px;background:linear-gradient(rgba(70,224,122,.024) 1px,transparent 1px) 0 0/100% 42px,linear-gradient(90deg,rgba(70,224,122,.024) 1px,transparent 1px) 0 0/42px 100%,radial-gradient(circle at 50% 55%,rgba(255,189,91,.12),transparent 45%),radial-gradient(circle at 48% 50%,rgba(99,230,255,.07),transparent 43%),#030804;overflow:hidden;box-shadow:inset 0 0 44px rgba(70,224,122,.14),inset 0 -44px 80px rgba(0,0,0,.42),0 0 32px rgba(70,224,122,.1)}.canvas-frame:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.018) 50%,rgba(0,0,0,.018) 50%) 0 0/100% 3px,radial-gradient(ellipse at 50% 50%,transparent 0,transparent 55%,rgba(0,0,0,.62) 100%);opacity:.7}#foodCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}.visual-note{position:absolute;left:14px;top:14px;z-index:3;color:var(--mut);font-size:10px;line-height:1.2;border:1px solid rgba(70,224,122,.2);background:rgba(3,7,4,.68);border-radius:999px;padding:6px 9px;backdrop-filter:blur(3px)}.visual-note b{color:var(--grn)}.sweep-tag{position:absolute;right:14px;bottom:82px;z-index:3;border:1px solid rgba(70,224,122,.18);background:rgba(3,7,4,.7);border-radius:5px;color:var(--mut);font-size:10px;letter-spacing:1.6px;text-transform:uppercase;padding:7px 10px}.readouts{position:absolute;left:14px;right:14px;bottom:12px;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.readout{border:1px solid rgba(70,224,122,.2);background:rgba(1,8,4,.82);padding:8px 10px;border-radius:5px;min-width:0}.readout span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.readout b{display:block;margin-top:4px;color:var(--txt);font-size:clamp(16px,2.5vw,24px);line-height:1;word-break:break-word}.green{color:var(--grn)!important}.cyan{color:var(--cyan)!important}.amber{color:var(--amber)!important}.red{color:var(--red)!important}
+.side{display:grid;gap:12px}.panel{padding:12px}.panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 10px}.panel h2:before{content:"// ";color:var(--grn)}.stat-row{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.76);border-radius:5px;padding:10px;margin-bottom:8px}.stat-row span{display:block;color:var(--mut);font-size:10.5px;text-transform:uppercase}.stat-row b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35}.signal-list,.recall-list{display:grid;gap:7px;max-height:290px;overflow:auto;padding-right:2px}.signal-row,.recall-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:8px 9px;font-size:12px;color:var(--mut)}.signal-row b,.recall-row b{color:var(--txt)}.recall-row{grid-template-columns:72px 1fr}.recall-row small{display:block;color:var(--mut);font-size:10px}.pill{display:inline-flex;align-items:center;border:1px solid rgba(70,224,122,.22);border-radius:999px;padding:3px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}.pill.warn{border-color:rgba(255,189,91,.36);color:var(--amber)}.pill.bad{border-color:rgba(255,101,114,.36);color:var(--red)}.pill.cyan{border-color:rgba(99,230,255,.36);color:var(--cyan)}
+.commodity-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}.commodity-card{border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.94),rgba(4,8,4,.96));box-shadow:inset 0 0 24px rgba(70,224,122,.025);padding:14px}.commodity-card h2{font-size:16px;margin:0 0 4px;text-transform:uppercase}.commodity-card small{display:block;color:var(--mut);font-size:11px;margin-bottom:10px}.bar-row{display:grid;grid-template-columns:112px 1fr auto;gap:9px;align-items:center;color:var(--mut);font-size:12px;margin-top:8px}.bar{height:8px;border:1px solid var(--line2);border-radius:20px;background:#010502;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan))}.bar.warn i{background:linear-gradient(90deg,var(--amber),var(--red))}.impact-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}.report-box{border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:190px}.truth{font-size:11.5px;color:var(--mut);line-height:1.65}.truth b{color:var(--txt)}.link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.link-grid a{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;font-size:12px;color:var(--txt)}.link-grid a span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:1040px){.toolbar{grid-template-columns:1fr 1fr 1fr}.main-grid,.hero-grid,.impact-grid{grid-template-columns:1fr}.commodity-grid{grid-template-columns:1fr 1fr}.screen{min-height:620px}}@media(max-width:680px){.wrap{padding:0 12px}.toolbar,.commodity-grid{grid-template-columns:1fr}.btn{width:100%}.screen{min-height:760px}.canvas-frame{inset:116px 12px 218px}.screen-head{display:block}.screen-time{text-align:left;margin-top:8px}.readouts{grid-template-columns:1fr 1fr;left:12px;right:12px}.visual-note{display:none}.sweep-tag{bottom:158px;left:12px;right:12px;text-align:center}.bar-row{grid-template-columns:1fr}.link-grid{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Food Shortage Watch","url":"https://niftytoolshub.com/food-watch.html","applicationCategory":"UtilityApplication","operatingSystem":"Any","description":"A browser-based signal dashboard for food commodity pressure, recall signals and pantry impact planning.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <nav class="navlinks">
+      <a href="/">home</a>
+      <a href="/prepper-tools.html">prepper</a>
+      <a href="/signal-watch.html">early warning</a>
+      <a href="/library.html">library</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live recalls + sample prices</option><option value="sample">Sample signal mode</option></select></div>
+    <div><label for="region">Region</label><select id="region"><option value="north-america">North America</option><option value="us">United States</option><option value="canada">Canada</option><option value="global">Global</option></select></div>
+    <div><label for="category">Food group</label><select id="category"><option value="all">All food signals</option><option value="grains">Grains</option><option value="proteins">Proteins</option><option value="oils">Oils</option><option value="sweeteners">Sweeteners</option><option value="beverages">Beverages</option></select></div>
+    <button class="btn" type="button" onclick="refreshFoodWatch(true)">Refresh watch</button>
+    <button class="btn ghost" type="button" onclick="copyReport(this)">Copy report</button>
+    <button class="btn ghost" type="button" onclick="downloadSnapshot()">Download JSON</button>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">Pantry signal array</div>
+        <div class="title">Food Shortage <span>Watch</span></div>
+        <p class="lead">// Track food supply pressure without panic: commodity stress, recall volume, pantry impacts and calm substitution ideas for weird grocery weeks.</p>
+        <div class="source-row">
+          <span class="badge"><b>Recalls:</b> openFDA food enforcement API when available</span>
+          <span class="badge"><b>Commodities:</b> World Bank Pink Sheet context + local fallback signal</span>
+          <span class="badge"><b>Canada/US:</b> official recall links for manual follow-up</span>
+        </div>
+      </div>
+      <aside class="score-card">
+        <h2>Food supply pressure</h2>
+        <div class="score-row"><b id="supplyScore">0</b><span>/100</span></div>
+        <div class="meter"><i id="supplyBar"></i></div>
+        <div class="state-label" id="supplyState">booting pantry sensors</div>
+        <div class="mini-grid">
+          <div class="mini"><span>commodity stress</span><b id="miniCommodity">--</b></div>
+          <div class="mini"><span>recall signal</span><b id="miniRecall">--</b></div>
+          <div class="mini"><span>source mode</span><b id="miniMode">--</b></div>
+          <div class="mini"><span>updated</span><b id="miniUpdated">--</b></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="main-grid">
+    <div class="screen">
+      <div class="screen-head">
+        <div>
+          <div class="kicker">FOOD SUPPLY SEISMOGRAPH</div>
+          <div class="screen-title">Pantry pressure waveform</div>
+        </div>
+        <div class="screen-time">
+          <div id="updatedAt">sync pending</div>
+          <div id="sourceState">source probes booting</div>
+        </div>
+      </div>
+      <div class="canvas-frame">
+        <canvas id="foodCanvas"></canvas>
+        <div class="visual-note"><b>signal:</b> commodity stress + recall velocity + pantry impact</div>
+      </div>
+      <div class="sweep-tag" id="sweepTag">sweep 01 / pantry pressure watch</div>
+      <div class="readouts">
+        <div class="readout"><span>Top commodity</span><b id="topCommodity">--</b></div>
+        <div class="readout"><span>Recall count</span><b id="recallCount">--</b></div>
+        <div class="readout"><span>Pantry impact</span><b id="pantryImpact">--</b></div>
+        <div class="readout"><span>Calm action</span><b id="calmAction">--</b></div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="panel">
+        <h2>Current read</h2>
+        <div class="stat-row"><span>signal</span><b id="readText">Booting food watch sensors</b><div class="meter"><i id="readMeter"></i></div></div>
+        <div class="stat-row"><span>strongest signal</span><b id="strongestSignal">--</b></div>
+        <div class="stat-row"><span>source health</span><b id="sourceHealth">--</b></div>
+      </div>
+      <div class="panel">
+        <h2>Anomaly badges</h2>
+        <div class="signal-list" id="badges"></div>
+      </div>
+      <div class="panel">
+        <h2>Recent recall signal</h2>
+        <div class="recall-list" id="recallList"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="commodity-grid" id="commodityGrid"></section>
+
+  <section class="impact-grid">
+    <article class="panel">
+      <h2>Readable report</h2>
+      <div class="report-box" id="reportText"></div>
+    </article>
+    <article class="panel">
+      <h2>What this is</h2>
+      <p class="truth"><b>Food Shortage Watch</b> combines official recall signals with commodity pressure context and pantry impact heuristics. It is a planning dashboard, not an alerting authority.</p>
+      <p class="truth"><b>Live mode:</b> openFDA recall data may be limited, delayed or blocked. Commodity price data is shown as a local signal pack until a reliable browser-safe feed is added.</p>
+      <p class="truth"><b>Calm prep:</b> watch categories, diversify staples, rotate pantry stock and follow official recall pages before discarding food.</p>
+      <div class="link-grid">
+        <a href="https://open.fda.gov/apis/food/enforcement/" target="_blank" rel="noopener"><span>Official API</span>openFDA food enforcement</a>
+        <a href="https://www.fsis.usda.gov/recalls" target="_blank" rel="noopener"><span>Official recalls</span>USDA FSIS recalls</a>
+        <a href="https://recalls-rappels.canada.ca/en/food-recall-warning" target="_blank" rel="noopener"><span>Official recalls</span>Canada food recall warnings</a>
+        <a href="https://www.worldbank.org/en/research/commodity-markets" target="_blank" rel="noopener"><span>Commodity context</span>World Bank commodity markets</a>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer>2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</footer>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const pendingTracks = [];
+  let flushTimer = 0;
+  let latest = null;
+  let anim = { score: 42, t: 0 };
+  const SAMPLE = buildSample();
+
+  function track(name, props){
+    try{
+      const payload = Object.assign({ tool:"Food Shortage Watch" }, props || {});
+      if (window.ntTrack) window.ntTrack(name, payload);
+      else {
+        pendingTracks.push([name, payload]);
+        if (!flushTimer) {
+          flushTimer = setInterval(() => {
+            if (!window.ntTrack) return;
+            while (pendingTracks.length) {
+              const item = pendingTracks.shift();
+              window.ntTrack(item[0], item[1]);
+            }
+            clearInterval(flushTimer);
+            flushTimer = 0;
+          }, 250);
+        }
+      }
+    }catch(_err){}
+  }
+  function buildSample(){
+    return {
+      commodities:[
+        {id:"wheat",name:"Wheat",group:"grains",stress:58,trend:12,impact:["bread","flour","pasta","cereal"],sub:["rice","oats","cornmeal"]},
+        {id:"rice",name:"Rice",group:"grains",stress:42,trend:4,impact:["rice bags","frozen meals","instant cups"],sub:["potatoes","pasta","barley"]},
+        {id:"corn",name:"Corn",group:"grains",stress:51,trend:9,impact:["tortillas","cereal","animal feed","snacks"],sub:["rice","wheat flour"]},
+        {id:"soy",name:"Soy / oilseed",group:"oils",stress:63,trend:17,impact:["cooking oil","soy milk","animal feed","processed foods"],sub:["canola oil","olive oil","beans"]},
+        {id:"coffee",name:"Coffee",group:"beverages",stress:74,trend:22,impact:["coffee","ready drinks","cafes"],sub:["tea","chicory","smaller rotation"]},
+        {id:"cocoa",name:"Cocoa",group:"sweeteners",stress:81,trend:28,impact:["chocolate","baking chips","snacks"],sub:["carob","vanilla snacks"]},
+        {id:"sugar",name:"Sugar",group:"sweeteners",stress:49,trend:8,impact:["baking","jam","processed foods"],sub:["honey","maple","less sweet recipes"]},
+        {id:"protein",name:"Meat / poultry",group:"proteins",stress:55,trend:11,impact:["frozen meals","deli meat","pet food"],sub:["beans","eggs","canned fish"]}
+      ],
+      recalls:[
+        {date:"sample",classification:"Class I",reason:"Undeclared allergen",product:"Prepared meal product",status:"sample"},
+        {date:"sample",classification:"Class II",reason:"Potential contamination",product:"Packaged produce",status:"sample"},
+        {date:"sample",classification:"Class I",reason:"Listeria risk",product:"Ready-to-eat food",status:"sample"}
+      ]
+    };
+  }
+  function fmt(n){return Math.round(Number(n) || 0).toLocaleString();}
+  function pct(n){return (n > 0 ? "+" : "") + Number(n || 0).toFixed(1) + "%";}
+  function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+  function currentMode(){return $("mode").value;}
+  function currentRegion(){return $("region").value;}
+  function currentCategory(){return $("category").value;}
+  function stateFromScore(score){
+    if (score >= 82) return "pantry shock watch";
+    if (score >= 65) return "elevated supply pressure";
+    if (score >= 45) return "busy food signal";
+    if (score >= 25) return "normal watch";
+    return "quiet shelves";
+  }
+  function stateClass(score){
+    if (score >= 82) return "bad";
+    if (score >= 65) return "warn";
+    if (score >= 45) return "cyan";
+    return "";
+  }
+  function scoreBucket(score){return Math.floor(score / 10) * 10;}
+  function recentDate(daysAgo){
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - daysAgo);
+    return d.toISOString().slice(0,10).replace(/-/g,"");
+  }
+  function timeoutFetch(url, ms){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms || 8000);
+    return fetch(url, { signal:controller.signal, cache:"no-store" }).then((res) => {
+      clearTimeout(timer);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    }).catch((err) => {
+      clearTimeout(timer);
+      throw err;
+    });
+  }
+  async function probe(name, url, log){
+    try{
+      const data = await timeoutFetch(url, 8000);
+      log.push({source:name,status:"live",detail:"ok"});
+      return {ok:true,data};
+    }catch(err){
+      log.push({source:name,status:"blocked",detail:String(err && err.message || err).slice(0,80)});
+      track("food_watch_error", { mode:currentMode(), region:currentRegion(), source_status:"blocked", source:name });
+      return {ok:false,error:err};
+    }
+  }
+  async function getOpenFdaRecalls(log){
+    const start = recentDate(60);
+    const end = recentDate(0);
+    const url = "https://api.fda.gov/food/enforcement.json?search=report_date:[" + start + "+TO+" + end + "]&sort=report_date:desc&limit=25";
+    const res = await probe("openFDA food enforcement", url, log);
+    if (!res.ok || !res.data || !Array.isArray(res.data.results)) return null;
+    return res.data.results.map((item) => ({
+      date:item.report_date || item.recall_initiation_date || "",
+      classification:item.classification || "unclassified",
+      reason:item.reason_for_recall || "recall listed",
+      product:item.product_description || item.recalling_firm || "food product",
+      status:"live"
+    }));
+  }
+  function filteredCommodities(){
+    const category = currentCategory();
+    if (category === "all") return SAMPLE.commodities.slice();
+    return SAMPLE.commodities.filter((item) => item.group === category);
+  }
+  function compute(data){
+    const commodities = filteredCommodities();
+    const commodityAvg = commodities.reduce((sum,item) => sum + item.stress, 0) / Math.max(1, commodities.length);
+    const class1 = data.recalls.filter((r) => /class i/i.test(r.classification || "")).length;
+    const recallScore = clamp(data.recalls.length * 3 + class1 * 8, 0, 100);
+    const score = Math.round(clamp(commodityAvg * .68 + recallScore * .32, 0, 100));
+    const top = commodities.slice().sort((a,b) => b.stress - a.stress)[0] || SAMPLE.commodities[0];
+    return {score,commodityAvg,recallScore,top,class1};
+  }
+  function render(data, log){
+    const pulse = compute(data);
+    latest = {data,log,pulse,mode:currentMode(),region:currentRegion(),category:currentCategory(),updated:new Date().toISOString()};
+    anim.score = pulse.score;
+    $("supplyScore").textContent = pulse.score;
+    $("supplyBar").style.width = pulse.score + "%";
+    $("supplyState").textContent = stateFromScore(pulse.score);
+    $("miniCommodity").textContent = Math.round(pulse.commodityAvg);
+    $("miniRecall").textContent = data.recalls.length + " events";
+    $("miniMode").textContent = currentMode() === "live" ? "live/safe" : "sample";
+    $("miniUpdated").textContent = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+    $("updatedAt").textContent = "updated " + new Date().toLocaleTimeString();
+    $("sourceState").textContent = log.filter(x => x.status === "live").length + " live / " + log.filter(x => x.status === "blocked").length + " blocked";
+    $("topCommodity").textContent = pulse.top.name;
+    $("recallCount").textContent = data.recalls.length;
+    $("pantryImpact").textContent = pulse.top.impact[0] || "staples";
+    $("calmAction").textContent = pulse.score >= 65 ? "rotate + diversify" : "watch + rotate";
+    $("readText").textContent = stateFromScore(pulse.score);
+    $("readMeter").style.width = pulse.score + "%";
+    $("strongestSignal").textContent = pulse.top.name + " pressure / " + pct(pulse.top.trend);
+    $("sourceHealth").textContent = log.map(x => x.status).join(", ") || "sample";
+    $("sweepTag").textContent = "sweep " + String(Math.max(1, Math.round(pulse.score / 18))).padStart(2,"0") + " / pantry pressure watch";
+    renderBadges(pulse, data);
+    renderRecalls(data.recalls);
+    renderCommodities(filteredCommodities());
+    $("reportText").textContent = reportText();
+  }
+  function renderBadges(pulse, data){
+    const badges = [];
+    if (pulse.score >= 65) badges.push(["Supply pressure", "overall score elevated", "warn"]);
+    if (pulse.top.stress >= 75) badges.push([pulse.top.name + " spike", pct(pulse.top.trend) + " trend pressure", "bad"]);
+    if (pulse.class1) badges.push(["Recall load", pulse.class1 + " high classification recall signals", "warn"]);
+    if (data.recalls.length >= 10) badges.push(["Recall velocity", data.recalls.length + " recent FDA records", "cyan"]);
+    if (!badges.length) badges.push(["Normal watch", "no major pantry badge", ""]);
+    $("badges").innerHTML = badges.map((item) => '<div class="signal-row"><div><b>' + item[0] + '</b><br>' + item[1] + '</div><span class="pill ' + item[2] + '">' + (item[2] || "normal") + '</span></div>').join("");
+  }
+  function renderRecalls(recalls){
+    $("recallList").innerHTML = recalls.slice(0,8).map((item) => {
+      const cls = /class i/i.test(item.classification || "") ? "bad" : /class ii/i.test(item.classification || "") ? "warn" : "cyan";
+      return '<div class="recall-row"><span class="pill ' + cls + '">' + safe(item.classification || item.status || "recall") + '</span><div><b>' + safe(shorten(item.product,72)) + '</b><small>' + safe(shorten(item.reason,105)) + '</small></div></div>';
+    }).join("") || '<div class="recall-row"><span class="pill">none</span><div><b>No recent recall records loaded</b><small>Check official pages for authoritative alerts.</small></div></div>';
+  }
+  function renderCommodities(items){
+    $("commodityGrid").innerHTML = items.map((item) => {
+      const cls = stateClass(item.stress);
+      return '<article class="commodity-card"><h2>' + safe(item.name) + '</h2><small>' + safe(item.impact.join(", ")) + '</small><span class="pill ' + cls + '">' + stateFromScore(item.stress) + '</span><div class="bar-row"><span>stress</span><div class="bar ' + (item.stress >= 65 ? "warn" : "") + '"><i style="width:' + item.stress + '%"></i></div><b>' + item.stress + '</b></div><div class="bar-row"><span>trend</span><div class="bar ' + (item.trend >= 18 ? "warn" : "") + '"><i style="width:' + clamp(Math.abs(item.trend) * 3, 4, 100) + '%"></i></div><b>' + pct(item.trend) + '</b></div><div class="bar-row"><span>substitute</span><div class="bar"><i style="width:48%"></i></div><b>' + safe(item.sub[0]) + '</b></div></article>';
+    }).join("");
+  }
+  function safe(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g, (m) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+  function shorten(value, max){
+    value = String(value || "");
+    return value.length > max ? value.slice(0, max - 3) + "..." : value;
+  }
+  function reportText(){
+    if (!latest) return "Food Shortage Watch report loading.";
+    const p = latest.pulse;
+    return [
+      "Food Shortage Watch report",
+      "Mode: " + latest.mode + " / region: " + latest.region + " / category: " + latest.category,
+      "Supply pressure: " + p.score + "/100 - " + stateFromScore(p.score),
+      "Strongest commodity signal: " + p.top.name + " at " + p.top.stress + "/100, trend " + pct(p.top.trend),
+      "Pantry impacts: " + p.top.impact.join(", "),
+      "Substitution ideas: " + p.top.sub.join(", "),
+      "Recall signal: " + latest.data.recalls.length + " recent records, " + p.class1 + " high-classification signals.",
+      "Calm action: " + (p.score >= 65 ? "avoid single-point pantry dependence; rotate staples and choose substitutes." : "keep normal rotation, watch recalls and avoid overbuying."),
+      "Reminder: use official recall pages before discarding food."
+    ].join("\n");
+  }
+  async function refreshFoodWatch(manual){
+    const mode = currentMode();
+    const log = [{source:"World Bank commodity context",status:"sample",detail:"monthly data link; local commodity signal pack active"}];
+    const data = {commodities:SAMPLE.commodities.slice(),recalls:SAMPLE.recalls.slice()};
+    if (mode === "live") {
+      const recalls = await getOpenFdaRecalls(log).catch(() => null);
+      if (recalls && recalls.length) data.recalls = recalls;
+    } else {
+      log.push({source:"Sample recall pack",status:"sample",detail:"local fallback data active"});
+    }
+    render(data, log);
+    if (manual) track("food_watch_refresh", { mode, region:currentRegion(), category:currentCategory(), score_bucket:scoreBucket(latest.pulse.score), source_status:log.some(x => x.status === "live") ? "mixed" : "sample" });
+  }
+  async function copyReport(button){
+    const text = reportText();
+    try{
+      await navigator.clipboard.writeText(text);
+      const old = button.textContent;
+      button.textContent = "Copied";
+      setTimeout(() => { button.textContent = old; }, 1200);
+    }catch(_err){
+      window.prompt("Copy report", text);
+    }
+    track("food_watch_copy_report", { mode:currentMode(), region:currentRegion(), category:currentCategory(), score_bucket:latest ? scoreBucket(latest.pulse.score) : 0 });
+  }
+  window.copyReport = copyReport;
+  function downloadSnapshot(){
+    const snapshot = latest || {data:SAMPLE,pulse:compute(SAMPLE),mode:currentMode(),region:currentRegion(),category:currentCategory(),updated:new Date().toISOString()};
+    const safeData = {
+      created:new Date().toISOString(),
+      mode:snapshot.mode,
+      region:snapshot.region,
+      category:snapshot.category,
+      pulse:snapshot.pulse,
+      commodities:snapshot.data.commodities,
+      recalls:snapshot.data.recalls.slice(0,25).map((r) => ({date:r.date,classification:r.classification,reason:r.reason,product:r.product,status:r.status}))
+    };
+    const blob = new Blob([JSON.stringify(safeData,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "food-shortage-watch.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    track("food_watch_export", { mode:currentMode(), region:currentRegion(), category:currentCategory(), score_bucket:latest ? scoreBucket(latest.pulse.score) : 0, format:"json" });
+  }
+  window.downloadSnapshot = downloadSnapshot;
+  window.refreshFoodWatch = refreshFoodWatch;
+  function bind(){
+    ["mode","region","category"].forEach((id) => {
+      $(id).addEventListener("change", () => {
+        track("food_watch_filter_change", { mode:currentMode(), region:currentRegion(), category:currentCategory() });
+        refreshFoodWatch(true);
+      });
+    });
+  }
+  function draw(){
+    const canvas = $("foodCanvas");
+    if (!canvas) return;
+    const frame = canvas.parentElement;
+    const rect = frame.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+    }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const w = rect.width, h = rect.height;
+    ctx.clearRect(0,0,w,h);
+    anim.t += 0.016;
+    const stress = clamp(anim.score / 100, .08, 1);
+    ctx.strokeStyle = "rgba(70,224,122,.15)";
+    ctx.lineWidth = 1;
+    for (let i=1;i<5;i++){const y=h*i/5;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    for (let i=1;i<8;i++){const x=w*i/8;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    drawWave(ctx,w,h,stress,"rgba(255,189,91,.9)",0,1);
+    drawWave(ctx,w,h,stress*.75,"rgba(70,224,122,.82)",1.8,.9);
+    drawGrain(ctx,w,h,stress);
+    const x = (anim.t * 82) % w;
+    ctx.fillStyle = "rgba(255,189,91,.055)";
+    ctx.fillRect(x - 22,0,44,h);
+    ctx.strokeStyle = "rgba(255,189,91,.42)";
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();
+    requestAnimationFrame(draw);
+  }
+  function drawWave(ctx,w,h,stress,color,phase,alpha){
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x=0;x<=w;x+=3){
+      const n = Math.sin(x*.023 + anim.t*7 + phase) + Math.sin(x*.061 + anim.t*2.7 + phase)*.35;
+      const spike = Math.sin(x*.017 - anim.t*9 + phase) > .988 ? stress*h*.22 : 0;
+      const y = h*.52 + n*h*.12*stress - spike;
+      if (x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  function drawGrain(ctx,w,h,stress){
+    ctx.fillStyle = "rgba(70,224,122,.45)";
+    for (let i=0;i<38;i++){
+      const x = (Math.sin(i*12.989 + anim.t)*43758.5453 % 1 + 1) % 1 * w;
+      const y = (Math.sin(i*78.233 + anim.t*.7)*23421.631 % 1 + 1) % 1 * h;
+      const r = 1.5 + stress*2;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    }
+  }
+  bind();
+  render({commodities:SAMPLE.commodities.slice(),recalls:SAMPLE.recalls.slice()}, [{source:"Sample signal pack",status:"sample",detail:"boot fallback data active"}]);
+  refreshFoodWatch(false);
+  requestAnimationFrame(draw);
+  track("food_watch_open", { mode:currentMode(), region:currentRegion(), category:currentCategory() });
+})();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>
