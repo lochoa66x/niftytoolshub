@@ -57,7 +57,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
         <div class="hero-actions">
           <button class="btn" type="button" onclick="copyReport(this)">Copy readiness report</button>
           <button class="btn ghost" type="button" onclick="downloadFullPlan()">Export JSON</button>
-          <button class="btn ghost" type="button" onclick="window.print()">Print</button>
+          <button class="btn ghost" type="button" onclick="printPlan()">Print</button>
           <button class="btn ghost" type="button" onclick="resetAll()">Reset</button>
         </div>
         <p class="footnote">Planning helper only. Follow official local emergency guidance, product labels and medical advice for real incidents.</p>
@@ -290,6 +290,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
   let calcTimer = 0;
   const pendingTracks = [];
   let flushTimer = 0;
+  let lastTrackedScoreLevel = "";
 
   function track(name, props){
     try{
@@ -315,6 +316,18 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
   }
   function save(){
     try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(_err){}
+  }
+  function scoreLevel(score){
+    if (score >= 80) return "strong";
+    if (score >= 60) return "ready";
+    if (score >= 35) return "decent";
+    return "getting_started";
+  }
+  function trackScoreLevel(score, label){
+    const level = scoreLevel(score);
+    if (level === lastTrackedScoreLevel) return;
+    lastTrackedScoreLevel = level;
+    track("prepper_score_level", { score_level:level, score_bucket:Math.floor(score / 10) * 10, label:label });
   }
   function load(){
     try{
@@ -458,6 +471,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
         save();
         renderChecklist();
         updateAll(false);
+        track("tool_action", { action:"prepper_checklist_toggle", category:state.activeCat, checked:input.checked });
       });
     });
     const done = checklist.filter((item) => state.checked[item.id]).length;
@@ -487,6 +501,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
   function addInventory(){
     const name = $("itemName").value.trim();
     if (!name) return;
+    const hasValue = numberValue("itemValue", 0) > 0;
     state.inventory.unshift({
       name,
       room: $("itemRoom").value.trim() || "Unsorted",
@@ -497,7 +512,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
     save();
     renderInventory();
     updateAll(false);
-    track("tool_action", { action:"prepper_inventory_add", item:name });
+    track("prepper_inventory_add", { inventory_count:state.inventory.length, has_value:hasValue });
   }
   window.addInventory = addInventory;
   function removeInventory(index){
@@ -570,6 +585,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
     $("scoreLabel").textContent = data.label;
     $("reportText").textContent = reportText();
     attentionItems(data);
+    trackScoreLevel(data.score, data.label);
   }
   function updateAll(shouldTrack){
     syncProfile();
@@ -590,6 +606,7 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
   function setTab(tab){
     document.querySelectorAll(".tab").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
     document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.toggle("active", panel.id === "tab-" + tab));
+    track("prepper_tab_open", { tab:tab });
   }
   function csvCell(value){
     return '"' + String(value == null ? "" : value).replace(/"/g, '""') + '"';
@@ -625,9 +642,9 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
       return cat.toUpperCase() + "\n" + lines.join("\n");
     }).join("\n\n");
   }
-  window.copyChecklist = (button) => copyText(checklistText(), button, "checklist_copy", { checklist:"go_bag" });
+  window.copyChecklist = (button) => copyText(checklistText(), button, "prepper_checklist_copy", { checklist:"go_bag" });
   window.downloadChecklist = () => downloadText("nifty-prepper-go-bag-checklist.txt", checklistText(), "text/plain", { export:"checklist" });
-  window.copyFamilyPlan = (button) => copyText(familyText(), button, "tool_action", { action:"prepper_family_copy" });
+  window.copyFamilyPlan = (button) => copyText(familyText(), button, "prepper_family_plan_copy", { target:"family_plan" });
   window.downloadFamilyPlan = () => downloadText("nifty-prepper-family-plan.txt", familyText(), "text/plain", { export:"family_plan" });
   window.copyReport = (button) => copyText(reportText(), button, "copy", { target:"prepper_report" });
   window.downloadInventoryCsv = () => downloadText("nifty-prepper-inventory.csv", inventoryCsv(), "text/csv", { export:"inventory_csv" });
@@ -635,11 +652,16 @@ main{padding:22px 0 36px}.shell{border:1px solid rgba(70,224,122,.22);border-rad
   window.downloadFullPlan = () => downloadText("nifty-prepper-plan.json", JSON.stringify({ created:new Date().toISOString(), state, report:reportText() }, null, 2), "application/json", { export:"full_plan" });
   window.resetAll = () => {
     if (!confirm("Reset the local Prepper Toolkit data in this browser?")) return;
+    track("prepper_reset", { scope:"local_browser" });
     try{ localStorage.removeItem(STORE); }catch(_err){}
     state = clone(defaults);
     setFormValues();
     renderChecklist();
     updateAll(false);
+  };
+  window.printPlan = () => {
+    track("prepper_print", { target:"prepper_plan" });
+    window.print();
   };
   function bind(){
     document.querySelectorAll(".tab").forEach((button) => button.addEventListener("click", () => setTab(button.dataset.tab)));

@@ -382,6 +382,7 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
+  "Prepper Toolkit Pro",
   "Early Warning Radar","Aurora Watch","Meme Early Warning","Outage Radar","Cyber Threat Radar","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro","Math Lab Pro",
   "Unit Converter Pro","World Clock / Time Zone Studio","Device Test Suite","File Organizer Toolkit","Color Palette Studio","QR Code Toolkit Pro",
   "Receipt Generator","Developer Toolkit","Text & Writing Toolkit Pro","Tarot Card Reader","Birth Chart / Zodiac Toolkit","Random Toolkit Pro",
@@ -442,8 +443,47 @@ function writeEvents(events){
 function escapeHTML(value){
   return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
 }
+const eventLabels = {
+  "prepper_open":"Prepper opened",
+  "prepper_calculate":"Prepper calculation",
+  "prepper_tab_open":"Prepper tab opened",
+  "prepper_score_level":"Prepper readiness score",
+  "prepper_export":"Prepper export",
+  "prepper_inventory_add":"Prepper inventory add",
+  "prepper_family_plan_copy":"Prepper family plan copy",
+  "prepper_checklist_copy":"Prepper checklist copy",
+  "prepper_print":"Prepper print",
+  "prepper_reset":"Prepper reset"
+};
 function label(value){
-  return escapeHTML(String(value || "unknown").replace(/[-_]/g," ").replace(/\b\w/g,function(ch){return ch.toUpperCase();}));
+  const raw = String(value || "unknown");
+  return escapeHTML(eventLabels[raw] || raw.replace(/[-_]/g," ").replace(/\b\w/g,function(ch){return ch.toUpperCase();}));
+}
+function eventKind(event){
+  const name = event && event.event || "";
+  if(name === "prepper_open" || name === "tool_open" || name === "tool_page_view") return "open";
+  if(/prepper_checklist_copy|prepper_family_plan_copy/.test(name) || name === "copy") return "copy";
+  if(/prepper_export|prepper_print/.test(name) || /download|share/.test(name)) return "export";
+  if(/prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|tool_action/.test(name)) return "action";
+  if(/slow|large/.test(name)) return "perf";
+  if(name === "error") return "error";
+  if(name === "search") return "search";
+  return name;
+}
+function isOpenEvent(event){return eventKind(event) === "open";}
+function isActionEvent(event){return /^(action|copy|export)$/.test(eventKind(event));}
+function friendlyAction(event){
+  const name = event.event || "";
+  if(name === "prepper_calculate") return "Prepper: calculate supplies";
+  if(name === "prepper_tab_open") return "Prepper: opened " + (event.tab || "tab");
+  if(name === "prepper_score_level") return "Prepper: score " + (event.score_level || event.label || "level");
+  if(name === "prepper_export") return "Prepper: export " + (event.export || event.format || "file");
+  if(name === "prepper_inventory_add") return "Prepper: inventory add";
+  if(name === "prepper_family_plan_copy") return "Prepper: copy family plan";
+  if(name === "prepper_checklist_copy") return "Prepper: copy checklist";
+  if(name === "prepper_print") return "Prepper: print plan";
+  if(name === "prepper_reset") return "Prepper: reset local data";
+  return event.action || label(name);
 }
 function since(days){
   const cutoff = Date.now() - days * DAY;
@@ -509,8 +549,8 @@ function metricWindow(name, events){
   return {
     name:name,
     events:events.length,
-    opens:countWhere(events,function(e){return e.event === "tool_open" || e.event === "tool_page_view";}),
-    actions:countWhere(events,function(e){return /tool_action|download|copy|share/.test(e.event || "");}),
+    opens:countWhere(events,isOpenEvent),
+    actions:countWhere(events,isActionEvent),
     searches:countWhere(events,function(e){return e.event === "search";}),
     errors:countWhere(events,function(e){return e.event === "error";}),
     issues:issueCount
@@ -538,25 +578,28 @@ function renderAttention(events){
   const byTool = {};
   const enoughData = events.length >= 50;
   if(enoughData){
-    catalog.forEach(function(tool){byTool[tool] = {tool:tool,opens:0,actions:0,errors:0,slow:0};});
+    catalog.forEach(function(tool){byTool[tool] = {tool:tool,opens:0,actions:0,errors:0,slow:0,prepperLow:0};});
   }
   events.forEach(function(e){
     const match = topTool(e) || "Unknown";
-    byTool[match] = byTool[match] || {tool:match,opens:0,actions:0,errors:0,slow:0};
-    if(e.event === "tool_open" || e.event === "tool_page_view") byTool[match].opens++;
-    if(/tool_action|download|copy|share/.test(e.event || "")) byTool[match].actions++;
+    byTool[match] = byTool[match] || {tool:match,opens:0,actions:0,errors:0,slow:0,prepperLow:0};
+    if(isOpenEvent(e)) byTool[match].opens++;
+    if(isActionEvent(e)) byTool[match].actions++;
     if(e.event === "error") byTool[match].errors++;
     if(/slow|large/.test(e.event || "")) byTool[match].slow++;
+    if(e.event === "prepper_score_level" && /getting_started|decent/.test(e.score_level || "")) byTool[match].prepperLow++;
   });
   let rows = Object.values(byTool).map(function(item){
     const missingActions = enoughData && item.opens > 5 && item.actions === 0 ? 12 : 0;
     const lowOpen = enoughData && item.opens === 0 ? 8 : 0;
-    const score = item.errors * 35 + item.slow * 18 + missingActions + lowOpen;
+    const prepperLow = (item.prepperLow || 0) * 10;
+    const score = item.errors * 35 + item.slow * 18 + missingActions + lowOpen + prepperLow;
     const reasons = [];
     if(item.errors) reasons.push(item.errors + " errors");
     if(item.slow) reasons.push(item.slow + " perf signals");
     if(missingActions) reasons.push("opens but no actions");
     if(lowOpen) reasons.push("no opens after enough traffic");
+    if(prepperLow) reasons.push("low prepper readiness score");
     if(!enoughData && !score) reasons.push("warming up");
     return Object.assign(item,{score:score,reason:reasons.join(", ") || "healthy"});
   }).sort(function(a,b){return b.score - a.score || a.opens - b.opens;}).slice(0,12);
@@ -585,14 +628,14 @@ function refreshDashboard(){
   const sessions = new Set(week.map(function(e){return e.session || "";})).size;
   $("eventCountBadge").textContent = events.length + " events";
   $("todayEvents").textContent = day.length;
-  $("todayMeta").textContent = countWhere(day,function(e){return e.event === "tool_open" || e.event === "tool_page_view";}) + " tool opens";
+  $("todayMeta").textContent = countWhere(day,isOpenEvent) + " tool opens";
   $("weekEvents").textContent = week.length;
   $("weekMeta").textContent = sessions + " sessions";
   $("monthEvents").textContent = month.length;
   $("monthMeta").textContent = countWhere(month,function(e){return e.event === "search";}) + " searches";
   renderSummary();
-  renderBars("toolBars", groupBy(month.filter(function(e){return e.event === "tool_open" || e.event === "tool_page_view";}), topTool), "No tool open events yet.", "");
-  renderBars("actionBars", groupBy(month.filter(function(e){return /tool_action|download|copy|share/.test(e.event || "");}), function(e){return e.action || e.event;}), "No tool action events yet.", "");
+  renderBars("toolBars", groupBy(month.filter(isOpenEvent), topTool), "No tool open events yet.", "");
+  renderBars("actionBars", groupBy(month.filter(isActionEvent), friendlyAction), "No tool action events yet.", "");
   renderBars("searchBars", groupBy(month.filter(function(e){return e.event === "search";}), function(e){return e.term;}), "No search events yet.", "warn");
   renderBars("referrerBars", groupBy(month, function(e){return e.referrer || e.source || "direct / local";}), "No referrer events in local storage.", "");
   renderIssues(month);
@@ -602,7 +645,7 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Library","Prepper Toolkit Pro","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio","Prepper Toolkit Pro"];
+  const tools = ["Prepper Toolkit Pro","Library","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];
@@ -614,6 +657,10 @@ function loadDemoData(){
   events.push({event:"error",type:"fetch_failed",message:"NOAA feed timeout",page:"aurora-watch",tool:"Aurora Watch",session:"demo-err",ts:new Date(now - 7200000).toISOString()});
   events.push({event:"slow_page",load_ms:4100,dom_ms:1900,page:"pdf-tools",tool:"PDF Toolkit",session:"demo-slow",ts:new Date(now - 10800000).toISOString()});
   events.push({event:"large_page",mb:2.4,page:"tarot-tools",tool:"Tarot Card Reader",session:"demo-large",ts:new Date(now - 16600000).toISOString()});
+  events.push({event:"prepper_open",tool:"Prepper Toolkit Pro",page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3600000).toISOString()});
+  events.push({event:"prepper_calculate",tool:"Prepper Toolkit Pro",people:4,days:7,page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3300000).toISOString()});
+  events.push({event:"prepper_score_level",tool:"Prepper Toolkit Pro",score_level:"decent",score_bucket:40,page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3100000).toISOString()});
+  events.push({event:"prepper_export",tool:"Prepper Toolkit Pro",export:"checklist",page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 2900000).toISOString()});
   writeEvents(events);
   refreshDashboard();
 }

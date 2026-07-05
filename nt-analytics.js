@@ -109,13 +109,20 @@
     return term;
   }
 
+  function isSensitivePropKey(key) {
+    var lower = String(key || "").toLowerCase();
+    var aggregateAllowList = /^(action|tool|target|tab|status|scope|export|format|checklist|category|checked|people|days|score_level|score_bucket|label|has_value|inventory_count|family_fields)$/;
+    var sensitive = /(name|phone|address|contact|note|serial|item|inventory|family|home|meet|med|pet|plan_text|free_text)/;
+    return sensitive.test(lower) && !aggregateAllowList.test(lower);
+  }
+
   function sanitizeProps(props) {
     var out = {};
     props = props || {};
     Object.keys(props).slice(0, 18).forEach(function (key) {
       var value = props[key];
       var cleanKey = safeText(key, 32).replace(/[^a-zA-Z0-9_:-]/g, "_");
-      if (!cleanKey) return;
+      if (!cleanKey || isSensitivePropKey(cleanKey)) return;
       if (typeof value === "number" || typeof value === "boolean") out[cleanKey] = value;
       else out[cleanKey] = safeText(value, 120);
     });
@@ -185,7 +192,7 @@
     if (/download|export|save file/.test(text)) return "download";
     if (/copy|clipboard/.test(text)) return "copy";
     if (/share/.test(text)) return "share";
-    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render/.test(text)) return "tool_action";
+    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness/.test(text)) return "tool_action";
     return "";
   }
 
