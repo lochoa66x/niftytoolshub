@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Positioning Radar - long short crowding watch | NiftyTools Hub</title>
+<meta name="description" content="Track long versus short positioning for crypto, equities, metals, energy and soft commodities with a calm market positioning radar.">
+<meta property="og:title" content="Market Positioning Radar - NiftyTools Hub">
+<meta property="og:description" content="A readable long/short positioning board for crypto, index, metals, energy and commodity markets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niftytoolshub.com/positioning-radar.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#070b07">
+<link rel="canonical" href="https://niftytoolshub.com/positioning-radar.html">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+:root{--bg:#050905;--panel:#0b110c;--txt:#dfeadf;--mut:#87937f;--dim:#aab7a5;--line:#1b2b1e;--line2:#29402d;--grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--violet:#a98cff;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);background:linear-gradient(rgba(70,224,122,.022) 1px,transparent 1px) 0 0/100% 34px,linear-gradient(90deg,rgba(70,224,122,.018) 1px,transparent 1px) 0 0/34px 100%,radial-gradient(800px 520px at 86% -8%,rgba(99,230,255,.08),transparent 62%),radial-gradient(720px 440px at 10% 2%,rgba(255,189,91,.06),transparent 60%),var(--bg);-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(rgba(255,255,255,.018) 50%,rgba(0,0,0,.018) 50%) 0 0/100% 5px;mix-blend-mode:screen;opacity:.12}body:after{content:"";position:fixed;inset:0;z-index:21;pointer-events:none;background:radial-gradient(circle at 50% 42%,transparent 0,transparent 68%,rgba(0,0,0,.45) 100%);opacity:.64}
+a{color:var(--grn);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}.wrap{max-width:1280px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:8;border-bottom:1px solid var(--line);background:rgba(5,9,5,.88);backdrop-filter:blur(8px)}.nav{height:54px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{display:flex;align-items:center;gap:9px;color:var(--txt);font-weight:800;font-size:15px}.logo .mk{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.2)}.logo .mk:before{content:"NT";font-size:11px}.navlinks{display:flex;gap:14px;color:var(--mut);font-size:12px}.navlinks a{color:var(--mut)}.navlinks a:hover{color:var(--grn)}
+main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px 1fr auto auto auto;align-items:end;gap:8px;margin:0 0 12px;padding:8px;border:1px solid rgba(70,224,122,.2);border-radius:6px;background:linear-gradient(180deg,rgba(9,16,10,.82),rgba(3,8,4,.78));box-shadow:inset 0 0 18px rgba(70,224,122,.035)}label{display:block;margin-bottom:5px;color:var(--mut);font-size:11px;text-transform:uppercase}select,input{width:100%;height:36px;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:rgba(3,8,4,.9);color:var(--txt);font-size:13px;outline:0}.btn{height:36px;font:700 13px var(--mono);border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.72);color:var(--grn);padding:7px 12px;cursor:pointer;transition:.15s;white-space:nowrap}.btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.34);text-decoration:none}.btn.ghost{border-color:var(--line);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
+.hero{position:relative;border:1px solid rgba(70,224,122,.26);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 42px rgba(70,224,122,.08),inset 0 0 28px rgba(70,224,122,.04);overflow:hidden}.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;padding:18px}.kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}.title{font-size:clamp(30px,5vw,58px);font-weight:800;text-transform:uppercase;line-height:1.02;margin:4px 0 10px;text-shadow:0 0 20px rgba(70,224,122,.12)}.title span{color:var(--amber)}.lead{max-width:860px;color:var(--mut);font-size:14px;margin:0 0 14px}.source-row{display:flex;gap:8px;flex-wrap:wrap}.badge{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(5,9,5,.76)}.badge b{color:var(--grn)}
+.score-card{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:radial-gradient(circle at 72% 12%,rgba(255,189,91,.08),transparent 38%),rgba(3,8,4,.78);padding:14px;min-width:0}.score-card h2{margin:0 0 10px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.7px}.score-row{display:flex;align-items:flex-end;gap:10px}.score-row b{font-size:56px;line-height:.92;color:var(--amber)}.score-row span{margin-bottom:7px;color:var(--mut);font-size:12px;text-transform:uppercase}.meter{height:9px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .25s}.state-label{margin-top:9px;color:var(--dim);font-weight:800}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mini{border:1px solid rgba(223,234,223,.1);background:rgba(9,14,9,.8);border-radius:5px;padding:9px}.mini span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.mini b{display:block;margin-top:3px;color:var(--txt);font-size:17px}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:14px}.panel{position:relative;border:1px solid rgba(70,224,122,.24);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 34px rgba(70,224,122,.06),inset 0 0 24px rgba(70,224,122,.03);overflow:hidden}.board{padding:14px}.board-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:12px}.board-head h2{font-size:clamp(22px,3vw,36px);line-height:1.05;margin:0;text-transform:uppercase}.board-head p{margin:4px 0 0;color:var(--mut);font-size:12px}.legend{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--mut);font-size:11px}.dot{display:inline-block;width:8px;height:8px;border-radius:99px;background:var(--grn);box-shadow:0 0 10px currentColor}.dot.short{background:var(--red)}.dot.net{background:var(--amber)}
+.position-table{display:grid;gap:8px}.table-head,.market-row{display:grid;grid-template-columns:1.1fr 86px minmax(190px,1fr) 88px 82px;gap:10px;align-items:center}.table-head{padding:0 10px 4px;color:var(--mut);font-size:10px;text-transform:uppercase}.market-row{min-height:70px;border:1px solid rgba(223,234,223,.1);border-radius:6px;background:linear-gradient(180deg,rgba(6,12,7,.86),rgba(2,7,4,.9));padding:10px;transition:.15s}.market-row:hover{border-color:rgba(70,224,122,.36);box-shadow:0 0 22px rgba(70,224,122,.08)}.market-title b{display:block;color:var(--txt);font-size:14px}.market-title small{display:block;color:var(--mut);font-size:10.5px}.source-pill,.net-pill{display:inline-flex;justify-content:center;align-items:center;border:1px solid rgba(70,224,122,.22);border-radius:999px;padding:4px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}.source-pill.sample{border-color:rgba(255,189,91,.34);color:var(--amber)}.source-pill.blocked,.net-pill.short{border-color:rgba(255,101,114,.34);color:var(--red)}.net-pill.long{border-color:rgba(70,224,122,.34);color:var(--grn)}.net-pill.neutral{border-color:rgba(99,230,255,.34);color:var(--cyan)}
+.balance{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center}.balance span{color:var(--mut);font-size:11px;text-align:center}.rail{height:22px;position:relative;border:1px solid rgba(223,234,223,.11);border-radius:999px;overflow:hidden;background:#010502}.rail .long{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,rgba(70,224,122,.86),rgba(99,230,255,.55));width:50%}.rail .short{position:absolute;inset:0 0 0 auto;background:linear-gradient(90deg,rgba(255,189,91,.52),rgba(255,101,114,.84));width:50%}.rail:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(223,234,223,.42)}.score-num{font-size:20px;font-weight:800;color:var(--amber)}.pctile{font-size:12px;color:var(--dim)}.side{display:grid;gap:12px}.panel-pad{padding:12px}.panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 10px}.panel h2:before{content:"// ";color:var(--grn)}.stat-row{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.76);border-radius:5px;padding:10px;margin-bottom:8px}.stat-row span{display:block;color:var(--mut);font-size:10.5px;text-transform:uppercase}.stat-row b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35}.list{display:grid;gap:7px;max-height:300px;overflow:auto;padding-right:2px}.signal-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:8px 9px;font-size:12px;color:var(--mut)}.signal-row b{color:var(--txt)}.heat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.heat-card{border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.94),rgba(4,8,4,.96));padding:12px}.heat-card span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.heat-card b{display:block;font-size:20px;margin-top:3px}.heat-card small{display:block;color:var(--mut);font-size:11px;margin-top:6px}.report-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}.report-box{border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:180px}.truth{font-size:11.5px;color:var(--mut);line-height:1.65}.truth b{color:var(--txt)}.link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.link-grid a{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;font-size:12px;color:var(--txt)}.link-grid a span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:1080px){.toolbar{grid-template-columns:1fr 1fr 1fr}.main-grid,.hero-grid,.report-grid{grid-template-columns:1fr}.heat-grid{grid-template-columns:1fr 1fr}.table-head{display:none}.market-row{grid-template-columns:1fr}.balance{grid-template-columns:44px 1fr 44px}}@media(max-width:640px){.wrap{padding:0 12px}.toolbar,.heat-grid{grid-template-columns:1fr}.btn{width:100%}.board-head{display:block}.legend{margin-top:10px}.link-grid{grid-template-columns:1fr}.title{font-size:34px}.score-row b{font-size:48px}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Positioning Radar","url":"https://niftytoolshub.com/positioning-radar.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A browser-based dashboard for long versus short positioning, CFTC weekly positioning context, ETF short references and crypto long short ratios.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <nav class="navlinks">
+      <a href="/">home</a>
+      <a href="/crypto-pulse.html">crypto pulse</a>
+      <a href="/food-watch.html">food watch</a>
+      <a href="/library.html">library</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Sample board</option></select></div>
+    <div><label for="group">Market group</label><select id="group"><option value="all">All markets</option><option value="equities">Equities</option><option value="crypto">Crypto</option><option value="metals">Metals</option><option value="energy">Energy</option><option value="softs">Softs</option><option value="grains">Grains</option></select></div>
+    <div><label for="searchMarket">Find market</label><input id="searchMarket" type="search" placeholder="spy, bitcoin, gold, oil, coffee"></div>
+    <button class="btn" type="button" onclick="refreshPositioning(true)">Refresh radar</button>
+    <button class="btn ghost" type="button" onclick="copyReport(this)">Copy report</button>
+    <button class="btn ghost" type="button" onclick="downloadSnapshot()">Download JSON</button>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker">Long / short positioning array</div>
+        <div class="title">Market <span>Positioning Radar</span></div>
+        <p class="lead">// Compare long versus short pressure across SPY/QQQ style equity proxies, Bitcoin/Ethereum, gold, silver, oil, coffee and other commodity lanes. Built for crowding awareness, not trading advice.</p>
+        <div class="source-row">
+          <span class="badge"><b>CFTC:</b> weekly futures positioning context</span>
+          <span class="badge"><b>ETFs:</b> FINRA/Nasdaq short reference links</span>
+          <span class="badge"><b>Crypto:</b> Binance long/short ratio where browser access works</span>
+        </div>
+      </div>
+      <aside class="score-card">
+        <h2>Crowding pressure</h2>
+        <div class="score-row"><b id="crowdScore">0</b><span>/100</span></div>
+        <div class="meter"><i id="crowdBar"></i></div>
+        <div class="state-label" id="crowdState">booting positioning board</div>
+        <div class="mini-grid">
+          <div class="mini"><span>most long</span><b id="miniLong">--</b></div>
+          <div class="mini"><span>most short</span><b id="miniShort">--</b></div>
+          <div class="mini"><span>live sources</span><b id="miniLive">--</b></div>
+          <div class="mini"><span>updated</span><b id="miniUpdated">--</b></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="main-grid">
+    <div class="panel board">
+      <div class="board-head">
+        <div>
+          <div class="kicker">POSITIONING BOARD</div>
+          <h2>Long vs short balance</h2>
+          <p>Bars show directional positioning pressure by market lane. Green is long, red is short, amber is crowding score.</p>
+        </div>
+        <div class="legend"><span><i class="dot"></i> long</span><span><i class="dot short"></i> short</span><span><i class="dot net"></i> crowded</span></div>
+      </div>
+      <div class="position-table">
+        <div class="table-head"><span>Market</span><span>Source</span><span>Long / short</span><span>Net</span><span>Crowd</span></div>
+        <div id="positionRows"></div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="panel panel-pad">
+        <h2>Current read</h2>
+        <div class="stat-row"><span>board signal</span><b id="readText">Booting market positioning radar</b><div class="meter"><i id="readMeter"></i></div></div>
+        <div class="stat-row"><span>strongest long crowd</span><b id="longSignal">--</b></div>
+        <div class="stat-row"><span>strongest short crowd</span><b id="shortSignal">--</b></div>
+      </div>
+      <div class="panel panel-pad">
+        <h2>Source health</h2>
+        <div class="list" id="sourceLog"></div>
+      </div>
+      <div class="panel panel-pad">
+        <h2>Alerts</h2>
+        <div class="list" id="alertList"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="heat-grid" id="heatGrid"></section>
+
+  <section class="report-grid">
+    <article class="panel panel-pad">
+      <h2>Readable report</h2>
+      <div class="report-box" id="reportText"></div>
+    </article>
+    <article class="panel panel-pad">
+      <h2>What this is</h2>
+      <p class="truth"><b>Market Positioning Radar</b> mixes different public positioning signals. CFTC futures data is weekly. ETF short interest is delayed. Crypto long/short ratios can be faster, but exchange-specific. Treat this as crowding context, not a buy/sell system.</p>
+      <p class="truth"><b>Important:</b> long/short data is not one universal measurement. SPY short volume, Nasdaq short interest, CFTC futures positioning and Binance perp account ratios answer related but different questions.</p>
+      <div class="link-grid">
+        <a href="https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm" target="_blank" rel="noopener"><span>official source</span>CFTC COT Reports</a>
+        <a href="https://www.finra.org/finra-data/browse-catalog/short-sale-volume-data" target="_blank" rel="noopener"><span>official source</span>FINRA short sale volume</a>
+        <a href="https://www.nasdaqtrader.com/Trader.aspx?id=ShortInterest" target="_blank" rel="noopener"><span>official source</span>Nasdaq short interest</a>
+        <a href="https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Long-Short-Ratio" target="_blank" rel="noopener"><span>api source</span>Binance long/short ratio</a>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer>2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</footer>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const SAMPLE = [
+    {id:"spy",symbol:"SPY",name:"SPY ETF proxy",group:"equities",type:"ETF short reference",longPct:47,shortPct:53,pctile:61,source:"sample",detail:"use FINRA daily short volume + Nasdaq short interest links"},
+    {id:"qqq",symbol:"QQQ",name:"Nasdaq ETF proxy",group:"equities",type:"ETF short reference",longPct:44,shortPct:56,pctile:68,source:"sample",detail:"ETF data is delayed or proxy-based"},
+    {id:"es",symbol:"ES",name:"S&P 500 futures",group:"equities",type:"CFTC futures",longPct:52,shortPct:48,pctile:55,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"nq",symbol:"NQ",name:"Nasdaq 100 futures",group:"equities",type:"CFTC futures",longPct:48,shortPct:52,pctile:58,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"btc",symbol:"BTC",name:"Bitcoin perps/futures",group:"crypto",type:"crypto + CFTC",longPct:51,shortPct:49,pctile:52,source:"sample",detail:"Binance ratio when available, CFTC CME weekly context"},
+    {id:"eth",symbol:"ETH",name:"Ethereum perps",group:"crypto",type:"crypto perps",longPct:49,shortPct:51,pctile:49,source:"sample",detail:"Binance ratio when available"},
+    {id:"gold",symbol:"GC",name:"Gold futures",group:"metals",type:"CFTC futures",longPct:62,shortPct:38,pctile:73,source:"sample",detail:"managed money / non-commercial positioning proxy"},
+    {id:"silver",symbol:"SI",name:"Silver futures",group:"metals",type:"CFTC futures",longPct:57,shortPct:43,pctile:66,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"oil",symbol:"WTI",name:"WTI crude oil",group:"energy",type:"CFTC futures",longPct:45,shortPct:55,pctile:70,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"gas",symbol:"NG",name:"Natural gas",group:"energy",type:"CFTC futures",longPct:40,shortPct:60,pctile:76,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"coffee",symbol:"KC",name:"Coffee futures",group:"softs",type:"CFTC futures",longPct:68,shortPct:32,pctile:82,source:"sample",detail:"soft commodity crowding can reverse quickly"},
+    {id:"cocoa",symbol:"CC",name:"Cocoa futures",group:"softs",type:"CFTC futures",longPct:71,shortPct:29,pctile:86,source:"sample",detail:"soft commodity crowding can reverse quickly"},
+    {id:"sugar",symbol:"SB",name:"Sugar futures",group:"softs",type:"CFTC futures",longPct:55,shortPct:45,pctile:57,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"wheat",symbol:"ZW",name:"Wheat futures",group:"grains",type:"CFTC futures",longPct:46,shortPct:54,pctile:63,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"corn",symbol:"ZC",name:"Corn futures",group:"grains",type:"CFTC futures",longPct:49,shortPct:51,pctile:50,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"soy",symbol:"ZS",name:"Soybeans futures",group:"grains",type:"CFTC futures",longPct:53,shortPct:47,pctile:54,source:"sample",detail:"weekly CFTC futures positioning context"}
+  ];
+  let latest = {markets:clone(SAMPLE),log:[],updated:new Date().toISOString()};
+  const pendingTracks = [];
+  let flushTimer = 0;
+
+  function track(name, props){
+    try{
+      const payload = Object.assign({ tool:"Market Positioning Radar" }, props || {});
+      if (window.ntTrack) window.ntTrack(name, payload);
+      else {
+        pendingTracks.push([name, payload]);
+        if (!flushTimer) {
+          flushTimer = setInterval(function(){
+            if (!window.ntTrack) return;
+            while (pendingTracks.length) {
+              const item = pendingTracks.shift();
+              window.ntTrack(item[0], item[1]);
+            }
+            clearInterval(flushTimer);
+            flushTimer = 0;
+          }, 250);
+        }
+      }
+    }catch(_err){}
+  }
+  function clone(value){return JSON.parse(JSON.stringify(value));}
+  function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+  function fmtPct(n){return Math.round(n) + "%";}
+  function net(item){return item.longPct - item.shortPct;}
+  function absNet(item){return Math.abs(net(item));}
+  function crowdScore(item){return Math.round(clamp(absNet(item) * 1.25 + item.pctile * .55,0,100));}
+  function stateFromScore(score){
+    if (score >= 80) return "crowded";
+    if (score >= 65) return "hot";
+    if (score >= 45) return "balanced watch";
+    return "quiet";
+  }
+  function scoreBucket(score){return Math.floor(score / 10) * 10;}
+  function currentMode(){return $("mode").value;}
+  function currentGroup(){return $("group").value;}
+  function searchTerm(){return $("searchMarket").value.trim().toLowerCase();}
+  function filterMarkets(markets){
+    const group = currentGroup();
+    const q = searchTerm();
+    return markets.filter(function(item){
+      const groupOk = group === "all" || item.group === group;
+      const text = [item.symbol,item.name,item.group,item.type].join(" ").toLowerCase();
+      return groupOk && (!q || text.includes(q));
+    });
+  }
+  async function fetchBinanceRatio(symbol, id, log, markets){
+    const url = "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=" + symbol + "&period=1d&limit=30";
+    try{
+      const res = await fetch(url, {cache:"no-store"});
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const rows = await res.json();
+      const last = Array.isArray(rows) ? rows[rows.length - 1] : null;
+      if (!last) throw new Error("empty ratio response");
+      const longPct = clamp(Number(last.longAccount) * 100, 0, 100);
+      const shortPct = clamp(Number(last.shortAccount) * 100, 0, 100);
+      const item = markets.find(function(m){return m.id === id;});
+      if (item && Number.isFinite(longPct) && Number.isFinite(shortPct)) {
+        item.longPct = longPct;
+        item.shortPct = shortPct;
+        item.pctile = ratioPercentile(rows);
+        item.source = "live";
+        item.detail = "Binance global long/short account ratio, " + symbol;
+      }
+      log.push({source:"Binance " + symbol + " long/short",status:"live",detail:"ok"});
+    }catch(err){
+      log.push({source:"Binance " + symbol + " long/short",status:"blocked",detail:String(err && err.message || err).slice(0,90)});
+      track("positioning_radar_error", { mode:currentMode(), group:currentGroup(), source_status:"blocked", source:"binance_" + symbol.toLowerCase() });
+    }
+  }
+  function ratioPercentile(rows){
+    const values = rows.map(function(row){return Math.abs(Number(row.longAccount || 0) - .5) * 200;}).filter(Number.isFinite);
+    if (!values.length) return 50;
+    const last = values[values.length - 1];
+    const below = values.filter(function(v){return v <= last;}).length;
+    return Math.round((below / values.length) * 100);
+  }
+  async function probeOfficialSources(log){
+    const probes = [
+      ["CFTC COT index","https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm"],
+      ["FINRA short sale volume","https://www.finra.org/finra-data/browse-catalog/short-sale-volume-data"],
+      ["Nasdaq short interest","https://www.nasdaqtrader.com/Trader.aspx?id=ShortInterest"]
+    ];
+    await Promise.all(probes.map(async function(item){
+      try{
+        const res = await fetch(item[1], {cache:"no-store", mode:"cors"});
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        log.push({source:item[0],status:"reference",detail:"official reference reachable"});
+      }catch(err){
+        log.push({source:item[0],status:"reference",detail:"official link listed; browser API may block direct reads"});
+      }
+    }));
+  }
+  function compute(markets, log){
+    const visible = filterMarkets(markets);
+    const sorted = visible.slice().sort(function(a,b){return crowdScore(b) - crowdScore(a);});
+    const longCrowd = sorted.slice().sort(function(a,b){return net(b) - net(a);})[0] || null;
+    const shortCrowd = sorted.slice().sort(function(a,b){return net(a) - net(b);})[0] || null;
+    const avgScore = visible.length ? Math.round(visible.reduce(function(sum,item){return sum + crowdScore(item);},0) / visible.length) : 0;
+    const liveCount = log.filter(function(item){return item.status === "live";}).length;
+    const blockedCount = log.filter(function(item){return item.status === "blocked";}).length;
+    return {visible,sorted,longCrowd,shortCrowd,avgScore,liveCount,blockedCount};
+  }
+  function render(markets, log){
+    latest = {markets:markets,log:log,updated:new Date().toISOString()};
+    const c = compute(markets, log);
+    $("crowdScore").textContent = c.avgScore;
+    $("crowdBar").style.width = c.avgScore + "%";
+    $("crowdState").textContent = stateFromScore(c.avgScore);
+    $("miniLong").textContent = c.longCrowd ? c.longCrowd.symbol + " " + fmtPct(c.longCrowd.longPct) : "--";
+    $("miniShort").textContent = c.shortCrowd ? c.shortCrowd.symbol + " " + fmtPct(c.shortCrowd.shortPct) : "--";
+    $("miniLive").textContent = c.liveCount + " live";
+    $("miniUpdated").textContent = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+    $("readText").textContent = stateFromScore(c.avgScore) + " positioning pressure";
+    $("readMeter").style.width = c.avgScore + "%";
+    $("longSignal").textContent = c.longCrowd ? c.longCrowd.name + " at " + fmtPct(c.longCrowd.longPct) + " long" : "--";
+    $("shortSignal").textContent = c.shortCrowd ? c.shortCrowd.name + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "--";
+    $("positionRows").innerHTML = c.sorted.map(rowHtml).join("") || '<div class="market-row"><div class="market-title"><b>No markets match this filter</b><small>Try all markets or clear search.</small></div></div>';
+    $("heatGrid").innerHTML = heatCards(markets);
+    $("sourceLog").innerHTML = log.map(logHtml).join("") || logHtml({source:"Sample positioning pack",status:"sample",detail:"local fallback data active"});
+    $("alertList").innerHTML = alertRows(c.sorted).join("");
+    $("reportText").textContent = reportText(c);
+  }
+  function rowHtml(item){
+    const n = net(item);
+    const score = crowdScore(item);
+    const netClass = Math.abs(n) < 5 ? "neutral" : n > 0 ? "long" : "short";
+    const netLabel = Math.abs(n) < 5 ? "even" : (n > 0 ? "long " : "short ") + Math.abs(Math.round(n));
+    const sourceClass = item.source === "live" ? "" : item.source === "blocked" ? "blocked" : "sample";
+    return '<div class="market-row"><div class="market-title"><b>' + safe(item.symbol) + ' - ' + safe(item.name) + '</b><small>' + safe(item.group) + ' / ' + safe(item.type) + '</small></div><span class="source-pill ' + sourceClass + '">' + safe(item.source) + '</span><div class="balance"><span>' + fmtPct(item.longPct) + '</span><div class="rail"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><span>' + fmtPct(item.shortPct) + '</span></div><span class="net-pill ' + netClass + '">' + netLabel + '</span><div><b class="score-num">' + score + '</b><div class="pctile">pctile ' + item.pctile + '</div></div></div>';
+  }
+  function heatCards(markets){
+    const groups = ["equities","crypto","metals","energy","softs","grains"];
+    return groups.map(function(group){
+      const items = markets.filter(function(item){return item.group === group;});
+      const score = items.length ? Math.round(items.reduce(function(sum,item){return sum + crowdScore(item);},0) / items.length) : 0;
+      const top = items.slice().sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0];
+      return '<article class="heat-card"><span>' + group + '</span><b>' + score + '/100</b><small>' + (top ? safe(top.symbol + " leads: " + (net(top) >= 0 ? "long" : "short") + " skew") : "no signal") + '</small></article>';
+    }).join("");
+  }
+  function alertRows(items){
+    const rows = items.filter(function(item){return crowdScore(item) >= 70 || absNet(item) >= 20;}).slice(0,5);
+    if (!rows.length) return ['<div class="signal-row"><div><b>No extreme crowding</b><br>Most lanes are near the middle of their board.</div><span class="net-pill neutral">normal</span></div>'];
+    return rows.map(function(item){
+      const n = net(item);
+      return '<div class="signal-row"><div><b>' + safe(item.symbol) + ' crowding</b><br>' + safe(item.name) + ' is ' + fmtPct(Math.max(item.longPct,item.shortPct)) + ' ' + (n >= 0 ? 'long' : 'short') + ' biased.</div><span class="net-pill ' + (n >= 0 ? 'long' : 'short') + '">' + crowdScore(item) + '</span></div>';
+    });
+  }
+  function logHtml(item){
+    const cls = item.status === "live" ? "" : item.status === "blocked" ? "blocked" : "sample";
+    return '<div class="signal-row"><div><b>' + safe(item.source) + '</b><br>' + safe(item.detail) + '</div><span class="source-pill ' + cls + '">' + safe(item.status) + '</span></div>';
+  }
+  function safe(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
+  }
+  function reportText(c){
+    return [
+      "Market Positioning Radar report",
+      "Mode: " + currentMode() + " / group: " + currentGroup() + " / visible markets: " + c.visible.length,
+      "Crowding pressure: " + c.avgScore + "/100 - " + stateFromScore(c.avgScore),
+      "Strongest long crowd: " + (c.longCrowd ? c.longCrowd.symbol + " at " + fmtPct(c.longCrowd.longPct) + " long" : "none"),
+      "Strongest short crowd: " + (c.shortCrowd ? c.shortCrowd.symbol + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "none"),
+      "Live sources: " + c.liveCount + " / blocked probes: " + c.blockedCount,
+      "Interpretation: " + (c.avgScore >= 70 ? "positioning is crowded enough to treat moves as squeeze/reversal sensitive." : "positioning is not broadly extreme; watch individual crowded lanes."),
+      "Note: crowding context only, not financial advice."
+    ].join("\n");
+  }
+  async function refreshPositioning(manual){
+    const mode = currentMode();
+    const markets = clone(SAMPLE);
+    const log = [];
+    if (mode === "live") {
+      await Promise.all([
+        fetchBinanceRatio("BTCUSDT","btc",log,markets),
+        fetchBinanceRatio("ETHUSDT","eth",log,markets),
+        probeOfficialSources(log)
+      ]);
+    } else {
+      log.push({source:"Sample positioning pack",status:"sample",detail:"local fallback data active"});
+    }
+    render(markets, log);
+    if (manual) {
+      const c = compute(markets, log);
+      track("positioning_radar_refresh", { mode:mode, group:currentGroup(), score_bucket:scoreBucket(c.avgScore), source_status:c.liveCount ? "mixed" : "sample" });
+    }
+  }
+  async function copyReport(button){
+    const c = compute(latest.markets, latest.log);
+    const text = reportText(c);
+    try{
+      await navigator.clipboard.writeText(text);
+      const old = button.textContent;
+      button.textContent = "Copied";
+      setTimeout(function(){button.textContent = old;},1200);
+    }catch(_err){
+      window.prompt("Copy report", text);
+    }
+    track("positioning_radar_copy_report", { mode:currentMode(), group:currentGroup(), score_bucket:scoreBucket(c.avgScore) });
+  }
+  function downloadSnapshot(){
+    const c = compute(latest.markets, latest.log);
+    const safeData = {
+      created:new Date().toISOString(),
+      mode:currentMode(),
+      group:currentGroup(),
+      score:c.avgScore,
+      markets:latest.markets.map(function(item){return {symbol:item.symbol,name:item.name,group:item.group,type:item.type,longPct:item.longPct,shortPct:item.shortPct,pctile:item.pctile,source:item.source};}),
+      sources:latest.log
+    };
+    const blob = new Blob([JSON.stringify(safeData,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "market-positioning-radar.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    track("positioning_radar_export", { mode:currentMode(), group:currentGroup(), score_bucket:scoreBucket(c.avgScore), format:"json" });
+  }
+  window.refreshPositioning = refreshPositioning;
+  window.copyReport = copyReport;
+  window.downloadSnapshot = downloadSnapshot;
+  function bind(){
+    ["mode","group"].forEach(function(id){
+      $(id).addEventListener("change", function(){
+        track("positioning_radar_filter_change", { mode:currentMode(), group:currentGroup() });
+        refreshPositioning(true);
+      });
+    });
+    $("searchMarket").addEventListener("input", function(){
+      render(latest.markets, latest.log);
+    });
+  }
+  bind();
+  render(clone(SAMPLE), [{source:"Sample positioning pack",status:"sample",detail:"boot fallback data active"}]);
+  refreshPositioning(false);
+  track("positioning_radar_open", { mode:currentMode(), group:currentGroup() });
+})();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>

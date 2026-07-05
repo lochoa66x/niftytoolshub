@@ -382,6 +382,7 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
+  "Market Positioning Radar",
   "Food Shortage Watch",
   "Crypto Network Pulse",
   "Prepper Toolkit Pro",
@@ -391,6 +392,9 @@ const catalog = [
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
 ];
 const toolAliases = {
+  "positioning-radar":"Market Positioning Radar",
+  "market positioning radar":"Market Positioning Radar",
+  "long short radar":"Market Positioning Radar",
   "food-watch":"Food Shortage Watch",
   "food shortage watch":"Food Shortage Watch",
   "pantry pressure":"Food Shortage Watch",
@@ -452,6 +456,12 @@ function escapeHTML(value){
   return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
 }
 const eventLabels = {
+  "positioning_radar_open":"Positioning Radar opened",
+  "positioning_radar_refresh":"Positioning Radar refresh",
+  "positioning_radar_filter_change":"Positioning Radar filter change",
+  "positioning_radar_copy_report":"Positioning Radar report copy",
+  "positioning_radar_export":"Positioning Radar export",
+  "positioning_radar_error":"Positioning Radar source error",
   "food_watch_open":"Food Watch opened",
   "food_watch_refresh":"Food Watch refresh",
   "food_watch_filter_change":"Food Watch filter change",
@@ -491,13 +501,12 @@ function label(value){
 }
 function eventKind(event){
   const name = event && event.event || "";
-  if(/^(food_watch_open|prepper_open|crypto_pulse_open|tool_open|tool_page_view)$/.test(name)) return "open";
-  if(/^(prepper_checklist_food_watch_copy_report|copy|prepper_family_plan_copy|crypto_pulse_copy_report|copy)$/.test(name)) return "copy";
-  if(/^(prepper_export|prepper_print|crypto_pulse_export|food_watch_export|download|share)$/.test(name)) return "export";
-  if(/^(prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|crypto_pulse_refresh|crypto_pulse_mode_change|food_watch_refresh|food_watch_filter_change|tool_action)$/.test(name)) return "action";
+  if(/^(positioning_radar_open|food_watch_open|prepper_open|crypto_pulse_open|tool_open|tool_page_view)$/.test(name)) return "open";
+  if(/^(positioning_radar_copy_report|food_watch_copy_report|prepper_checklist_copy|prepper_family_plan_copy|crypto_pulse_copy_report|copy)$/.test(name)) return "copy";
+  if(/^(positioning_radar_export|food_watch_export|prepper_export|prepper_print|crypto_pulse_export|download|share)$/.test(name)) return "export";
+  if(/^(positioning_radar_refresh|positioning_radar_filter_change|food_watch_refresh|food_watch_filter_change|prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|crypto_pulse_refresh|crypto_pulse_mode_change|tool_action)$/.test(name)) return "action";
   if(/error/.test(name)) return "error";
   if(/slow|large/.test(name)) return "perf";
-  if(name === "error") return "error";
   if(name === "search") return "search";
   return name;
 }
@@ -505,6 +514,11 @@ function isOpenEvent(event){return eventKind(event) === "open";}
 function isActionEvent(event){return /^(action|copy|export)$/.test(eventKind(event));}
 function friendlyAction(event){
   const name = event.event || "";
+  if(name === "positioning_radar_refresh") return "Positioning: refresh radar";
+  if(name === "positioning_radar_filter_change") return "Positioning: filter " + (event.group || event.market || "change");
+  if(name === "positioning_radar_copy_report") return "Positioning: copy report";
+  if(name === "positioning_radar_export") return "Positioning: export " + (event.format || "snapshot");
+  if(name === "positioning_radar_error") return "Positioning: source error";
   if(name === "food_watch_refresh") return "Food: refresh watch";
   if(name === "food_watch_filter_change") return "Food: filter " + (event.region || event.category || "change");
   if(name === "food_watch_copy_report") return "Food: copy report";
@@ -686,7 +700,7 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Food Shortage Watch","Crypto Network Pulse","Prepper Toolkit Pro","Library","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
+  const tools = ["Market Positioning Radar","Food Shortage Watch","Crypto Network Pulse","Prepper Toolkit Pro","Library","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];
@@ -698,6 +712,10 @@ function loadDemoData(){
   events.push({event:"error",type:"fetch_failed",message:"NOAA feed timeout",page:"aurora-watch",tool:"Aurora Watch",session:"demo-err",ts:new Date(now - 7200000).toISOString()});
   events.push({event:"slow_page",load_ms:4100,dom_ms:1900,page:"pdf-tools",tool:"PDF Toolkit",session:"demo-slow",ts:new Date(now - 10800000).toISOString()});
   events.push({event:"large_page",mb:2.4,page:"tarot-tools",tool:"Tarot Card Reader",session:"demo-large",ts:new Date(now - 16600000).toISOString()});
+  events.push({event:"positioning_radar_open",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"all",session:"demo-positioning",ts:new Date(now - 1250000).toISOString()});
+  events.push({event:"positioning_radar_refresh",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"crypto",score_bucket:60,source_status:"mixed",session:"demo-positioning",ts:new Date(now - 1150000).toISOString()});
+  events.push({event:"positioning_radar_copy_report",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"metals",score_bucket:70,session:"demo-positioning",ts:new Date(now - 1050000).toISOString()});
+  events.push({event:"positioning_radar_error",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"equities",source_status:"blocked",session:"demo-positioning",ts:new Date(now - 950000).toISOString()});
   events.push({event:"food_watch_open",tool:"Food Shortage Watch",page:"food-watch",mode:"live",region:"north-america",category:"all",session:"demo-food",ts:new Date(now - 1750000).toISOString()});
   events.push({event:"food_watch_refresh",tool:"Food Shortage Watch",page:"food-watch",mode:"live",region:"north-america",category:"grains",score_bucket:60,source_status:"mixed",session:"demo-food",ts:new Date(now - 1650000).toISOString()});
   events.push({event:"food_watch_error",tool:"Food Shortage Watch",page:"food-watch",mode:"live",region:"canada",source_status:"blocked",session:"demo-food",ts:new Date(now - 1550000).toISOString()});
