@@ -293,6 +293,25 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       }
     }));
   }
+  async function fetchPositioningApi(log, markets){
+    const res = await fetch("/api/positioning?ts=" + Date.now(), {cache:"no-store"});
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const payload = await res.json();
+    if (!payload || !Array.isArray(payload.markets)) throw new Error("bad positioning payload");
+    payload.markets.forEach(function(update){
+      const item = markets.find(function(market){return market.id === update.id;});
+      if (!item) return;
+      ["longPct","shortPct","pctile"].forEach(function(key){
+        if (Number.isFinite(Number(update[key]))) item[key] = Number(update[key]);
+      });
+      ["source","detail","type"].forEach(function(key){
+        if (update[key]) item[key] = update[key];
+      });
+    });
+    (payload.sources || []).forEach(function(source){log.push(source);});
+    if (!log.length) log.push({source:"Nifty positioning API",status:"live",detail:"server connector returned market rows"});
+    return true;
+  }
   function compute(markets, log){
     const visible = filterMarkets(markets);
     const sorted = visible.slice().sort(function(a,b){return crowdScore(b) - crowdScore(a);});
@@ -391,11 +410,20 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     const markets = clone(SAMPLE);
     const log = [];
     if (mode === "live") {
-      await Promise.all([
-        fetchBinanceRatio("BTCUSDT","btc",log,markets),
-        fetchBinanceRatio("ETHUSDT","eth",log,markets),
-        probeOfficialSources(log)
-      ]);
+      let apiOk = false;
+      try{
+        apiOk = await fetchPositioningApi(log, markets);
+      }catch(err){
+        log.push({source:"Nifty positioning API",status:"blocked",detail:String(err && err.message || err).slice(0,90)});
+        track("positioning_radar_error", { mode:currentMode(), group:currentGroup(), source_status:"blocked", source:"nifty_positioning_api" });
+      }
+      if (!apiOk) {
+        await Promise.all([
+          fetchBinanceRatio("BTCUSDT","btc",log,markets),
+          fetchBinanceRatio("ETHUSDT","eth",log,markets),
+          probeOfficialSources(log)
+        ]);
+      }
     } else {
       log.push({source:"Sample positioning pack",status:"sample",detail:"local fallback data active"});
     }
