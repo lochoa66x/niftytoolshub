@@ -382,6 +382,7 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
+  "Market Volume Pulse",
   "Market Positioning Radar",
   "Food Shortage Watch",
   "Crypto Network Pulse",
@@ -392,6 +393,10 @@ const catalog = [
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
 ];
 const toolAliases = {
+  "market-volume-pulse":"Market Volume Pulse",
+  "market volume pulse":"Market Volume Pulse",
+  "volume pulse":"Market Volume Pulse",
+  "stock volume radar":"Market Volume Pulse",
   "positioning-radar":"Market Positioning Radar",
   "market positioning radar":"Market Positioning Radar",
   "long short radar":"Market Positioning Radar",
@@ -456,6 +461,12 @@ function escapeHTML(value){
   return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
 }
 const eventLabels = {
+  "market_volume_open":"Market Volume Pulse opened",
+  "market_volume_refresh":"Market Volume refresh",
+  "market_volume_filter_change":"Market Volume filter change",
+  "market_volume_copy_report":"Market Volume report copy",
+  "market_volume_export":"Market Volume export",
+  "market_volume_error":"Market Volume source error",
   "positioning_radar_open":"Positioning Radar opened",
   "positioning_radar_refresh":"Positioning Radar refresh",
   "positioning_radar_filter_change":"Positioning Radar filter change",
@@ -501,10 +512,10 @@ function label(value){
 }
 function eventKind(event){
   const name = event && event.event || "";
-  if(/^(positioning_radar_open|food_watch_open|prepper_open|crypto_pulse_open|tool_open|tool_page_view)$/.test(name)) return "open";
-  if(/^(positioning_radar_copy_report|food_watch_copy_report|prepper_checklist_copy|prepper_family_plan_copy|crypto_pulse_copy_report|copy)$/.test(name)) return "copy";
-  if(/^(positioning_radar_export|food_watch_export|prepper_export|prepper_print|crypto_pulse_export|download|share)$/.test(name)) return "export";
-  if(/^(positioning_radar_refresh|positioning_radar_filter_change|food_watch_refresh|food_watch_filter_change|prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|crypto_pulse_refresh|crypto_pulse_mode_change|tool_action)$/.test(name)) return "action";
+  if(/^(positioning_radar_open|food_watch_open|prepper_open|crypto_pulse_open|tool_open|tool_page_view|market_volume_open)$/.test(name)) return "open";
+  if(/^(positioning_radar_copy_report|food_watch_copy_report|prepper_checklist_copy|prepper_family_plan_copy|crypto_pulse_copy_report|copy|market_volume_copy_report)$/.test(name)) return "copy";
+  if(/^(positioning_radar_export|food_watch_export|prepper_export|prepper_print|crypto_pulse_export|download|share|market_volume_export)$/.test(name)) return "export";
+  if(/^(positioning_radar_refresh|positioning_radar_filter_change|food_watch_refresh|food_watch_filter_change|prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|crypto_pulse_refresh|crypto_pulse_mode_change|tool_action|market_volume_refresh|market_volume_filter_change)$/.test(name)) return "action";
   if(/error/.test(name)) return "error";
   if(/slow|large/.test(name)) return "perf";
   if(name === "search") return "search";
@@ -514,6 +525,11 @@ function isOpenEvent(event){return eventKind(event) === "open";}
 function isActionEvent(event){return /^(action|copy|export)$/.test(eventKind(event));}
 function friendlyAction(event){
   const name = event.event || "";
+  if(name === "market_volume_refresh") return "Market Volume: refresh pulse";
+  if(name === "market_volume_filter_change") return "Market Volume: filter " + (event.lane || event.group || "change");
+  if(name === "market_volume_copy_report") return "Market Volume: copy report";
+  if(name === "market_volume_export") return "Market Volume: export " + (event.format || "snapshot");
+  if(name === "market_volume_error") return "Market Volume: source error";
   if(name === "positioning_radar_refresh") return "Positioning: refresh radar";
   if(name === "positioning_radar_filter_change") return "Positioning: filter " + (event.group || event.market || "change");
   if(name === "positioning_radar_copy_report") return "Positioning: copy report";
@@ -712,6 +728,9 @@ function loadDemoData(){
   events.push({event:"error",type:"fetch_failed",message:"NOAA feed timeout",page:"aurora-watch",tool:"Aurora Watch",session:"demo-err",ts:new Date(now - 7200000).toISOString()});
   events.push({event:"slow_page",load_ms:4100,dom_ms:1900,page:"pdf-tools",tool:"PDF Toolkit",session:"demo-slow",ts:new Date(now - 10800000).toISOString()});
   events.push({event:"large_page",mb:2.4,page:"tarot-tools",tool:"Tarot Card Reader",session:"demo-large",ts:new Date(now - 16600000).toISOString()});
+  events.push({event:"market_volume_open",tool:"Market Volume Pulse",page:"market-volume-pulse",lane:"all",group:"all",session:"demo-volume",ts:new Date(now - 820000).toISOString()});
+  events.push({event:"market_volume_refresh",tool:"Market Volume Pulse",page:"market-volume-pulse",lane:"unusual",group:"tech",score_bucket:70,source_status:"reference",session:"demo-volume",ts:new Date(now - 760000).toISOString()});
+  events.push({event:"market_volume_copy_report",tool:"Market Volume Pulse",page:"market-volume-pulse",lane:"active",group:"all",session:"demo-volume",ts:new Date(now - 720000).toISOString()});
   events.push({event:"positioning_radar_open",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"all",session:"demo-positioning",ts:new Date(now - 1250000).toISOString()});
   events.push({event:"positioning_radar_refresh",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"crypto",score_bucket:60,source_status:"mixed",session:"demo-positioning",ts:new Date(now - 1150000).toISOString()});
   events.push({event:"positioning_radar_copy_report",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"metals",score_bucket:70,session:"demo-positioning",ts:new Date(now - 1050000).toISOString()});

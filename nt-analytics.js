@@ -7,6 +7,7 @@
   var MAX_EVENTS = 800;
   var searchTimers = new WeakMap();
   var TOOL_NAMES = {
+    "market-volume-pulse": "Market Volume Pulse",
     "positioning-radar": "Market Positioning Radar",
     "food-watch": "Food Shortage Watch",
     "crypto-pulse": "Crypto Network Pulse",
@@ -114,7 +115,7 @@
 
   function isSensitivePropKey(key) {
     var lower = String(key || "").toLowerCase();
-    var aggregateAllowList = /^(action|tool|target|tab|status|scope|export|format|checklist|category|checked|people|days|score_level|score_bucket|label|has_value|inventory_count|family_fields|mode|network|region|source_status|source|group|market)$/;
+    var aggregateAllowList = /^(action|tool|target|tab|status|scope|export|format|checklist|category|checked|people|days|score_level|score_bucket|label|has_value|inventory_count|family_fields|mode|network|region|source_status|source|group|market|lane|ticker|noise)$/;
     var sensitive = /(name|phone|address|contact|note|serial|item|inventory|family|home|meet|med|pet|plan_text|free_text)/;
     return sensitive.test(lower) && !aggregateAllowList.test(lower);
   }
@@ -195,7 +196,7 @@
     if (/download|export|save file/.test(text)) return "download";
     if (/copy|clipboard/.test(text)) return "copy";
     if (/share/.test(text)) return "share";
-    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness|pulse|refresh|watch|pantry|recall|shortage|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|watch|pantry|recall|shortage/.test(text)) return "tool_action";
+    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness|pulse|refresh|watch|pantry|recall|shortage|positioning|market|long|short|ratio|volume|ticker|lane|unusual|dollar|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|watch|pantry|recall|shortage/.test(text)) return "tool_action";
     return "";
   }
 

@@ -1,0 +1,303 @@
+const ALPHA_URL = "https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS";
+const STOOQ_URL = "https://stooq.com/q/l/";
+const USER_AGENT = "NiftyToolsHub/1.0 market-volume-pulse";
+
+const WATCH = [
+  { symbol:"NVDA", name:"NVIDIA", group:"tech", avgVolume:245000000 },
+  { symbol:"TSLA", name:"Tesla", group:"tech", avgVolume:98000000 },
+  { symbol:"AAPL", name:"Apple", group:"tech", avgVolume:61000000 },
+  { symbol:"MSFT", name:"Microsoft", group:"tech", avgVolume:26000000 },
+  { symbol:"AMZN", name:"Amazon", group:"tech", avgVolume:42000000 },
+  { symbol:"META", name:"Meta Platforms", group:"tech", avgVolume:16000000 },
+  { symbol:"AMD", name:"AMD", group:"tech", avgVolume:62000000 },
+  { symbol:"PLTR", name:"Palantir", group:"tech", avgVolume:84000000 },
+  { symbol:"SMCI", name:"Super Micro Computer", group:"tech", avgVolume:7600000 },
+  { symbol:"MSTR", name:"Strategy", group:"crypto", avgVolume:17500000 },
+  { symbol:"COIN", name:"Coinbase", group:"crypto", avgVolume:12000000 },
+  { symbol:"MARA", name:"MARA Holdings", group:"crypto", avgVolume:53000000 },
+  { symbol:"RIOT", name:"Riot Platforms", group:"crypto", avgVolume:26000000 },
+  { symbol:"HOOD", name:"Robinhood", group:"crypto", avgVolume:36000000 },
+  { symbol:"GME", name:"GameStop", group:"meme", avgVolume:17000000 },
+  { symbol:"AMC", name:"AMC Entertainment", group:"meme", avgVolume:18000000 },
+  { symbol:"SOFI", name:"SoFi", group:"financials", avgVolume:65000000 },
+  { symbol:"JPM", name:"JPMorgan Chase", group:"financials", avgVolume:9500000 },
+  { symbol:"BAC", name:"Bank of America", group:"financials", avgVolume:42000000 },
+  { symbol:"XOM", name:"Exxon Mobil", group:"energy", avgVolume:17000000 },
+  { symbol:"CVX", name:"Chevron", group:"energy", avgVolume:8600000 },
+  { symbol:"SPY", name:"SPDR S&P 500 ETF", group:"etf", avgVolume:73000000 },
+  { symbol:"QQQ", name:"Invesco QQQ ETF", group:"etf", avgVolume:46000000 },
+  { symbol:"IWM", name:"iShares Russell 2000 ETF", group:"etf", avgVolume:35000000 },
+  { symbol:"TLT", name:"iShares 20+ Year Treasury ETF", group:"etf", avgVolume:42000000 },
+  { symbol:"GLD", name:"SPDR Gold Shares", group:"etf", avgVolume:8500000 },
+  { symbol:"USO", name:"United States Oil Fund", group:"etf", avgVolume:4700000 },
+  { symbol:"HYG", name:"iShares High Yield Bond ETF", group:"etf", avgVolume:38000000 },
+  { symbol:"BITO", name:"ProShares Bitcoin Strategy ETF", group:"crypto", avgVolume:18000000 }
+];
+
+const SAMPLE_ROWS = [
+  row("NVDA", 161.24, 2.1, 268000000, 245000000, "AI/semis attention", "sample"),
+  row("TSLA", 287.10, -1.8, 142000000, 98000000, "mega-cap activity spike", "sample"),
+  row("PLTR", 137.42, 5.9, 126000000, 84000000, "unusual software volume", "sample"),
+  row("AMD", 149.83, 3.2, 94000000, 62000000, "semiconductor follow-through", "sample"),
+  row("SOFI", 17.54, 7.4, 91000000, 65000000, "retail finance pressure", "sample"),
+  row("AAPL", 213.66, .6, 73000000, 61000000, "large-cap liquidity", "sample"),
+  row("MSTR", 421.31, 4.8, 36000000, 17500000, "bitcoin proxy flow", "sample"),
+  row("COIN", 288.40, 3.6, 25000000, 12000000, "crypto-linked equity pulse", "sample"),
+  row("GME", 28.60, 8.2, 39000000, 17000000, "meme-stock attention", "sample"),
+  row("XOM", 116.52, -1.2, 24000000, 17000000, "energy tape activity", "sample")
+];
+
+const SAMPLE_ETFS = [
+  row("SPY", 625.19, .4, 81000000, 73000000, "broad-market tape", "sample"),
+  row("QQQ", 551.73, .7, 59000000, 46000000, "growth/tech pressure", "sample"),
+  row("IWM", 217.88, -.5, 42000000, 35000000, "small-cap risk mood", "sample"),
+  row("TLT", 88.40, -1.1, 56000000, 42000000, "rates pressure", "sample"),
+  row("GLD", 224.60, .9, 12000000, 8500000, "gold hedge flow", "sample"),
+  row("HYG", 78.55, -.2, 43000000, 38000000, "credit risk pulse", "sample")
+];
+
+module.exports = async function handler(req, res) {
+  const sources = [];
+  let rows = [];
+  let etfs = [];
+
+  const key = process.env.ALPHA_VANTAGE_API_KEY || process.env.ALPHAVANTAGE_API_KEY || "";
+  if (key) {
+    try {
+      rows = await fetchAlphaVantage(key);
+      sources.push({ source:"Alpha Vantage TOP_GAINERS_LOSERS", status:rows.length ? "live" : "reference", detail:rows.length ? rows.length + " most-active rows parsed" : "response did not include active rows" });
+    } catch (err) {
+      sources.push({ source:"Alpha Vantage TOP_GAINERS_LOSERS", status:"blocked", detail:cleanError(err) });
+    }
+  } else {
+    sources.push({ source:"Alpha Vantage TOP_GAINERS_LOSERS", status:"reference", detail:"ALPHA_VANTAGE_API_KEY optional; using public reference basket" });
+  }
+
+  try {
+    const stooqRows = await fetchStooq(WATCH);
+    if (stooqRows.length) {
+      rows = mergeRows(rows, stooqRows.filter((item) => item.group !== "etf"));
+      etfs = stooqRows.filter((item) => item.group === "etf");
+      sources.push({ source:"Stooq quote basket", status:"reference", detail:stooqRows.length + " public delayed quote rows parsed" });
+    } else {
+      sources.push({ source:"Stooq quote basket", status:"sample", detail:"public quote basket returned no rows" });
+    }
+  } catch (err) {
+    sources.push({ source:"Stooq quote basket", status:"blocked", detail:cleanError(err) });
+  }
+
+  if (rows.length < 6) rows = mergeRows(rows, SAMPLE_ROWS);
+  if (etfs.length < 4) etfs = mergeRows(etfs, SAMPLE_ETFS);
+
+  rows = rows.map(normalizeRow).sort((a, b) => b.score - a.score).slice(0, 28);
+  etfs = etfs.map(normalizeRow).sort((a, b) => b.score - a.score).slice(0, 12);
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=1800");
+  res.status(200).json({
+    ok:true,
+    updatedAt:new Date().toISOString(),
+    mode:rows.some((item) => item.source === "live") ? "live" : rows.some((item) => item.source === "reference") ? "reference" : "sample",
+    note:"Market volume feeds are delayed or mixed-source unless a paid realtime data provider is connected. Context only, not financial advice.",
+    rows:rows,
+    etfs:etfs,
+    sources:sources
+  });
+};
+
+async function fetchAlphaVantage(key) {
+  const payload = await fetchJson(ALPHA_URL + "&apikey=" + encodeURIComponent(key));
+  if (payload.Note || payload.Information) throw new Error(payload.Note || payload.Information);
+  const active = Array.isArray(payload.most_actively_traded) ? payload.most_actively_traded : [];
+  return active.map((item) => {
+    const symbol = cleanSymbol(item.ticker || item.symbol);
+    const meta = metaFor(symbol);
+    const price = toNumber(item.price);
+    const changePct = toNumber(String(item.change_percentage || "").replace("%", ""));
+    const volume = toNumber(item.volume);
+    return row(symbol, price, changePct, volume, meta.avgVolume, "Alpha Vantage most-active ticker", "live");
+  }).filter((item) => item.symbol && item.volume > 0);
+}
+
+async function fetchStooq(items) {
+  const chunks = [];
+  for (let i = 0; i < items.length; i += 12) chunks.push(items.slice(i, i + 12));
+  const out = [];
+  for (const chunk of chunks) {
+    const symbols = chunk.map((item) => item.symbol.toLowerCase() + ".us").join(",");
+    const text = await fetchText(STOOQ_URL + "?s=" + encodeURIComponent(symbols) + "&f=sd2t2ohlcv&h&e=csv");
+    const parsed = parseCsvTable(text);
+    for (const raw of parsed) {
+      const symbol = cleanSymbol(String(raw.Symbol || "").replace(/\.US$/i, ""));
+      const meta = metaFor(symbol);
+      const close = toNumber(raw.Close);
+      const open = toNumber(raw.Open);
+      const volume = toNumber(raw.Volume);
+      if (!symbol || !Number.isFinite(close) || close <= 0 || !Number.isFinite(volume) || volume <= 0) continue;
+      const changePct = Number.isFinite(open) && open > 0 ? ((close - open) / open) * 100 : 0;
+      out.push(row(symbol, close, changePct, volume, meta.avgVolume, "public delayed quote basket", "reference"));
+    }
+  }
+  return out;
+}
+
+function row(symbol, price, changePct, volume, avgVolume, signal, source) {
+  const meta = metaFor(symbol);
+  const vol = Math.max(0, Math.round(toNumber(volume)));
+  const avg = Math.max(1, Math.round(toNumber(avgVolume || meta.avgVolume || vol || 1)));
+  const px = round2(toNumber(price));
+  const rel = vol / avg;
+  const dollarVolume = Number.isFinite(px) ? Math.round(px * vol) : 0;
+  return {
+    symbol:cleanSymbol(symbol),
+    name:meta.name,
+    group:meta.group,
+    price:px,
+    changePct:round2(changePct),
+    volume:vol,
+    avgVolume:avg,
+    relVolume:round2(rel),
+    dollarVolume:dollarVolume,
+    signal:signal || meta.signal,
+    score:attentionScore(vol, avg, changePct, dollarVolume, px),
+    source:source || "sample",
+    detail:detailFor(source || "sample", meta)
+  };
+}
+
+function normalizeRow(item) {
+  const meta = metaFor(item.symbol);
+  return Object.assign({}, item, {
+    symbol:cleanSymbol(item.symbol),
+    name:item.name || meta.name,
+    group:item.group || meta.group,
+    price:round2(item.price),
+    changePct:round2(item.changePct),
+    volume:Math.round(toNumber(item.volume)),
+    avgVolume:Math.round(toNumber(item.avgVolume || meta.avgVolume || 1)),
+    relVolume:round2(item.relVolume || (toNumber(item.volume) / Math.max(1, toNumber(item.avgVolume || meta.avgVolume || 1)))),
+    dollarVolume:Math.round(toNumber(item.dollarVolume || toNumber(item.price) * toNumber(item.volume))),
+    score:Math.round(clamp(item.score || attentionScore(item.volume, item.avgVolume || meta.avgVolume, item.changePct, item.dollarVolume, item.price), 0, 100)),
+    source:item.source || "sample",
+    detail:item.detail || detailFor(item.source || "sample", meta)
+  });
+}
+
+function metaFor(symbol) {
+  const clean = cleanSymbol(symbol);
+  const item = WATCH.find((entry) => entry.symbol === clean);
+  return item || { symbol:clean, name:clean || "Ticker", group:guessGroup(clean), avgVolume:25000000, signal:"market attention" };
+}
+
+function guessGroup(symbol) {
+  if (/^(SPY|QQQ|IWM|TLT|GLD|USO|HYG|BITO)$/.test(symbol)) return "etf";
+  if (/^(MSTR|COIN|MARA|RIOT|HOOD|BITF|CLSK)$/.test(symbol)) return "crypto";
+  if (/^(NVDA|TSLA|AAPL|MSFT|AMZN|META|AMD|PLTR|SMCI)$/.test(symbol)) return "tech";
+  if (/^(JPM|BAC|GS|MS|SOFI)$/.test(symbol)) return "financials";
+  if (/^(XOM|CVX|OXY|SLB)$/.test(symbol)) return "energy";
+  if (/^(GME|AMC)$/.test(symbol)) return "meme";
+  return "large";
+}
+
+function detailFor(source, meta) {
+  if (source === "live") return "Alpha Vantage most-active stock feed";
+  if (source === "reference") return "Public delayed quote basket with local average-volume baselines";
+  return "Bundled reference row for layout and fallback mode";
+}
+
+function attentionScore(volume, avgVolume, changePct, dollarVolume, price) {
+  const rel = toNumber(volume) / Math.max(1, toNumber(avgVolume));
+  const relScore = clamp(rel * 28, 0, 45);
+  const moveScore = clamp(Math.abs(toNumber(changePct)) * 4.2, 0, 30);
+  const dollarScore = clamp(Math.log10(Math.max(1, toNumber(dollarVolume))) * 6 - 40, 0, 22);
+  const pennyPenalty = toNumber(price) > 0 && toNumber(price) < 5 ? 8 : 0;
+  return Math.round(clamp(18 + relScore + moveScore + dollarScore - pennyPenalty, 0, 100));
+}
+
+function mergeRows(base, extra) {
+  const bySymbol = new Map();
+  for (const item of base || []) bySymbol.set(cleanSymbol(item.symbol), item);
+  for (const item of extra || []) {
+    const symbol = cleanSymbol(item.symbol);
+    if (!symbol) continue;
+    const old = bySymbol.get(symbol);
+    if (!old || sourceRank(item.source) < sourceRank(old.source)) bySymbol.set(symbol, item);
+  }
+  return Array.from(bySymbol.values());
+}
+
+function sourceRank(source) {
+  if (source === "live") return 0;
+  if (source === "reference") return 1;
+  return 2;
+}
+
+async function fetchText(url) {
+  const res = await fetch(url, { headers:{ "user-agent":USER_AGENT }, cache:"no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return await res.text();
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url, { headers:{ "user-agent":USER_AGENT }, cache:"no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return await res.json();
+}
+
+function parseCsvTable(text) {
+  const lines = String(text || "").replace(/^\uFEFF/, "").trim().split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return [];
+  const headers = parseCsvLine(lines[0]);
+  return lines.slice(1).map((line) => {
+    const cells = parseCsvLine(line);
+    const row = {};
+    headers.forEach((header, index) => { row[header] = cells[index]; });
+    return row;
+  });
+}
+
+function parseCsvLine(line) {
+  const cells = [];
+  let cell = "";
+  let quote = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (quote && line[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else {
+        quote = !quote;
+      }
+    } else if (ch === "," && !quote) {
+      cells.push(cell.trim());
+      cell = "";
+    } else {
+      cell += ch;
+    }
+  }
+  cells.push(cell.trim());
+  return cells;
+}
+
+function cleanSymbol(symbol) {
+  return String(symbol || "").trim().toUpperCase().replace(/[^A-Z0-9.-]/g, "");
+}
+
+function toNumber(value) {
+  if (value == null || value === "" || value === "N/D") return NaN;
+  return Number(String(value).replace(/[%,$\s]/g, ""));
+}
+
+function round2(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
+}
+
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, Number(n) || 0));
+}
+
+function cleanError(err) {
+  return String(err && err.message || err || "fetch failed").slice(0, 130);
+}
