@@ -1,7 +1,8 @@
 const CFTC_DISAGG_URL = "https://www.cftc.gov/dea/newcot/f_disagg.txt";
-const CFTC_FINANCIAL_URL = "https://www.cftc.gov/dea/newcot/FinFut.txt";
+const CFTC_FINANCIAL_URL = "https://www.cftc.gov/dea/newcot/FinFutWk.txt";
 const FINRA_BASE = "https://cdn.finra.org/equity/regsho/daily/CNMSshvol";
 const BINANCE_RATIO = "https://fapi.binance.com/futures/data/globalLongShortAccountRatio";
+const OKX_RATIO = "https://www.okx.com/api/v5/rubik/stat/contracts/long-short-account-ratio";
 
 const USER_AGENT = "NiftyToolsHub/1.0 market-positioning-radar";
 
@@ -66,6 +67,41 @@ async function addBinance(symbol, id, markets, sources) {
     sources.push({ source:"Binance " + symbol + " long/short", status:"live", detail:"server fetch ok" });
   } catch (err) {
     sources.push({ source:"Binance " + symbol + " long/short", status:"blocked", detail:cleanError(err) });
+    await addOkxRatio(symbol.replace("USDT", ""), id, markets, sources);
+  }
+}
+
+async function addOkxRatio(currency, id, markets, sources) {
+  const url = OKX_RATIO + "?ccy=" + encodeURIComponent(currency) + "&period=1D";
+  try {
+    const payload = await fetchJson(url);
+    const rows = Array.isArray(payload && payload.data) ? payload.data : [];
+    const points = rows.map((row) => ({
+      ts:Array.isArray(row) ? Number(row[0]) : Number(row && (row.ts || row.timestamp || row[0] || 0)),
+      ratio:Array.isArray(row) ? Number(row[1]) : Number(row && (row.longShortRatio || row.ratio || row[1]))
+    })).filter((row) => Number.isFinite(row.ratio) && row.ratio > 0);
+    const latest = points.reduce((best, row) => row.ts >= best.ts ? row : best, points[0] || { ts:0, ratio:NaN });
+    const ratio = latest.ratio;
+    if (!Number.isFinite(ratio) || ratio <= 0) throw new Error("empty OKX ratio response");
+    const longPct = clamp((ratio / (1 + ratio)) * 100, 0, 100);
+    const shortPct = 100 - longPct;
+    const nextMarket = {
+      id:id,
+      longPct:round1(longPct),
+      shortPct:round1(shortPct),
+      pctile:ratioPercentileFromValues(points.map((row) => row.ratio)),
+      source:"live",
+      detail:"OKX contracts long/short ratio fallback, " + currency
+    };
+    const item = markets.find((market) => market.id === id);
+    if (item) {
+      Object.assign(item, nextMarket);
+    } else {
+      markets.push(nextMarket);
+    }
+    sources.push({ source:"OKX " + currency + " long/short", status:"live", detail:"fallback server fetch ok" });
+  } catch (err) {
+    sources.push({ source:"OKX " + currency + " long/short", status:"blocked", detail:cleanError(err) });
   }
 }
 
@@ -108,12 +144,15 @@ async function addFinraShortVolume(markets, sources) {
 async function addCftcDisaggregated(markets, sources) {
   try {
     const text = await fetchText(CFTC_DISAGG_URL);
-    const rows = parseCsvTable(text);
+    const rows = parseCftcTable(text);
     let found = 0;
     for (const target of CFTC_DISAGG_MARKETS) {
       const row = findCftcRow(rows, target.re);
       if (!row) continue;
-      const pair = getLongShort(row, [
+      const pair = row._cells ? {
+        long:toNumber(row._cells[13]),
+        short:toNumber(row._cells[14])
+      } : getLongShort(row, [
         ["m_money_positions_long_all", "m_money_positions_short_all"],
         ["managed_money_positions_long_all", "managed_money_positions_short_all"],
         ["money_manager_positions_long_all", "money_manager_positions_short_all"]
@@ -131,13 +170,13 @@ async function addCftcDisaggregated(markets, sources) {
 async function addCftcFinancial(markets, sources) {
   try {
     const text = await fetchText(CFTC_FINANCIAL_URL);
-    const rows = parseCsvTable(text);
+    const rows = parseCftcTable(text);
     let found = 0;
     for (const target of CFTC_FINANCIAL_MARKETS) {
       const row = findCftcRow(rows, target.re);
       if (!row) continue;
-      const asset = getLongShort(row, [["asset_mgr_positions_long_all", "asset_mgr_positions_short_all"]]);
-      const lev = getLongShort(row, [["lev_money_positions_long_all", "lev_money_positions_short_all"], ["leveraged_funds_positions_long_all", "leveraged_funds_positions_short_all"]]);
+      const asset = row._cells ? { long:toNumber(row._cells[11]), short:toNumber(row._cells[12]) } : getLongShort(row, [["asset_mgr_positions_long_all", "asset_mgr_positions_short_all"]]);
+      const lev = row._cells ? { long:toNumber(row._cells[14]), short:toNumber(row._cells[15]) } : getLongShort(row, [["lev_money_positions_long_all", "lev_money_positions_short_all"], ["leveraged_funds_positions_long_all", "leveraged_funds_positions_short_all"]]);
       const long = (asset ? asset.long : 0) + (lev ? lev.long : 0);
       const short = (asset ? asset.short : 0) + (lev ? lev.short : 0);
       if (!long && !short) continue;
@@ -200,6 +239,21 @@ function parseCsvTable(text) {
   });
 }
 
+function parseCftcTable(text) {
+  const lines = String(text || "").replace(/^\uFEFF/, "").trim().split(/\r?\n/).filter(Boolean);
+  if (!lines.length) return [];
+  const first = parseCsvLine(lines[0]);
+  if (/market.*exchange/i.test(String(first[0] || ""))) return parseCsvTable(text);
+  return lines.map((line) => {
+    const cells = parseCsvLine(line);
+    return {
+      _cells:cells,
+      _market:cells[0],
+      market_and_exchange_names:cells[0]
+    };
+  });
+}
+
 function parseCsvLine(line) {
   const cells = [];
   let cell = "";
@@ -225,7 +279,7 @@ function parseCsvLine(line) {
 }
 
 function findCftcRow(rows, re) {
-  return rows.find((row) => re.test(String(row.market_and_exchange_names || row.market_and_exchange_name || row.market || "")));
+  return rows.find((row) => re.test(String(row.market_and_exchange_names || row.market_and_exchange_name || row.market || row._market || "")));
 }
 
 function getLongShort(row, pairs) {
@@ -261,6 +315,15 @@ function ratioPercentile(rows) {
   const last = values[values.length - 1];
   const below = values.filter((value) => value <= last).length;
   return Math.round((below / values.length) * 100);
+}
+
+function ratioPercentileFromValues(values) {
+  const clean = values.filter(Number.isFinite);
+  if (!clean.length) return 50;
+  const transformed = clean.map((ratio) => Math.abs((ratio / (1 + ratio)) * 100 - 50) * 2);
+  const last = transformed[transformed.length - 1];
+  const below = transformed.filter((value) => value <= last).length;
+  return Math.round((below / transformed.length) * 100);
 }
 
 function imbalancePercentile(value) {
