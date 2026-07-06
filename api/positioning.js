@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
   res.status(200).json({
     ok:true,
     updatedAt:new Date().toISOString(),
-    note:"Public market-positioning feeds are mixed-frequency. CFTC is weekly, FINRA short-volume is delayed, Binance is exchange-specific.",
+    note:"Public market-positioning feeds are mixed-frequency. CFTC is weekly, FINRA short-volume is delayed, crypto long/short feeds are exchange-specific.",
     markets:dedupeMarkets(markets),
     sources:sources
   });
@@ -66,8 +66,13 @@ async function addBinance(symbol, id, markets, sources) {
     });
     sources.push({ source:"Binance " + symbol + " long/short", status:"live", detail:"server fetch ok" });
   } catch (err) {
-    sources.push({ source:"Binance " + symbol + " long/short", status:"blocked", detail:cleanError(err) });
-    await addOkxRatio(symbol.replace("USDT", ""), id, markets, sources);
+    const detail = cleanError(err);
+    const covered = await addOkxRatio(symbol.replace("USDT", ""), id, markets, sources);
+    sources.push({
+      source:"Binance " + symbol + " long/short",
+      status:covered ? "covered" : "blocked",
+      detail:covered ? detail + "; OKX fallback live" : detail
+    });
   }
 }
 
@@ -100,8 +105,10 @@ async function addOkxRatio(currency, id, markets, sources) {
       markets.push(nextMarket);
     }
     sources.push({ source:"OKX " + currency + " long/short", status:"live", detail:"fallback server fetch ok" });
+    return true;
   } catch (err) {
     sources.push({ source:"OKX " + currency + " long/short", status:"blocked", detail:cleanError(err) });
+    return false;
   }
 }
 
