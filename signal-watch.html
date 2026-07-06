@@ -107,17 +107,17 @@
   .logo .mk::before{content:"NT";font-size:11px;color:var(--grn);font-weight:800}
   .crumb{margin-top:28px;text-transform:uppercase;letter-spacing:0}
   .lead{max-width:1040px;font-size:15px}
-  .radar-command{position:relative;display:grid;grid-template-columns:minmax(0,1.28fr) minmax(290px,.72fr);gap:18px;margin:18px 0 22px;align-items:stretch}
+  .radar-command{position:relative;display:grid;grid-template-columns:1fr;gap:18px;margin:18px auto 22px;align-items:stretch;max-width:1180px}
   .radar-command::before{content:"";position:absolute;inset:-1px;border:1px solid rgba(70,224,122,.12);pointer-events:none}
   .radar-screen,.radar-side{position:relative;border:1px solid rgba(70,224,122,.32);background:linear-gradient(180deg,rgba(3,17,8,.96),rgba(1,8,4,.98));box-shadow:0 0 44px rgba(70,224,122,.1),inset 0 0 34px rgba(70,224,122,.05);overflow:hidden}
-  .radar-screen{min-height:450px;border-radius:8px;padding:18px}
+  .radar-screen{min-height:610px;border-radius:8px;padding:18px}
   .radar-screen::before,.radar-side::before,.signal::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(105,232,255,.06),transparent);transform:translateX(-115%);animation:scanline 6.4s linear infinite;pointer-events:none}
   @keyframes scanline{to{transform:translateX(115%)}}
   .radar-topline{position:relative;z-index:2;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
   .radar-kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}
   .radar-title{font-size:clamp(18px,2.6vw,30px);line-height:1.05;font-weight:800;text-transform:uppercase;color:var(--txt);text-shadow:0 0 18px rgba(70,224,122,.22)}
   .radar-time{font-size:11px;color:var(--mut);text-align:right;line-height:1.6}
-  .canvas-wrap{position:absolute;inset:76px 16px 16px;border:1px solid rgba(70,224,122,.2);background:
+  .canvas-wrap{position:absolute;inset:82px 16px 142px;border:1px solid rgba(70,224,122,.2);background:
     linear-gradient(rgba(70,224,122,.035) 1px,transparent 1px) 0 0/100% 34px,
     linear-gradient(90deg,rgba(70,224,122,.035) 1px,transparent 1px) 0 0/34px 100%,
     radial-gradient(circle at 50% 52%,rgba(70,224,122,.08),transparent 48%),
@@ -130,7 +130,7 @@
   .readout b.cyan{color:var(--blue)}
   .readout b.amber{color:var(--amber)}
   .readout b.green{color:var(--grn)}
-  .radar-side{border-radius:8px;padding:18px;display:grid;align-content:start;gap:14px}
+  .radar-side{border-radius:8px;padding:18px;display:grid;grid-template-columns:1fr 1fr 1fr;align-content:start;gap:14px}
   .side-row{border:1px solid rgba(214,226,214,.1);background:rgba(10,13,10,.72);padding:13px;border-radius:5px}
   .side-row span{display:block;font-size:10.5px;color:var(--mut);text-transform:uppercase}
   .side-row b{display:block;margin-top:5px;color:var(--txt);font-size:15px;line-height:1.35;word-break:break-word}
@@ -140,7 +140,7 @@
   .status-chip{border:1px solid rgba(70,224,122,.25);padding:10px;border-radius:5px;background:rgba(70,224,122,.04)}
   .status-chip span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
   .status-chip b{display:block;color:var(--grn);font-size:20px;margin-top:3px}
-  .operator-feed{font-size:11.5px;color:var(--mut);line-height:1.7;border-top:1px solid rgba(214,226,214,.08);padding-top:12px}
+  .operator-feed{font-size:11.5px;color:var(--mut);line-height:1.7;border-top:1px solid rgba(214,226,214,.08);padding-top:12px;grid-column:1/-1}
   .operator-feed b{color:var(--txt)}
   .section-title{margin-top:2px}
   .panel{box-shadow:inset 0 0 0 1px rgba(70,224,122,.02)}
@@ -155,7 +155,7 @@
   .meter{height:9px}
   .metric{border-top-color:rgba(70,224,122,.1)}
   .log pre{min-height:180px}
-  @media(max-width:1000px){.radar-command{grid-template-columns:1fr}.radar-screen{min-height:420px}.radar-side{grid-template-columns:repeat(2,minmax(0,1fr))}.operator-feed{grid-column:1/-1}}
+  @media(max-width:1000px){.radar-screen{min-height:540px}.radar-side{grid-template-columns:repeat(2,minmax(0,1fr))}.operator-feed{grid-column:1/-1}}
   @media(max-width:650px){.radar-screen{min-height:560px;padding:14px}.canvas-wrap{inset:92px 12px 150px}.radar-topline{display:block}.radar-time{text-align:left;margin-top:8px}.radar-overlay{grid-template-columns:1fr 1fr;left:12px;right:12px;bottom:12px}.radar-side{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr}.readout b{font-size:20px}}
 </style>
 </head>
@@ -254,14 +254,9 @@
       </div>
 
       <div class="panel">
-        <h2>Signal split</h2>
-        <p class="note">World radar: space weather, global quake clustering, major internet status pages, public information-seeking and market stress.</p>
-        <p class="note">Local radar: official alerts where available, nearby quakes, local air/smoke, weather friction, your-network health probes, local news attention and travel friction.</p>
-      </div>
-
-      <div class="panel">
-        <h2>Premium hooks</h2>
-        <p class="note">Paid layer idea: saved locations, alert thresholds, SMS/email/webhooks, daily local briefing, AI explanations and watchlists for custom sources.</p>
+        <h2>World vs local</h2>
+        <p class="note">World radar watches broad public signals: space weather, major earthquakes, internet infrastructure, market stress and global attention spikes.</p>
+        <p class="note">Local radar focuses on the selected place: nearby quakes, air/smoke, weather alerts, connectivity checks, local news pressure and travel friction.</p>
       </div>
     </section>
 
@@ -331,13 +326,14 @@
   let radarAngle=0;
 
   function setPlace(){
-    const p=PLACES[$('place').value];
+    const place=$('place');
+    const p=place&&PLACES[place.value];
     if(!p)return;
-    $('lat').value=p[1];
-    $('lon').value=p[2];
+    setValue('lat',p[1]);
+    setValue('lon',p[2]);
     refreshSignals();
   }
-  function placeName(){const p=PLACES[$('place').value];return p?p[0]:'Manual location';}
+  function placeName(){const place=$('place');const p=place&&PLACES[place.value];return p?p[0]:'Manual location';}
   function cityName(){return placeName().split(',')[0].trim();}
   function countryName(){return (placeName().split(',')[1]||'').trim();}
   function isLikelyUS(lat,lon){return lat>=18&&lat<=72&&lon>=-170&&lon<=-65;}
@@ -569,8 +565,8 @@
   }
 
   async function refreshSignals(){
-    $('refreshBtn').disabled=true;
-    $('placeLabel').textContent=placeName().split(',')[0];
+    setDisabled('refreshBtn',true);
+    setText('placeLabel',cityName());
     seedLoading();
     try{
       const [space,quakes,internet,news,market,alerts,air,weather,internetLocal,newsLocal,travel]=await Promise.all([
@@ -579,7 +575,7 @@
       latestSignals=[space,quakes[0],internet,news,market,alerts,quakes[1],air,weather,internetLocal,newsLocal,travel];
       renderSignals(latestSignals);
     }finally{
-      $('refreshBtn').disabled=false;
+      setDisabled('refreshBtn',false);
     }
   }
   function seedLoading(){
@@ -592,17 +588,20 @@
   }
   function renderSignals(signals){
     const world=signals.filter(s=>s.scope==='world'), local=signals.filter(s=>s.scope==='local');
-    $('worldSignals').innerHTML=world.map(renderCard).join('');
-    $('localSignals').innerHTML=local.map(renderCard).join('');
+    setHTML('worldSignals',world.map(renderCard).join(''));
+    setHTML('localSignals',local.map(renderCard).join(''));
     const worldScore=overallScore(world,WORLD_WEIGHTS), localScore=overallScore(local,LOCAL_WEIGHTS);
-    $('worldDial').style.setProperty('--score',worldScore);$('localDial').style.setProperty('--score',localScore);
-    $('worldScore').textContent=worldScore;$('localScore').textContent=localScore;
-    $('worldLabel').textContent=label(worldScore);$('localLabel').textContent=label(localScore);
-    $('worldSources').textContent=world.filter(s=>s.ok).length+'/'+world.length;
-    $('localSources').textContent=local.filter(s=>s.ok).length+'/'+local.length;
-    $('worldSummary').textContent=summaryFor(worldScore,world);
-    $('localSummary').textContent='For '+placeName()+': '+summaryFor(localScore,local);
-    $('report').textContent=buildReport(world,local,worldScore,localScore);
+    setStyleVar('worldDial','--score',worldScore);
+    setStyleVar('localDial','--score',localScore);
+    setText('worldScore',worldScore);
+    setText('localScore',localScore);
+    setText('worldLabel',label(worldScore));
+    setText('localLabel',label(localScore));
+    setText('worldSources',world.filter(s=>s.ok).length+'/'+world.length);
+    setText('localSources',local.filter(s=>s.ok).length+'/'+local.length);
+    setText('worldSummary',summaryFor(worldScore,world));
+    setText('localSummary','For '+placeName()+': '+summaryFor(localScore,local));
+    setText('report',buildReport(world,local,worldScore,localScore));
     syncRadarMeta(world,local,worldScore,localScore);
   }
   function renderCard(s){
@@ -629,11 +628,12 @@
     return 'Public signals are mostly quiet right now.';
   }
   function buildReport(world,local,worldScore,localScore){
+    const lat=$('lat'), lon=$('lon');
     return [
       'NiftyTools Early Warning Radar',
       'World weirdness: '+worldScore+' / 100 ('+label(worldScore)+')',
       'Local watch: '+localScore+' / 100 ('+label(localScore)+') for '+placeName(),
-      'Location reference: '+$('lat').value+', '+$('lon').value,
+      'Location reference: '+(lat?lat.value:'--')+', '+(lon?lon.value:'--'),
       'Updated: '+new Date().toLocaleString(),
       '',
       'World signals:',
@@ -646,6 +646,22 @@
   function setText(id,value){
     const el=$(id);
     if(el)el.textContent=value;
+  }
+  function setHTML(id,value){
+    const el=$(id);
+    if(el)el.innerHTML=value;
+  }
+  function setValue(id,value){
+    const el=$(id);
+    if(el)el.value=value;
+  }
+  function setDisabled(id,value){
+    const el=$(id);
+    if(el)el.disabled=value;
+  }
+  function setStyleVar(id,name,value){
+    const el=$(id);
+    if(el)el.style.setProperty(name,value);
   }
   function syncRadarMeta(world,local,worldScore,localScore){
     const all=world.concat(local);
@@ -693,8 +709,8 @@
     if(!w||!h)return;
     ctx.clearRect(0,0,w,h);
     const now=performance.now()/1000;
-    const cx=w*.5, cy=h*.54;
-    const radius=Math.max(90,Math.min(w,h)*.39);
+    const cx=w*.5, cy=h*.5;
+    const radius=Math.max(90,Math.min(w,h)*.43);
     ctx.save();
     ctx.translate(cx,cy);
     ctx.lineWidth=1;
