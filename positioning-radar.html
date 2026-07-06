@@ -27,6 +27,30 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 .balance{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;align-items:center}.balance span{color:var(--mut);font-size:11px;text-align:center}.rail{height:22px;position:relative;border:1px solid rgba(223,234,223,.11);border-radius:999px;overflow:hidden;background:#010502}.rail .long{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,rgba(70,224,122,.86),rgba(99,230,255,.55));width:50%}.rail .short{position:absolute;inset:0 0 0 auto;background:linear-gradient(90deg,rgba(255,189,91,.52),rgba(255,101,114,.84));width:50%}.rail:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(223,234,223,.42)}.score-num{font-size:20px;font-weight:800;color:var(--amber)}.pctile{font-size:12px;color:var(--dim)}.side{display:grid;gap:12px}.panel-pad{padding:12px}.panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);margin:0 0 10px}.panel h2:before{content:"// ";color:var(--grn)}.stat-row{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.76);border-radius:5px;padding:10px;margin-bottom:8px}.stat-row span{display:block;color:var(--mut);font-size:10.5px;text-transform:uppercase}.stat-row b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35}.list{display:grid;gap:7px;max-height:300px;overflow:auto;padding-right:2px}.signal-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:8px 9px;font-size:12px;color:var(--mut)}.signal-row b{color:var(--txt)}.heat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.heat-card{border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.94),rgba(4,8,4,.96));padding:12px}.heat-card span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.heat-card b{display:block;font-size:20px;margin-top:3px}.heat-card small{display:block;color:var(--mut);font-size:11px;margin-top:6px}.report-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;margin-top:14px}.report-box{border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:180px}.truth{font-size:11.5px;color:var(--mut);line-height:1.65}.truth b{color:var(--txt)}.link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.link-grid a{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;font-size:12px;color:var(--txt)}.link-grid a span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
 @media(max-width:1080px){.toolbar{grid-template-columns:1fr 1fr 1fr}.main-grid,.hero-grid,.report-grid{grid-template-columns:1fr}.heat-grid{grid-template-columns:1fr 1fr}.table-head{display:none}.market-row{grid-template-columns:1fr}.balance{grid-template-columns:44px 1fr 44px}}@media(max-width:640px){.wrap{padding:0 12px}.toolbar,.heat-grid{grid-template-columns:1fr}.btn{width:100%}.board-head{display:block}.legend{margin-top:10px}.link-grid{grid-template-columns:1fr}.title{font-size:34px}.score-row b{font-size:48px}}
 </style>
+<style>
+/* Positioning Radar upgrade: clearer first read, richer rows, less raw-table energy. */
+.hero{background:radial-gradient(740px 220px at 18% 0,rgba(70,224,122,.09),transparent 62%),radial-gradient(560px 240px at 88% 12%,rgba(255,189,91,.08),transparent 64%),linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98))}
+.insight-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.insight-card{position:relative;min-height:108px;border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.94),rgba(3,8,4,.97));box-shadow:inset 0 0 20px rgba(70,224,122,.03);padding:12px;overflow:hidden}
+.insight-card:after{content:"";position:absolute;inset:auto 12px 0 12px;height:2px;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));opacity:.44}
+.insight-card span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.insight-card b{display:block;margin-top:6px;color:var(--txt);font-size:18px;line-height:1.15}
+.insight-card small{display:block;margin-top:7px;color:var(--mut);font-size:11px;line-height:1.35}
+.insight-card.hot b{color:var(--amber)}.insight-card.long b{color:var(--grn)}.insight-card.short b{color:var(--red)}.insight-card.live b{color:var(--cyan)}
+.board{padding:12px}.board-head h2{font-size:clamp(22px,2.6vw,32px)}
+.position-table{gap:7px}.market-row{grid-template-columns:1.2fr 86px minmax(210px,1fr) 112px 82px;min-height:76px;background:linear-gradient(90deg,rgba(70,224,122,.035),rgba(6,12,7,.88) 36%,rgba(2,7,4,.92));box-shadow:inset 0 0 20px rgba(70,224,122,.018)}
+.market-title small{margin-top:2px}.market-detail{display:block;margin-top:5px;color:var(--mut);font-size:10px;line-height:1.3}
+.signal-chip{display:inline-flex;margin-top:7px;align-items:center;border:1px solid rgba(99,230,255,.24);border-radius:999px;padding:3px 7px;color:var(--cyan);font-size:10px;text-transform:uppercase}
+.signal-chip.long{border-color:rgba(70,224,122,.32);color:var(--grn)}.signal-chip.short{border-color:rgba(255,101,114,.34);color:var(--red)}.signal-chip.hot{border-color:rgba(255,189,91,.36);color:var(--amber)}
+.source-pill.reference{border-color:rgba(99,230,255,.32);color:var(--cyan)}
+.net-pill{min-width:86px}.net-pill.short{background:rgba(255,101,114,.045)}.net-pill.long{background:rgba(70,224,122,.045)}.net-pill.neutral{background:rgba(99,230,255,.035)}
+.score-num{font-size:18px}.pctile{font-size:10px;text-transform:uppercase}
+.heat-grid{margin-top:0}.heat-card{min-height:94px}.heat-card b{font-size:24px;line-height:1}
+.heat-panel{margin-top:14px}.heat-panel h2{display:flex;justify-content:space-between;gap:12px}.heat-panel h2 span{color:var(--grn);font-size:11px;letter-spacing:.8px}
+.report-box{min-height:160px}
+@media(max-width:1080px){.insight-strip{grid-template-columns:1fr 1fr}.market-row{grid-template-columns:1fr}.net-pill{justify-content:flex-start;width:max-content}.source-pill{width:max-content}.balance{max-width:540px}}
+@media(max-width:640px){.insight-strip{grid-template-columns:1fr}.insight-card{min-height:auto}.market-row{padding:11px}.source-row .badge{width:100%}}
+</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Positioning Radar","url":"https://niftytoolshub.com/positioning-radar.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A browser-based dashboard for long versus short positioning, CFTC weekly positioning context, ETF short references and crypto long short ratios.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 </head>
 <body>
@@ -79,6 +103,8 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     </div>
   </section>
 
+  <section class="insight-strip" id="insightStrip" aria-label="Market positioning quick read"></section>
+
   <section class="main-grid">
     <div class="panel board">
       <div class="board-head">
@@ -113,7 +139,10 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     </aside>
   </section>
 
-  <section class="heat-grid" id="heatGrid"></section>
+  <section class="panel panel-pad heat-panel">
+    <h2>Group heat <span id="heatSummary">all markets</span></h2>
+    <div class="heat-grid" id="heatGrid"></div>
+  </section>
 
   <section class="report-grid">
     <article class="panel panel-pad">
@@ -192,6 +221,17 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     if (score >= 65) return "hot";
     if (score >= 45) return "balanced watch";
     return "quiet";
+  }
+  function biasRead(item){
+    const n = net(item);
+    const score = crowdScore(item);
+    if (Math.abs(n) < 5 && score < 60) return {label:"balanced",tone:""};
+    if (n <= -20) return {label:"short squeeze risk",tone:"short"};
+    if (n >= 20) return {label:"long unwind risk",tone:"long"};
+    if (score >= 80 && n > 0) return {label:"crowded long",tone:"hot"};
+    if (score >= 80 && n < 0) return {label:"crowded short",tone:"hot"};
+    if (score >= 65) return {label:n >= 0 ? "long crowding" : "short crowding",tone:n >= 0 ? "long" : "short"};
+    return {label:n >= 0 ? "long lean" : "short lean",tone:n >= 0 ? "long" : "short"};
   }
   function scoreBucket(score){return Math.floor(score / 10) * 10;}
   function currentMode(){return $("mode").value;}
@@ -278,7 +318,9 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     $("longSignal").textContent = c.longCrowd ? c.longCrowd.name + " at " + fmtPct(c.longCrowd.longPct) + " long" : "--";
     $("shortSignal").textContent = c.shortCrowd ? c.shortCrowd.name + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "--";
     $("positionRows").innerHTML = c.sorted.map(rowHtml).join("") || '<div class="market-row"><div class="market-title"><b>No markets match this filter</b><small>Try all markets or clear search.</small></div></div>';
-    $("heatGrid").innerHTML = heatCards(markets);
+    $("insightStrip").innerHTML = insightCards(c);
+    $("heatSummary").textContent = currentGroup() === "all" ? "current view" : currentGroup();
+    $("heatGrid").innerHTML = heatCards(c.visible);
     $("sourceLog").innerHTML = log.map(logHtml).join("") || logHtml({source:"Sample positioning pack",status:"sample",detail:"local fallback data active"});
     $("alertList").innerHTML = alertRows(c.sorted).join("");
     $("reportText").textContent = reportText(c);
@@ -288,11 +330,28 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     const score = crowdScore(item);
     const netClass = Math.abs(n) < 5 ? "neutral" : n > 0 ? "long" : "short";
     const netLabel = Math.abs(n) < 5 ? "even" : (n > 0 ? "long " : "short ") + Math.abs(Math.round(n));
+    const read = biasRead(item);
     const sourceClass = item.source === "live" ? "" : item.source === "blocked" ? "blocked" : "sample";
-    return '<div class="market-row"><div class="market-title"><b>' + safe(item.symbol) + ' - ' + safe(item.name) + '</b><small>' + safe(item.group) + ' / ' + safe(item.type) + '</small></div><span class="source-pill ' + sourceClass + '">' + safe(item.source) + '</span><div class="balance"><span>' + fmtPct(item.longPct) + '</span><div class="rail"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><span>' + fmtPct(item.shortPct) + '</span></div><span class="net-pill ' + netClass + '">' + netLabel + '</span><div><b class="score-num">' + score + '</b><div class="pctile">pctile ' + item.pctile + '</div></div></div>';
+    return '<div class="market-row"><div class="market-title"><b>' + safe(item.symbol) + ' - ' + safe(item.name) + '</b><small>' + safe(item.group) + ' / ' + safe(item.type) + '</small><em class="market-detail">' + safe(item.detail) + '</em><span class="signal-chip ' + read.tone + '">' + safe(read.label) + '</span></div><span class="source-pill ' + sourceClass + '">' + safe(item.source) + '</span><div class="balance"><span>' + fmtPct(item.longPct) + '</span><div class="rail"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><span>' + fmtPct(item.shortPct) + '</span></div><span class="net-pill ' + netClass + '">' + netLabel + '</span><div><b class="score-num">' + score + '</b><div class="pctile">pctile ' + item.pctile + '</div></div></div>';
+  }
+  function insightCards(c){
+    const top = c.sorted[0] || null;
+    const squeeze = c.sorted.filter(function(item){return net(item) < 0;}).sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0] || null;
+    const unwind = c.sorted.filter(function(item){return net(item) > 0;}).sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0] || null;
+    const sourceMode = c.liveCount ? c.liveCount + " live sources" : "sample/reference mode";
+    return [
+      insightHtml("market mood", top ? stateFromScore(c.avgScore) : "no match", top ? "Top crowding: " + top.symbol + " " + biasRead(top).label : "Clear search or change filters.", "hot"),
+      insightHtml("short squeeze watch", squeeze ? squeeze.symbol + " " + fmtPct(squeeze.shortPct) + " short" : "none", squeeze ? squeeze.name + " carries the strongest short-side skew." : "No short-heavy lane in this view.", "short"),
+      insightHtml("long unwind watch", unwind ? unwind.symbol + " " + fmtPct(unwind.longPct) + " long" : "none", unwind ? unwind.name + " carries the strongest long-side skew." : "No long-heavy lane in this view.", "long"),
+      insightHtml("source mode", sourceMode, c.blockedCount ? c.blockedCount + " browser-blocked probes; official links remain listed." : "No blocked source probes in this refresh.", "live")
+    ].join("");
+  }
+  function insightHtml(label, value, detail, tone){
+    return '<article class="insight-card ' + tone + '"><span>' + safe(label) + '</span><b>' + safe(value) + '</b><small>' + safe(detail) + '</small></article>';
   }
   function heatCards(markets){
-    const groups = ["equities","crypto","metals","energy","softs","grains"];
+    const order = ["equities","crypto","metals","energy","softs","grains"];
+    const groups = order.filter(function(group){return markets.some(function(item){return item.group === group;});});
     return groups.map(function(group){
       const items = markets.filter(function(item){return item.group === group;});
       const score = items.length ? Math.round(items.reduce(function(sum,item){return sum + crowdScore(item);},0) / items.length) : 0;
@@ -309,7 +368,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     });
   }
   function logHtml(item){
-    const cls = item.status === "live" ? "" : item.status === "blocked" ? "blocked" : "sample";
+    const cls = item.status === "live" ? "" : item.status === "blocked" ? "blocked" : item.status === "reference" ? "reference" : "sample";
     return '<div class="signal-row"><div><b>' + safe(item.source) + '</b><br>' + safe(item.detail) + '</div><span class="source-pill ' + cls + '">' + safe(item.status) + '</span></div>';
   }
   function safe(value){
