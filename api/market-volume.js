@@ -8,29 +8,59 @@ const WATCH = [
   { symbol:"AAPL", name:"Apple", group:"tech", avgVolume:61000000 },
   { symbol:"MSFT", name:"Microsoft", group:"tech", avgVolume:26000000 },
   { symbol:"AMZN", name:"Amazon", group:"tech", avgVolume:42000000 },
+  { symbol:"GOOGL", name:"Alphabet Class A", group:"tech", avgVolume:34000000 },
+  { symbol:"GOOG", name:"Alphabet Class C", group:"tech", avgVolume:25000000 },
   { symbol:"META", name:"Meta Platforms", group:"tech", avgVolume:16000000 },
+  { symbol:"AVGO", name:"Broadcom", group:"tech", avgVolume:30000000 },
   { symbol:"AMD", name:"AMD", group:"tech", avgVolume:62000000 },
+  { symbol:"MU", name:"Micron Technology", group:"tech", avgVolume:26000000 },
+  { symbol:"INTC", name:"Intel", group:"tech", avgVolume:76000000 },
+  { symbol:"ORCL", name:"Oracle", group:"tech", avgVolume:12000000 },
+  { symbol:"CRM", name:"Salesforce", group:"tech", avgVolume:7000000 },
+  { symbol:"NFLX", name:"Netflix", group:"tech", avgVolume:4200000 },
   { symbol:"PLTR", name:"Palantir", group:"tech", avgVolume:84000000 },
   { symbol:"SMCI", name:"Super Micro Computer", group:"tech", avgVolume:7600000 },
+  { symbol:"UBER", name:"Uber", group:"large", avgVolume:23000000 },
+  { symbol:"WMT", name:"Walmart", group:"large", avgVolume:17000000 },
+  { symbol:"DIS", name:"Disney", group:"large", avgVolume:12000000 },
+  { symbol:"BABA", name:"Alibaba", group:"large", avgVolume:21000000 },
   { symbol:"MSTR", name:"Strategy", group:"crypto", avgVolume:17500000 },
   { symbol:"COIN", name:"Coinbase", group:"crypto", avgVolume:12000000 },
   { symbol:"MARA", name:"MARA Holdings", group:"crypto", avgVolume:53000000 },
   { symbol:"RIOT", name:"Riot Platforms", group:"crypto", avgVolume:26000000 },
+  { symbol:"CLSK", name:"CleanSpark", group:"crypto", avgVolume:29000000 },
+  { symbol:"BITF", name:"Bitfarms", group:"crypto", avgVolume:19000000 },
   { symbol:"HOOD", name:"Robinhood", group:"crypto", avgVolume:36000000 },
   { symbol:"GME", name:"GameStop", group:"meme", avgVolume:17000000 },
   { symbol:"AMC", name:"AMC Entertainment", group:"meme", avgVolume:18000000 },
+  { symbol:"NIO", name:"NIO", group:"meme", avgVolume:48000000 },
+  { symbol:"RIVN", name:"Rivian", group:"meme", avgVolume:43000000 },
+  { symbol:"LCID", name:"Lucid", group:"meme", avgVolume:52000000 },
+  { symbol:"F", name:"Ford", group:"large", avgVolume:61000000 },
+  { symbol:"T", name:"AT&T", group:"large", avgVolume:39000000 },
+  { symbol:"PFE", name:"Pfizer", group:"large", avgVolume:42000000 },
+  { symbol:"WBD", name:"Warner Bros. Discovery", group:"large", avgVolume:33000000 },
+  { symbol:"SNAP", name:"Snap", group:"meme", avgVolume:27000000 },
   { symbol:"SOFI", name:"SoFi", group:"financials", avgVolume:65000000 },
   { symbol:"JPM", name:"JPMorgan Chase", group:"financials", avgVolume:9500000 },
   { symbol:"BAC", name:"Bank of America", group:"financials", avgVolume:42000000 },
+  { symbol:"C", name:"Citigroup", group:"financials", avgVolume:17000000 },
+  { symbol:"WFC", name:"Wells Fargo", group:"financials", avgVolume:20000000 },
   { symbol:"XOM", name:"Exxon Mobil", group:"energy", avgVolume:17000000 },
   { symbol:"CVX", name:"Chevron", group:"energy", avgVolume:8600000 },
+  { symbol:"OXY", name:"Occidental Petroleum", group:"energy", avgVolume:13000000 },
+  { symbol:"SLB", name:"SLB", group:"energy", avgVolume:11000000 },
   { symbol:"SPY", name:"SPDR S&P 500 ETF", group:"etf", avgVolume:73000000 },
   { symbol:"QQQ", name:"Invesco QQQ ETF", group:"etf", avgVolume:46000000 },
   { symbol:"IWM", name:"iShares Russell 2000 ETF", group:"etf", avgVolume:35000000 },
   { symbol:"TLT", name:"iShares 20+ Year Treasury ETF", group:"etf", avgVolume:42000000 },
   { symbol:"GLD", name:"SPDR Gold Shares", group:"etf", avgVolume:8500000 },
+  { symbol:"SLV", name:"iShares Silver Trust", group:"etf", avgVolume:25000000 },
   { symbol:"USO", name:"United States Oil Fund", group:"etf", avgVolume:4700000 },
   { symbol:"HYG", name:"iShares High Yield Bond ETF", group:"etf", avgVolume:38000000 },
+  { symbol:"XLF", name:"Financial Select Sector SPDR", group:"etf", avgVolume:35000000 },
+  { symbol:"XLE", name:"Energy Select Sector SPDR", group:"etf", avgVolume:18000000 },
+  { symbol:"XLK", name:"Technology Select Sector SPDR", group:"etf", avgVolume:8200000 },
   { symbol:"BITO", name:"ProShares Bitcoin Strategy ETF", group:"crypto", avgVolume:18000000 }
 ];
 
@@ -190,18 +220,18 @@ function metaFor(symbol) {
 }
 
 function guessGroup(symbol) {
-  if (/^(SPY|QQQ|IWM|TLT|GLD|USO|HYG|BITO)$/.test(symbol)) return "etf";
+  if (/^(SPY|QQQ|IWM|TLT|GLD|SLV|USO|HYG|XLF|XLE|XLK|BITO)$/.test(symbol)) return "etf";
   if (/^(MSTR|COIN|MARA|RIOT|HOOD|BITF|CLSK)$/.test(symbol)) return "crypto";
-  if (/^(NVDA|TSLA|AAPL|MSFT|AMZN|META|AMD|PLTR|SMCI)$/.test(symbol)) return "tech";
-  if (/^(JPM|BAC|GS|MS|SOFI)$/.test(symbol)) return "financials";
+  if (/^(NVDA|TSLA|AAPL|MSFT|AMZN|GOOGL|GOOG|META|AVGO|AMD|MU|INTC|ORCL|CRM|NFLX|PLTR|SMCI)$/.test(symbol)) return "tech";
+  if (/^(JPM|BAC|C|WFC|GS|MS|SOFI)$/.test(symbol)) return "financials";
   if (/^(XOM|CVX|OXY|SLB)$/.test(symbol)) return "energy";
-  if (/^(GME|AMC)$/.test(symbol)) return "meme";
+  if (/^(GME|AMC|NIO|RIVN|LCID|SNAP)$/.test(symbol)) return "meme";
   return "large";
 }
 
 function detailFor(source, meta) {
   if (source === "live") return "Alpha Vantage most-active stock feed";
-  if (source === "reference") return "Public delayed quote basket with local average-volume baselines";
+  if (source === "reference") return "Public delayed high-liquidity quote basket with local average-volume baselines";
   return "Bundled reference row for layout and fallback mode";
 }
 

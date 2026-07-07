@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Market Volume Pulse - active stocks and unusual volume | NiftyTools Hub</title>
-<meta name="description" content="Track most-active stocks, unusual volume, dollar-volume leaders, ETF pressure and market attention spikes.">
+<meta name="description" content="Track most-active stocks, high-liquidity volume leaders, unusual volume, dollar-volume leaders, ETF pressure and market attention spikes.">
 <meta property="og:title" content="Market Volume Pulse - NiftyTools Hub">
 <meta property="og:description" content="A compact radar for stock-market volume, unusual attention, ETF pressure and risk mood.">
 <meta property="og:type" content="website">
@@ -59,11 +59,11 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
       <div>
         <div class="kicker">Volume scanner / attention tape</div>
         <div class="title">Market <span>Volume Pulse</span></div>
-        <p class="lead">// Track where market attention is moving: most-active tickers, unusual volume, dollar-volume leaders, ETF pressure and risk mood. Built for context, not trade signals.</p>
+        <p class="lead">// Track where market attention is moving: most-active tickers, high-liquidity volume leaders, unusual volume, dollar-volume leaders, ETF pressure and risk mood. Built for context, not trade signals.</p>
         <div class="badges">
-          <span class="badge"><b>Most active:</b> volume leaders</span>
+          <span class="badge"><b>Most active:</b> delayed volume leaders</span>
           <span class="badge"><b>Unusual:</b> relative volume spikes</span>
-          <span class="badge"><b>ETF mood:</b> SPY/QQQ/IWM/TLT/GLD/HYG</span>
+          <span class="badge"><b>Universe:</b> liquid stocks, ETFs, crypto proxies</span>
         </div>
       </div>
       <aside class="score-card">
@@ -125,7 +125,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     <article class="panel panel-pad">
       <h2>What this is</h2>
       <p class="truth"><b>Market Volume Pulse</b> highlights attention, not conviction. Heavy volume can mean news, rebalancing, options hedging, ETF flows, panic, hype, or plain liquidity.</p>
-      <p class="truth"><b>Important:</b> public sources are delayed or mixed-frequency unless a paid realtime feed is connected. Market context only, not financial advice.</p>
+      <p class="truth"><b>Important:</b> free mode uses delayed public quotes plus a high-liquidity watchlist. A configured Alpha Vantage key can add a broader most-active feed. Market context only, not financial advice.</p>
       <div class="links">
         <a href="https://www.alphavantage.co/documentation/" target="_blank" rel="noopener"><span>optional API</span>Alpha Vantage docs</a>
         <a href="https://stooq.com/db/h/" target="_blank" rel="noopener"><span>reference feed</span>Stooq market data</a>

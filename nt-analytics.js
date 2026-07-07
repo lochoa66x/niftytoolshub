@@ -196,7 +196,7 @@
     if (/download|export|save file/.test(text)) return "download";
     if (/copy|clipboard/.test(text)) return "copy";
     if (/share/.test(text)) return "share";
-    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness|pulse|refresh|watch|pantry|recall|shortage|positioning|market|long|short|ratio|volume|ticker|lane|unusual|dollar|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|watch|pantry|recall|shortage/.test(text)) return "tool_action";
+    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness|pulse|refresh|watch|pantry|recall|shortage|positioning|market|long|short|ratio|volume|ticker|lane|unusual|dollar|positioning|market|long|short|ratio|volume|ticker|lane|unusual|dollar|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|watch|pantry|recall|shortage/.test(text)) return "tool_action";
     return "";
   }
 
