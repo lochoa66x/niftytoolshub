@@ -7,21 +7,20 @@
   var MAX_EVENTS = 800;
   var searchTimers = new WeakMap();
   var TOOL_NAMES = {
-    "market-volume-pulse": "Market Volume Pulse",
-    "positioning-radar": "Market Positioning Radar",
-    "food-watch": "Food Shortage Watch",
-    "crypto-pulse": "Crypto Network Pulse",
-    "prepper-tools": "Prepper Toolkit Pro",
     "signal-watch": "Early Warning Radar",
     "aurora-watch": "Aurora Watch",
-    "meme-watch": "Meme Early Warning",
-    "cyber-threat": "Cyber Threat Radar",
     "outage-radar": "Outage Radar",
+    "cyber-threat": "Cyber Threat Radar",
+    "food-watch": "Food Watch",
+    "meme-watch": "Meme Watch",
+    "crypto-pulse": "Crypto Network Pulse",
+    "market-volume-pulse": "Market Volume Pulse",
+    "positioning-radar": "Market Positioning Radar",
     "ai-panic": "AI Panic Meter",
+    "admin": "Admin Centre Lite",
     "image-tools": "Image Toolkit",
     "pdf-tools": "PDF Toolkit",
     "salary-tools": "Salary / Paycheck Calculator Pro",
-    "math-tools": "Math Lab Pro",
     "unit-tools": "Unit Converter Pro",
     "time-tools": "World Clock / Time Zone Studio",
     "device-tests": "Device Test Suite",
@@ -34,10 +33,83 @@
     "tarot-tools": "Tarot Card Reader",
     "astrology-tools": "Birth Chart / Zodiac Toolkit",
     "random-tools": "Random Toolkit Pro",
+    "bot-detector": "Bot Post Detector",
     "fake-hacker": "Fake Hacker Terminal",
     "mortgage": "Mortgage Calculator",
     "auto-loan": "Auto Loan Calculator",
     "percentage": "Percentage Calculator"
+  };
+  var SIGNAL_SUITE_TOOLS = {
+    "signal-watch": {
+      name: "Early Warning Radar",
+      lane: "global + local anomaly",
+      truth: "mixed",
+      read: "Live public feeds with local/browser fallback",
+      sources: "NOAA, USGS, status pages, weather/news proxies"
+    },
+    "aurora-watch": {
+      name: "Aurora Watch",
+      lane: "space weather",
+      truth: "live",
+      read: "Live NOAA + Open-Meteo where browser access allows",
+      sources: "NOAA SWPC, NOAA OVATION, Open-Meteo"
+    },
+    "outage-radar": {
+      name: "Outage Radar",
+      lane: "internet health",
+      truth: "mixed",
+      read: "Official status pages plus browser reachability probes",
+      sources: "Cloudflare, OpenAI, GitHub, Google, AWS, local probes"
+    },
+    "cyber-threat": {
+      name: "Cyber Threat Radar",
+      lane: "public cyber signals",
+      truth: "mixed",
+      read: "Public feeds with animated demo fallback when blocked",
+      sources: "SANS ISC/DShield, CISA KEV, demo simulator"
+    },
+    "food-watch": {
+      name: "Food Watch",
+      lane: "recalls + commodity pressure",
+      truth: "mixed",
+      read: "Live recall feed plus reference commodity pressure rows",
+      sources: "openFDA recalls, bundled commodity context"
+    },
+    "meme-watch": {
+      name: "Meme Watch",
+      lane: "trend early warning",
+      truth: "proxy",
+      read: "Public web attention proxies; social firehose not connected",
+      sources: "HN, GDELT, Wikipedia/Wikimedia, demo terms"
+    },
+    "crypto-pulse": {
+      name: "Crypto Pulse",
+      lane: "on-chain network stress",
+      truth: "mixed",
+      read: "BTC public APIs are strongest; ETH needs backend key for full depth",
+      sources: "Blockchain.com, mempool.space, CoinGecko, ETH fallback"
+    },
+    "market-volume-pulse": {
+      name: "Market Volume Pulse",
+      lane: "market activity",
+      truth: "delayed",
+      read: "Live/reference quote basket; full real-time market tape is later",
+      sources: "Nifty API, Stooq/reference rows, optional Alpha Vantage"
+    },
+    "positioning-radar": {
+      name: "Market Positioning Radar",
+      lane: "long/short crowding",
+      truth: "delayed",
+      read: "CFTC/FINRA/OKX are useful but delayed/proxy-based",
+      sources: "CFTC COT, FINRA short volume, OKX, Binance fallback"
+    },
+    "admin": {
+      name: "Admin Centre Lite",
+      lane: "operations",
+      truth: "local",
+      read: "Local browser buffer now; production analytics backend later",
+      sources: "nt-analytics localStorage, Vercel Analytics later"
+    }
   };
 
   function nowIso() {
@@ -113,20 +185,13 @@
     return term;
   }
 
-  function isSensitivePropKey(key) {
-    var lower = String(key || "").toLowerCase();
-    var aggregateAllowList = /^(action|tool|target|tab|status|scope|export|format|checklist|category|checked|people|days|score_level|score_bucket|label|has_value|inventory_count|family_fields|mode|network|region|source_status|source|group|market|lane|ticker|noise)$/;
-    var sensitive = /(name|phone|address|contact|note|serial|item|inventory|family|home|meet|med|pet|plan_text|free_text)/;
-    return sensitive.test(lower) && !aggregateAllowList.test(lower);
-  }
-
   function sanitizeProps(props) {
     var out = {};
     props = props || {};
     Object.keys(props).slice(0, 18).forEach(function (key) {
       var value = props[key];
       var cleanKey = safeText(key, 32).replace(/[^a-zA-Z0-9_:-]/g, "_");
-      if (!cleanKey || isSensitivePropKey(cleanKey)) return;
+      if (!cleanKey) return;
       if (typeof value === "number" || typeof value === "boolean") out[cleanKey] = value;
       else out[cleanKey] = safeText(value, 120);
     });
@@ -176,6 +241,52 @@
 
   window.ntTrack = track;
 
+  function signalMeta(slug) {
+    slug = slug || pageName();
+    return SIGNAL_SUITE_TOOLS[slug] || null;
+  }
+
+  function signalTruthFromProps(props, meta) {
+    var status = String((props && (props.source_status || props.status || props.truth)) || (meta && meta.truth) || "unknown").toLowerCase();
+    if (/blocked|error|failed|timeout/.test(status)) return "blocked";
+    if (/sample|demo/.test(status)) return "sample";
+    if (/proxy|reference|fallback/.test(status)) return "proxy";
+    if (/mixed|degraded/.test(status)) return "mixed";
+    if (/delayed/.test(status)) return "delayed";
+    if (/local/.test(status)) return "local";
+    if (/live|ok|online/.test(status)) return "live";
+    return status || "unknown";
+  }
+
+  function reportSignalHealth(props) {
+    var slug = safeText((props && props.slug) || pageName(), 48);
+    var meta = signalMeta(slug);
+    if (!meta) return;
+    var truth = signalTruthFromProps(props, meta);
+    track("signal_source_health", Object.assign({
+      tool: meta.name,
+      slug: slug,
+      lane: meta.lane,
+      truth: truth,
+      source_status: truth,
+      read: meta.read
+    }, sanitizeProps(props || {})));
+  }
+
+  window.ntSignalHealth = reportSignalHealth;
+  window.NiftySignalSuite = {
+    tools: SIGNAL_SUITE_TOOLS,
+    truthLabels: {
+      live: "Real feed working",
+      delayed: "Real but delayed",
+      proxy: "Useful estimate",
+      mixed: "Live plus fallback",
+      sample: "Fallback/sample",
+      local: "Local browser only",
+      blocked: "Feed blocked"
+    }
+  };
+
   function cardName(card) {
     var title = card.querySelector("h1,h2,h3,.title");
     if (title) return safeText(title.textContent, 80);
@@ -196,7 +307,7 @@
     if (/download|export|save file/.test(text)) return "download";
     if (/copy|clipboard/.test(text)) return "copy";
     if (/share/.test(text)) return "share";
-    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|reset|pack|inventory|readiness|pulse|refresh|watch|pantry|recall|shortage|positioning|market|long|short|ratio|volume|ticker|lane|unusual|dollar|positioning|market|long|short|ratio|volume|ticker|lane|unusual|dollar|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|positioning|market|long|short|ratio|watch|pantry|recall|shortage/.test(text)) return "tool_action";
+    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render/.test(text)) return "tool_action";
     return "";
   }
 
@@ -281,6 +392,65 @@
     };
   }
 
+  function botCategoryFromUA(ua) {
+    ua = String(ua || "").toLowerCase();
+    if (/gptbot|chatgpt-user|ccbot|claudebot|anthropic|perplexitybot|bytespider|google-extended|applebot-extended|diffbot|youbot/.test(ua)) return "ai_crawler";
+    if (/googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|semrushbot|ahrefsbot|mj12bot|dotbot|petalbot|crawler|spider|bot\b/.test(ua)) return "known_bot";
+    if (/headless|phantomjs|selenium|playwright|puppeteer|curl|wget|python-requests|httpclient|go-http-client/.test(ua)) return "automation";
+    return "browser";
+  }
+
+  function coarseTimezone() {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || "unknown";
+    } catch (err) {
+      return "unknown";
+    }
+  }
+
+  function sessionBotScore() {
+    var ua = navigator.userAgent || "";
+    var category = botCategoryFromUA(ua);
+    var score = 12;
+    if (category === "known_bot") score += 80;
+    if (category === "ai_crawler") score += 84;
+    if (category === "automation") score += 68;
+    if (navigator.webdriver) score += 72;
+    if (!navigator.languages || !navigator.languages.length) score += 18;
+    if (!screen || !screen.width || !screen.height) score += 14;
+    if (/admin|bot-detector/.test(pageName())) score -= 8;
+    return Math.max(0, Math.min(100, score));
+  }
+
+  function trackBotProbe() {
+    var ua = navigator.userAgent || "";
+    var category = botCategoryFromUA(ua);
+    track("bot_session_probe", {
+      bot_score: sessionBotScore(),
+      ua_category: category,
+      webdriver: !!navigator.webdriver,
+      language_count: navigator.languages ? navigator.languages.length : 0,
+      screen_bucket: screen && screen.width ? String(Math.round(screen.width / 100) * 100) + "x" + String(Math.round(screen.height / 100) * 100) : "unknown",
+      timezone: coarseTimezone()
+    });
+  }
+
+  function bindHumanSignals() {
+    var sent = {};
+    function mark(kind) {
+      if (sent[kind]) return;
+      sent[kind] = true;
+      track("human_signal", {
+        signal: kind,
+        ms_since_load: Math.round(performance.now ? performance.now() : 0),
+        ua_category: botCategoryFromUA(navigator.userAgent || "")
+      });
+    }
+    ["pointerdown", "keydown", "touchstart", "scroll"].forEach(function (eventName) {
+      window.addEventListener(eventName, function () { mark(eventName); }, { once: true, passive: true });
+    });
+  }
+
   function bindErrors() {
     window.addEventListener("error", function (event) {
       track("error", {
@@ -326,9 +496,22 @@
     if (name !== "index" && name !== "admin") {
       track("tool_page_view", { tool: canonicalToolName(name, location.pathname) });
     }
+    var meta = signalMeta(name);
+    if (meta) {
+      track("signal_tool_open", {
+        tool: meta.name,
+        slug: name,
+        lane: meta.lane,
+        truth: meta.truth,
+        source_status: meta.truth,
+        read: meta.read,
+        sources: meta.sources
+      });
+    }
     if (name === "admin") {
       track("admin_open", { tool: "admin" });
     }
+    trackBotProbe();
   }
 
   function init() {
@@ -336,6 +519,7 @@
     bindSearch();
     bindFetchMonitor();
     bindErrors();
+    bindHumanSignals();
     trackPerformance();
     trackPage();
   }

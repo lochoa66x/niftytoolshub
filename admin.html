@@ -179,6 +179,80 @@
     font-size:12px;
     line-height:1.6;
   }
+  .suite-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .suite-card{
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(56,255,136,.18);
+    background:linear-gradient(135deg,rgba(56,255,136,.055),rgba(2,7,4,.86) 48%,rgba(105,232,255,.035));
+    padding:14px;
+    min-height:148px;
+  }
+  .suite-card:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg,transparent,rgba(105,232,255,.08),transparent);
+    transform:translateX(-120%);
+    animation:suiteSweep 7s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes suiteSweep{to{transform:translateX(120%)}}
+  .suite-card > *{position:relative;z-index:1}
+  .suite-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .suite-top b{display:block;font-size:15px;color:var(--txt)}
+  .suite-top small{display:block;margin-top:4px;color:var(--mut);font-size:11px;line-height:1.4}
+  .truth-pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(56,255,136,.34);
+    color:var(--green);
+    border-radius:999px;
+    padding:5px 8px;
+    min-width:76px;
+    font-size:10px;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .truth-pill.delayed,.truth-pill.proxy,.truth-pill.mixed{border-color:rgba(255,209,102,.42);color:var(--amber)}
+  .truth-pill.sample,.truth-pill.local{border-color:rgba(105,232,255,.38);color:var(--cyan)}
+  .truth-pill.blocked{border-color:rgba(255,90,111,.54);color:var(--red)}
+  .suite-read{color:var(--mut);font-size:12px;line-height:1.55;margin:0 0 10px}
+  .suite-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .suite-stat{border:1px solid rgba(56,255,136,.12);background:rgba(0,0,0,.18);padding:7px}
+  .suite-stat span{display:block;color:var(--mut);font-size:9px;text-transform:uppercase}
+  .suite-stat b{display:block;color:var(--txt);font-size:14px;margin-top:2px}
+  .suite-summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .suite-summary span{border:1px solid rgba(56,255,136,.2);padding:6px 8px;color:var(--mut);font-size:11px;background:rgba(0,0,0,.18)}
+  .suite-summary b{color:var(--green)}
+  .suite-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 12px}
+  .suite-strip .suite-stat{min-height:58px;background:linear-gradient(180deg,rgba(56,255,136,.055),rgba(0,0,0,.2))}
+  .suite-strip .suite-stat b{font-size:22px;color:var(--green)}
+  .suite-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+  .suite-filter{
+    min-height:34px;
+    border:1px solid rgba(56,255,136,.22);
+    background:rgba(0,0,0,.22);
+    color:var(--mut);
+    padding:7px 10px;
+    font-size:11px;
+    text-transform:uppercase;
+  }
+  .suite-filter.active{color:var(--ink);background:var(--green);border-color:var(--green);font-weight:900}
+  .suite-note{border:1px solid rgba(255,209,102,.26);background:rgba(255,209,102,.045);color:var(--amber);padding:9px 10px;font-size:12px;line-height:1.5;margin:0 0 12px}
+  .suite-grid.compact{display:grid;grid-template-columns:1fr;gap:8px}
+  .suite-card.compact{min-height:0;padding:11px 12px;background:linear-gradient(90deg,rgba(56,255,136,.045),rgba(2,7,4,.88) 38%,rgba(2,7,4,.94))}
+  .suite-card.compact:before{display:none}
+  .suite-row-main{display:grid;grid-template-columns:minmax(190px,1.3fr) 92px 88px 88px 88px minmax(180px,1fr);gap:10px;align-items:center}
+  .suite-tool b{display:block;color:var(--txt);font-size:14px}
+  .suite-tool small{display:block;color:var(--mut);font-size:10.5px;margin-top:2px}
+  .suite-mini span{display:block;color:var(--mut);font-size:9px;text-transform:uppercase}
+  .suite-mini b{display:block;color:var(--txt);font-size:14px;margin-top:1px}
+  .suite-current{color:var(--mut);font-size:11.5px;line-height:1.35}
+  .suite-details{margin-top:8px;color:var(--mut);font-size:11.5px;line-height:1.55}
+  .suite-details summary{cursor:pointer;color:var(--green);width:max-content}
+  .suite-details[open]{border-top:1px solid rgba(56,255,136,.14);padding-top:8px}
   .footer{border-top:1px solid rgba(56,255,136,.14);color:var(--mut);padding:28px 0 42px;font-size:12px;line-height:1.7}
   @media (max-width:980px){
     .hero{grid-template-columns:1fr}
@@ -191,6 +265,11 @@
     .navlinks a,.navlinks button{flex:1;text-align:center}
     h1{font-size:40px}
     .bar-row{grid-template-columns:1fr}
+    .suite-strip{grid-template-columns:1fr 1fr}
+    .suite-grid{grid-template-columns:1fr}
+    .suite-row-main{grid-template-columns:1fr 1fr}
+    .suite-tool,.suite-current{grid-column:1/-1}
+    .suite-meta{grid-template-columns:1fr 1fr}
     .panel{padding:14px}
     .panel-head{display:block}
     .badge{display:inline-block;margin-top:10px}
@@ -270,6 +349,29 @@
           <tbody id="summaryBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="panel wide">
+      <div class="panel-head">
+        <div>
+          <h2>Signal Suite Reliability</h2>
+          <p>Flagship tools grouped by truth status: live, delayed, proxy, mixed, sample, local or blocked.</p>
+        </div>
+        <span class="badge" id="signalSuiteBadge">10 tools</span>
+      </div>
+      <div id="signalSuiteStrip" class="suite-strip"></div>
+      <div class="suite-note">Local browser telemetry only. Production traffic lives in Vercel Analytics until a backend/drain is connected.</div>
+      <div class="suite-filters" id="signalSuiteFilters" aria-label="Signal Suite filters">
+        <button class="suite-filter active" type="button" data-suite-filter="all">All</button>
+        <button class="suite-filter" type="button" data-suite-filter="attention">Needs attention</button>
+        <button class="suite-filter" type="button" data-suite-filter="seen">Seen locally</button>
+        <button class="suite-filter" type="button" data-suite-filter="baseline">Baseline only</button>
+        <button class="suite-filter" type="button" data-suite-filter="live-delayed">Live / delayed</button>
+        <button class="suite-filter" type="button" data-suite-filter="proxy-mixed">Proxy / mixed</button>
+        <button class="suite-filter" type="button" data-suite-filter="blocked">Blocked</button>
+      </div>
+      <div id="signalSuiteGrid" class="suite-grid compact"></div>
+      <div id="signalSuiteSummary" class="suite-summary"></div>
     </div>
 
     <div class="panel">
@@ -382,52 +484,28 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
-  "Market Volume Pulse",
-  "Market Positioning Radar",
-  "Market Volume Pulse",
-  "Market Positioning Radar",
-  "Food Shortage Watch",
-  "Crypto Network Pulse",
-  "Prepper Toolkit Pro",
-  "Early Warning Radar","Aurora Watch","Meme Early Warning","Outage Radar","Cyber Threat Radar","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro","Math Lab Pro",
+  "Early Warning Radar","Aurora Watch","Outage Radar","Cyber Threat Radar","Food Watch","Meme Watch","Crypto Pulse","Market Volume Pulse","Market Positioning Radar","Admin Centre Lite","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro",
   "Unit Converter Pro","World Clock / Time Zone Studio","Device Test Suite","File Organizer Toolkit","Color Palette Studio","QR Code Toolkit Pro",
   "Receipt Generator","Developer Toolkit","Text & Writing Toolkit Pro","Tarot Card Reader","Birth Chart / Zodiac Toolkit","Random Toolkit Pro",
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
 ];
 const toolAliases = {
-  "market-volume-pulse":"Market Volume Pulse",
-  "market volume pulse":"Market Volume Pulse",
-  "volume pulse":"Market Volume Pulse",
-  "stock volume radar":"Market Volume Pulse",
-  "positioning-radar":"Market Positioning Radar",
-  "market positioning radar":"Market Positioning Radar",
-  "long short radar":"Market Positioning Radar",
-  "food-watch":"Food Shortage Watch",
-  "food shortage watch":"Food Shortage Watch",
-  "pantry pressure":"Food Shortage Watch",
-  "crypto-pulse":"Crypto Network Pulse",
-  "crypto network pulse":"Crypto Network Pulse",
-  "btc eth pulse":"Crypto Network Pulse",
-  "prepper-tools":"Prepper Toolkit Pro",
-  "prepper toolkit":"Prepper Toolkit Pro",
-  "prepper toolkit pro":"Prepper Toolkit Pro",
-  "library":"Library",
-  "library.html":"Library",
-  "secondary tool library":"Library",
-  "prepper-tools":"Prepper Toolkit Pro",
-  "prepper toolkit":"Prepper Toolkit Pro",
-  "preparedness":"Prepper Toolkit Pro",
-  "outage-radar":"Outage Radar",
-  "outage radar":"Outage Radar",
-  "cyber-threat":"Cyber Threat Radar",
-  "cyber threat radar":"Cyber Threat Radar",
-  "math-tools":"Math Lab Pro",
-  "math lab pro":"Math Lab Pro",
   "signal-watch":"Early Warning Radar",
   "signal watch":"Early Warning Radar",
   "early warning radar":"Early Warning Radar",
   "aurora-watch":"Aurora Watch",
-  "meme-watch":"Meme Early Warning",
+  "outage-radar":"Outage Radar",
+  "cyber-threat":"Cyber Threat Radar",
+  "food-watch":"Food Watch",
+  "meme-watch":"Meme Watch",
+  "meme early warning":"Meme Watch",
+  "crypto-pulse":"Crypto Pulse",
+  "crypto network pulse":"Crypto Pulse",
+  "market-volume-pulse":"Market Volume Pulse",
+  "positioning-radar":"Market Positioning Radar",
+  "market-positioning-radar":"Market Positioning Radar",
+  "admin":"Admin Centre Lite",
+  "admin-centre-lite":"Admin Centre Lite",
   "ai-panic":"AI Panic Meter",
   "image-tools":"Image Toolkit",
   "pdf-tools":"PDF Toolkit",
@@ -450,6 +528,19 @@ const toolAliases = {
   "auto-loan":"Auto Loan Calculator",
   "percentage":"Percentage Calculator"
 };
+const signalSuite = [
+  {slug:"signal-watch",tool:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",read:"Live public feeds with fallback layers for space weather, quakes, outages, news and local checks.",sources:"NOAA, USGS, status pages, GDELT/Wikimedia, weather/news proxies"},
+  {slug:"aurora-watch",tool:"Aurora Watch",lane:"space weather",truth:"live",read:"Tonight visibility score from NOAA space weather plus local cloud/moonlight context.",sources:"NOAA SWPC, NOAA OVATION, Open-Meteo"},
+  {slug:"outage-radar",tool:"Outage Radar",lane:"internet health",truth:"mixed",read:"Official status pages plus browser reachability probes; carrier/app signals are still proxy-like.",sources:"Cloudflare, OpenAI, GitHub, Google, AWS, local probes"},
+  {slug:"cyber-threat",tool:"Cyber Threat Radar",lane:"public cyber signals",truth:"mixed",read:"Public cyber feeds with demo visualization fallback when browser access is blocked.",sources:"SANS ISC/DShield, CISA KEV, demo simulator"},
+  {slug:"food-watch",tool:"Food Watch",lane:"recalls + commodity pressure",truth:"mixed",read:"Recall signals are live where possible; commodity shortage pressure still uses reference context.",sources:"openFDA, bundled commodity pressure rows"},
+  {slug:"meme-watch",tool:"Meme Watch",lane:"trend early warning",truth:"proxy",read:"Public attention proxies. Useful for trend smoke, not a full social firehose yet.",sources:"HN, GDELT, Wikipedia/Wikimedia"},
+  {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"BTC public network probes are strongest; ETH depth needs a backend/API key path.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH fallback"},
+  {slug:"market-volume-pulse",tool:"Market Volume Pulse",lane:"market activity",truth:"delayed",read:"Most-active / dollar-volume style board using live or reference rows; full tape later.",sources:"Nifty API, Stooq/reference rows, optional Alpha Vantage"},
+  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"delayed",read:"CFTC/FINRA/OKX signals are useful but delayed/proxy-based. Binance noise is not critical.",sources:"CFTC COT, FINRA, OKX, Binance fallback"},
+  {slug:"admin",tool:"Admin Centre Lite",lane:"operations",truth:"local",read:"Local browser buffer now. Production analytics API/drain is the next real ops layer.",sources:"nt-analytics localStorage, Vercel Analytics later"}
+];
+let signalSuiteFilter = "all";
 
 function $(id){return document.getElementById(id);}
 function readEvents(){
@@ -462,101 +553,8 @@ function writeEvents(events){
 function escapeHTML(value){
   return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
 }
-const eventLabels = {
-  "market_volume_open":"Market Volume Pulse opened",
-  "market_volume_refresh":"Market Volume refresh",
-  "market_volume_filter_change":"Market Volume filter change",
-  "market_volume_copy_report":"Market Volume report copy",
-  "market_volume_export":"Market Volume export",
-  "market_volume_error":"Market Volume source error",
-  "positioning_radar_open":"Positioning Radar opened",
-  "positioning_radar_refresh":"Positioning Radar refresh",
-  "positioning_radar_filter_change":"Positioning Radar filter change",
-  "positioning_radar_copy_report":"Positioning Radar report copy",
-  "positioning_radar_export":"Positioning Radar export",
-  "positioning_radar_error":"Positioning Radar source error",
-  "food_watch_open":"Food Watch opened",
-  "food_watch_refresh":"Food Watch refresh",
-  "food_watch_filter_change":"Food Watch filter change",
-  "food_watch_copy_report":"Food Watch report copy",
-  "food_watch_export":"Food Watch export",
-  "food_watch_error":"Food Watch source error",
-  "crypto_pulse_open":"Crypto Pulse opened",
-  "crypto_pulse_refresh":"Crypto Pulse refresh",
-  "crypto_pulse_mode_change":"Crypto Pulse mode change",
-  "crypto_pulse_copy_report":"Crypto Pulse report copy",
-  "crypto_pulse_export":"Crypto Pulse export",
-  "crypto_pulse_error":"Crypto Pulse source error",
-  "prepper_open":"Prepper opened",
-  "prepper_calculate":"Prepper calculation",
-  "prepper_tab_open":"Prepper tab opened",
-  "prepper_score_level":"Prepper readiness score",
-  "prepper_export":"Prepper export",
-  "prepper_inventory_add":"Prepper inventory add",
-  "prepper_family_plan_copy":"Prepper family plan copy",
-  "prepper_checklist_copy":"Prepper checklist copy",
-  "prepper_print":"Prepper print",
-  "prepper_reset":"Prepper reset",
-  "prepper_open":"Prepper opened",
-  "prepper_calculate":"Prepper calculation",
-  "prepper_tab_open":"Prepper tab opened",
-  "prepper_score_level":"Prepper readiness score",
-  "prepper_export":"Prepper export",
-  "prepper_inventory_add":"Prepper inventory add",
-  "prepper_family_plan_copy":"Prepper family plan copy",
-  "prepper_checklist_copy":"Prepper checklist copy",
-  "prepper_print":"Prepper print",
-  "prepper_reset":"Prepper reset"
-};
 function label(value){
-  const raw = String(value || "unknown");
-  return escapeHTML(eventLabels[raw] || raw.replace(/[-_]/g," ").replace(/\b\w/g,function(ch){return ch.toUpperCase();}));
-}
-function eventKind(event){
-  const name = event && event.event || "";
-  if(/^(positioning_radar_open|food_watch_open|prepper_open|crypto_pulse_open|tool_open|tool_page_view|market_volume_open)$/.test(name)) return "open";
-  if(/^(positioning_radar_copy_report|food_watch_copy_report|prepper_checklist_copy|prepper_family_plan_copy|crypto_pulse_copy_report|copy|market_volume_copy_report)$/.test(name)) return "copy";
-  if(/^(positioning_radar_export|food_watch_export|prepper_export|prepper_print|crypto_pulse_export|download|share|market_volume_export)$/.test(name)) return "export";
-  if(/^(positioning_radar_refresh|positioning_radar_filter_change|food_watch_refresh|food_watch_filter_change|prepper_calculate|prepper_tab_open|prepper_score_level|prepper_inventory_add|prepper_reset|crypto_pulse_refresh|crypto_pulse_mode_change|tool_action|market_volume_refresh|market_volume_filter_change)$/.test(name)) return "action";
-  if(/error/.test(name)) return "error";
-  if(/slow|large/.test(name)) return "perf";
-  if(name === "search") return "search";
-  return name;
-}
-function isOpenEvent(event){return eventKind(event) === "open";}
-function isActionEvent(event){return /^(action|copy|export)$/.test(eventKind(event));}
-function friendlyAction(event){
-  const name = event.event || "";
-  if(name === "market_volume_refresh") return "Market Volume: refresh pulse";
-  if(name === "market_volume_filter_change") return "Market Volume: filter " + (event.lane || event.group || "change");
-  if(name === "market_volume_copy_report") return "Market Volume: copy report";
-  if(name === "market_volume_export") return "Market Volume: export " + (event.format || "snapshot");
-  if(name === "market_volume_error") return "Market Volume: source error";
-  if(name === "positioning_radar_refresh") return "Positioning: refresh radar";
-  if(name === "positioning_radar_filter_change") return "Positioning: filter " + (event.group || event.market || "change");
-  if(name === "positioning_radar_copy_report") return "Positioning: copy report";
-  if(name === "positioning_radar_export") return "Positioning: export " + (event.format || "snapshot");
-  if(name === "positioning_radar_error") return "Positioning: source error";
-  if(name === "food_watch_refresh") return "Food: refresh watch";
-  if(name === "food_watch_filter_change") return "Food: filter " + (event.region || event.category || "change");
-  if(name === "food_watch_copy_report") return "Food: copy report";
-  if(name === "food_watch_export") return "Food: export " + (event.format || "snapshot");
-  if(name === "food_watch_error") return "Food: source error";
-  if(name === "crypto_pulse_refresh") return "Crypto: refresh pulse";
-  if(name === "crypto_pulse_mode_change") return "Crypto: mode " + (event.mode || "change");
-  if(name === "crypto_pulse_copy_report") return "Crypto: copy report";
-  if(name === "crypto_pulse_export") return "Crypto: export " + (event.format || "snapshot");
-  if(name === "crypto_pulse_error") return "Crypto: source error";
-  if(name === "prepper_calculate") return "Prepper: calculate supplies";
-  if(name === "prepper_tab_open") return "Prepper: opened " + (event.tab || "tab");
-  if(name === "prepper_score_level") return "Prepper: score " + (event.score_level || event.label || "level");
-  if(name === "prepper_export") return "Prepper: export " + (event.export || event.format || "file");
-  if(name === "prepper_inventory_add") return "Prepper: inventory add";
-  if(name === "prepper_family_plan_copy") return "Prepper: copy family plan";
-  if(name === "prepper_checklist_copy") return "Prepper: copy checklist";
-  if(name === "prepper_print") return "Prepper: print plan";
-  if(name === "prepper_reset") return "Prepper: reset local data";
-  return event.action || label(name);
+  return escapeHTML(String(value || "unknown").replace(/[-_]/g," ").replace(/\b\w/g,function(ch){return ch.toUpperCase();}));
 }
 function since(days){
   const cutoff = Date.now() - days * DAY;
@@ -622,8 +620,8 @@ function metricWindow(name, events){
   return {
     name:name,
     events:events.length,
-    opens:countWhere(events,isOpenEvent),
-    actions:countWhere(events,isActionEvent),
+    opens:countWhere(events,function(e){return e.event === "tool_open" || e.event === "tool_page_view";}),
+    actions:countWhere(events,function(e){return /tool_action|download|copy|share/.test(e.event || "");}),
     searches:countWhere(events,function(e){return e.event === "search";}),
     errors:countWhere(events,function(e){return e.event === "error";}),
     issues:issueCount
@@ -635,6 +633,123 @@ function renderSummary(){
     return '<tr><td>'+row.name+'</td><td>'+row.events+'</td><td>'+row.opens+'</td><td>'+row.actions+'</td><td>'+row.searches+'</td><td>'+row.errors+'</td><td>'+row.issues+'</td></tr>';
   }).join("");
 }
+function signalSlugFromEvent(event){
+  const candidates = [event.slug, event.page, event.tool, event.path, event.title, event.target].filter(Boolean);
+  for(const value of candidates){
+    const slug = slugLike(value);
+    const bySlug = signalSuite.find(function(item){return item.slug === slug;});
+    if(bySlug) return bySlug.slug;
+    const normalized = normalizeToolName(value).toLowerCase();
+    const byName = signalSuite.find(function(item){return item.tool.toLowerCase() === normalized;});
+    if(byName) return byName.slug;
+  }
+  return "";
+}
+function truthFromEvent(event, fallback){
+  const raw = String(event.source_status || event.truth || event.status || fallback || "unknown").toLowerCase();
+  if(/blocked|error|failed|timeout/.test(raw) || event.event === "error") return "blocked";
+  if(/sample|demo/.test(raw)) return "sample";
+  if(/proxy|reference|fallback/.test(raw)) return "proxy";
+  if(/mixed|degraded/.test(raw)) return "mixed";
+  if(/delayed/.test(raw)) return "delayed";
+  if(/local/.test(raw)) return "local";
+  if(/live|ok|online/.test(raw)) return "live";
+  return raw || fallback || "unknown";
+}
+function truthRank(truth){
+  return {blocked:0,sample:1,proxy:2,mixed:3,delayed:4,local:5,live:6}[truth] == null ? 3 : {blocked:0,sample:1,proxy:2,mixed:3,delayed:4,local:5,live:6}[truth];
+}
+function truthLabel(truth){
+  return {
+    live:"live",
+    delayed:"delayed",
+    proxy:"proxy",
+    mixed:"mixed",
+    sample:"sample",
+    local:"local",
+    blocked:"blocked"
+  }[truth] || "watch";
+}
+function renderSignalSuite(events){
+  const bySlug = {};
+  signalSuite.forEach(function(item){
+    bySlug[item.slug] = {meta:item,opens:0,actions:0,errors:0,slow:0,truth:item.truth,last:null};
+  });
+  events.forEach(function(event){
+    const slug = signalSlugFromEvent(event);
+    if(!slug || !bySlug[slug]) return;
+    const row = bySlug[slug];
+    if(event.event === "tool_open" || event.event === "tool_page_view" || event.event === "signal_tool_open") row.opens++;
+    if(/tool_action|download|copy|share|refresh|export/.test(event.event || "")) row.actions++;
+    if(event.event === "error" || /_error$/.test(event.event || "")) row.errors++;
+    if(/slow|large/.test(event.event || "")) row.slow++;
+    const nextTruth = truthFromEvent(event, row.truth);
+    if(truthRank(nextTruth) < truthRank(row.truth) || /source_status|truth|status/.test(Object.keys(event).join(" "))) row.truth = nextTruth;
+    if(!row.last || Date.parse(event.ts || 0) > Date.parse(row.last.ts || 0)) row.last = event;
+  });
+  const rows = signalSuite.map(function(item){
+    const row = bySlug[item.slug];
+    row.seen = !!row.last || row.opens > 0 || row.actions > 0 || row.errors > 0 || row.slow > 0;
+    row.baseline = !row.seen;
+    row.needsAttention = row.errors > 0 || row.slow > 0 || row.truth === "blocked" || row.truth === "sample";
+    return row;
+  });
+  const counts = rows.reduce(function(map,row){
+    map[row.truth] = (map[row.truth] || 0) + 1;
+    return map;
+  },{});
+  const seenCount = rows.filter(function(row){return row.seen;}).length;
+  const baselineCount = rows.filter(function(row){return row.baseline;}).length;
+  const attentionCount = rows.filter(function(row){return row.needsAttention;}).length;
+  const blockedCount = rows.filter(function(row){return row.truth === "blocked";}).length;
+  $("signalSuiteBadge").textContent = rows.length + " flagship tools";
+  $("signalSuiteStrip").innerHTML = [
+    ["Tools", rows.length],
+    ["Seen locally", seenCount],
+    ["Baseline only", baselineCount],
+    ["Needs attention", attentionCount],
+    ["Blocked", blockedCount]
+  ].map(function(item){
+    return '<div class="suite-stat"><span>'+escapeHTML(item[0])+'</span><b>'+item[1]+'</b></div>';
+  }).join("");
+  $("signalSuiteSummary").innerHTML = ["live","delayed","mixed","proxy","sample","local","blocked"].filter(function(key){return counts[key];}).map(function(key){
+    return '<span><b>'+counts[key]+'</b> '+key+'</span>';
+  }).join("");
+  const filtered = rows.filter(function(row){
+    if(signalSuiteFilter === "attention") return row.needsAttention;
+    if(signalSuiteFilter === "seen") return row.seen;
+    if(signalSuiteFilter === "baseline") return row.baseline;
+    if(signalSuiteFilter === "live-delayed") return row.truth === "live" || row.truth === "delayed";
+    if(signalSuiteFilter === "proxy-mixed") return row.truth === "proxy" || row.truth === "mixed";
+    if(signalSuiteFilter === "blocked") return row.truth === "blocked";
+    return true;
+  });
+  if(!filtered.length){
+    $("signalSuiteGrid").innerHTML = '<div class="empty">No Signal Suite tools match this filter.</div>';
+    return;
+  }
+  $("signalSuiteGrid").innerHTML = filtered.map(function(row){
+    const meta = row.meta;
+    const truth = truthLabel(row.truth);
+    const lastText = row.last ? new Date(row.last.ts).toLocaleString() : "not opened locally";
+    const attention = row.errors ? row.errors + " feed/error events" : row.slow ? row.slow + " perf events" : row.opens ? "recently seen" : "baseline only";
+    return '<article class="suite-card compact">'+
+      '<div class="suite-row-main">'+
+        '<div class="suite-tool"><b>'+escapeHTML(meta.tool)+'</b><small>'+escapeHTML(meta.lane)+'</small></div>'+
+        '<span class="truth-pill '+truth+'">'+truth+'</span>'+
+        '<div class="suite-mini"><span>opens</span><b>'+row.opens+'</b></div>'+
+        '<div class="suite-mini"><span>actions</span><b>'+row.actions+'</b></div>'+
+        '<div class="suite-mini"><span>issues</span><b>'+row.errors+'</b></div>'+
+        '<div class="suite-current">'+escapeHTML(meta.read)+'</div>'+
+      '</div>'+
+      '<details class="suite-details"><summary>details</summary>'+
+        '<div><b style="color:var(--txt)">Sources:</b> '+escapeHTML(meta.sources)+'</div>'+
+        '<div><b style="color:var(--txt)">Status:</b> '+escapeHTML(attention)+'</div>'+
+        '<div><b style="color:var(--txt)">Last:</b> '+escapeHTML(lastText)+'</div>'+
+      '</details>'+
+    '</article>';
+  }).join("");
+}
 function renderIssues(events){
   const rows = events.filter(function(e){return /error|slow|large/.test(e.event || "");}).slice(-16).reverse();
   if(!rows.length){
@@ -643,7 +758,7 @@ function renderIssues(events){
   }
   $("issueBody").innerHTML = rows.map(function(e){
     const detail = e.message || e.url || e.action || e.target || e.type || e.mb || e.bytes || "";
-    const impact = /error/.test(e.event || "") ? "check now" : e.event === "slow_page" ? "performance" : e.event === "large_page" ? "page weight" : "watch";
+    const impact = e.event === "error" ? "check now" : e.event === "slow_page" ? "performance" : e.event === "large_page" ? "page weight" : "watch";
     return '<tr><td>'+new Date(e.ts).toLocaleString()+'</td><td>'+label(e.event)+'</td><td>'+escapeHTML(e.page || e.path || "")+'</td><td>'+escapeHTML(detail)+'</td><td>'+impact+'</td></tr>';
   }).join("");
 }
@@ -651,28 +766,25 @@ function renderAttention(events){
   const byTool = {};
   const enoughData = events.length >= 50;
   if(enoughData){
-    catalog.forEach(function(tool){byTool[tool] = {tool:tool,opens:0,actions:0,errors:0,slow:0,prepperLow:0};});
+    catalog.forEach(function(tool){byTool[tool] = {tool:tool,opens:0,actions:0,errors:0,slow:0};});
   }
   events.forEach(function(e){
     const match = topTool(e) || "Unknown";
-    byTool[match] = byTool[match] || {tool:match,opens:0,actions:0,errors:0,slow:0,prepperLow:0};
-    if(isOpenEvent(e)) byTool[match].opens++;
-    if(isActionEvent(e)) byTool[match].actions++;
-    if(/error/.test(e.event || "")) byTool[match].errors++;
+    byTool[match] = byTool[match] || {tool:match,opens:0,actions:0,errors:0,slow:0};
+    if(e.event === "tool_open" || e.event === "tool_page_view") byTool[match].opens++;
+    if(/tool_action|download|copy|share/.test(e.event || "")) byTool[match].actions++;
+    if(e.event === "error") byTool[match].errors++;
     if(/slow|large/.test(e.event || "")) byTool[match].slow++;
-    if(e.event === "prepper_score_level" && /getting_started|decent/.test(e.score_level || "")) byTool[match].prepperLow++;
   });
   let rows = Object.values(byTool).map(function(item){
     const missingActions = enoughData && item.opens > 5 && item.actions === 0 ? 12 : 0;
     const lowOpen = enoughData && item.opens === 0 ? 8 : 0;
-    const prepperLow = (item.prepperLow || 0) * 10;
-    const score = item.errors * 35 + item.slow * 18 + missingActions + lowOpen + prepperLow;
+    const score = item.errors * 35 + item.slow * 18 + missingActions + lowOpen;
     const reasons = [];
     if(item.errors) reasons.push(item.errors + " errors");
     if(item.slow) reasons.push(item.slow + " perf signals");
     if(missingActions) reasons.push("opens but no actions");
     if(lowOpen) reasons.push("no opens after enough traffic");
-    if(prepperLow) reasons.push("low prepper readiness score");
     if(!enoughData && !score) reasons.push("warming up");
     return Object.assign(item,{score:score,reason:reasons.join(", ") || "healthy"});
   }).sort(function(a,b){return b.score - a.score || a.opens - b.opens;}).slice(0,12);
@@ -701,16 +813,17 @@ function refreshDashboard(){
   const sessions = new Set(week.map(function(e){return e.session || "";})).size;
   $("eventCountBadge").textContent = events.length + " events";
   $("todayEvents").textContent = day.length;
-  $("todayMeta").textContent = countWhere(day,isOpenEvent) + " tool opens";
+  $("todayMeta").textContent = countWhere(day,function(e){return e.event === "tool_open" || e.event === "tool_page_view";}) + " tool opens";
   $("weekEvents").textContent = week.length;
   $("weekMeta").textContent = sessions + " sessions";
   $("monthEvents").textContent = month.length;
   $("monthMeta").textContent = countWhere(month,function(e){return e.event === "search";}) + " searches";
   renderSummary();
-  renderBars("toolBars", groupBy(month.filter(isOpenEvent), topTool), "No tool open events yet.", "");
-  renderBars("actionBars", groupBy(month.filter(isActionEvent), friendlyAction), "No tool action events yet.", "");
+  renderBars("toolBars", groupBy(month.filter(function(e){return e.event === "tool_open" || e.event === "tool_page_view";}), topTool), "No tool open events yet.", "");
+  renderBars("actionBars", groupBy(month.filter(function(e){return /tool_action|download|copy|share/.test(e.event || "");}), function(e){return e.action || e.event;}), "No tool action events yet.", "");
   renderBars("searchBars", groupBy(month.filter(function(e){return e.event === "search";}), function(e){return e.term;}), "No search events yet.", "warn");
   renderBars("referrerBars", groupBy(month, function(e){return e.referrer || e.source || "direct / local";}), "No referrer events in local storage.", "");
+  renderSignalSuite(month);
   renderIssues(month);
   renderAttention(month);
   $("sourceLabel").textContent = events.length ? "Local warm-up" : "Awaiting data";
@@ -718,37 +831,23 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Market Positioning Radar","Food Shortage Watch","Crypto Network Pulse","Prepper Toolkit Pro","Library","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
+  const tools = ["Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];
     events.push({event:i % 5 === 0 ? "tool_action" : "tool_open", tool:tool, page:tool.toLowerCase().replace(/[^a-z0-9]+/g,"-"), action:i % 5 === 0 ? "Calculate" : "", session:"demo-"+(i % 13), ts:new Date(now - (i * 3.8 * 3600000)).toISOString(), source:i % 4 === 0 ? "google" : "direct / local"});
   }
+  signalSuite.forEach(function(tool,i){
+    const statuses = ["mixed","live","mixed","proxy","sample","delayed","blocked","local"];
+    events.push({event:"signal_tool_open",tool:tool.tool,slug:tool.slug,page:tool.slug,lane:tool.lane,truth:tool.truth,source_status:tool.truth,session:"demo-signal",ts:new Date(now - i * 2100000).toISOString()});
+    if(i % 4 === 2) events.push({event:"signal_source_health",tool:tool.tool,slug:tool.slug,page:tool.slug,source_status:statuses[i % statuses.length],session:"demo-signal",ts:new Date(now - i * 2400000).toISOString()});
+  });
   ["pdf","salary","aurora","image compressor","qr wifi"].forEach(function(term,i){
     events.push({event:"search",term:term,page:"index",session:"demo-search",ts:new Date(now - i * 7200000).toISOString(),source:"homepage"});
   });
   events.push({event:"error",type:"fetch_failed",message:"NOAA feed timeout",page:"aurora-watch",tool:"Aurora Watch",session:"demo-err",ts:new Date(now - 7200000).toISOString()});
   events.push({event:"slow_page",load_ms:4100,dom_ms:1900,page:"pdf-tools",tool:"PDF Toolkit",session:"demo-slow",ts:new Date(now - 10800000).toISOString()});
   events.push({event:"large_page",mb:2.4,page:"tarot-tools",tool:"Tarot Card Reader",session:"demo-large",ts:new Date(now - 16600000).toISOString()});
-  events.push({event:"market_volume_open",tool:"Market Volume Pulse",page:"market-volume-pulse",lane:"all",group:"all",session:"demo-volume",ts:new Date(now - 820000).toISOString()});
-  events.push({event:"market_volume_refresh",tool:"Market Volume Pulse",page:"market-volume-pulse",lane:"unusual",group:"tech",score_bucket:70,source_status:"reference",session:"demo-volume",ts:new Date(now - 760000).toISOString()});
-  events.push({event:"market_volume_copy_report",tool:"Market Volume Pulse",page:"market-volume-pulse",lane:"active",group:"all",session:"demo-volume",ts:new Date(now - 720000).toISOString()});
-  events.push({event:"positioning_radar_open",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"all",session:"demo-positioning",ts:new Date(now - 1250000).toISOString()});
-  events.push({event:"positioning_radar_refresh",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"crypto",score_bucket:60,source_status:"mixed",session:"demo-positioning",ts:new Date(now - 1150000).toISOString()});
-  events.push({event:"positioning_radar_copy_report",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"metals",score_bucket:70,session:"demo-positioning",ts:new Date(now - 1050000).toISOString()});
-  events.push({event:"positioning_radar_error",tool:"Market Positioning Radar",page:"positioning-radar",mode:"live",group:"equities",source_status:"blocked",session:"demo-positioning",ts:new Date(now - 950000).toISOString()});
-  events.push({event:"food_watch_open",tool:"Food Shortage Watch",page:"food-watch",mode:"live",region:"north-america",category:"all",session:"demo-food",ts:new Date(now - 1750000).toISOString()});
-  events.push({event:"food_watch_refresh",tool:"Food Shortage Watch",page:"food-watch",mode:"live",region:"north-america",category:"grains",score_bucket:60,source_status:"mixed",session:"demo-food",ts:new Date(now - 1650000).toISOString()});
-  events.push({event:"food_watch_error",tool:"Food Shortage Watch",page:"food-watch",mode:"live",region:"canada",source_status:"blocked",session:"demo-food",ts:new Date(now - 1550000).toISOString()});
-  events.push({event:"food_watch_export",tool:"Food Shortage Watch",page:"food-watch",format:"json",score_bucket:60,session:"demo-food",ts:new Date(now - 1450000).toISOString()});
-  events.push({event:"crypto_pulse_open",tool:"Crypto Network Pulse",page:"crypto-pulse",mode:"live",network:"combined",session:"demo-crypto",ts:new Date(now - 2400000).toISOString()});
-  events.push({event:"crypto_pulse_refresh",tool:"Crypto Network Pulse",page:"crypto-pulse",mode:"live",network:"combined",score_bucket:60,source_status:"mixed",session:"demo-crypto",ts:new Date(now - 2200000).toISOString()});
-  events.push({event:"crypto_pulse_error",tool:"Crypto Network Pulse",page:"crypto-pulse",mode:"live",network:"eth",source_status:"blocked",session:"demo-crypto",ts:new Date(now - 2100000).toISOString()});
-  events.push({event:"crypto_pulse_export",tool:"Crypto Network Pulse",page:"crypto-pulse",format:"json",score_bucket:60,session:"demo-crypto",ts:new Date(now - 1900000).toISOString()});
-  events.push({event:"prepper_open",tool:"Prepper Toolkit Pro",page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3600000).toISOString()});
-  events.push({event:"prepper_calculate",tool:"Prepper Toolkit Pro",people:4,days:7,page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3300000).toISOString()});
-  events.push({event:"prepper_score_level",tool:"Prepper Toolkit Pro",score_level:"decent",score_bucket:40,page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 3100000).toISOString()});
-  events.push({event:"prepper_export",tool:"Prepper Toolkit Pro",export:"checklist",page:"prepper-tools",session:"demo-prepper",ts:new Date(now - 2900000).toISOString()});
   writeEvents(events);
   refreshDashboard();
 }
@@ -772,6 +871,19 @@ function exportEvents(btn){
   const old = btn.textContent;
   btn.textContent = "Exported";
   setTimeout(function(){btn.textContent = old;},1200);
+}
+function bindSignalSuiteFilters(){
+  const root = $("signalSuiteFilters");
+  if(!root) return;
+  root.addEventListener("click", function(event){
+    const button = event.target.closest && event.target.closest("[data-suite-filter]");
+    if(!button) return;
+    signalSuiteFilter = button.dataset.suiteFilter || "all";
+    root.querySelectorAll("[data-suite-filter]").forEach(function(item){
+      item.classList.toggle("active", item === button);
+    });
+    renderSignalSuite(since(30));
+  });
 }
 function startMatrix(){
   const canvas = $("matrix");
@@ -800,6 +912,7 @@ function startMatrix(){
   addEventListener("resize",resize);
   draw();
 }
+bindSignalSuiteFilters();
 startMatrix();
 refreshDashboard();
 </script>
