@@ -190,7 +190,7 @@
       <div class="radar-overlay">
         <div class="readout"><span>World score</span><b id="heroWorldScore" class="green">--</b></div>
         <div class="readout"><span>Local score</span><b id="heroLocalScore" class="cyan">--</b></div>
-        <div class="readout"><span>Active sources</span><b id="heroSourceCount">0/12</b></div>
+        <div class="readout"><span>Active sources</span><b id="heroSourceCount">0/13</b></div>
         <div class="readout"><span>Peak signal</span><b id="heroPeakScore" class="amber">--</b></div>
       </div>
     </div>
@@ -206,7 +206,7 @@
       </div>
       <div class="side-row">
         <span>Signal blend</span>
-        <b id="sourceTicker">Space weather, quakes, outages, news, market, alerts, air, travel</b>
+        <b id="sourceTicker">Space weather, quakes, outages, conflict spillover, news, market, alerts, air, travel</b>
       </div>
       <div class="side-row">
         <span>Operator note</span>
@@ -319,11 +319,13 @@
     ['ORD','Chicago O Hare',41.98,-87.91],['SFO','San Francisco',37.62,-122.38],['MIA','Miami',25.79,-80.29],
     ['YVR','Vancouver',49.19,-123.18],['FRA','Frankfurt',50.04,8.56],['CDG','Paris Charles de Gaulle',49.01,2.55]
   ];
-  const WORLD_WEIGHTS={space:.22,quakeWorld:.20,internet:.19,news:.20,market:.19};
+  const WORLD_WEIGHTS={space:.18,quakeWorld:.17,internet:.17,conflict:.18,news:.15,market:.15};
   const LOCAL_WEIGHTS={alerts:.16,quakeLocal:.18,air:.20,weather:.13,internetLocal:.11,newsLocal:.11,travel:.11};
   let latestSignals=[];
   let radarFrame=0;
   let radarAngle=0;
+  let gdeltQueue=Promise.resolve();
+  let gdeltNextAt=0;
 
   function setPlace(){
     const place=$('place');
@@ -353,6 +355,18 @@
       if(!res.ok)throw new Error(res.status+' '+res.statusText);
       return await res.json();
     }finally{clearTimeout(t);}
+  }
+  function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+  async function fetchGdeltJson(url,timeout=11000){
+    const run=async()=>{
+      const wait=Math.max(0,gdeltNextAt-Date.now());
+      if(wait)await sleep(wait);
+      gdeltNextAt=Date.now()+5600;
+      return fetchJson(url,timeout);
+    };
+    const job=gdeltQueue.then(run,run);
+    gdeltQueue=job.catch(()=>{});
+    return job;
   }
   function unavailable(id,title,scope,source,err){
     return {id,title,scope,score:12,status:'normal',confidence:'low',ok:false,updated:null,source,
@@ -462,6 +476,26 @@
         metrics:{'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x','average ratio':fmt(avgRatio,2)+'x'}};
     }catch(err){return unavailable('news','News Panic Meter','world',source,err);}
   }
+  async function loadConflict(){
+    const source='GDELT DOC API public news proxy';
+    const query='(airstrike OR "missile strike" OR shelling OR "border clash" OR coup OR "civil unrest" OR "state of emergency" OR "evacuation order" OR mobilization OR "war escalation")';
+    try{
+      const url='https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=160&sort=HybridRel';
+      const data=await fetchGdeltJson(url,12000);
+      const articles=data.articles||[];
+      const recentCount=countRecentArticles(articles,24);
+      const older=Math.max(0,articles.length-recentCount);
+      const baseline=Math.max(1,older/6);
+      const ratio=recentCount/baseline;
+      const highTerms=countTermHits(articles,['airstrike','missile','shelling','border clash','coup','civil unrest','evacuation','mobilization','war escalation','drone']);
+      const regions=conflictRegions(articles);
+      const regionText=regions.length?regions.slice(0,3).map(r=>r.name).join(', '):'general world feed';
+      const score=clamp(10+Math.min(34,(ratio-1)*14)+Math.min(26,recentCount*.75)+Math.min(18,highTerms*2.8)+Math.min(12,Math.max(0,regions.length-1)*3));
+      return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:level(score),confidence:articles.length?'medium':'low',ok:true,updated:new Date().toISOString(),source,
+        why:score>=45?'Public conflict-related coverage is elevated versus the recent baseline. Treat this as civilian context, not tactical tracking. Active regions: '+regionText+'.':'No broad conflict-spillover spike in the public news proxy right now.',
+        metrics:{'truth layer':'proxy / public news','24h articles':recentCount,'7d baseline/day':fmt(baseline,1),'coverage ratio':fmt(ratio,2)+'x','active regions':regionText}};
+    }catch(err){return unavailable('conflict','Conflict Spillover Pulse','world',source,err);}
+  }
   async function loadMarkets(){
     const source='CoinGecko public market API';
     try{
@@ -550,11 +584,10 @@
     const placeTerm=country?'"'+city+'" "'+country+'"':'"'+city+'"';
     const query=placeTerm+' '+emergencyTerms;
     try{
-      const recent=await fetchJson('https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=24h&maxrecords=50&sort=HybridRel',10000);
-      const week=await fetchJson('https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=150&sort=HybridRel',10000);
-      const recentArticles=recent.articles||[];
+      const week=await fetchGdeltJson('https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=150&sort=HybridRel',11000);
       const weekArticles=week.articles||[];
-      const baseline=Math.max(1,weekArticles.length/7);
+      const recentArticles=weekArticles.filter(a=>isGdeltRecent(a,24));
+      const baseline=Math.max(1,(weekArticles.length-recentArticles.length)/6);
       const ratio=recentArticles.length/baseline;
       const theme=themeFromArticles(recentArticles);
       const score=clamp(10+Math.min(48,(ratio-1)*16)+Math.min(28,recentArticles.length*2));
@@ -587,10 +620,10 @@
     setText('placeLabel',cityName());
     seedLoading();
     try{
-      const [space,quakes,internet,news,market,alerts,air,weather,internetLocal,newsLocal,travel]=await Promise.all([
-        loadSpace(),loadQuakes(),loadInternet(),loadNews(),loadMarkets(),loadOfficialAlerts(),loadAir(),loadLocalWeather(),loadLocalInternetHealth(),loadLocalNewsSpike(),loadAirportTravel()
+      const [space,quakes,internet,conflict,news,market,alerts,air,weather,internetLocal,newsLocal,travel]=await Promise.all([
+        loadSpace(),loadQuakes(),loadInternet(),loadConflict(),loadNews(),loadMarkets(),loadOfficialAlerts(),loadAir(),loadLocalWeather(),loadLocalInternetHealth(),loadLocalNewsSpike(),loadAirportTravel()
       ]);
-      latestSignals=[space,quakes[0],internet,news,market,alerts,quakes[1],air,weather,internetLocal,newsLocal,travel];
+      latestSignals=[space,quakes[0],internet,conflict,news,market,alerts,quakes[1],air,weather,internetLocal,newsLocal,travel];
       renderSignals(latestSignals);
     }finally{
       setDisabled('refreshBtn',false);
@@ -598,7 +631,7 @@
   }
   function seedLoading(){
     latestSignals=[
-      ['space','Space Weather','world'],['quakeWorld','Global Earthquake Cluster','world'],['internet','Major Platform Outage Pulse','world'],['news','News Panic Meter','world'],['market','Market Stress','world'],
+      ['space','Space Weather','world'],['quakeWorld','Global Earthquake Cluster','world'],['internet','Major Platform Outage Pulse','world'],['conflict','Conflict Spillover Pulse','world'],['news','News Panic Meter','world'],['market','Market Stress','world'],
       ['alerts','Official Alerts','local'],['quakeLocal','Nearby Earthquakes','local'],['air','Wildfire / Air Quality','local'],['weather','Local Weather Friction','local'],
       ['internetLocal','Local Internet Health','local'],['newsLocal','Local News Spike','local'],['travel','Airport / Travel Friction','local']
     ].map(([id,title,scope])=>({id,title,scope,score:0,status:'normal',confidence:'--',ok:false,updated:null,source:'loading',why:'Checking source...',metrics:{}}));
@@ -824,6 +857,7 @@
       {id:'space',title:'Space Weather',scope:'world',score:74,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: geomagnetic storm-level Kp activity.',metrics:{'max Kp next 36h':'6.7','NOAA scale':'G2'}},
       {id:'quakeWorld',title:'Global Earthquake Cluster',scope:'world',score:59,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: several M5+ earthquakes appeared in the daily feed.',metrics:{'max magnitude':'6.1','M5+ count':3}},
       {id:'internet',title:'Major Platform Outage Pulse',scope:'world',score:68,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: multiple major public status pages show active incidents or degraded components.',metrics:{'providers checked':'8/8','active incidents':2,'degraded components':4}},
+      {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:63,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: conflict-related public coverage is elevated across several regions. This is civilian context, not tactical tracking.',metrics:{'truth layer':'proxy / public news','24h articles':44,'coverage ratio':'2.6x','active regions':'Middle East, Eastern Europe'}},
       {id:'news',title:'News Panic Meter',scope:'world',score:57,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: public information-seeking jumped for emergency-related pages.',metrics:{'top page':'State of emergency','top ratio':'3.2x'}},
       {id:'market',title:'Market Stress',scope:'world',score:43,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: crypto volatility is elevated but stablecoins are holding.',metrics:{'BTC 24h move':'-5.7%'}},
       {id:'alerts',title:'Official Alerts',scope:'local',score:78,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: severe official alert active near the selected location.',metrics:{'active alerts':2,'top severity':'Severe','headline':'Severe thunderstorm warning'}},
@@ -865,6 +899,47 @@
       if(hits>best[1])best=[name,hits];
     });
     return best[0];
+  }
+  function parseGdeltDate(value){
+    const s=String(value||'').trim();
+    const compact=s.match(/^(\d{4})(\d{2})(\d{2})(?:T?(\d{2})(\d{2})(\d{2}))?/);
+    if(compact){
+      return Date.UTC(
+        Number(compact[1]),
+        Number(compact[2])-1,
+        Number(compact[3]),
+        Number(compact[4]||0),
+        Number(compact[5]||0),
+        Number(compact[6]||0)
+      );
+    }
+    const parsed=Date.parse(s);
+    return Number.isFinite(parsed)?parsed:0;
+  }
+  function isGdeltRecent(article,hours){
+    const ts=parseGdeltDate(article&&article.seendate);
+    return ts&&ts>=Date.now()-hours*3600*1000;
+  }
+  function countRecentArticles(articles,hours){
+    return (articles||[]).filter(a=>isGdeltRecent(a,hours)).length;
+  }
+  function countTermHits(articles,terms){
+    const text=(articles||[]).map(a=>(a.title||'')+' '+(a.sourcecountry||'')+' '+(a.domain||'')).join(' ').toLowerCase();
+    return terms.reduce((sum,term)=>sum+(text.includes(term.toLowerCase())?1:0),0);
+  }
+  function conflictRegions(articles){
+    const text=(articles||[]).slice(0,80).map(a=>(a.title||'')+' '+(a.sourcecountry||'')+' '+(a.domain||'')).join(' ').toLowerCase();
+    const regions=[
+      ['Eastern Europe',/(ukraine|russia|kyiv|kiev|moscow|crimea|belarus|poland|black sea)/],
+      ['Middle East',/(israel|gaza|palestine|lebanon|iran|iraq|syria|yemen|red sea|houthi)/],
+      ['East Asia',/(taiwan|china|south china sea|korea|japan|philippines)/],
+      ['South Asia',/(india|pakistan|afghanistan|bangladesh|kashmir)/],
+      ['Africa / Sahel',/(sudan|sahel|mali|niger|somalia|ethiopia|congo|drc|burkina|chad)/],
+      ['Latin America',/(mexico|haiti|venezuela|colombia|ecuador|brazil|argentina|peru)/],
+      ['Europe',/(france|germany|spain|united kingdom|britain|london|european union|nato)/],
+      ['North America',/(united states|canada|washington|ottawa|mexico)/]
+    ];
+    return regions.map(([name,re])=>({name,hits:(text.match(re)||[]).length})).filter(r=>r.hits).sort((a,b)=>b.hits-a.hits);
   }
   function nearestAirport(lat,lon){
     const best=AIRPORTS.map(([code,name,aLat,aLon])=>({code,name,lat:aLat,lon:aLon,km:distanceKm(lat,lon,aLat,aLon)})).sort((a,b)=>a.km-b.km)[0];

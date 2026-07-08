@@ -43,9 +43,10 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
       <div>
         <div class="crumb">Home / Signal Suite</div>
         <h1>Signal <span>Suite Hub</span></h1>
-        <p class="lead">// One command shelf for the serious radar tools: world/local anomaly watch, aurora, internet weather, cyber signals, food pressure, meme acceleration, crypto networks and market stress.</p>
+        <p class="lead">// One command shelf for the serious radar tools: world/local anomaly watch, aurora, internet weather, conflict spillover, cyber signals, food pressure, meme acceleration, crypto networks and market stress.</p>
         <div class="actions">
           <a class="btn" href="/signal-watch.html" data-suite-link="signal-watch">Open Early Warning Radar</a>
+          <a class="btn ghost" href="/prepper-risk.html">Prepper Risk Scanner</a>
           <a class="btn ghost" href="/prepper-command.html">Prepper Command</a>
           <a class="btn ghost" href="/prepper-tools.html">Prepper Toolkit</a>
           <a class="btn ghost" href="/library.html?filter=signal">All signal tools</a>
@@ -94,7 +95,8 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
 <script>
 (function(){
   const TOOLS=[
-    {slug:"signal-watch",name:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",group:["global","local","prepper"],watches:"Space weather, major earthquakes, internet status, news panic, market stress, wildfire/air quality.",best:"Morning situational read and weird-day dashboard.",score:76},
+    {slug:"signal-watch",name:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",group:["global","local","prepper"],watches:"Space weather, major earthquakes, internet status, conflict spillover, news panic, market stress, wildfire/air quality.",best:"Morning situational read and weird-day dashboard.",score:77},
+    {slug:"prepper-risk",name:"Prepper Risk Scanner",lane:"local risk to checklist",truth:"mixed",group:["prepper","local"],watches:"Official alerts where available, weather friction, air/smoke, nearby quakes, local internet probes and travel friction.",best:"Turning today's local conditions into a practical Prep Today checklist.",score:74},
     {slug:"prepper-command",name:"Prepper Command",lane:"household readiness command",truth:"local",group:["prepper","local"],watches:"Water, food, power, go-bag, contacts, inventory and scenario playbooks.",best:"A quick readiness cockpit when a radar signal turns practical.",score:72},
     {slug:"prepper-tools",name:"Prepper Toolkit Pro",lane:"preparedness calculators",truth:"local",group:["prepper","local"],watches:"Supply targets, outage power, go-bag, family plan, inventory exports and printable reports.",best:"Building a useful household plan before anything gets weird.",score:78},
     {slug:"aurora-watch",name:"Aurora Watch",lane:"space weather",truth:"live",group:["global","local"],watches:"NOAA space weather, aurora oval context, cloud/moonlight constraints.",best:"Will I see northern lights tonight?",score:58},

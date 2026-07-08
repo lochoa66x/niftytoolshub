@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prepper Risk Scanner - emergency alert and weather risk scan | NiftyTools Hub</title>
+<meta name="description" content="Scan local emergency signals, weather risk, smoke, earthquakes, internet reachability and travel friction, then generate a practical prep checklist for today.">
+<meta property="og:title" content="Prepper Risk Scanner - NiftyTools Hub">
+<meta property="og:description" content="A calm household risk scanner that turns local public signals into a practical Prep Today checklist.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niftytoolshub.com/prepper-risk.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#070b07">
+<link rel="canonical" href="https://niftytoolshub.com/prepper-risk.html">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+:root{--bg:#070b07;--panel:#0d120d;--txt:#dfeadf;--mut:#87937f;--dim:#aab7a5;--line:#1d2d20;--line2:#29402d;--grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);background:linear-gradient(rgba(70,224,122,.026) 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,radial-gradient(900px 500px at 76% -12%,rgba(99,230,255,.08),transparent 62%),radial-gradient(660px 420px at 8% 5%,rgba(70,224,122,.08),transparent 58%),var(--bg);-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(rgba(255,255,255,.018) 50%,rgba(0,0,0,.02) 50%) 0 0/100% 4px;opacity:.16}body:after{content:"";position:fixed;inset:0;z-index:21;pointer-events:none;background:radial-gradient(circle at 50% 42%,transparent 0,transparent 70%,rgba(0,0,0,.44) 100%);opacity:.64}
+a{color:var(--grn);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}.wrap{max-width:1240px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:rgba(7,11,7,.86);backdrop-filter:blur(8px)}.nav{height:56px;display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{display:flex;align-items:center;gap:10px;color:var(--txt);font-weight:800;font-size:15px}.logo .mk{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}.logo .mk:before{content:"NT";font-size:11px}.navlinks{display:flex;gap:14px;color:var(--mut);font-size:12px}.navlinks a{color:var(--mut)}.navlinks a:hover{color:var(--grn)}
+main{padding:22px 0 38px}.shell{border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(12,18,12,.94),rgba(5,8,5,.98));box-shadow:0 0 44px rgba(70,224,122,.08),inset 0 0 30px rgba(70,224,122,.035);overflow:hidden}.terminal-bar{height:34px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:#0d130d;padding:0 14px;color:var(--mut);font-size:12px}.lights{display:flex;gap:5px}.lights i{width:9px;height:9px;border-radius:50%;background:var(--grn);box-shadow:0 0 10px rgba(70,224,122,.5)}.lights i:nth-child(2){background:var(--amber)}.lights i:nth-child(3){background:var(--cyan)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;padding:22px}.eyebrow{color:var(--grn);font-size:12px;text-transform:uppercase;letter-spacing:1.6px;margin:0 0 8px}h1{font-size:clamp(34px,5vw,62px);line-height:1.02;margin:0 0 12px;text-transform:uppercase;letter-spacing:0;text-shadow:0 0 24px rgba(70,224,122,.14)}h1 span{color:var(--grn)}.lead{max-width:780px;margin:0 0 16px;color:var(--dim);font-size:15px}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{min-height:38px;border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.72);color:var(--grn);font-weight:800;padding:8px 13px;cursor:pointer;transition:.15s;white-space:nowrap}.btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.34);text-decoration:none}.btn.ghost{border-color:var(--line2);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}.btn:disabled{opacity:.55;cursor:wait}
+.score-card{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:radial-gradient(circle at 72% 12%,rgba(99,230,255,.08),transparent 38%),rgba(3,8,4,.78);padding:15px;min-width:0}.score-card h2{margin:0 0 10px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.7px}.score-row{display:flex;align-items:flex-end;gap:11px}.score-row b{font-size:58px;line-height:.92;color:var(--grn)}.score-row span{margin-bottom:7px;color:var(--mut);font-size:12px;text-transform:uppercase}.meter{height:9px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .25s}.state-label{margin-top:9px;color:var(--dim);font-weight:800}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mini{border:1px solid rgba(223,234,223,.1);background:rgba(9,14,9,.8);border-radius:5px;padding:9px}.mini span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.mini b{display:block;margin-top:3px;color:var(--txt);font-size:17px}
+.controls{display:grid;grid-template-columns:220px 1fr 140px 140px auto;align-items:end;gap:9px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(3,8,4,.55);padding:12px 22px}.field label{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;margin-bottom:5px}input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:5px;background:rgba(3,8,4,.88);color:var(--txt);padding:9px 10px;outline:0;caret-color:var(--grn)}input:focus,select:focus{border-color:var(--grn)}
+.truth-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:16px 22px 0}.truth-tile{border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(3,8,4,.72);padding:9px 10px;min-height:64px}.truth-tile span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.45px}.truth-tile b{display:block;margin-top:4px;color:var(--txt);font-size:13px;line-height:1.22}.truth-tile.official b{color:var(--grn)}.truth-tile.live b{color:var(--cyan)}.truth-tile.proxy b{color:var(--amber)}.truth-tile.unavailable b{color:var(--red)}
+.content{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:14px;padding:16px 22px 22px}.panel{position:relative;border:1px solid rgba(70,224,122,.2);border-radius:7px;background:linear-gradient(180deg,rgba(12,18,12,.94),rgba(4,8,4,.96));box-shadow:0 0 26px rgba(70,224,122,.045),inset 0 0 24px rgba(70,224,122,.025);padding:14px;overflow:hidden}.panel h2{margin:0 0 10px;font-size:15px;text-transform:uppercase;letter-spacing:.4px}.panel h2:before{content:"// ";color:var(--grn)}.help{margin:-5px 0 12px;color:var(--mut);font-size:12px}.module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module{border:1px solid rgba(223,234,223,.1);border-radius:7px;background:linear-gradient(180deg,rgba(6,12,7,.86),rgba(2,7,4,.9));padding:11px;min-height:170px}.module-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.module h3{margin:0;color:var(--txt);font-size:14px}.module .score{font-size:28px;font-weight:800;line-height:1;color:var(--txt)}.module p{margin:9px 0;color:var(--dim);font-size:12px}.module small{display:block;color:var(--mut);font-size:10.5px}.tag{display:inline-flex;align-items:center;border:1px solid rgba(70,224,122,.2);border-radius:999px;padding:3px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}.tag.live{border-color:rgba(99,230,255,.32);color:var(--cyan)}.tag.proxy,.tag.estimate{border-color:rgba(255,189,91,.34);color:var(--amber)}.tag.unavailable{border-color:rgba(255,101,114,.34);color:var(--red)}.tag.official{border-color:rgba(70,224,122,.32);color:var(--grn)}.bar{height:7px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red))}
+.side{display:grid;gap:14px}.checklist{display:grid;gap:7px}.check-item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(4,9,5,.72);padding:8px;color:var(--dim);font-size:12px}.check-item input{width:auto;margin-top:3px;accent-color:var(--grn)}.check-item b{display:block;color:var(--txt);font-size:12px}.check-item span:last-child{font-size:10px;color:var(--amber);text-transform:uppercase}.report-box{border:1px dashed rgba(70,224,122,.28);border-radius:5px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:170px}.source-note{color:var(--mut);font-size:11px;margin:10px 0 0}.footer{border-top:1px solid var(--line);margin-top:28px;padding:22px 0;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:1020px){.hero,.content{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.controls .btn{grid-column:1/-1}.truth-strip{grid-template-columns:1fr 1fr}.navlinks{display:none}}@media(max-width:680px){.wrap{padding:0 12px}.hero,.controls,.content,.truth-strip{padding-left:14px;padding-right:14px}.controls,.module-grid,.truth-strip{grid-template-columns:1fr}.actions .btn{width:100%}.mini-grid{grid-template-columns:1fr}}
+@media print{header,.terminal-bar,.controls,.actions,.btn,body:before,body:after{display:none!important}body{background:#fff;color:#111;font-family:Arial,sans-serif}.wrap{max-width:none}.shell,.panel,.score-card,.module{border:1px solid #aaa;box-shadow:none;background:#fff;color:#111}.content,.hero{grid-template-columns:1fr;padding:12px}.report-box{color:#111;background:#fff;border-color:#aaa}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Prepper Risk Scanner","url":"https://niftytoolshub.com/prepper-risk.html","applicationCategory":"UtilityApplication","operatingSystem":"Any","description":"A browser-based emergency alert and weather risk scanner that generates a practical household prep checklist.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <nav class="navlinks">
+      <a href="/">home</a>
+      <a href="/signal-watch.html">early warning</a>
+      <a href="/prepper-tools.html">prepper toolkit</a>
+      <a href="/library.html">library</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="shell">
+    <div class="terminal-bar"><span class="lights"><i></i><i></i><i></i></span> niftytoolshub: ~/prepper-risk-scan</div>
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Household risk scan</p>
+        <h1>Prepper <span>Risk Scanner</span></h1>
+        <p class="lead">// A calmer local scan for official alerts, weather friction, smoke, nearby quakes, local network checks and travel friction. It turns the signal into a practical Prep Today list.</p>
+        <div class="actions">
+          <button class="btn" id="refreshBtn" type="button" onclick="refreshScan(true)">Refresh scan</button>
+          <button class="btn ghost" type="button" onclick="copyChecklist(this)">Copy checklist</button>
+          <button class="btn ghost" type="button" onclick="downloadReport()">Download report</button>
+          <button class="btn ghost" type="button" onclick="printReport()">Print</button>
+        </div>
+      </div>
+      <aside class="score-card">
+        <h2>Today risk</h2>
+        <div class="score-row"><b id="riskScore">--</b><span>/100</span></div>
+        <div class="meter"><i id="riskBar"></i></div>
+        <div class="state-label" id="riskLabel">booting scan</div>
+        <div class="mini-grid">
+          <div class="mini"><span>top signal</span><b id="topSignal">--</b></div>
+          <div class="mini"><span>live sources</span><b id="liveCount">--</b></div>
+          <div class="mini"><span>place</span><b id="placeRead">--</b></div>
+          <div class="mini"><span>updated</span><b id="updatedRead">--</b></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="controls">
+      <div class="field"><label for="place">Location preset</label><select id="place"></select></div>
+      <div class="field"><label for="customLabel">Manual label</label><input id="customLabel" placeholder="Manual location"></div>
+      <div class="field"><label for="lat">Latitude</label><input id="lat" type="number" step="0.0001"></div>
+      <div class="field"><label for="lon">Longitude</label><input id="lon" type="number" step="0.0001"></div>
+      <button class="btn" type="button" onclick="refreshScan(true)">Scan this place</button>
+    </div>
+
+    <div class="truth-strip" id="truthStrip" aria-label="Source truth labels"></div>
+
+    <div class="content">
+      <section class="panel">
+        <h2>Risk modules</h2>
+        <p class="help">Source truth is shown on every card. Official feeds are best, live public APIs are useful, and local probes are approximations.</p>
+        <div class="module-grid" id="moduleGrid"></div>
+      </section>
+      <aside class="side">
+        <section class="panel">
+          <h2>Prep Today</h2>
+          <p class="help">Generated from current risk modules. Checkmarks stay in this browser until the next scan.</p>
+          <div class="checklist" id="checklist"></div>
+        </section>
+        <section class="panel">
+          <h2>Readable report</h2>
+          <div class="report-box" id="reportBox">Scan loading...</div>
+          <p class="source-note">Follow official local instructions during a real emergency. This tool is a planning helper, not an emergency service.</p>
+        </section>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer"><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const PLACES={
+    toronto:["Toronto, Canada",43.6532,-79.3832,"Canada","YYZ"],
+    montreal:["Montreal, Canada",45.5017,-73.5673,"Canada","YUL"],
+    vancouver:["Vancouver, Canada",49.2827,-123.1207,"Canada","YVR"],
+    nyc:["New York, USA",40.7128,-74.0060,"USA","JFK"],
+    la:["Los Angeles, USA",34.0522,-118.2437,"USA","LAX"],
+    miami:["Miami, USA",25.7617,-80.1918,"USA","MIA"],
+    mexico:["Mexico City, Mexico",19.4326,-99.1332,"Mexico","MEX"],
+    london:["London, UK",51.5072,-0.1276,"UK","LHR"],
+    manual:["Manual location",43.6532,-79.3832,"Manual","--"]
+  };
+  const MODULES=[
+    ["alerts","Official Alerts",1.15],
+    ["weather","Weather Friction",1],
+    ["air","Air / Smoke",.95],
+    ["quake","Nearby Earthquakes",.85],
+    ["internet","Local Internet Probe",.65],
+    ["travel","Travel Friction",.7]
+  ];
+  let latest=[];
+  let checklist=[];
+  const pendingTracks=[];
+  let flushTimer=0;
+
+  function track(name,props){
+    try{
+      const payload=Object.assign({tool:"Prepper Risk Scanner"},props||{});
+      if(window.ntTrack)window.ntTrack(name,payload);
+      else{
+        pendingTracks.push([name,payload]);
+        if(!flushTimer)flushTimer=setInterval(function(){
+          if(!window.ntTrack)return;
+          while(pendingTracks.length){const item=pendingTracks.shift();window.ntTrack(item[0],item[1]);}
+          clearInterval(flushTimer);flushTimer=0;
+        },250);
+      }
+    }catch(_err){}
+  }
+  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));}
+  function clamp(n,min=0,max=100){return Math.max(min,Math.min(max,Math.round(Number(n)||0)));}
+  function fmt(n,d=1){return Number.isFinite(Number(n))?Number(n).toFixed(d):"--";}
+  function age(ts){return ts?new Date(ts).toLocaleString():"--";}
+  function label(score){if(score>=80)return"Act";if(score>=58)return"Prep";if(score>=32)return"Watch";return"Quiet";}
+  function tagClass(truth){return truth==="official"?"official":truth==="live"?"live":truth==="proxy"?"proxy":truth==="local estimate"?"estimate":"unavailable";}
+  function selectedPlace(){
+    const key=$("place").value||"toronto";
+    const p=PLACES[key]||PLACES.toronto;
+    const label=key==="manual"&&$("customLabel").value.trim()?$("customLabel").value.trim():p[0];
+    return {key,label,lat:Number($("lat").value)||p[1],lon:Number($("lon").value)||p[2],country:p[3],airport:p[4]};
+  }
+  function isLikelyUS(lat,lon){return lat>=18&&lat<=72&&lon>=-170&&lon<=-65;}
+  function initPlaces(){
+    $("place").innerHTML=Object.keys(PLACES).map(key=>'<option value="'+key+'">'+esc(PLACES[key][0])+'</option>').join("");
+    $("place").value="toronto";
+    applyPreset();
+  }
+  function applyPreset(){
+    const p=PLACES[$("place").value]||PLACES.toronto;
+    $("lat").value=p[1];$("lon").value=p[2];$("customLabel").value=$("place").value==="manual"?"":p[0];
+  }
+  async function fetchJson(url,timeout=10000){
+    const controller=new AbortController();
+    const t=setTimeout(()=>controller.abort(),timeout);
+    try{
+      const res=await fetch(url,{signal:controller.signal,cache:"no-store"});
+      clearTimeout(t);
+      if(!res.ok)throw new Error(res.status+" "+res.statusText);
+      return await res.json();
+    }catch(err){clearTimeout(t);throw err;}
+  }
+  function unavailable(id,title,truth,err){
+    return {id,title,score:10,truth:truth||"unavailable",ok:false,updated:null,why:"Source unavailable from this browser: "+(err&&err.message?err.message:"request failed")+". Treated as neutral.",metrics:{}};
+  }
+  async function loadAlerts(place){
+    const source="National Weather Service alerts API";
+    if(!(place.country==="USA"||isLikelyUS(place.lat,place.lon))){
+      return {id:"alerts",title:"Official Alerts",score:10,truth:"unavailable",ok:false,updated:new Date().toISOString(),why:"Official browser-readable alert feed is wired for U.S. points in this v1. Non-U.S. locations stay neutral until country feeds are added.",metrics:{coverage:"U.S. official now",source:"pending for this country"}};
+    }
+    try{
+      const data=await fetchJson("https://api.weather.gov/alerts/active?point="+place.lat.toFixed(4)+","+place.lon.toFixed(4),9000);
+      const alerts=(data.features||[]).map(f=>f.properties||{});
+      const rank={Extreme:95,Severe:78,Moderate:56,Minor:32,Unknown:20};
+      const top=alerts.slice().sort((a,b)=>(rank[b.severity]||20)-(rank[a.severity]||20))[0];
+      const score=alerts.length?clamp((rank[top.severity]||30)+Math.min(15,(alerts.length-1)*5)):8;
+      return {id:"alerts",title:"Official Alerts",score,truth:"official",ok:true,updated:new Date().toISOString(),why:alerts.length?"Active official alert: "+(top.headline||top.event||top.severity)+".":"No active NWS alert for this point.",metrics:{active:alerts.length,severity:top?top.severity:"none",event:top?(top.event||"alert"):"none",source}};
+    }catch(err){return unavailable("alerts","Official Alerts","official",err);}
+  }
+  async function loadWeather(place){
+    const source="Open-Meteo forecast API";
+    try{
+      const url="https://api.open-meteo.com/v1/forecast?latitude="+place.lat+"&longitude="+place.lon+"&hourly=temperature_2m,precipitation_probability,wind_gusts_10m,weather_code,visibility&forecast_hours=24&timezone=auto";
+      const data=await fetchJson(url,9000);
+      const h=data.hourly||{};
+      const temp=(h.temperature_2m||[]).map(Number).filter(Number.isFinite);
+      const precip=Math.max(0,...(h.precipitation_probability||[]).map(Number));
+      const gust=Math.max(0,...(h.wind_gusts_10m||[]).map(Number));
+      const bad=(h.weather_code||[]).map(Number).filter(c=>c===45||c===48||c>=61||c>=95).length;
+      const minTemp=temp.length?Math.min(...temp):0,maxTemp=temp.length?Math.max(...temp):0;
+      const vis=(h.visibility||[]).map(Number).filter(Number.isFinite);
+      const minVis=vis.length?Math.min(...vis):null;
+      const tempRisk=maxTemp>=34?20:minTemp<=-15?18:maxTemp>=30||minTemp<=-8?10:0;
+      const score=clamp(10+precip*.38+Math.max(0,gust-38)*1.1+bad*5+tempRisk+(minVis!==null&&minVis<1000?18:minVis!==null&&minVis<3000?9:0));
+      return {id:"weather",title:"Weather Friction",score,truth:"live",ok:true,updated:new Date().toISOString(),why:score>=58?"Weather could disrupt movement or comfort in the next 24 hours.":"No major short-term weather disruption in the public forecast.",metrics:{precip:fmt(precip,0)+"%",gust:fmt(gust,0)+" km/h",temp:fmt(minTemp,0)+" to "+fmt(maxTemp,0)+" C",roughHours:bad,source}};
+    }catch(err){return unavailable("weather","Weather Friction","live",err);}
+  }
+  async function loadAir(place){
+    const source="Open-Meteo Air Quality API";
+    try{
+      const data=await fetchJson("https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+place.lat+"&longitude="+place.lon+"&current=us_aqi,pm2_5,pm10,carbon_monoxide,nitrogen_dioxide,ozone",9000);
+      const c=data.current||{},aqi=Number(c.us_aqi)||0,pm=Number(c.pm2_5)||0;
+      const score=aqi>=200?92:aqi>=150?76:aqi>=100?58:aqi>=50?34:12;
+      return {id:"air",title:"Air / Smoke",score,truth:"live",ok:true,updated:c.time||new Date().toISOString(),why:aqi>=100?"Air quality is unhealthy or approaching unhealthy levels. Consider smoke/pollution prep.":"Air quality is currently good-to-moderate.",metrics:{aqi,pm25:fmt(pm,1)+" ug/m3",pm10:fmt(c.pm10,1)+" ug/m3",source}};
+    }catch(err){return unavailable("air","Air / Smoke","live",err);}
+  }
+  async function loadQuakes(place){
+    const source="USGS all-day earthquake feed";
+    try{
+      const data=await fetchJson("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson",9000);
+      const quakes=(data.features||[]).map(f=>({mag:Number(f.properties&&f.properties.mag)||0,ts:f.properties&&f.properties.time,coords:f.geometry&&f.geometry.coordinates||[]})).filter(q=>q.coords.length>=2);
+      const nearby=quakes.map(q=>Object.assign(q,{km:distance(place.lat,place.lon,q.coords[1],q.coords[0])})).filter(q=>q.km<=500&&q.mag>=2.5);
+      const max=nearby.reduce((m,q)=>Math.max(m,q.mag),0);
+      const score=clamp(8+nearby.length*9+Math.max(0,max-3)*18);
+      const newest=nearby.slice().sort((a,b)=>b.ts-a.ts)[0];
+      return {id:"quake",title:"Nearby Earthquakes",score,truth:"live",ok:true,updated:newest?new Date(newest.ts).toISOString():new Date().toISOString(),why:nearby.length?"Recent M2.5+ earthquakes appeared within 500 km of "+place.label+".":"No M2.5+ quake cluster within 500 km of "+place.label+".",metrics:{nearby:nearby.length,maxMag:fmt(max,1),radius:"500 km",source}};
+    }catch(err){return unavailable("quake","Nearby Earthquakes","live",err);}
+  }
+  async function loadInternet(){
+    const endpoints=[
+      ["Google","https://www.google.com/favicon.ico"],
+      ["Cloudflare","https://www.cloudflare.com/favicon.ico"],
+      ["Wikipedia","https://www.wikipedia.org/static/favicon/wikipedia.ico"],
+      ["Apple","https://www.apple.com/favicon.ico"]
+    ];
+    try{
+      const probes=await Promise.all(endpoints.map(([name,url])=>probeEndpoint(name,url,4200)));
+      const failed=probes.filter(p=>!p.ok).length;
+      const slow=probes.filter(p=>p.ok&&p.ms>1800).length;
+      const avg=average(probes.filter(p=>p.ok).map(p=>p.ms));
+      const score=clamp(8+failed*24+slow*11+(avg>1200?12:0));
+      return {id:"internet",title:"Local Internet Probe",score,truth:"local estimate",ok:true,updated:new Date().toISOString(),why:failed||slow?"This browser had trouble reaching multiple common endpoints. It may be your connection, device, DNS, or local network.":"Browser probes reached common endpoints without obvious trouble.",metrics:{reached:(endpoints.length-failed)+"/"+endpoints.length,failures:failed,slow,avgMs:fmt(avg,0)}};
+    }catch(err){return unavailable("internet","Local Internet Probe","local estimate",err);}
+  }
+  async function loadTravel(place){
+    const source="Nearest-airport weather estimate";
+    try{
+      const url="https://api.open-meteo.com/v1/forecast?latitude="+place.lat+"&longitude="+place.lon+"&hourly=precipitation_probability,wind_gusts_10m,weather_code,visibility&forecast_hours=24&timezone=auto";
+      const data=await fetchJson(url,9000);
+      const h=data.hourly||{};
+      const precip=Math.max(0,...(h.precipitation_probability||[]).map(Number));
+      const gust=Math.max(0,...(h.wind_gusts_10m||[]).map(Number));
+      const flags=(h.weather_code||[]).map(Number).filter(c=>c===45||c===48||c>=61||c>=95).length;
+      const vis=(h.visibility||[]).map(Number).filter(Number.isFinite);
+      const minVis=vis.length?Math.min(...vis):null;
+      const score=clamp(8+precip*.3+Math.max(0,gust-42)*1.05+flags*5+(minVis!==null&&minVis<1000?20:minVis!==null&&minVis<3000?10:0));
+      return {id:"travel",title:"Travel Friction",score,truth:"proxy",ok:true,updated:new Date().toISOString(),why:score>=58?"Weather near the selected place could create road or airport travel friction.":"Travel weather proxy is not showing a major friction signal.",metrics:{airport:place.airport,precip:fmt(precip,0)+"%",gust:fmt(gust,0)+" km/h",visibility:minVis===null?"--":fmt(minVis/1000,1)+" km",source}};
+    }catch(err){return unavailable("travel","Travel Friction","proxy",err);}
+  }
+  async function probeEndpoint(name,url,timeout){
+    const started=performance.now();
+    const controller=new AbortController();
+    const t=setTimeout(()=>controller.abort(),timeout);
+    try{
+      await fetch(url+(url.includes("?")?"&":"?")+"nt="+Date.now(),{mode:"no-cors",cache:"no-store",signal:controller.signal});
+      clearTimeout(t);
+      return {name,ok:true,ms:Math.round(performance.now()-started)};
+    }catch(err){clearTimeout(t);return {name,ok:false,ms:timeout,error:err&&err.message};}
+  }
+  function distance(lat1,lon1,lat2,lon2){
+    const R=6371,toRad=x=>x*Math.PI/180;
+    const dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);
+    const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  }
+  function average(values){return values.length?values.reduce((a,b)=>a+b,0)/values.length:0;}
+  async function refreshScan(manual){
+    const button=$("refreshBtn");
+    button.disabled=true;
+    const place=selectedPlace();
+    $("placeRead").textContent=place.label.split(",")[0];
+    renderLoading();
+    try{
+      latest=await Promise.all([loadAlerts(place),loadWeather(place),loadAir(place),loadQuakes(place),loadInternet(),loadTravel(place)]);
+      renderAll(place);
+      if(manual)track("prepper_risk_refresh",{place:place.label,score:riskScore(latest),level:label(riskScore(latest))});
+    }finally{button.disabled=false;}
+  }
+  function renderLoading(){
+    latest=MODULES.map(row=>({id:row[0],title:row[1],score:0,truth:"unavailable",ok:false,updated:null,why:"Checking source...",metrics:{}}));
+    renderAll(selectedPlace());
+  }
+  function riskScore(rows){
+    const total=MODULES.reduce((sum,row)=>{
+      const item=rows.find(r=>r.id===row[0]);
+      return sum+(item?item.score:0)*row[2];
+    },0);
+    const weight=MODULES.reduce((sum,row)=>sum+row[2],0);
+    const high=rows.filter(r=>r.score>=58).length;
+    return clamp(total/weight+(high>=2?8:0));
+  }
+  function renderAll(place){
+    const score=riskScore(latest);
+    const top=latest.slice().sort((a,b)=>b.score-a.score)[0]||{title:"--",score:0};
+    $("riskScore").textContent=score;
+    $("riskBar").style.width=score+"%";
+    $("riskLabel").textContent=label(score);
+    $("riskScore").style.color=score>=80?"var(--red)":score>=58?"var(--amber)":score>=32?"var(--cyan)":"var(--grn)";
+    $("topSignal").textContent=top.title;
+    $("liveCount").textContent=latest.filter(s=>s.ok).length+"/"+latest.length;
+    $("placeRead").textContent=place.label.split(",")[0];
+    $("updatedRead").textContent=new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+    $("truthStrip").innerHTML=truthTiles(latest);
+    $("moduleGrid").innerHTML=latest.map(moduleHtml).join("");
+    checklist=buildChecklist(latest,place,score);
+    renderChecklist();
+    $("reportBox").textContent=reportText(latest,place,score,checklist);
+  }
+  function truthTiles(rows){
+    const buckets={official:0,live:0,proxy:0,"local estimate":0,unavailable:0};
+    rows.forEach(row=>{buckets[row.truth]=buckets[row.truth]+1||1;});
+    return [
+      truthTile("official",buckets.official+" source",buckets.official?"official":"unavailable"),
+      truthTile("live APIs",buckets.live+" sources","live"),
+      truthTile("proxy",buckets.proxy+" source","proxy"),
+      truthTile("local estimate",buckets["local estimate"]+" source","proxy"),
+      truthTile("unavailable",buckets.unavailable+" neutral","unavailable")
+    ].join("");
+  }
+  function truthTile(labelText,value,tone){return '<div class="truth-tile '+tone+'"><span>'+esc(labelText)+'</span><b>'+esc(value)+'</b></div>';}
+  function moduleHtml(s){
+    const cls=tagClass(s.truth);
+    const metrics=Object.entries(s.metrics||{}).slice(0,4).map(([k,v])=>esc(k)+": "+esc(v)).join(" / ");
+    return '<article class="module"><div class="module-head"><div><h3>'+esc(s.title)+'</h3><span class="tag '+cls+'">'+esc(s.truth)+'</span></div><div class="score">'+clamp(s.score)+'</div></div><div class="bar"><i style="width:'+clamp(s.score)+'%"></i></div><p>'+esc(s.why)+'</p><small>'+metrics+'</small><small>updated: '+esc(age(s.updated))+'</small></article>';
+  }
+  function buildChecklist(rows,place,score){
+    const byId=id=>rows.find(r=>r.id===id)||{score:0};
+    const list=[
+      ["Water","Fill bottles and keep at least 1 gallon per person for today.","core"],
+      ["Food","Stage no-cook food for 24 hours and check pet food.","core"],
+      ["Power","Charge phones, battery packs, flashlights and medical devices.","core"],
+      ["Comms","Send location/check-in plan to household contacts.","core"],
+      ["Documents","Keep ID, insurance, medication list and emergency cash together.","core"],
+      ["Go-bag","Put keys, wallet, meds, chargers and water near the exit.","core"],
+      ["Vehicle / travel","Check fuel/charge level and avoid unnecessary trips if conditions worsen.","core"],
+      ["Pets / family","Confirm pet carrier, leash, meds and family meet point.","core"]
+    ];
+    if(byId("alerts").score>=32)list.unshift(["Official instructions","Read the active official alert and follow local guidance first.","urgent"]);
+    if(byId("weather").score>=58)list.push(["Weather prep","Secure loose outdoor items and plan for rain, wind, heat, cold or fog.","weather"]);
+    if(byId("air").score>=58)list.push(["Air quality","Close windows, run filtration if available and reduce outdoor exertion.","air"]);
+    if(byId("quake").score>=45)list.push(["Quake check","Move heavy items from shelves and keep shoes/light near the bed.","quake"]);
+    if(byId("internet").score>=45)list.push(["Connectivity","Save key phone numbers and maps offline before your network gets worse.","comms"]);
+    if(byId("travel").score>=45)list.push(["Travel timing","Check routes/airport before leaving and build in backup time.","travel"]);
+    if(score>=80)list.unshift(["Act now","Prioritize safety, official alerts, family contact and immediate supplies for "+place.label+".","urgent"]);
+    return list;
+  }
+  function renderChecklist(){
+    const saved=readChecks();
+    $("checklist").innerHTML=checklist.map((item,i)=>'<label class="check-item"><input type="checkbox" data-check="'+i+'" '+(saved[item[0]]?"checked":"")+'><span><b>'+esc(item[0])+'</b>'+esc(item[1])+'</span><span>'+esc(item[2])+'</span></label>').join("");
+    $("checklist").querySelectorAll("[data-check]").forEach(input=>input.addEventListener("change",function(){
+      const map=readChecks();
+      map[checklist[Number(input.dataset.check)][0]]=input.checked;
+      localStorage.setItem("nifty-prepper-risk-checks",JSON.stringify(map));
+    }));
+  }
+  function readChecks(){try{return JSON.parse(localStorage.getItem("nifty-prepper-risk-checks")||"{}");}catch(_err){return {};}}
+  function checklistText(){return checklist.map(item=>"- "+item[0]+": "+item[1]).join("\n");}
+  function reportText(rows,place,score,items){
+    return [
+      "NiftyTools Prepper Risk Scanner",
+      "Place: "+place.label+" ("+fmt(place.lat,4)+", "+fmt(place.lon,4)+")",
+      "Today risk: "+score+"/100 - "+label(score),
+      "",
+      "Signals:",
+      ...rows.map(s=>"- "+s.title+": "+clamp(s.score)+"/100 - "+s.truth+" - "+s.why),
+      "",
+      "Prep Today:",
+      ...items.map(item=>"- "+item[0]+": "+item[1]),
+      "",
+      "Note: follow official local emergency instructions during real incidents."
+    ].join("\n");
+  }
+  async function copyChecklist(button){
+    const text=checklistText();
+    try{
+      await navigator.clipboard.writeText(text);
+      const old=button.textContent;button.textContent="Copied";setTimeout(()=>button.textContent=old,1200);
+    }catch(_err){window.prompt("Copy checklist",text);}
+    track("prepper_risk_copy",{items:checklist.length});
+  }
+  function downloadReport(){
+    const place=selectedPlace();
+    const payload={created:new Date().toISOString(),place,score:riskScore(latest),signals:latest,checklist,report:$("reportBox").textContent};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);a.download="prepper-risk-report.json";a.click();URL.revokeObjectURL(a.href);
+    track("prepper_risk_download",{score:riskScore(latest)});
+  }
+  function printReport(){window.print();track("prepper_risk_print",{score:riskScore(latest)});}
+  window.refreshScan=refreshScan;
+  window.copyChecklist=copyChecklist;
+  window.downloadReport=downloadReport;
+  window.printReport=printReport;
+  $("place").addEventListener("change",function(){applyPreset();refreshScan(true);});
+  ["customLabel","lat","lon"].forEach(id=>$(id).addEventListener("change",function(){if($("place").value!=="manual")$("place").value="manual";refreshScan(true);}));
+  initPlaces();
+  renderLoading();
+  refreshScan(false);
+  track("prepper_risk_open",{place:selectedPlace().label});
+})();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>
