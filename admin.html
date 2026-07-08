@@ -484,12 +484,19 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
-  "Early Warning Radar","Aurora Watch","Outage Radar","Cyber Threat Radar","Food Watch","Meme Watch","Crypto Pulse","Market Volume Pulse","Market Positioning Radar","Admin Centre Lite","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro",
+  "Signal Suite Hub","Prepper Command Center Lite","Early Warning Radar","Aurora Watch","Outage Radar","Cyber Threat Radar","Food Watch","Meme Watch","Crypto Pulse","Market Volume Pulse","Market Positioning Radar","Admin Centre Lite","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro",
   "Unit Converter Pro","World Clock / Time Zone Studio","Device Test Suite","File Organizer Toolkit","Color Palette Studio","QR Code Toolkit Pro",
   "Receipt Generator","Developer Toolkit","Text & Writing Toolkit Pro","Tarot Card Reader","Birth Chart / Zodiac Toolkit","Random Toolkit Pro",
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
 ];
 const toolAliases = {
+  "signal-suite":"Signal Suite Hub",
+  "signal suite":"Signal Suite Hub",
+  "signal suite hub":"Signal Suite Hub",
+  "prepper-command":"Prepper Command Center Lite",
+  "prepper command":"Prepper Command Center Lite",
+  "prepper command center lite":"Prepper Command Center Lite",
+  "prepper-tools":"Prepper Toolkit",
   "signal-watch":"Early Warning Radar",
   "signal watch":"Early Warning Radar",
   "early warning radar":"Early Warning Radar",
@@ -529,6 +536,7 @@ const toolAliases = {
   "percentage":"Percentage Calculator"
 };
 const signalSuite = [
+  {slug:"signal-suite",tool:"Signal Suite Hub",lane:"signal command shelf",truth:"local",read:"Hub page grouping the flagship radar tools with source truth labels and clean navigation.",sources:"NiftyTools Hub tool catalog and local analytics events"},
   {slug:"signal-watch",tool:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",read:"Live public feeds with fallback layers for space weather, quakes, outages, news and local checks.",sources:"NOAA, USGS, status pages, GDELT/Wikimedia, weather/news proxies"},
   {slug:"aurora-watch",tool:"Aurora Watch",lane:"space weather",truth:"live",read:"Tonight visibility score from NOAA space weather plus local cloud/moonlight context.",sources:"NOAA SWPC, NOAA OVATION, Open-Meteo"},
   {slug:"outage-radar",tool:"Outage Radar",lane:"internet health",truth:"mixed",read:"Official status pages plus browser reachability probes; carrier/app signals are still proxy-like.",sources:"Cloudflare, OpenAI, GitHub, Google, AWS, local probes"},
@@ -537,7 +545,7 @@ const signalSuite = [
   {slug:"meme-watch",tool:"Meme Watch",lane:"trend early warning",truth:"proxy",read:"Public attention proxies. Useful for trend smoke, not a full social firehose yet.",sources:"HN, GDELT, Wikipedia/Wikimedia"},
   {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"BTC public network probes are strongest; ETH depth needs a backend/API key path.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH fallback"},
   {slug:"market-volume-pulse",tool:"Market Volume Pulse",lane:"market activity",truth:"delayed",read:"Most-active / dollar-volume style board using live or reference rows; full tape later.",sources:"Nifty API, Stooq/reference rows, optional Alpha Vantage"},
-  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"delayed",read:"CFTC/FINRA/OKX signals are useful but delayed/proxy-based. Binance noise is not critical.",sources:"CFTC COT, FINRA, OKX, Binance fallback"},
+  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"delayed",read:"Connected market-positioning board. CFTC is weekly, FINRA is delayed proxy, crypto is exchange-specific fallback data.",sources:"CFTC COT, FINRA short-volume proxy, OKX fallback, optional Binance probe"},
   {slug:"admin",tool:"Admin Centre Lite",lane:"operations",truth:"local",read:"Local browser buffer now. Production analytics API/drain is the next real ops layer.",sources:"nt-analytics localStorage, Vercel Analytics later"}
 ];
 let signalSuiteFilter = "all";
@@ -620,8 +628,8 @@ function metricWindow(name, events){
   return {
     name:name,
     events:events.length,
-    opens:countWhere(events,function(e){return e.event === "tool_open" || e.event === "tool_page_view";}),
-    actions:countWhere(events,function(e){return /tool_action|download|copy|share/.test(e.event || "");}),
+    opens:countWhere(events,isOpenEvent),
+    actions:countWhere(events,isActionEvent),
     searches:countWhere(events,function(e){return e.event === "search";}),
     errors:countWhere(events,function(e){return e.event === "error";}),
     issues:issueCount
@@ -632,6 +640,12 @@ function renderSummary(){
   $("summaryBody").innerHTML = windows.map(function(row){
     return '<tr><td>'+row.name+'</td><td>'+row.events+'</td><td>'+row.opens+'</td><td>'+row.actions+'</td><td>'+row.searches+'</td><td>'+row.errors+'</td><td>'+row.issues+'</td></tr>';
   }).join("");
+}
+function isOpenEvent(event){
+  return /^(tool_open|tool_page_view|signal_tool_open|signal_suite_open|prepper_command_open)$/.test(event.event || "");
+}
+function isActionEvent(event){
+  return /tool_action|download|copy|share|signal_suite_tool_open|signal_suite_filter_change|prepper_command_tab_open|prepper_command_calculate|prepper_command_copy|prepper_command_print|prepper_command_reset/.test(event.event || "");
 }
 function signalSlugFromEvent(event){
   const candidates = [event.slug, event.page, event.tool, event.path, event.title, event.target].filter(Boolean);
@@ -680,7 +694,7 @@ function renderSignalSuite(events){
     if(!slug || !bySlug[slug]) return;
     const row = bySlug[slug];
     if(event.event === "tool_open" || event.event === "tool_page_view" || event.event === "signal_tool_open") row.opens++;
-    if(/tool_action|download|copy|share|refresh|export/.test(event.event || "")) row.actions++;
+    if(/tool_action|download|copy|share|refresh|export|signal_suite_tool_open|signal_suite_filter_change/.test(event.event || "")) row.actions++;
     if(event.event === "error" || /_error$/.test(event.event || "")) row.errors++;
     if(/slow|large/.test(event.event || "")) row.slow++;
     const nextTruth = truthFromEvent(event, row.truth);
@@ -771,8 +785,8 @@ function renderAttention(events){
   events.forEach(function(e){
     const match = topTool(e) || "Unknown";
     byTool[match] = byTool[match] || {tool:match,opens:0,actions:0,errors:0,slow:0};
-    if(e.event === "tool_open" || e.event === "tool_page_view") byTool[match].opens++;
-    if(/tool_action|download|copy|share/.test(e.event || "")) byTool[match].actions++;
+    if(isOpenEvent(e)) byTool[match].opens++;
+    if(isActionEvent(e)) byTool[match].actions++;
     if(e.event === "error") byTool[match].errors++;
     if(/slow|large/.test(e.event || "")) byTool[match].slow++;
   });
@@ -813,14 +827,14 @@ function refreshDashboard(){
   const sessions = new Set(week.map(function(e){return e.session || "";})).size;
   $("eventCountBadge").textContent = events.length + " events";
   $("todayEvents").textContent = day.length;
-  $("todayMeta").textContent = countWhere(day,function(e){return e.event === "tool_open" || e.event === "tool_page_view";}) + " tool opens";
+  $("todayMeta").textContent = countWhere(day,isOpenEvent) + " tool opens";
   $("weekEvents").textContent = week.length;
   $("weekMeta").textContent = sessions + " sessions";
   $("monthEvents").textContent = month.length;
   $("monthMeta").textContent = countWhere(month,function(e){return e.event === "search";}) + " searches";
   renderSummary();
-  renderBars("toolBars", groupBy(month.filter(function(e){return e.event === "tool_open" || e.event === "tool_page_view";}), topTool), "No tool open events yet.", "");
-  renderBars("actionBars", groupBy(month.filter(function(e){return /tool_action|download|copy|share/.test(e.event || "");}), function(e){return e.action || e.event;}), "No tool action events yet.", "");
+  renderBars("toolBars", groupBy(month.filter(isOpenEvent), topTool), "No tool open events yet.", "");
+  renderBars("actionBars", groupBy(month.filter(isActionEvent), function(e){return e.action || e.event;}), "No tool action events yet.", "");
   renderBars("searchBars", groupBy(month.filter(function(e){return e.event === "search";}), function(e){return e.term;}), "No search events yet.", "warn");
   renderBars("referrerBars", groupBy(month, function(e){return e.referrer || e.source || "direct / local";}), "No referrer events in local storage.", "");
   renderSignalSuite(month);
@@ -831,7 +845,7 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
+  const tools = ["Signal Suite Hub","Prepper Command Center Lite","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];
@@ -848,6 +862,10 @@ function loadDemoData(){
   events.push({event:"error",type:"fetch_failed",message:"NOAA feed timeout",page:"aurora-watch",tool:"Aurora Watch",session:"demo-err",ts:new Date(now - 7200000).toISOString()});
   events.push({event:"slow_page",load_ms:4100,dom_ms:1900,page:"pdf-tools",tool:"PDF Toolkit",session:"demo-slow",ts:new Date(now - 10800000).toISOString()});
   events.push({event:"large_page",mb:2.4,page:"tarot-tools",tool:"Tarot Card Reader",session:"demo-large",ts:new Date(now - 16600000).toISOString()});
+  events.push({event:"signal_suite_open",tool:"Signal Suite Hub",page:"signal-suite",session:"demo-signal-hub",ts:new Date(now - 860000).toISOString()});
+  events.push({event:"signal_suite_tool_open",tool:"Signal Suite Hub",page:"signal-suite",target:"outage-radar",session:"demo-signal-hub",ts:new Date(now - 820000).toISOString()});
+  events.push({event:"prepper_command_open",tool:"Prepper Command Center Lite",page:"prepper-command",session:"demo-prepper-command",ts:new Date(now - 760000).toISOString()});
+  events.push({event:"prepper_command_calculate",tool:"Prepper Command Center Lite",page:"prepper-command",action:"water_food_power",session:"demo-prepper-command",ts:new Date(now - 710000).toISOString()});
   writeEvents(events);
   refreshDashboard();
 }

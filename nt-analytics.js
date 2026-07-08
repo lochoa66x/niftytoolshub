@@ -8,6 +8,7 @@
   var searchTimers = new WeakMap();
   var TOOL_NAMES = {
     "signal-watch": "Early Warning Radar",
+    "signal-suite": "Signal Suite Hub",
     "aurora-watch": "Aurora Watch",
     "outage-radar": "Outage Radar",
     "cyber-threat": "Cyber Threat Radar",
@@ -18,6 +19,8 @@
     "positioning-radar": "Market Positioning Radar",
     "ai-panic": "AI Panic Meter",
     "admin": "Admin Centre Lite",
+    "prepper-command": "Prepper Command Center Lite",
+    "prepper-tools": "Prepper Toolkit",
     "image-tools": "Image Toolkit",
     "pdf-tools": "PDF Toolkit",
     "salary-tools": "Salary / Paycheck Calculator Pro",
@@ -40,6 +43,13 @@
     "percentage": "Percentage Calculator"
   };
   var SIGNAL_SUITE_TOOLS = {
+    "signal-suite": {
+      name: "Signal Suite Hub",
+      lane: "signal command shelf",
+      truth: "local",
+      read: "Local hub grouping the flagship radar tools with source truth labels",
+      sources: "NiftyTools Hub tool catalog and local analytics events"
+    },
     "signal-watch": {
       name: "Early Warning Radar",
       lane: "global + local anomaly",
@@ -307,7 +317,7 @@
     if (/download|export|save file/.test(text)) return "download";
     if (/copy|clipboard/.test(text)) return "copy";
     if (/share/.test(text)) return "share";
-    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render/.test(text)) return "tool_action";
+    if (/compress|resize|convert|generate|remove|merge|split|extract|calculate|estimate|test|start|run|create|scan|analyze|clean|format|render|print|reset|pack|inventory/.test(text)) return "tool_action";
     return "";
   }
 
