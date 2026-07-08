@@ -382,9 +382,9 @@
   }
   function friendlyError(err){
     const msg=String(err&&err.message?err.message:err||'request failed');
-    if(/abort|timeout|signal/i.test(msg))return 'the source took too long to answer';
-    if(/429|rate/i.test(msg))return 'the source is rate-limiting public requests';
-    if(/Failed to fetch|NetworkError|CORS/i.test(msg))return 'the browser blocked or could not reach the feed';
+    if(/abort|timeout|signal/i.test(msg))return 'timed out';
+    if(/429|rate/i.test(msg))return 'rate limited';
+    if(/Failed to fetch|NetworkError|CORS/i.test(msg))return 'blocked/unreachable';
     return msg;
   }
   function neutralLocal(id,title,source,why,metrics={}){
@@ -494,7 +494,7 @@
     return loadConflictWikiProxy(reason).catch(()=>({
       id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:18,status:'normal',confidence:'low',ok:true,updated:new Date().toISOString(),source:'Wikimedia public-interest proxy',
       why:'Conflict-spillover news feed was slow, so a neutral public-interest proxy is active. This is civilian context, not tactical tracking.',
-      metrics:{'truth layer':'proxy fallback','feed status':friendlyError(reason),'active regions':'not inferred','score mode':'neutral fallback'}
+      metrics:{'source mode':'fallback','primary feed':friendlyError(reason),'active regions':'not inferred','score mode':'neutral'}
     }));
   }
   async function loadConflictWikiProxy(reason){
@@ -511,10 +511,16 @@
     }));
     const top=rows.sort((a,b)=>b.ratio-a.ratio)[0]||{page:'conflict pages',ratio:1,last:0};
     const avgRatio=avg(rows.map(r=>r.ratio));
-    const score=clamp(16+Math.min(32,(top.ratio-1)*14)+Math.min(18,(avgRatio-1)*12));
+    const elevatedRows=rows.filter(r=>r.ratio>=2.5).length;
+    const watchedRows=rows.length||pages.length;
+    const topPressure=Math.max(0,top.ratio-2.4)*9;
+    const broadPressure=Math.max(0,avgRatio-1.35)*12;
+    const breadthPressure=elevatedRows>=3?12:elevatedRows>=2?8:elevatedRows?3:0;
+    const score=clamp(16+Math.min(20,topPressure)+Math.min(12,broadPressure)+breadthPressure);
+    const isFallbackElevated=score>=35&&elevatedRows>=1;
     return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:level(score),confidence:'low',ok:true,updated:end.toISOString(),source,
-      why:top.ratio>1.7?'Primary conflict news feed was slow, but public-interest pages are elevated. Treat this as a proxy fallback, not tactical tracking.':'Primary conflict news feed was slow; public-interest proxy does not show a broad spike.',
-      metrics:{'truth layer':'proxy fallback','feed status':friendlyError(reason),'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x'}};
+      why:isFallbackElevated?'Primary conflict news feed was slow; fallback pageviews show a stronger public-interest move. Treat this as context only, not tactical tracking.':'Primary conflict news feed was slow; fallback pageviews are shown as context only and do not indicate a broad spike.',
+      metrics:{'source mode':'fallback','primary feed':friendlyError(reason),'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x','breadth':elevatedRows+'/'+watchedRows+' pages >2.5x'}};
   }
   async function loadConflict(){
     const source='GDELT DOC API public news proxy';
