@@ -484,7 +484,7 @@
 const STORE_KEY = "nifty_admin_events";
 const DAY = 86400000;
 const catalog = [
-  "Signal Suite Hub","Prepper Command Center Lite","Early Warning Radar","Aurora Watch","Outage Radar","Cyber Threat Radar","Food Watch","Meme Watch","Crypto Pulse","Market Volume Pulse","Market Positioning Radar","Admin Centre Lite","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro",
+  "Signal Suite Hub","Prepper Command Center Lite","Prepper Toolkit Pro","Early Warning Radar","Aurora Watch","Outage Radar","Cyber Threat Radar","Food Watch","Meme Watch","Crypto Pulse","Market Volume Pulse","Market Positioning Radar","Admin Centre Lite","AI Panic Meter","Image Toolkit","PDF Toolkit","Salary / Paycheck Calculator Pro",
   "Unit Converter Pro","World Clock / Time Zone Studio","Device Test Suite","File Organizer Toolkit","Color Palette Studio","QR Code Toolkit Pro",
   "Receipt Generator","Developer Toolkit","Text & Writing Toolkit Pro","Tarot Card Reader","Birth Chart / Zodiac Toolkit","Random Toolkit Pro",
   "Fake Hacker Terminal","Mortgage","Auto Loan","Percentage Calc","Currency Converter","Timer & Stopwatch"
@@ -496,7 +496,9 @@ const toolAliases = {
   "prepper-command":"Prepper Command Center Lite",
   "prepper command":"Prepper Command Center Lite",
   "prepper command center lite":"Prepper Command Center Lite",
-  "prepper-tools":"Prepper Toolkit",
+  "prepper-tools":"Prepper Toolkit Pro",
+  "prepper toolkit":"Prepper Toolkit Pro",
+  "prepper toolkit pro":"Prepper Toolkit Pro",
   "signal-watch":"Early Warning Radar",
   "signal watch":"Early Warning Radar",
   "early warning radar":"Early Warning Radar",
@@ -537,6 +539,8 @@ const toolAliases = {
 };
 const signalSuite = [
   {slug:"signal-suite",tool:"Signal Suite Hub",lane:"signal command shelf",truth:"local",read:"Hub page grouping the flagship radar tools with source truth labels and clean navigation.",sources:"NiftyTools Hub tool catalog and local analytics events"},
+  {slug:"prepper-command",tool:"Prepper Command Center Lite",lane:"readiness command",truth:"local",read:"Quick household readiness cockpit for water, food, power, go-bags, contacts and scenario playbooks.",sources:"Local browser calculations and checklist state"},
+  {slug:"prepper-tools",tool:"Prepper Toolkit Pro",lane:"preparedness calculators",truth:"local",read:"Full household planner with supply targets, outage power, go-bag, family plan, inventory exports and printable reports.",sources:"Local browser calculations and exports"},
   {slug:"signal-watch",tool:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",read:"Live public feeds with fallback layers for space weather, quakes, outages, news and local checks.",sources:"NOAA, USGS, status pages, GDELT/Wikimedia, weather/news proxies"},
   {slug:"aurora-watch",tool:"Aurora Watch",lane:"space weather",truth:"live",read:"Tonight visibility score from NOAA space weather plus local cloud/moonlight context.",sources:"NOAA SWPC, NOAA OVATION, Open-Meteo"},
   {slug:"outage-radar",tool:"Outage Radar",lane:"internet health",truth:"mixed",read:"Official status pages plus browser reachability probes; carrier/app signals are still proxy-like.",sources:"Cloudflare, OpenAI, GitHub, Google, AWS, local probes"},
@@ -642,10 +646,10 @@ function renderSummary(){
   }).join("");
 }
 function isOpenEvent(event){
-  return /^(tool_open|tool_page_view|signal_tool_open|signal_suite_open|prepper_command_open)$/.test(event.event || "");
+  return /^(tool_open|tool_page_view|signal_tool_open|signal_suite_open|prepper_command_open|prepper_open)$/.test(event.event || "");
 }
 function isActionEvent(event){
-  return /tool_action|download|copy|share|signal_suite_tool_open|signal_suite_filter_change|prepper_command_tab_open|prepper_command_calculate|prepper_command_copy|prepper_command_print|prepper_command_reset/.test(event.event || "");
+  return /tool_action|download|copy|share|signal_suite_tool_open|signal_suite_filter_change|prepper_command_tab_open|prepper_command_calculate|prepper_command_copy|prepper_command_print|prepper_command_reset|prepper_tab_open|prepper_calculate|prepper_export|prepper_print|prepper_reset|prepper_checklist_copy|prepper_family_plan_copy|prepper_inventory_add|prepper_score_level/.test(event.event || "");
 }
 function signalSlugFromEvent(event){
   const candidates = [event.slug, event.page, event.tool, event.path, event.title, event.target].filter(Boolean);
@@ -845,7 +849,7 @@ function refreshDashboard(){
 }
 function loadDemoData(){
   const now = Date.now();
-  const tools = ["Signal Suite Hub","Prepper Command Center Lite","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
+  const tools = ["Signal Suite Hub","Prepper Command Center Lite","Prepper Toolkit Pro","Early Warning Radar","Salary / Paycheck Calculator Pro","PDF Toolkit","Image Toolkit","Aurora Watch","QR Code Toolkit Pro","World Clock / Time Zone Studio","Color Palette Studio"];
   const events = [];
   for(let i=0;i<96;i++){
     const tool = tools[i % tools.length];
@@ -866,6 +870,8 @@ function loadDemoData(){
   events.push({event:"signal_suite_tool_open",tool:"Signal Suite Hub",page:"signal-suite",target:"outage-radar",session:"demo-signal-hub",ts:new Date(now - 820000).toISOString()});
   events.push({event:"prepper_command_open",tool:"Prepper Command Center Lite",page:"prepper-command",session:"demo-prepper-command",ts:new Date(now - 760000).toISOString()});
   events.push({event:"prepper_command_calculate",tool:"Prepper Command Center Lite",page:"prepper-command",action:"water_food_power",session:"demo-prepper-command",ts:new Date(now - 710000).toISOString()});
+  events.push({event:"prepper_open",tool:"Prepper Toolkit Pro",page:"prepper-tools",session:"demo-prepper-tools",ts:new Date(now - 680000).toISOString()});
+  events.push({event:"prepper_calculate",tool:"Prepper Toolkit Pro",page:"prepper-tools",action:"readiness_score",session:"demo-prepper-tools",ts:new Date(now - 640000).toISOString()});
   writeEvents(events);
   refreshDashboard();
 }

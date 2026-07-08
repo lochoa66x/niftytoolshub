@@ -20,7 +20,7 @@
     "ai-panic": "AI Panic Meter",
     "admin": "Admin Centre Lite",
     "prepper-command": "Prepper Command Center Lite",
-    "prepper-tools": "Prepper Toolkit",
+    "prepper-tools": "Prepper Toolkit Pro",
     "image-tools": "Image Toolkit",
     "pdf-tools": "PDF Toolkit",
     "salary-tools": "Salary / Paycheck Calculator Pro",

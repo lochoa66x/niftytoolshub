@@ -47,6 +47,7 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
         <div class="actions">
           <a class="btn" href="/signal-watch.html" data-suite-link="signal-watch">Open Early Warning Radar</a>
           <a class="btn ghost" href="/prepper-command.html">Prepper Command</a>
+          <a class="btn ghost" href="/prepper-tools.html">Prepper Toolkit</a>
           <a class="btn ghost" href="/library.html?filter=signal">All signal tools</a>
         </div>
       </div>
@@ -94,6 +95,8 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
 (function(){
   const TOOLS=[
     {slug:"signal-watch",name:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",group:["global","local","prepper"],watches:"Space weather, major earthquakes, internet status, news panic, market stress, wildfire/air quality.",best:"Morning situational read and weird-day dashboard.",score:76},
+    {slug:"prepper-command",name:"Prepper Command",lane:"household readiness command",truth:"local",group:["prepper","local"],watches:"Water, food, power, go-bag, contacts, inventory and scenario playbooks.",best:"A quick readiness cockpit when a radar signal turns practical.",score:72},
+    {slug:"prepper-tools",name:"Prepper Toolkit Pro",lane:"preparedness calculators",truth:"local",group:["prepper","local"],watches:"Supply targets, outage power, go-bag, family plan, inventory exports and printable reports.",best:"Building a useful household plan before anything gets weird.",score:78},
     {slug:"aurora-watch",name:"Aurora Watch",lane:"space weather",truth:"live",group:["global","local"],watches:"NOAA space weather, aurora oval context, cloud/moonlight constraints.",best:"Will I see northern lights tonight?",score:58},
     {slug:"outage-radar",name:"Outage Radar",lane:"internet weather",truth:"mixed",group:["internet","global","local"],watches:"Cloud/app status pages, browser probes, carrier and regional coverage notes.",best:"Separating platform trouble from your own connection.",score:71},
     {slug:"cyber-threat",name:"Cyber Threat Radar",lane:"public cyber signals",truth:"mixed",group:["internet","global"],watches:"Public threat feeds, vulnerability pulse and attack-map style visualization.",best:"A quick cyber weather layer for curious operators.",score:63},
