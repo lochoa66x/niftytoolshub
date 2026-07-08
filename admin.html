@@ -549,7 +549,7 @@ const signalSuite = [
   {slug:"meme-watch",tool:"Meme Watch",lane:"trend early warning",truth:"proxy",read:"Public attention proxies. Useful for trend smoke, not a full social firehose yet.",sources:"HN, GDELT, Wikipedia/Wikimedia"},
   {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"Readable network health board for BTC fees, mempool pressure, ETH gas, activity and market context with source truth labels.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH fallback"},
   {slug:"market-volume-pulse",tool:"Market Volume Pulse",lane:"market activity",truth:"delayed",read:"Most-active / dollar-volume style board using live or reference rows; full tape later.",sources:"Nifty API, Stooq/reference rows, optional Alpha Vantage"},
-  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"delayed",read:"Connected market-positioning board. CFTC is weekly, FINRA is delayed proxy, crypto is exchange-specific fallback data.",sources:"CFTC COT, FINRA short-volume proxy, OKX fallback, optional Binance probe"},
+  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"mixed",read:"Core positioning board for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee. CFTC is weekly, FINRA is delayed proxy, crypto uses exchange fallback when needed.",sources:"CFTC COT, FINRA short-volume proxy, OKX fallback, optional Binance probe hidden when covered"},
   {slug:"admin",tool:"Admin Centre Lite",lane:"operations",truth:"local",read:"Local browser buffer now. Production analytics API/drain is the next real ops layer.",sources:"nt-analytics localStorage, Vercel Analytics later"}
 ];
 let signalSuiteFilter = "all";

@@ -68,11 +68,15 @@ async function addBinance(symbol, id, markets, sources) {
   } catch (err) {
     const detail = cleanError(err);
     const covered = await addOkxRatio(symbol.replace("USDT", ""), id, markets, sources);
-    sources.push({
-      source:"Binance " + symbol + " long/short",
-      status:covered ? "covered" : "blocked",
-      detail:covered ? detail + "; OKX fallback live" : detail
-    });
+    if (covered) {
+      sources.push({
+        source:"Crypto exchange fallback",
+        status:"covered",
+        detail:"Binance " + symbol + " blocked (" + detail + "); OKX fallback live"
+      });
+      return;
+    }
+    sources.push({ source:"Binance " + symbol + " long/short", status:"blocked", detail:detail });
   }
 }
 
