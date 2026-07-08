@@ -19,7 +19,7 @@
 body:before{content:"";position:fixed;inset:0;z-index:20;pointer-events:none;background:linear-gradient(rgba(255,255,255,.025) 50%,rgba(0,0,0,.025) 50%) 0 0/100% 4px;mix-blend-mode:screen;opacity:.24}body:after{content:"";position:fixed;inset:0;z-index:21;pointer-events:none;background:radial-gradient(circle at 50% 45%,transparent 0,transparent 64%,rgba(0,0,0,.42) 100%);opacity:.78}
 a{color:var(--grn);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}.wrap{max-width:1280px;margin:0 auto;padding:0 18px}
 header{position:sticky;top:0;z-index:8;border-bottom:1px solid var(--line);background:rgba(5,9,5,.86);backdrop-filter:blur(8px)}.nav{height:54px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{display:flex;align-items:center;gap:9px;color:var(--txt);font-weight:800;font-size:15px}.logo .mk{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.22)}.logo .mk:before{content:"NT";font-size:11px}.navlinks{display:flex;gap:14px;color:var(--mut);font-size:12px}.navlinks a{color:var(--mut)}.navlinks a:hover{color:var(--grn)}
-main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px auto auto auto;align-items:end;gap:8px;margin:0 0 12px;padding:8px;border:1px solid rgba(70,224,122,.2);border-radius:6px;background:linear-gradient(180deg,rgba(9,16,10,.82),rgba(3,8,4,.78));box-shadow:inset 0 0 18px rgba(70,224,122,.035)}label{display:block;margin-bottom:5px;color:var(--mut);font-size:11px;text-transform:uppercase}select{width:100%;height:36px;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:rgba(3,8,4,.9);color:var(--txt);font-size:13px;outline:0}.btn{height:36px;font:700 13px var(--mono);border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.7);color:var(--grn);padding:7px 12px;cursor:pointer;transition:.15s;white-space:nowrap}.btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38);text-decoration:none}.btn.ghost{border-color:var(--line);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
+main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:170px 170px repeat(4,auto);align-items:end;gap:8px;margin:0 0 12px;padding:8px;border:1px solid rgba(70,224,122,.2);border-radius:6px;background:linear-gradient(180deg,rgba(9,16,10,.82),rgba(3,8,4,.78));box-shadow:inset 0 0 18px rgba(70,224,122,.035)}label{display:block;margin-bottom:5px;color:var(--mut);font-size:11px;text-transform:uppercase}select{width:100%;height:36px;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:rgba(3,8,4,.9);color:var(--txt);font-size:13px;outline:0}.btn{height:36px;font:700 13px var(--mono);border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.7);color:var(--grn);padding:7px 12px;cursor:pointer;transition:.15s;white-space:nowrap;text-align:center}.btn:hover:not(:disabled){background:var(--grn);color:#06120a;box-shadow:0 0 16px rgba(70,224,122,.38);text-decoration:none}.btn.ghost{border-color:var(--line);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;color:var(--grn);border-color:var(--grn);box-shadow:none}
 .hero{position:relative;border:1px solid rgba(70,224,122,.26);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.96),rgba(3,7,4,.98));box-shadow:0 0 42px rgba(70,224,122,.08),inset 0 0 28px rgba(70,224,122,.04);overflow:hidden}.hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(99,230,255,.04),transparent);transform:translateX(-118%);animation:scanline 7s linear infinite}@keyframes scanline{to{transform:translateX(118%)}}
 .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;padding:18px}.kicker{color:var(--grn);font-size:11px;text-transform:uppercase;letter-spacing:.8px}.title{font-size:clamp(30px,5vw,58px);font-weight:800;text-transform:uppercase;line-height:1.02;margin:4px 0 10px;text-shadow:0 0 20px rgba(70,224,122,.14)}.title span{color:var(--grn)}.lead{max-width:820px;color:var(--mut);font-size:14px;margin:0 0 14px}.source-row{display:flex;gap:8px;flex-wrap:wrap}.badge{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:4px;padding:5px 8px;background:rgba(5,9,5,.76)}.badge b{color:var(--grn)}
 .score-card{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:radial-gradient(circle at 72% 12%,rgba(99,230,255,.08),transparent 38%),rgba(3,8,4,.78);padding:14px;min-width:0}.score-card h2{margin:0 0 10px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.7px}.score-row{display:flex;align-items:flex-end;gap:10px}.score-row b{font-size:56px;line-height:.92;color:var(--grn)}.score-row span{margin-bottom:7px;color:var(--mut);font-size:12px;text-transform:uppercase}.meter{height:9px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .25s}.state-label{margin-top:9px;color:var(--dim);font-weight:800}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mini{border:1px solid rgba(223,234,223,.1);background:rgba(9,14,9,.8);border-radius:5px;padding:9px}.mini span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.mini b{display:block;margin-top:3px;color:var(--txt);font-size:17px}
@@ -74,6 +74,11 @@ body:before{opacity:.11}body:after{opacity:.62}
 .spark span{flex:1;min-width:2px;border-radius:2px 2px 0 0;background:var(--grn);box-shadow:0 0 8px rgba(70,224,122,.28);opacity:.85}
 .spark.cyan span{background:var(--cyan);box-shadow:0 0 8px rgba(99,230,255,.24)}
 .spark.amber span{background:var(--amber);box-shadow:0 0 8px rgba(255,189,91,.24)}
+.pulse-explain{display:grid;gap:7px;border-top:1px solid rgba(223,234,223,.08);padding-top:8px;color:var(--mut);font-size:11px;line-height:1.35}
+.pulse-explain div{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.source-chip{display:inline-flex;border:1px solid rgba(99,230,255,.24);border-radius:999px;padding:3px 7px;color:var(--cyan);font-size:10px;text-transform:uppercase;white-space:nowrap}
+.source-chip.sample,.source-chip.proxy{border-color:rgba(255,189,91,.34);color:var(--amber)}
+.source-chip.blocked{border-color:rgba(255,101,114,.34);color:var(--red)}
 .source-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
 .source-strip span{border:1px solid rgba(70,224,122,.16);background:rgba(1,8,4,.72);border-radius:5px;padding:8px 10px;color:var(--mut);font-size:10px;text-transform:uppercase}
 .source-strip b{color:var(--grn)}
@@ -124,7 +129,8 @@ body:before{opacity:.11}body:after{opacity:.62}
     <div><label for="network">Network view</label><select id="network"><option value="combined">Combined</option><option value="btc">BTC only</option><option value="eth">ETH only</option></select></div>
     <button class="btn" type="button" onclick="refreshPulse(true)">Refresh pulse</button>
     <button class="btn ghost" type="button" onclick="copyReport(this)">Copy report</button>
-    <button class="btn ghost" type="button" onclick="downloadSnapshot()">Download JSON</button>
+    <a class="btn ghost" href="/positioning-radar.html" onclick="trackLink('market_positioning')">Positioning</a>
+    <a class="btn ghost" href="/market-volume-pulse.html" onclick="trackLink('market_volume')">Market Volume</a>
   </div>
 
   <section class="hero">
@@ -184,6 +190,7 @@ body:before{opacity:.11}body:after{opacity:.62}
             </div>
             <div class="pulse-score"><b id="btcBoardScore">--</b><span>fee score</span></div>
             <div class="spark amber" id="btcSpark" aria-hidden="true"></div>
+            <div class="pulse-explain"><div><span id="btcFeeText">Wallet fees determine send speed.</span><span class="source-chip" id="btcFeeSource">live</span></div><span id="btcFeeStatus" class="pill">normal</span></div>
           </article>
           <article class="pulse-row btc">
             <div class="pulse-name"><b>BTC mempool</b><span>transaction backlog and tx/day trend</span></div>
@@ -193,6 +200,7 @@ body:before{opacity:.11}body:after{opacity:.62}
             </div>
             <div class="pulse-score"><b id="mempoolBoardScore">--</b><span>mempool score</span></div>
             <div class="spark green" id="mempoolSpark" aria-hidden="true"></div>
+            <div class="pulse-explain"><div><span id="mempoolText">Backlog hints at confirmation friction.</span><span class="source-chip" id="mempoolSource">live</span></div><span id="mempoolStatus" class="pill">normal</span></div>
           </article>
           <article class="pulse-row eth">
             <div class="pulse-name"><b>ETH gas</b><span>gwei pressure and API availability</span></div>
@@ -202,6 +210,7 @@ body:before{opacity:.11}body:after{opacity:.62}
             </div>
             <div class="pulse-score"><b id="ethBoardScore">--</b><span>ETH score</span></div>
             <div class="spark cyan" id="ethSpark" aria-hidden="true"></div>
+            <div class="pulse-explain"><div><span id="ethGasText">Gas pressure affects swap/send cost.</span><span class="source-chip" id="ethGasSource">sample</span></div><span id="ethGasStatus" class="pill">normal</span></div>
           </article>
           <article class="pulse-row market">
             <div class="pulse-name"><b>Market context</b><span>BTC/ETH 24h change and volume</span></div>
@@ -211,6 +220,7 @@ body:before{opacity:.11}body:after{opacity:.62}
             </div>
             <div class="pulse-score"><b id="marketBoardScore">--</b><span>context</span></div>
             <div class="spark cyan" id="marketSpark" aria-hidden="true"></div>
+            <div class="pulse-explain"><div><span id="marketText">Large price moves raise attention risk.</span><span class="source-chip" id="marketSource">live</span></div><span id="marketStatus" class="pill">normal</span></div>
           </article>
           <article class="pulse-row fee">
             <div class="pulse-name"><b>Network stress</b><span>combined rail/weather score</span></div>
@@ -220,6 +230,7 @@ body:before{opacity:.11}body:after{opacity:.62}
             </div>
             <div class="pulse-score"><b id="combinedBoardScore">--</b><span>total score</span></div>
             <div class="spark amber" id="feeSpark" aria-hidden="true"></div>
+            <div class="pulse-explain"><div><span id="combinedText">One-glance network weather.</span><span class="source-chip" id="combinedSource">mixed</span></div><span id="combinedStatus" class="pill">normal</span></div>
           </article>
         </div>
         <div class="source-strip">
@@ -496,6 +507,38 @@ body:before{opacity:.11}body:after{opacity:.62}
     const el = $(id);
     if (el) el.style.width = clamp(Number(value) || 0, 0, 100) + "%";
   }
+  function statusLabel(score){
+    if (score >= 82) return "high";
+    if (score >= 65) return "elevated";
+    if (score >= 45) return "busy";
+    return "normal";
+  }
+  function statusClass(score){
+    if (score >= 82) return "pill bad";
+    if (score >= 65) return "pill warn";
+    if (score >= 45) return "pill cyan";
+    return "pill";
+  }
+  function setPill(id, score){
+    const el = $(id);
+    if (!el) return;
+    el.className = statusClass(score);
+    el.textContent = statusLabel(score);
+  }
+  function sourceStatus(log, pattern){
+    const rows = log.filter((item) => pattern.test(item.source || ""));
+    if (!rows.length) return "sample";
+    if (rows.some((item) => item.status === "live")) return "live";
+    if (rows.some((item) => item.status === "sample")) return "sample";
+    if (rows.some((item) => item.status === "blocked")) return "blocked";
+    return rows[0].status || "proxy";
+  }
+  function setSourceChip(id, status){
+    const el = $(id);
+    if (!el) return;
+    el.className = "source-chip " + (status || "proxy");
+    el.textContent = status || "proxy";
+  }
   function renderSpark(id, values){
     const el = $(id);
     if (!el) return;
@@ -548,6 +591,21 @@ body:before{opacity:.11}body:after{opacity:.62}
     setText("marketBoardMeta", "BTC " + pct(data.btc.change24h || 0) + " / ETH " + pct(data.eth.change24h || 0));
     setText("combinedBoardMeta", stateFromScore(pulse.combined) + " / " + pulse.liveCount + " live");
     setText("operatorRead", operatorRead(data, pulse, log));
+    setText("btcFeeText", pulse.feeScore >= 65 ? "Check fees before sending BTC." : "BTC send fees look manageable.");
+    setText("mempoolText", pulse.mempoolScore >= 65 ? "Backlog is high enough to slow confirmations." : "Backlog is not the main pressure point.");
+    setText("ethGasText", pulse.ethScore >= 65 ? "ETH actions may feel expensive right now." : "ETH gas pressure is manageable.");
+    setText("marketText", pulse.marketScore >= 65 ? "Market motion is amplifying network attention." : "Market motion is not extreme.");
+    setText("combinedText", pulse.combined >= 65 ? "Network weather is busy enough to watch." : "Network weather is usable at a glance.");
+    setPill("btcFeeStatus", pulse.feeScore);
+    setPill("mempoolStatus", pulse.mempoolScore);
+    setPill("ethGasStatus", pulse.ethScore);
+    setPill("marketStatus", pulse.marketScore);
+    setPill("combinedStatus", pulse.combined);
+    setSourceChip("btcFeeSource", sourceStatus(log, /mempool\.space fee/i));
+    setSourceChip("mempoolSource", sourceStatus(log, /mempool\.space mempool|Blockchain\.com BTC transactions/i));
+    setSourceChip("ethGasSource", sourceStatus(log, /Etherscan/i));
+    setSourceChip("marketSource", sourceStatus(log, /CoinGecko/i));
+    setSourceChip("combinedSource", pulse.liveCount && pulse.blockedCount ? "proxy" : pulse.liveCount ? "live" : "sample");
     setText("liveProbeMini", String(pulse.liveCount));
     setText("blockedProbeMini", String(pulse.blockedCount));
     setWidth("btcPressureRail", pulse.feeScore);
@@ -669,9 +727,13 @@ body:before{opacity:.11}body:after{opacity:.62}
     }catch(_err){
       window.prompt("Copy report", text);
     }
-    track("crypto_pulse_copy_report", { mode:currentMode(), network:currentNetwork(), score_bucket:latest ? scoreBucket(latest.pulse.combined) : 0 });
+    track("crypto_pulse_copy", { mode:currentMode(), network:currentNetwork(), score_bucket:latest ? scoreBucket(latest.pulse.combined) : 0 });
   }
   window.copyReport = copyReport;
+  function trackLink(target){
+    track("crypto_pulse_tool_open", { target:target, mode:currentMode(), network:currentNetwork(), score_bucket:latest ? scoreBucket(latest.pulse.combined) : 0 });
+  }
+  window.trackLink = trackLink;
   function downloadSnapshot(){
     const snapshot = latest || { data:SAMPLE, pulse:computePulse(SAMPLE, []), mode:currentMode(), network:currentNetwork(), updated:new Date().toISOString() };
     const safe = {
@@ -708,6 +770,11 @@ body:before{opacity:.11}body:after{opacity:.62}
       $("network").value = button.dataset.view;
       $("network").dispatchEvent(new Event("change"));
     }));
+    $("sourceLog").addEventListener("toggle", (event) => {
+      if (event.target && event.target.matches(".source-details")) {
+        track("crypto_pulse_source_toggle", { open:event.target.open, mode:currentMode(), network:currentNetwork() });
+      }
+    }, true);
   }
   function draw(){
     const canvas = $("pulseCanvas");

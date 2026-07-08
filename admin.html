@@ -547,7 +547,7 @@ const signalSuite = [
   {slug:"cyber-threat",tool:"Cyber Threat Radar",lane:"public cyber signals",truth:"mixed",read:"Public cyber feeds with demo visualization fallback when browser access is blocked.",sources:"SANS ISC/DShield, CISA KEV, demo simulator"},
   {slug:"food-watch",tool:"Food Watch",lane:"recalls + commodity pressure",truth:"mixed",read:"Recall signals are live where possible; commodity shortage pressure still uses reference context.",sources:"openFDA, bundled commodity pressure rows"},
   {slug:"meme-watch",tool:"Meme Watch",lane:"trend early warning",truth:"proxy",read:"Public attention proxies. Useful for trend smoke, not a full social firehose yet.",sources:"HN, GDELT, Wikipedia/Wikimedia"},
-  {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"BTC public network probes are strongest; ETH depth needs a backend/API key path.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH fallback"},
+  {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"Readable network health board for BTC fees, mempool pressure, ETH gas, activity and market context with source truth labels.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH fallback"},
   {slug:"market-volume-pulse",tool:"Market Volume Pulse",lane:"market activity",truth:"delayed",read:"Most-active / dollar-volume style board using live or reference rows; full tape later.",sources:"Nifty API, Stooq/reference rows, optional Alpha Vantage"},
   {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"delayed",read:"Connected market-positioning board. CFTC is weekly, FINRA is delayed proxy, crypto is exchange-specific fallback data.",sources:"CFTC COT, FINRA short-volume proxy, OKX fallback, optional Binance probe"},
   {slug:"admin",tool:"Admin Centre Lite",lane:"operations",truth:"local",read:"Local browser buffer now. Production analytics API/drain is the next real ops layer.",sources:"nt-analytics localStorage, Vercel Analytics later"}
@@ -646,10 +646,10 @@ function renderSummary(){
   }).join("");
 }
 function isOpenEvent(event){
-  return /^(tool_open|tool_page_view|signal_tool_open|signal_suite_open|prepper_command_open|prepper_open)$/.test(event.event || "");
+  return /^(tool_open|tool_page_view|signal_tool_open|signal_suite_open|prepper_command_open|prepper_open|crypto_pulse_open)$/.test(event.event || "");
 }
 function isActionEvent(event){
-  return /tool_action|download|copy|share|signal_suite_tool_open|signal_suite_filter_change|prepper_command_tab_open|prepper_command_calculate|prepper_command_copy|prepper_command_print|prepper_command_reset|prepper_tab_open|prepper_calculate|prepper_export|prepper_print|prepper_reset|prepper_checklist_copy|prepper_family_plan_copy|prepper_inventory_add|prepper_score_level/.test(event.event || "");
+  return /tool_action|download|copy|share|signal_suite_tool_open|signal_suite_filter_change|prepper_command_tab_open|prepper_command_calculate|prepper_command_copy|prepper_command_print|prepper_command_reset|prepper_tab_open|prepper_calculate|prepper_export|prepper_print|prepper_reset|prepper_checklist_copy|prepper_family_plan_copy|prepper_inventory_add|prepper_score_level|crypto_pulse_refresh|crypto_pulse_source_toggle|crypto_pulse_tool_open|crypto_pulse_export/.test(event.event || "");
 }
 function signalSlugFromEvent(event){
   const candidates = [event.slug, event.page, event.tool, event.path, event.title, event.target].filter(Boolean);
@@ -872,6 +872,8 @@ function loadDemoData(){
   events.push({event:"prepper_command_calculate",tool:"Prepper Command Center Lite",page:"prepper-command",action:"water_food_power",session:"demo-prepper-command",ts:new Date(now - 710000).toISOString()});
   events.push({event:"prepper_open",tool:"Prepper Toolkit Pro",page:"prepper-tools",session:"demo-prepper-tools",ts:new Date(now - 680000).toISOString()});
   events.push({event:"prepper_calculate",tool:"Prepper Toolkit Pro",page:"prepper-tools",action:"readiness_score",session:"demo-prepper-tools",ts:new Date(now - 640000).toISOString()});
+  events.push({event:"crypto_pulse_open",tool:"Crypto Pulse",page:"crypto-pulse",session:"demo-crypto-pulse",ts:new Date(now - 610000).toISOString()});
+  events.push({event:"crypto_pulse_refresh",tool:"Crypto Pulse",page:"crypto-pulse",action:"network_refresh",session:"demo-crypto-pulse",ts:new Date(now - 590000).toISOString()});
   writeEvents(events);
   refreshDashboard();
 }
