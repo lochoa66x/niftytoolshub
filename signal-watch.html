@@ -77,6 +77,7 @@
   .signals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
   @media(max-width:720px){.signals{grid-template-columns:1fr}}
   .signal{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px;min-width:0}
+  .signal.loading{border-color:rgba(119,200,255,.36)}
   .signal[data-level="normal"]{border-color:rgba(70,224,122,.32)}
   .signal[data-level="elevated"]{border-color:rgba(255,180,84,.45)}
   .signal[data-level="severe"],.signal[data-level="critical"]{border-color:rgba(255,107,107,.58)}
@@ -90,6 +91,11 @@
   .signal-score{font-size:26px;font-weight:800;color:var(--txt);margin:4px 0}
   .meter{height:8px;border:1px solid var(--line);border-radius:20px;background:var(--bg);overflow:hidden;margin:7px 0 12px}
   .meter span{display:block;height:100%;background:linear-gradient(90deg,var(--grn),var(--amber),var(--bad));width:0}
+  .signal.loading .meter span{width:42%;background:linear-gradient(90deg,transparent,var(--blue),var(--grn),transparent);animation:loadbar 1.1s ease-in-out infinite}
+  @keyframes loadbar{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(119,200,255,.18);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-3px;margin-right:8px;box-shadow:0 0 14px rgba(119,200,255,.22)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  body.is-syncing #heroUpdated::before{content:"";display:inline-block;width:12px;height:12px;border:2px solid rgba(119,200,255,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:-2px}
   .signal p{font-size:12.5px;color:var(--mut);margin:0 0 10px}
   .metric-list{display:grid;gap:5px;margin-top:10px}
   .metric{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;color:var(--mut);border-top:1px solid rgba(214,226,214,.06);padding-top:5px}
@@ -152,6 +158,7 @@
   .signal h3{line-height:1.25}
   .signal-score{display:inline-flex;align-items:baseline;gap:6px}
   .signal-score::after{content:"/100";font-size:11px;color:var(--mut);font-weight:500}
+  .signal.loading .signal-score::after{content:""}
   .meter{height:9px}
   .metric{border-top-color:rgba(70,224,122,.1)}
   .log pre{min-height:180px}
@@ -370,8 +377,15 @@
   }
   function unavailable(id,title,scope,source,err){
     return {id,title,scope,score:12,status:'normal',confidence:'low',ok:false,updated:null,source,
-      why:'Source unavailable from this browser: '+(err&&err.message?err.message:'request failed')+'. The combined score treats this as neutral.',
+      why:'Source unavailable from this browser: '+friendlyError(err)+'. The combined score treats this as neutral.',
       metrics:{source:'unavailable'}};
+  }
+  function friendlyError(err){
+    const msg=String(err&&err.message?err.message:err||'request failed');
+    if(/abort|timeout|signal/i.test(msg))return 'the source took too long to answer';
+    if(/429|rate/i.test(msg))return 'the source is rate-limiting public requests';
+    if(/Failed to fetch|NetworkError|CORS/i.test(msg))return 'the browser blocked or could not reach the feed';
+    return msg;
   }
   function neutralLocal(id,title,source,why,metrics={}){
     return {id,title,scope:'local',score:12,status:'normal',confidence:'low',ok:true,updated:new Date().toISOString(),source,why,metrics};
@@ -476,12 +490,38 @@
         metrics:{'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x','average ratio':fmt(avgRatio,2)+'x'}};
     }catch(err){return unavailable('news','News Panic Meter','world',source,err);}
   }
+  function conflictFallback(reason){
+    return loadConflictWikiProxy(reason).catch(()=>({
+      id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:18,status:'normal',confidence:'low',ok:true,updated:new Date().toISOString(),source:'Wikimedia public-interest proxy',
+      why:'Conflict-spillover news feed was slow, so a neutral public-interest proxy is active. This is civilian context, not tactical tracking.',
+      metrics:{'truth layer':'proxy fallback','feed status':friendlyError(reason),'active regions':'not inferred','score mode':'neutral fallback'}
+    }));
+  }
+  async function loadConflictWikiProxy(reason){
+    const source='Wikimedia public-interest proxy';
+    const pages=['Russo-Ukrainian_War','Israel-Hamas_war','Red_Sea_crisis','Sudanese_civil_war_(2023-present)','Civil_disorder','Travel_warning'];
+    const end=new Date();end.setUTCDate(end.getUTCDate()-1);
+    const start=new Date(end);start.setUTCDate(start.getUTCDate()-9);
+    const rows=await Promise.all(pages.map(async p=>{
+      const url='https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/'+encodeURIComponent(p)+'/daily/'+ymd(start)+'/'+ymd(end)+'?origin=*';
+      const data=await fetchJson(url,7500);
+      const counts=(data.items||[]).map(i=>i.views||0);
+      const last=counts[counts.length-1]||0, base=avg(counts.slice(0,-1))||1;
+      return {page:p,last,base,ratio:last/base};
+    }));
+    const top=rows.sort((a,b)=>b.ratio-a.ratio)[0]||{page:'conflict pages',ratio:1,last:0};
+    const avgRatio=avg(rows.map(r=>r.ratio));
+    const score=clamp(16+Math.min(32,(top.ratio-1)*14)+Math.min(18,(avgRatio-1)*12));
+    return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:level(score),confidence:'low',ok:true,updated:end.toISOString(),source,
+      why:top.ratio>1.7?'Primary conflict news feed was slow, but public-interest pages are elevated. Treat this as a proxy fallback, not tactical tracking.':'Primary conflict news feed was slow; public-interest proxy does not show a broad spike.',
+      metrics:{'truth layer':'proxy fallback','feed status':friendlyError(reason),'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x'}};
+  }
   async function loadConflict(){
     const source='GDELT DOC API public news proxy';
     const query='(airstrike OR "missile strike" OR shelling OR "border clash" OR coup OR "civil unrest" OR "state of emergency" OR "evacuation order" OR mobilization OR "war escalation")';
     try{
-      const url='https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=160&sort=HybridRel';
-      const data=await fetchGdeltJson(url,12000);
+      const url='https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=80&sort=HybridRel';
+      const data=await fetchGdeltJson(url,9000);
       const articles=data.articles||[];
       const recentCount=countRecentArticles(articles,24);
       const older=Math.max(0,articles.length-recentCount);
@@ -494,7 +534,7 @@
       return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:level(score),confidence:articles.length?'medium':'low',ok:true,updated:new Date().toISOString(),source,
         why:score>=45?'Public conflict-related coverage is elevated versus the recent baseline. Treat this as civilian context, not tactical tracking. Active regions: '+regionText+'.':'No broad conflict-spillover spike in the public news proxy right now.',
         metrics:{'truth layer':'proxy / public news','24h articles':recentCount,'7d baseline/day':fmt(baseline,1),'coverage ratio':fmt(ratio,2)+'x','active regions':regionText}};
-    }catch(err){return unavailable('conflict','Conflict Spillover Pulse','world',source,err);}
+    }catch(err){return conflictFallback(err);}
   }
   async function loadMarkets(){
     const source='CoinGecko public market API';
@@ -616,6 +656,7 @@
   }
 
   async function refreshSignals(){
+    setPageBusy(true);
     setDisabled('refreshBtn',true);
     setText('placeLabel',cityName());
     seedLoading();
@@ -627,6 +668,17 @@
       renderSignals(latestSignals);
     }finally{
       setDisabled('refreshBtn',false);
+      setPageBusy(false);
+    }
+  }
+  function setPageBusy(isBusy){
+    document.body.classList.toggle('is-syncing',!!isBusy);
+    const btn=$('refreshBtn');
+    if(btn)btn.textContent=isBusy?'Syncing feeds...':'Refresh signals';
+    if(isBusy){
+      setText('heroUpdated','syncing live feeds');
+      setText('heroTopSignal','Checking public sources');
+      setText('operatorNote','Live feeds are syncing. Scores appear as soon as the slowest source settles or falls back cleanly.');
     }
   }
   function seedLoading(){
@@ -634,13 +686,28 @@
       ['space','Space Weather','world'],['quakeWorld','Global Earthquake Cluster','world'],['internet','Major Platform Outage Pulse','world'],['conflict','Conflict Spillover Pulse','world'],['news','News Panic Meter','world'],['market','Market Stress','world'],
       ['alerts','Official Alerts','local'],['quakeLocal','Nearby Earthquakes','local'],['air','Wildfire / Air Quality','local'],['weather','Local Weather Friction','local'],
       ['internetLocal','Local Internet Health','local'],['newsLocal','Local News Spike','local'],['travel','Airport / Travel Friction','local']
-    ].map(([id,title,scope])=>({id,title,scope,score:0,status:'normal',confidence:'--',ok:false,updated:null,source:'loading',why:'Checking source...',metrics:{}}));
+    ].map(([id,title,scope])=>({id,title,scope,score:null,status:'loading',confidence:'--',ok:false,loading:true,updated:null,source:'syncing',why:'Checking source...',metrics:{}}));
     renderSignals(latestSignals);
   }
   function renderSignals(signals){
     const world=signals.filter(s=>s.scope==='world'), local=signals.filter(s=>s.scope==='local');
     setHTML('worldSignals',world.map(renderCard).join(''));
     setHTML('localSignals',local.map(renderCard).join(''));
+    if(signals.some(s=>s.loading)){
+      setStyleVar('worldDial','--score',0);
+      setStyleVar('localDial','--score',0);
+      setText('worldScore','--');
+      setText('localScore','--');
+      setText('worldLabel','Syncing');
+      setText('localLabel','Syncing');
+      setText('worldSources','syncing');
+      setText('localSources','syncing');
+      setText('worldSummary','Checking public feeds. Scores will appear after sources answer or fall back.');
+      setText('localSummary','For '+placeName()+': checking local feeds and browser probes.');
+      setText('report','NiftyTools Early Warning Radar\n\nSyncing public sources...');
+      syncRadarMeta(world,local,0,0);
+      return;
+    }
     const worldScore=overallScore(world,WORLD_WEIGHTS), localScore=overallScore(local,LOCAL_WEIGHTS);
     setStyleVar('worldDial','--score',worldScore);
     setStyleVar('localDial','--score',localScore);
@@ -656,6 +723,13 @@
     syncRadarMeta(world,local,worldScore,localScore);
   }
   function renderCard(s){
+    if(s.loading){
+      return '<article class="signal loading" data-level="loading"><div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill">Syncing</span></div>'+
+        '<div class="signal-score"><span class="spinner" aria-hidden="true"></span>--</div><div class="meter"><span></span></div>'+
+        '<p>Checking live source. This card will update when data arrives or a fallback source takes over.</p>'+
+        '<div class="metric-list"><div class="metric"><span>status</span><b>syncing</b></div></div>'+
+        '<div class="source">source: syncing - updated: -- - confidence: --</div></article>';
+    }
     const lvl=level(s.score);
     const metrics=Object.entries(s.metrics||{}).map(([k,v])=>'<div class="metric"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>').join('');
     return '<article class="signal" data-level="'+lvl+'"><div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill '+lvl+'">'+esc(label(s.score))+'</span></div>'+
@@ -664,7 +738,7 @@
       '<div class="source">source: '+esc(s.source)+' - updated: '+esc(age(s.updated))+' - confidence: '+esc(s.confidence)+'</div></article>';
   }
   function overallScore(signals,weights){
-    const weighted=signals.reduce((sum,s)=>sum+s.score*(weights[s.id]||0),0);
+    const weighted=signals.reduce((sum,s)=>sum+(Number(s.score)||0)*(weights[s.id]||0),0);
     const severe=signals.filter(s=>s.score>=65).length, weird=signals.filter(s=>s.score>=45).length;
     return clamp(weighted+(severe>=2?10:0)+(weird>=3?8:0));
   }
@@ -716,6 +790,22 @@
   }
   function syncRadarMeta(world,local,worldScore,localScore){
     const all=world.concat(local);
+    if(all.length&&all.every(s=>s.loading)){
+      setText('heroWorldScore','--');
+      setText('heroLocalScore','--');
+      setText('heroWorldState','Syncing');
+      setText('heroLocalState','Syncing');
+      setText('heroSourceCount','syncing');
+      setText('heroPeakScore','--');
+      setText('heroTopSignal','Checking public sources');
+      setText('heroPlace',placeName());
+      setText('heroUpdated','syncing live feeds');
+      setText('sourceTicker','Live sources loading');
+      setText('operatorNote','Live feeds are syncing. Scores appear as soon as sources answer or fall back cleanly.');
+      const loadingMeter=$('heroPeakMeter');
+      if(loadingMeter)loadingMeter.style.width='28%';
+      return;
+    }
     const peak=all.slice().sort((a,b)=>b.score-a.score)[0]||{title:'Waiting for signals',score:0,why:'Sources are loading.'};
     const active=all.filter(s=>s.ok).length;
     const topSources=all.filter(s=>s.ok).sort((a,b)=>b.score-a.score).slice(0,5).map(s=>s.title).join(' / ');
