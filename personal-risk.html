@@ -37,6 +37,97 @@ main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-rad
 <script defer src="/nt-journeys.js"></script>
 <link rel="stylesheet" href="/nt-mobile-lite.css">
 <script defer src="/nt-mobile-lite.js"></script>
+<style id="personal-risk-focus-polish">
+.hero > .hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 280px;
+}
+
+@media (min-width: 721px) {
+  .hero {
+    grid-template-columns: minmax(330px, 420px) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .score-card {
+    order: -1;
+    min-height: 280px;
+    padding: 22px;
+    border-color: rgba(70, 224, 122, 0.46);
+    background:
+      radial-gradient(circle at 50% 8%, rgba(99, 230, 255, 0.13), transparent 36%),
+      radial-gradient(circle at 50% 86%, rgba(70, 224, 122, 0.1), transparent 46%),
+      rgba(3, 8, 4, 0.86);
+    box-shadow:
+      0 0 38px rgba(70, 224, 122, 0.1),
+      inset 0 0 28px rgba(70, 224, 122, 0.055);
+  }
+
+  .score-card small,
+  .score-card .state {
+    text-align: center;
+  }
+
+  .score-card small {
+    color: var(--grn);
+    font-weight: 800;
+  }
+
+  .score-row {
+    justify-content: center;
+    margin: 18px 0 14px;
+  }
+
+  .score-row b {
+    font-size: clamp(72px, 7vw, 104px);
+  }
+
+  .score-row span {
+    margin-bottom: 13px;
+    font-size: 20px;
+  }
+
+  .score-card .state {
+    font-size: 18px;
+  }
+
+  .score-card .mini-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding-top: 14px;
+  }
+
+  .score-card {
+    order: -1;
+    padding: 16px;
+    border-color: rgba(70, 224, 122, 0.42);
+  }
+
+  .score-card small,
+  .score-card .state {
+    text-align: center;
+  }
+
+  .score-row {
+    justify-content: center;
+  }
+
+  .score-card .mini-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 <body>
 <header>
@@ -55,15 +146,13 @@ main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-rad
   <section class="shell">
     <div class="bar-top"><span class="lights"><i></i><i></i><i></i></span> niftytoolshub: ~/personal-risk-briefing</div>
     <div class="hero">
-      <div>
+      <div class="hero-copy">
         <p class="eyebrow">Daily command brief</p>
         <h1>Personal <span>Risk Briefing</span></h1>
         <p class="lead">// One personal read for your place: weather, air, nearby quakes, internet outages, food recalls, market stress, cyber pressure and conflict/news context. It outputs a practical action queue, not panic noise.</p>
         <div class="actions">
           <button class="btn" id="scanBtn" type="button">Run briefing</button>
           <button class="btn ghost" id="copyBtn" type="button">Copy brief</button>
-          <button class="btn ghost" id="exportBtn" type="button">Export JSON</button>
-          <button class="btn ghost" type="button" onclick="window.print()">Print</button>
         </div>
       </div>
       <aside class="score-card">
@@ -393,16 +482,9 @@ main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-rad
     catch(_err){window.prompt("Copy briefing",text);}
     track("personal_risk_copy",{items:actions.length});
   }
-  function exportJson(){
-    const payload={createdAt:new Date().toISOString(),profile:profile(),score:scoreAll(lanes),lanes,actions,brief:$("briefBox").textContent};
-    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
-    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="personal-risk-briefing.json";a.click();URL.revokeObjectURL(a.href);
-    track("personal_risk_export",{score:payload.score});
-  }
   $("scanBtn").addEventListener("click",()=>scan(true));
   $("profileBtn").addEventListener("click",()=>scan(true));
   $("copyBtn").addEventListener("click",copyBrief);
-  $("exportBtn").addEventListener("click",exportJson);
   $("place").addEventListener("change",()=>{applyPreset(true);scan(true);});
   ["label","lat","lon","people","mode"].forEach(id=>$(id).addEventListener("change",()=>{if(id==="lat"||id==="lon")$("place").value="manual";scan(true);}));
   initPlaces();
