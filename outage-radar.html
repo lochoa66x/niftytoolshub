@@ -261,7 +261,7 @@
           <b id="topDriver">Waiting for official and local data</b>
         </div>
         <div class="stat-row">
-          <span>Source health</span>
+          <span>Data mode</span>
           <b id="healthText">Checking browser-readable feeds</b>
         </div>
       </div>
@@ -642,7 +642,7 @@
     $('pulseMeter').style.width=state.score+'%';
     $('pulseLabel').textContent=state.score>=75?'Major outage risk signal':state.score>=38?'Degraded service watch':'Mostly normal service weather';
     $('topDriver').textContent=events[0]?events[0].provider+' - '+events[0].title:'No outage events above baseline';
-    $('healthText').textContent=(state.errors.length?state.errors.length+' feeds blocked; ':'')+services.filter((s)=>s.source==='official').length+' official, '+services.filter((s)=>s.source==='local').length+' local checks';
+    $('healthText').textContent=(state.errors.length?state.errors.length+' feeds unavailable; ':'')+services.filter((s)=>s.source==='official').length+' official signals, '+services.filter((s)=>s.source==='local').length+' local checks';
     $('sourceState').textContent=state.atlas.loaded?'world atlas online':'map fallback online';
     if($('liveRegionCount'))$('liveRegionCount').textContent=regions.length;
     if($('liveSignalCount'))$('liveSignalCount').textContent=events.filter((e)=>e.severity>=35).length;

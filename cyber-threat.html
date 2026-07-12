@@ -190,7 +190,7 @@
           <b id="topDriver">Waiting for feed data</b>
         </div>
         <div class="stat-row">
-          <span>Source health</span>
+          <span>Feed mode</span>
           <b id="healthText">Checking browser-readable feeds</b>
         </div>
       </div>
@@ -439,7 +439,7 @@
       state.templates=demoTemplates();
       state.ports=demoPorts();
       state.kevs=demoKev();
-      state.health='public feeds blocked or unavailable; demo fallback active';
+      state.health='public feeds unavailable; demo fallback active';
       state.events=[];
       for(let i=0;i<12;i++)spawnEvent(true);
       computeScore();

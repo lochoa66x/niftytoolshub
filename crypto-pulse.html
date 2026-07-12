@@ -264,16 +264,13 @@ body:before{opacity:.11}body:after{opacity:.62}
         <h2>Pulse read</h2>
         <div class="stat-row"><span>current read</span><b id="readText">Booting crypto pulse sensors</b><div class="meter"><i id="readMeter"></i></div></div>
         <div class="stat-row"><span>strongest signal</span><b id="strongestSignal">--</b></div>
-        <div class="stat-row"><span>data source status</span><b id="sourceHealth">--</b></div>
+        <span id="sourceHealth" class="nt-admin-source-hook" hidden aria-hidden="true">--</span>
       </div>
       <div class="panel">
         <h2>Anomaly badges</h2>
         <div class="signal-list" id="badges"></div>
       </div>
-      <div class="panel">
-        <h2>Source health</h2>
-        <div class="source-log" id="sourceLog"></div>
-      </div>
+      <div id="sourceLog" class="nt-admin-source-hook" hidden aria-hidden="true"></div>
     </aside>
   </section>
 
