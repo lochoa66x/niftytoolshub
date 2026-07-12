@@ -28,6 +28,7 @@ main{padding:24px 0 36px}.hero{border:1px solid rgba(70,224,122,.26);border-radi
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Prepper Command Center Lite","url":"https://niftytoolshub.com/prepper-command.html","applicationCategory":"LifestyleApplication","operatingSystem":"Any","description":"A local-first household preparedness planner for water, food, power, checklists, contacts, inventory, evacuation and air quality readiness.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="/nt-nav.css">
+<link rel="stylesheet" href="/nt-tool-context.css">
 </head>
 <body>
 <header><div class="wrap nav"><a class="logo" href="/"><span class="mk"></span> niftytoolshub</a><a href="/signal-suite.html">signal suite</a></div></header>
@@ -216,6 +217,7 @@ load();Object.entries(state.comms||{}).forEach(([k,v])=>{if($(k))$(k).value=v||"
 
 <script src="/tools-registry.js"></script>
 <script defer src="/nt-nav.js"></script>
+<script defer src="/nt-tool-context.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
