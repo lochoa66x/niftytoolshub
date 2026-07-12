@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NiftyTools Hub - preparedness, signal radars and useful tools</title>
-<meta name="description" content="Useful tools for weird internet days: preparedness planning, early warning radars, outage maps, aurora watch, calculators, PDFs, images and file utilities.">
-<meta property="og:title" content="NiftyTools Hub - useful tools for weird internet days">
-<meta property="og:description" content="Preparedness tools, signal radars, outage maps, calculators and file utilities in a terminal-style toolbox.">
+<title>NiftyTools Hub - command center for weird internet days</title>
+<meta name="description" content="Command Center for weird internet days: signal radars, prepper planning, market context, work tools and a clean secondary utility library.">
+<meta property="og:title" content="NiftyTools Hub - command center for weird internet days">
+<meta property="og:description" content="Signal radars, prepper planning, market context and practical tools organized in a terminal-style command center.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://niftytoolshub.com/">
 <meta name="twitter:card" content="summary">
@@ -30,6 +30,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 @media(max-width:980px){.hub-bands{grid-template-columns:1fr}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"NiftyTools Hub","url":"https://niftytoolshub.com/","description":"Useful tools for weird internet days: preparedness, signal radars, calculators, file utilities and playful experiments.","potentialAction":{"@type":"SearchAction","target":"https://niftytoolshub.com/library.html?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
+<link rel="stylesheet" href="/nt-nav.css">
 </head>
 <body>
 <header>
@@ -54,10 +55,10 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
         <span class="pill">prepper toolkit active</span>
         <span class="pill">signal radars live</span>
       </div>
-      <h1>Useful tools for<br><span class="grad">weird internet days.</span></h1>
-      <p class="sub">// Preparedness planning, signal radars, outage maps, file utilities, calculators and playful experiments. Built like a terminal, organized like a real toolbox.</p>
+      <h1>Command Center for<br><span class="grad">weird internet days.</span></h1>
+      <p class="sub">// Signal radars, prepper planning, market context, work tools and playful experiments. The homepage shows the strongest systems first; the full library keeps the small utilities easy to find.</p>
       <div class="actions">
-        <a class="btn" href="/signal-suite.html">Open Signal Suite</a>
+        <a class="btn" href="/signal-suite.html">Open Command Center</a>
         <a class="ghost" href="/personal-risk.html">Personal Risk Briefing</a>
         <a class="ghost" href="/command-queue.html">Command Queue</a>
         <a class="ghost" href="/signal-suite-pro.html">Signal Suite Pro Lite</a>
@@ -87,8 +88,8 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 
 <section id="featured" class="wrap">
   <div class="section-head">
-    <h2>Featured Tools</h2>
-    <p>The homepage now stays focused on the powerful stuff. The small utilities moved into the secondary library.</p>
+    <h2>Command Center</h2>
+    <p>The top shelf is now organized by mission: Command Center, Prepper + Local Risk, Markets, Work Tools and Fun Lab.</p>
   </div>
   <div class="feature-grid" id="featuredGrid">
     <a class="feature" href="/signal-suite.html">
@@ -162,8 +163,8 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 
 <section id="systems" class="wrap" style="margin-top:28px">
   <div class="section-head">
-    <h2>Tool Systems</h2>
-    <p>Jump by intent instead of scrolling a giant directory.</p>
+    <h2>Browse By Mission</h2>
+    <p>Five clear lanes keep the homepage focused while the full library keeps every tool reachable.</p>
   </div>
   <div class="bands hub-bands" id="hubBands">
     <div class="band">
@@ -225,7 +226,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
   }
 
   if(hubBands){
-    hubBands.innerHTML = registry.hubs.map(hub => {
+    hubBands.innerHTML = registry.hubs.filter(hub => hub.id !== "utilities").map(hub => {
       const tools = registry.byHub(hub.id);
       const topTools = tools.slice(0, 4).map(tool => `<span>${esc(tool.name)}</span>`).join("");
       return `
@@ -251,6 +252,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 })();
 </script>
 
+<script defer src="/nt-nav.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

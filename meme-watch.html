@@ -231,8 +231,12 @@
       return await res.json();
     }finally{clearTimeout(t);}
   }
+  function unwrapProxy(payload){
+    return payload && payload.ok && Object.prototype.hasOwnProperty.call(payload,'data') ? payload.data : payload;
+  }
 
   async function scanMemes(){
+    if(window.ntSignal) window.ntSignal.start('Scanning public meme signals');
     $('scanBtn').disabled=true;
     renderLoading();
     const seed=baseTerms();
@@ -255,6 +259,7 @@
       renderResults(latestResults,sourceState);
     }finally{
       $('scanBtn').disabled=false;
+      if(window.ntSignal) window.ntSignal.finish('Meme Watch scan updated');
     }
   }
   function renderLoading(){
@@ -324,20 +329,20 @@
     return {ok:true,scores:Object.fromEntries(entries)};
   }
   async function gdeltCount(query,timespan){
-    const url='https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan='+timespan+'&maxrecords=50&sort=HybridRel';
-    const data=await fetchJson(url,10000);
+    const url='/api/source-proxy?source=gdelt-doc&q='+encodeURIComponent(query)+'&timespan='+encodeURIComponent(timespan)+'&maxrecords=50';
+    const data=unwrapProxy(await fetchJson(url,12000));
     return (data.articles||[]).length;
   }
   async function loadWikiSignals(terms){
     const entries=await mapLimit(terms,3,async term=>{
       try{
-        const search=await fetchJson('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+encodeURIComponent(term)+'&format=json&origin=*',8000);
+        const search=unwrapProxy(await fetchJson('/api/source-proxy?source=wikipedia-search&q='+encodeURIComponent(term),9000));
         const top=((search.query||{}).search||[])[0];
         if(!top)return [term,{views:0,title:'none',score:0}];
         const title=top.title.replaceAll(' ','_');
         const end=new Date();end.setUTCDate(end.getUTCDate()-1);
         const start=new Date(end);start.setUTCDate(start.getUTCDate()-6);
-        const pv=await fetchJson('https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/'+encodeURIComponent(title)+'/daily/'+ymd(start)+'/'+ymd(end)+'?origin=*',8000);
+        const pv=unwrapProxy(await fetchJson('/api/source-proxy?source=wikimedia-pageviews&title='+encodeURIComponent(title)+'&start='+ymd(start)+'&end='+ymd(end),10000));
         const views=(pv.items||[]).reduce((sum,i)=>sum+(Number(i.views)||0),0);
         return [term,{views,title:top.title,score:clamp(Math.log10(views+1)*18)}];
       }catch(err){return [term,{views:0,title:'unavailable',score:0,error:err.message}];}
@@ -481,6 +486,7 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

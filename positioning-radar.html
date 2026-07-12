@@ -77,6 +77,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 @media(max-width:640px){.core-strip,.source-health-summary,.truth-strip{grid-template-columns:1fr}.core-market{min-height:auto}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Positioning Radar","url":"https://niftytoolshub.com/positioning-radar.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A browser-based dashboard for long versus short positioning, CFTC weekly positioning context, ETF short references and crypto long short ratios.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="/nt-nav.css">
 </head>
 <body>
 <header>
@@ -93,7 +94,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 
 <main class="wrap">
   <div class="toolbar">
-    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Sample board</option></select></div>
+    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Demo board</option></select></div>
     <div><label for="group">Market group</label><select id="group"><option value="all">All markets</option><option value="equities">Equities</option><option value="crypto">Crypto</option><option value="metals">Metals</option><option value="energy">Energy</option><option value="softs">Softs</option><option value="grains">Grains</option></select></div>
     <div><label for="searchMarket">Find market</label><input id="searchMarket" type="search" placeholder="spy, bitcoin, gold, oil, coffee"></div>
     <button class="btn" type="button" onclick="refreshPositioning(true)">Refresh radar</button>
@@ -145,7 +146,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       <div class="board-helper"><b>Core read:</b> SPY, QQQ, BTC, ETH, gold, silver, oil and coffee stay pinned here. Secondary futures lanes appear below only when they add useful context for the selected view.</div>
       <details class="read-note">
         <summary>How to read this board</summary>
-        <div><b>Long % / short %</b> shows directional pressure inside each data lane. <b>Crowd</b> scores how stretched that lane looks. CFTC rows are weekly futures context, FINRA rows are delayed short-volume proxies, and crypto rows are exchange-specific long/short readings or fallback feeds.</div>
+        <div><b>Long % / short %</b> shows directional pressure inside each data lane. <b>Crowd</b> scores how stretched that lane looks. CFTC rows are weekly futures context, FINRA rows are delayed short-volume context, and crypto rows are exchange-specific long/short readings or backup feeds.</div>
       </details>
       <div class="core-strip" id="coreStrip" aria-label="Core market positioning"></div>
       <div class="position-table">
@@ -202,13 +203,13 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 (function(){
   const $ = (id) => document.getElementById(id);
   const SAMPLE = [
-    {id:"spy",symbol:"SPY",name:"SPY ETF proxy",group:"equities",type:"ETF short reference",longPct:47,shortPct:53,pctile:61,source:"sample",detail:"use FINRA daily short volume + Nasdaq short interest links"},
-    {id:"qqq",symbol:"QQQ",name:"Nasdaq ETF proxy",group:"equities",type:"ETF short reference",longPct:44,shortPct:56,pctile:68,source:"sample",detail:"ETF data is delayed or proxy-based"},
+    {id:"spy",symbol:"SPY",name:"SPY ETF context",group:"equities",type:"ETF short reference",longPct:47,shortPct:53,pctile:61,source:"sample",detail:"use FINRA daily short volume + Nasdaq short interest links"},
+    {id:"qqq",symbol:"QQQ",name:"Nasdaq ETF context",group:"equities",type:"ETF short reference",longPct:44,shortPct:56,pctile:68,source:"sample",detail:"ETF data is delayed or context-based"},
     {id:"es",symbol:"ES",name:"S&P 500 futures",group:"equities",type:"CFTC futures",longPct:52,shortPct:48,pctile:55,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"nq",symbol:"NQ",name:"Nasdaq 100 futures",group:"equities",type:"CFTC futures",longPct:48,shortPct:52,pctile:58,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"btc",symbol:"BTC",name:"Bitcoin perps/futures",group:"crypto",type:"crypto + CFTC",longPct:51,shortPct:49,pctile:52,source:"sample",detail:"OKX/Binance exchange ratio when available, CFTC CME weekly context"},
     {id:"eth",symbol:"ETH",name:"Ethereum perps",group:"crypto",type:"crypto perps",longPct:49,shortPct:51,pctile:49,source:"sample",detail:"OKX/Binance exchange ratio when available"},
-    {id:"gold",symbol:"GC",name:"Gold futures",group:"metals",type:"CFTC futures",longPct:62,shortPct:38,pctile:73,source:"sample",detail:"managed money / non-commercial positioning proxy"},
+    {id:"gold",symbol:"GC",name:"Gold futures",group:"metals",type:"CFTC futures",longPct:62,shortPct:38,pctile:73,source:"sample",detail:"managed money / non-commercial positioning context"},
     {id:"silver",symbol:"SI",name:"Silver futures",group:"metals",type:"CFTC futures",longPct:57,shortPct:43,pctile:66,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"oil",symbol:"WTI",name:"WTI crude oil",group:"energy",type:"CFTC futures",longPct:45,shortPct:55,pctile:70,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"gas",symbol:"NG",name:"Natural gas",group:"energy",type:"CFTC futures",longPct:40,shortPct:60,pctile:76,source:"sample",detail:"weekly CFTC futures positioning context"},
@@ -355,7 +356,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       const coveredByOkx = (okxBtcLive && /Binance BTCUSDT long\/short/i.test(source)) || (okxEthLive && /Binance ETHUSDT long\/short/i.test(source));
       if ((coveredByOkx && item.status === "blocked") || /OKX fallback live/i.test(String(item.detail || ""))) {
         item.status = "covered";
-        item.detail = String(item.detail || "blocked") + "; OKX fallback live";
+        item.detail = String(item.detail || "unavailable") + "; OKX backup live";
       }
     });
     const rank = { live:0, covered:1, reference:2, sample:3, blocked:4 };
@@ -441,10 +442,10 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
   }
   function sourceLabel(item){
     const detail = String(item && item.detail || "");
-    if (item && item.source === "sample") return "sample";
-    if (item && item.source === "blocked") return "blocked";
-    if (/FINRA|short-volume|short volume/i.test(detail)) return "Live FINRA proxy";
-    if (/OKX|fallback/i.test(detail)) return "Live OKX fallback";
+    if (item && item.source === "sample") return "Demo";
+    if (item && item.source === "blocked") return "Unavailable";
+    if (/FINRA|short-volume|short volume/i.test(detail)) return "Delayed FINRA";
+    if (/OKX|fallback/i.test(detail)) return "Backup OKX";
     if (/CFTC/i.test(detail)) return "Weekly CFTC";
     if (item && item.source === "live") return "live";
     return item && item.source || "source";
@@ -456,9 +457,9 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     const hasCrypto = markets.some(function(item){return (item.id === "btc" || item.id === "eth") && item.source === "live";});
     const noisy = rows.filter(function(item){return item.status === "blocked";}).length;
     return [
-      truthTile("CFTC futures", hasCftc ? "weekly live file" : "weekly fallback", hasCftc ? "delay" : "proxy"),
-      truthTile("SPY / QQQ", hasFinra ? "delayed FINRA proxy" : "reference proxy", "proxy"),
-      truthTile("BTC / ETH", hasCrypto ? "exchange ratio live" : "sample fallback", hasCrypto ? "live" : "proxy"),
+      truthTile("CFTC futures", hasCftc ? "weekly live file" : "weekly backup", hasCftc ? "delay" : "proxy"),
+      truthTile("SPY / QQQ", hasFinra ? "delayed FINRA context" : "reference context", "proxy"),
+      truthTile("BTC / ETH", hasCrypto ? "exchange ratio live" : "demo backup", hasCrypto ? "live" : "proxy"),
       truthTile("Source noise", noisy ? noisy + " hidden probes" : "clean refresh", noisy ? "block" : "live")
     ].join("");
   }
@@ -469,12 +470,12 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     const top = c.sorted[0] || null;
     const squeeze = c.sorted.filter(function(item){return net(item) < 0;}).sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0] || null;
     const unwind = c.sorted.filter(function(item){return net(item) > 0;}).sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0] || null;
-    const sourceMode = c.liveCount ? c.liveCount + " live sources" : "sample/reference mode";
+    const sourceMode = c.liveCount ? c.liveCount + " live sources" : "demo/context mode";
     return [
       insightHtml("market mood", top ? stateFromScore(c.avgScore) : "no match", top ? "Top crowding: " + top.symbol + " " + biasRead(top).label : "Clear search or change filters.", "hot"),
       insightHtml("short squeeze watch", squeeze ? squeeze.symbol + " " + fmtPct(squeeze.shortPct) + " short" : "none", squeeze ? squeeze.name + " carries the strongest short-side skew." : "No short-heavy lane in this view.", "short"),
       insightHtml("long unwind watch", unwind ? unwind.symbol + " " + fmtPct(unwind.longPct) + " long" : "none", unwind ? unwind.name + " carries the strongest long-side skew." : "No long-heavy lane in this view.", "long"),
-      insightHtml("source mode", sourceMode, c.blockedCount ? c.blockedCount + " blocked probes need attention." : (c.coveredCount ? c.coveredCount + " exchange probes are covered by fallback feeds." : "No blocked source probes in this refresh."), "live")
+      insightHtml("source mode", sourceMode, c.blockedCount ? c.blockedCount + " unavailable probes need attention." : (c.coveredCount ? c.coveredCount + " exchange probes are covered by backup feeds." : "No unavailable source probes in this refresh."), "live")
     ].join("");
   }
   function insightHtml(label, value, detail, tone){
@@ -503,32 +504,32 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     return '<div class="signal-row"><div><b>' + safe(item.source) + '</b><br>' + safe(item.detail) + '</div><span class="source-pill ' + cls + '">' + safe(sourceLogLabel(item)) + '</span></div>';
   }
   function sourceHealthHtml(log){
-    const rows = Array.isArray(log) && log.length ? log : [{source:"Sample positioning pack",status:"sample",detail:"local fallback data active"}];
+    const rows = Array.isArray(log) && log.length ? log : [{source:"Demo positioning pack",status:"sample",detail:"local backup data active"}];
     const visible = rows.filter(function(item){return item.status !== "blocked";});
     const blocked = rows.filter(function(item){return item.status === "blocked";});
     const live = rows.filter(function(item){return item.status === "live";}).length;
     const proxy = rows.filter(function(item){return /FINRA|reference|covered|proxy|fallback/i.test((item.source || "") + " " + (item.detail || "") + " " + (item.status || ""));}).length;
     const sample = rows.filter(function(item){return item.status === "sample";}).length;
     const body = visible.map(logHtml).join("") || '<div class="empty">No visible source rows. Blocked probes are collapsed below.</div>';
-    const blockedHtml = blocked.length ? '<details class="blocked-details"><summary>' + blocked.length + ' blocked/noisy probes</summary>' + blocked.map(logHtml).join("") + '</details>' : "";
+    const blockedHtml = blocked.length ? '<details class="blocked-details"><summary>' + blocked.length + ' unavailable/noisy probes</summary>' + blocked.map(logHtml).join("") + '</details>' : "";
     return '<div class="source-health-summary">' +
       '<span>live<b>' + live + '</b></span>' +
-      '<span>proxy / fallback<b>' + proxy + '</b></span>' +
-      '<span>sample<b>' + sample + '</b></span>' +
-      '<span>blocked<b>' + blocked.length + '</b></span>' +
+      '<span>context / backup<b>' + proxy + '</b></span>' +
+      '<span>demo<b>' + sample + '</b></span>' +
+      '<span>unavailable<b>' + blocked.length + '</b></span>' +
       '</div>' + body + blockedHtml;
   }
   function sourceLogLabel(item){
     const text = String((item && item.source || "") + " " + (item && item.detail || ""));
     if (!item) return "source";
-    if (item.status === "blocked") return "blocked";
-    if (item.status === "covered") return "covered";
-    if (item.status === "sample") return "sample";
+    if (item.status === "blocked") return "Unavailable";
+    if (item.status === "covered") return "Backup";
+    if (item.status === "sample") return "Demo";
     if (/CFTC/i.test(text)) return "live CFTC";
-    if (/FINRA/i.test(text)) return "live FINRA proxy";
-    if (/OKX|fallback/i.test(text)) return "live OKX fallback";
-    if (item.status === "reference") return "reference";
-    return item.status || "source";
+    if (/FINRA/i.test(text)) return "Delayed";
+    if (/OKX|fallback/i.test(text)) return "Backup";
+    if (item.status === "reference") return "Context";
+    return window.ntSignal ? window.ntSignal.label(item.status || "context") : (item.status || "source");
   }
   function safe(value){
     return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
@@ -540,12 +541,13 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       "Crowding pressure: " + c.avgScore + "/100 - " + stateFromScore(c.avgScore),
       "Strongest long crowd: " + (c.longCrowd ? c.longCrowd.symbol + " at " + fmtPct(c.longCrowd.longPct) + " long" : "none"),
       "Strongest short crowd: " + (c.shortCrowd ? c.shortCrowd.symbol + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "none"),
-      "Live sources: " + c.liveCount + " / covered fallbacks: " + c.coveredCount + " / blocked probes: " + c.blockedCount,
+      "Live sources: " + c.liveCount + " / backup sources: " + c.coveredCount + " / unavailable probes: " + c.blockedCount,
       "Interpretation: " + (c.avgScore >= 70 ? "positioning is crowded enough to treat moves as squeeze/reversal sensitive." : "positioning is not broadly extreme; watch individual crowded lanes."),
       "Note: crowding context only, not financial advice."
     ].join("\n");
   }
   async function refreshPositioning(manual){
+    if(window.ntSignal) window.ntSignal.start('Syncing positioning feeds');
     const mode = currentMode();
     const markets = clone(SAMPLE);
     const log = [];
@@ -565,9 +567,10 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
         ]);
       }
     } else {
-      log.push({source:"Sample positioning pack",status:"sample",detail:"local fallback data active"});
+      log.push({source:"Demo positioning pack",status:"sample",detail:"local backup data active"});
     }
     render(markets, log);
+    if(window.ntSignal) window.ntSignal.finish('Market Positioning Radar updated');
     if (manual) {
       const c = compute(markets, log);
       track("positioning_radar_refresh", { mode:mode, group:currentGroup(), score_bucket:scoreBucket(c.avgScore), source_status:c.liveCount ? "mixed" : "sample" });
@@ -619,17 +622,20 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     });
   }
   bind();
-  render(clone(SAMPLE), [{source:"Sample positioning pack",status:"sample",detail:"boot fallback data active"}]);
+  render(clone(SAMPLE), [{source:"Demo positioning pack",status:"sample",detail:"boot backup data active"}]);
   refreshPositioning(false);
   track("positioning_radar_open", { mode:currentMode(), group:currentGroup() });
 })();
 </script>
 
+<script src="/tools-registry.js"></script>
+<script defer src="/nt-nav.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

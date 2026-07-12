@@ -220,10 +220,10 @@
 <script>
   const $=id=>document.getElementById(id);
   const FEEDS={
-    topPorts:'https://isc.sans.edu/api/topports/records/12?json',
-    sources:'https://isc.sans.edu/api/sources/attacks/24?json',
-    infocon:'https://isc.sans.edu/api/infocon?json',
-    kev:'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json'
+    topPorts:'/api/source-proxy?source=sans-topports',
+    sources:'/api/source-proxy?source=sans-sources',
+    infocon:'/api/source-proxy?source=sans-infocon',
+    kev:'/api/source-proxy?source=cisa-kev'
   };
   const MAP_DATA_URL='https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
   const CITIES=[
@@ -268,6 +268,9 @@
       if(!res.ok)throw new Error(res.status+' '+res.statusText);
       return await res.json();
     }finally{clearTimeout(t);}
+  }
+  function unwrapProxy(payload){
+    return payload && payload.ok && Object.prototype.hasOwnProperty.call(payload,'data') ? payload.data : payload;
   }
   function arrayFromFeed(obj,names){
     for(const name of names){
@@ -328,18 +331,22 @@
   async function loadLive(){
     const date=yesterday();
     const urls={
-      topPorts:'https://isc.sans.edu/api/topports/records/12/'+date+'?json',
-      sources:'https://isc.sans.edu/api/sources/attacks/24/'+date+'?json',
+      topPorts:FEEDS.topPorts,
+      sources:FEEDS.sources,
       infocon:FEEDS.infocon,
       kev:FEEDS.kev
     };
     const [ports,sources,info,kev]=await Promise.allSettled([
       fetchJson(urls.topPorts),fetchJson(urls.sources),fetchJson(urls.infocon,7000),fetchJson(urls.kev,10000)
     ]);
-    const portRows=ports.status==='fulfilled'?arrayFromFeed(ports.value,['topports.port','port','data']):[];
-    const sourceRows=sources.status==='fulfilled'?arrayFromFeed(sources.value,['sources.data','data']):[];
-    const kevRows=kev.status==='fulfilled'?(kev.value.vulnerabilities||[]):[];
-    const infocon=info.status==='fulfilled'?(info.value.status||info.value.infocon?.status||'green'):'unknown';
+    const portPayload=ports.status==='fulfilled'?unwrapProxy(ports.value):null;
+    const sourcePayload=sources.status==='fulfilled'?unwrapProxy(sources.value):null;
+    const kevPayload=kev.status==='fulfilled'?unwrapProxy(kev.value):null;
+    const infoPayload=info.status==='fulfilled'?unwrapProxy(info.value):null;
+    const portRows=portPayload?arrayFromFeed(portPayload,['topports.port','port','data']):[];
+    const sourceRows=sourcePayload?arrayFromFeed(sourcePayload,['sources.data','data']):[];
+    const kevRows=kevPayload?(kevPayload.vulnerabilities||[]):[];
+    const infocon=infoPayload?(infoPayload.status||infoPayload.infocon?.status||'green'):'unknown';
     if(!portRows.length&&!sourceRows.length&&!kevRows.length)throw new Error('public feeds unavailable from this browser');
     const parsedPorts=normalizePorts(portRows);
     const parsedKev=normalizeKev(kevRows);
@@ -401,6 +408,7 @@
     });
   }
   async function refreshThreats(){
+    if(window.ntSignal) window.ntSignal.start('Syncing public cyber sources');
     $('refreshBtn').disabled=true;
     $('sourceState').textContent='refreshing feeds';
     state.mode=$('mode').value;
@@ -428,6 +436,7 @@
       renderAll();
     }finally{
       $('refreshBtn').disabled=false;
+      if(window.ntSignal) window.ntSignal.finish(state.mode==='live'?'Cyber Threat Radar updated':'Cyber Threat Radar using demo backup');
     }
   }
   function spawnEvent(backfill=false){
@@ -685,6 +694,7 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

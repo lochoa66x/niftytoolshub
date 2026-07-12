@@ -564,6 +564,7 @@
   }
 
   async function refreshOutages(){
+    if(window.ntSignal) window.ntSignal.start('Syncing outage status sources');
     state.mode=$('mode').value;
     state.events=[];state.services=[];state.regions=REGIONAL_NODES.slice();state.links=[];state.errors=[];
     $('sourceState').textContent='syncing feeds...';
@@ -583,6 +584,7 @@
     buildLinks();
     scoreSignals();
     renderAll();
+    if(window.ntSignal) window.ntSignal.finish('Outage Radar updated');
   }
 
   function scoreSignals(){
@@ -982,6 +984,7 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

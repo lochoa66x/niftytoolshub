@@ -29,6 +29,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 @media(max-width:1050px){.toolbar{grid-template-columns:1fr 1fr 1fr}.hero-grid,.main-grid,.report-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.head{display:none}.row{grid-template-columns:1fr}.source{width:max-content}.bar{max-width:560px}}@media(max-width:640px){.wrap{padding:0 12px}.toolbar,.cards,.links{grid-template-columns:1fr}.btn{width:100%}.board-head{display:block}.legend{margin-top:8px}.title{font-size:34px}.score-row b{font-size:42px}.badges .badge{width:100%}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Volume Pulse","url":"https://niftytoolshub.com/market-volume-pulse.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A compact market attention radar for most-active stocks, unusual volume, dollar-volume leaders and ETF pressure.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="/nt-nav.css">
 </head>
 <body>
 <header>
@@ -142,24 +143,24 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 (function(){
   const $ = (id) => document.getElementById(id);
   const SAMPLE_ROWS = [
-    {symbol:"NVDA",name:"NVIDIA",group:"tech",price:161.24,changePct:2.1,volume:268000000,avgVolume:245000000,relVolume:1.09,dollarVolume:43212320000,signal:"AI/semis attention",score:66,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"TSLA",name:"Tesla",group:"tech",price:287.10,changePct:-1.8,volume:142000000,avgVolume:98000000,relVolume:1.45,dollarVolume:40768200000,signal:"mega-cap activity spike",score:68,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"PLTR",name:"Palantir",group:"tech",price:137.42,changePct:5.9,volume:126000000,avgVolume:84000000,relVolume:1.50,dollarVolume:17314920000,signal:"unusual software volume",score:84,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"AMD",name:"AMD",group:"tech",price:149.83,changePct:3.2,volume:94000000,avgVolume:62000000,relVolume:1.52,dollarVolume:14084020000,signal:"semiconductor follow-through",score:75,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"SOFI",name:"SoFi",group:"financials",price:17.54,changePct:7.4,volume:91000000,avgVolume:65000000,relVolume:1.40,dollarVolume:1596140000,signal:"retail finance pressure",score:79,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"MSTR",name:"Strategy",group:"crypto",price:421.31,changePct:4.8,volume:36000000,avgVolume:17500000,relVolume:2.06,dollarVolume:15167160000,signal:"bitcoin proxy flow",score:86,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"COIN",name:"Coinbase",group:"crypto",price:288.40,changePct:3.6,volume:25000000,avgVolume:12000000,relVolume:2.08,dollarVolume:7210000000,signal:"crypto-linked equity pulse",score:79,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"GME",name:"GameStop",group:"meme",price:28.60,changePct:8.2,volume:39000000,avgVolume:17000000,relVolume:2.29,dollarVolume:1115400000,signal:"meme-stock attention",score:88,source:"sample",detail:"Bundled reference row for fallback mode"}
+    {symbol:"NVDA",name:"NVIDIA",group:"tech",price:161.24,changePct:2.1,volume:268000000,avgVolume:245000000,relVolume:1.09,dollarVolume:43212320000,signal:"AI/semis attention",score:66,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"TSLA",name:"Tesla",group:"tech",price:287.10,changePct:-1.8,volume:142000000,avgVolume:98000000,relVolume:1.45,dollarVolume:40768200000,signal:"mega-cap activity spike",score:68,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"PLTR",name:"Palantir",group:"tech",price:137.42,changePct:5.9,volume:126000000,avgVolume:84000000,relVolume:1.50,dollarVolume:17314920000,signal:"unusual software volume",score:84,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"AMD",name:"AMD",group:"tech",price:149.83,changePct:3.2,volume:94000000,avgVolume:62000000,relVolume:1.52,dollarVolume:14084020000,signal:"semiconductor follow-through",score:75,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"SOFI",name:"SoFi",group:"financials",price:17.54,changePct:7.4,volume:91000000,avgVolume:65000000,relVolume:1.40,dollarVolume:1596140000,signal:"retail finance pressure",score:79,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"MSTR",name:"Strategy",group:"crypto",price:421.31,changePct:4.8,volume:36000000,avgVolume:17500000,relVolume:2.06,dollarVolume:15167160000,signal:"bitcoin context flow",score:86,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"COIN",name:"Coinbase",group:"crypto",price:288.40,changePct:3.6,volume:25000000,avgVolume:12000000,relVolume:2.08,dollarVolume:7210000000,signal:"crypto-linked equity pulse",score:79,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"GME",name:"GameStop",group:"meme",price:28.60,changePct:8.2,volume:39000000,avgVolume:17000000,relVolume:2.29,dollarVolume:1115400000,signal:"meme-stock attention",score:88,source:"sample",detail:"Bundled reference row for backup mode"}
   ];
   const SAMPLE_ETFS = [
-    {symbol:"SPY",name:"SPDR S&P 500 ETF",group:"etf",price:625.19,changePct:.4,volume:81000000,avgVolume:73000000,relVolume:1.11,dollarVolume:50640390000,signal:"broad-market tape",score:62,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"QQQ",name:"Invesco QQQ ETF",group:"etf",price:551.73,changePct:.7,volume:59000000,avgVolume:46000000,relVolume:1.28,dollarVolume:32552070000,signal:"growth/tech pressure",score:66,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"IWM",name:"iShares Russell 2000 ETF",group:"etf",price:217.88,changePct:-.5,volume:42000000,avgVolume:35000000,relVolume:1.20,dollarVolume:9150960000,signal:"small-cap risk mood",score:58,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"TLT",name:"iShares 20+ Year Treasury ETF",group:"etf",price:88.40,changePct:-1.1,volume:56000000,avgVolume:42000000,relVolume:1.33,dollarVolume:4950400000,signal:"rates pressure",score:64,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"GLD",name:"SPDR Gold Shares",group:"etf",price:224.60,changePct:.9,volume:12000000,avgVolume:8500000,relVolume:1.41,dollarVolume:2695200000,signal:"gold hedge flow",score:62,source:"sample",detail:"Bundled reference row for fallback mode"},
-    {symbol:"HYG",name:"iShares High Yield Bond ETF",group:"etf",price:78.55,changePct:-.2,volume:43000000,avgVolume:38000000,relVolume:1.13,dollarVolume:3377650000,signal:"credit risk pulse",score:55,source:"sample",detail:"Bundled reference row for fallback mode"}
+    {symbol:"SPY",name:"SPDR S&P 500 ETF",group:"etf",price:625.19,changePct:.4,volume:81000000,avgVolume:73000000,relVolume:1.11,dollarVolume:50640390000,signal:"broad-market tape",score:62,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"QQQ",name:"Invesco QQQ ETF",group:"etf",price:551.73,changePct:.7,volume:59000000,avgVolume:46000000,relVolume:1.28,dollarVolume:32552070000,signal:"growth/tech pressure",score:66,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"IWM",name:"iShares Russell 2000 ETF",group:"etf",price:217.88,changePct:-.5,volume:42000000,avgVolume:35000000,relVolume:1.20,dollarVolume:9150960000,signal:"small-cap risk mood",score:58,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"TLT",name:"iShares 20+ Year Treasury ETF",group:"etf",price:88.40,changePct:-1.1,volume:56000000,avgVolume:42000000,relVolume:1.33,dollarVolume:4950400000,signal:"rates pressure",score:64,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"GLD",name:"SPDR Gold Shares",group:"etf",price:224.60,changePct:.9,volume:12000000,avgVolume:8500000,relVolume:1.41,dollarVolume:2695200000,signal:"gold hedge flow",score:62,source:"sample",detail:"Bundled reference row for backup mode"},
+    {symbol:"HYG",name:"iShares High Yield Bond ETF",group:"etf",price:78.55,changePct:-.2,volume:43000000,avgVolume:38000000,relVolume:1.13,dollarVolume:3377650000,signal:"credit risk pulse",score:55,source:"sample",detail:"Bundled reference row for backup mode"}
   ];
-  let latest = {rows:clone(SAMPLE_ROWS),etfs:clone(SAMPLE_ETFS),sources:[{source:"Sample volume pack",status:"sample",detail:"boot fallback data active"}],updated:new Date().toISOString(),mode:"sample"};
+  let latest = {rows:clone(SAMPLE_ROWS),etfs:clone(SAMPLE_ETFS),sources:[{source:"Demo volume pack",status:"sample",detail:"boot backup data active"}],updated:new Date().toISOString(),mode:"sample"};
   const pendingTracks = [];
   let flushTimer = 0;
 
@@ -229,11 +230,13 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
   }
   function sourceSummary(sources){
     const live = sources.filter(function(item){return item.status === "live";}).length;
+    const delayed = sources.filter(function(item){return item.status === "delayed";}).length;
     const ref = sources.filter(function(item){return item.status === "reference";}).length;
     const sample = sources.filter(function(item){return item.status === "sample";}).length;
     if (live) return live + " live";
+    if (delayed) return delayed + " delayed";
     if (ref) return ref + " reference";
-    return sample ? "sample" : "unknown";
+    return sample ? "demo" : "unknown";
   }
   function compute(){
     const rows = sortRows(filterRows(allRows()));
@@ -276,11 +279,11 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     return '<article class="card '+tone+'"><span>'+safe(label)+'</span><b>'+safe(value)+'</b><small>'+safe(detail)+'</small></article>';
   }
   function rowHtml(item){
-    const cls = item.source === "live" ? "" : item.source === "reference" ? "reference" : item.source === "blocked" ? "blocked" : "sample";
+    const cls = item.source === "live" ? "" : item.source === "delayed" || item.source === "reference" ? "reference" : item.source === "blocked" ? "blocked" : "sample";
     const changeCls = Number(item.changePct) >= 0 ? "up" : "down";
     const signalCls = item.score >= 78 ? "hot" : isPennyNoise(item) ? "bad" : "";
     const relWidth = clamp(Number(item.relVolume) * 34, 5, 100);
-    return '<div class="row"><div class="ticker"><b>'+safe(item.symbol)+' - '+safe(item.name)+'</b><small>'+safe(item.group)+' / '+safe(item.signal)+'</small><span class="signal '+signalCls+'">'+safe(signalLabel(item))+'</span></div><span class="source '+cls+'">'+safe(item.source)+'</span><div class="bar"><div class="rail"><i style="width:'+relWidth+'%"></i></div><small>'+vol(item.volume)+' shares / '+Number(item.relVolume).toFixed(2)+'x avg / '+money(item.dollarVolume)+'</small></div><div class="price"><b>$'+Number(item.price).toFixed(2)+'</b><span class="'+changeCls+'">'+pct(item.changePct)+'</span></div><div><b class="score">'+Math.round(item.score)+'</b><small> pulse</small></div></div>';
+    return '<div class="row"><div class="ticker"><b>'+safe(item.symbol)+' - '+safe(item.name)+'</b><small>'+safe(item.group)+' / '+safe(item.signal)+'</small><span class="signal '+signalCls+'">'+safe(signalLabel(item))+'</span></div><span class="source '+cls+'">'+safe(window.ntSignal ? window.ntSignal.label(item.source) : item.source)+'</span><div class="bar"><div class="rail"><i style="width:'+relWidth+'%"></i></div><small>'+vol(item.volume)+' shares / '+Number(item.relVolume).toFixed(2)+'x avg / '+money(item.dollarVolume)+'</small></div><div class="price"><b>$'+Number(item.price).toFixed(2)+'</b><span class="'+changeCls+'">'+pct(item.changePct)+'</span></div><div><b class="score">'+Math.round(item.score)+'</b><small> pulse</small></div></div>';
   }
   function signalLabel(item){
     if (item.score >= 82) return "attention spike";
@@ -290,11 +293,11 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     return "active tape";
   }
   function sourceHtml(sources){
-    const order = { live:0, reference:1, sample:2, blocked:3 };
+    const order = { live:0, delayed:1, reference:2, sample:3, blocked:4 };
     return (sources || []).slice().sort(function(a,b){return (order[a.status]||2)-(order[b.status]||2);}).map(function(item){
-      const cls = item.status === "live" ? "" : item.status === "reference" ? "reference" : item.status === "blocked" ? "blocked" : "sample";
-      return '<div class="item"><div><b>'+safe(item.source)+'</b><small>'+safe(item.detail)+'</small></div><span class="pill '+cls+'">'+safe(item.status)+'</span></div>';
-    }).join("") || '<div class="item"><div><b>Sample volume pack</b><small>local fallback data active</small></div><span class="pill sample">sample</span></div>';
+      const cls = item.status === "live" ? "" : item.status === "delayed" || item.status === "reference" ? "reference" : item.status === "blocked" ? "blocked" : "sample";
+      return '<div class="item"><div><b>'+safe(item.source)+'</b><small>'+safe(item.detail)+'</small></div><span class="pill '+cls+'">'+safe(window.ntSignal ? window.ntSignal.label(item.status) : item.status)+'</span></div>';
+    }).join("") || '<div class="item"><div><b>Demo volume pack</b><small>local backup data active</small></div><span class="pill sample">Demo</span></div>';
   }
   function alertsHtml(rows){
     const alerts = rows.filter(function(item){return item.score >= 75 || Number(item.relVolume) >= 1.8 || Math.abs(Number(item.changePct)) >= 6;}).slice(0,5);
@@ -341,13 +344,15 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     };
   }
   async function refreshVolume(manual){
+    if(window.ntSignal) window.ntSignal.start('Syncing market activity feeds');
     try{
       await fetchApi();
     }catch(err){
-      latest = {rows:clone(SAMPLE_ROWS),etfs:clone(SAMPLE_ETFS),sources:[{source:"Nifty market-volume API",status:"blocked",detail:String(err && err.message || err).slice(0,90)},{source:"Sample volume pack",status:"sample",detail:"local fallback data active"}],updated:new Date().toISOString(),mode:"sample"};
+      latest = {rows:clone(SAMPLE_ROWS),etfs:clone(SAMPLE_ETFS),sources:[{source:"Nifty market-volume API",status:"blocked",detail:String(err && err.message || err).slice(0,90)},{source:"Demo volume pack",status:"sample",detail:"local backup data active"}],updated:new Date().toISOString(),mode:"sample"};
       track("market_volume_error", { lane:currentLane(), group:currentGroup(), source_status:"blocked", source:"nifty_market_volume_api" });
     }
     render();
+    if(window.ntSignal) window.ntSignal.finish('Market Volume Pulse updated');
     if (manual) {
       const c = compute();
       track("market_volume_refresh", { lane:currentLane(), group:currentGroup(), score_bucket:Math.floor(c.score/10)*10, source_status:latest.mode });
@@ -398,11 +403,14 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 </script>
 
 
+<script src="/tools-registry.js"></script>
+<script defer src="/nt-nav.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

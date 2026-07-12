@@ -283,6 +283,7 @@
   }
 
   async function refreshAurora(){
+    if(window.ntSignal) window.ntSignal.start('Syncing aurora and sky sources');
     $('refreshBtn').disabled=true;
     renderLoading();
     const lat=Number($('lat').value), lon=Number($('lon').value);
@@ -300,6 +301,7 @@
       render(latestState);
     }finally{
       $('refreshBtn').disabled=false;
+      if(window.ntSignal) window.ntSignal.finish('Aurora Watch updated');
     }
   }
 
@@ -544,6 +546,7 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

@@ -215,7 +215,7 @@
     text-transform:uppercase;
     white-space:nowrap;
   }
-  .truth-pill.delayed,.truth-pill.proxy,.truth-pill.mixed{border-color:rgba(255,209,102,.42);color:var(--amber)}
+  .truth-pill.delayed,.truth-pill.proxy,.truth-pill.backup,.truth-pill.mixed{border-color:rgba(255,209,102,.42);color:var(--amber)}
   .truth-pill.sample,.truth-pill.local{border-color:rgba(105,232,255,.38);color:var(--cyan)}
   .truth-pill.blocked{border-color:rgba(255,90,111,.54);color:var(--red)}
   .suite-read{color:var(--mut);font-size:12px;line-height:1.55;margin:0 0 10px}
@@ -284,7 +284,7 @@
       <a href="/">Tools</a>
       <a href="#traffic">Traffic</a>
       <a href="#health">Health</a>
-      <button onclick="refreshDashboard()">Refresh</button>
+      <button onclick="refreshDashboardFromSources()">Refresh</button>
     </div>
   </div>
 </div>
@@ -355,7 +355,7 @@
       <div class="panel-head">
         <div>
           <h2>Signal Suite Reliability</h2>
-          <p>Flagship tools grouped by truth status: live, delayed, proxy, mixed, sample, local or blocked.</p>
+          <p>Flagship tools grouped by truth status: live, delayed, context, backup, demo, local or unavailable.</p>
         </div>
         <span class="badge" id="signalSuiteBadge">10 tools</span>
       </div>
@@ -367,8 +367,8 @@
         <button class="suite-filter" type="button" data-suite-filter="seen">Seen locally</button>
         <button class="suite-filter" type="button" data-suite-filter="baseline">Baseline only</button>
         <button class="suite-filter" type="button" data-suite-filter="live-delayed">Live / delayed</button>
-        <button class="suite-filter" type="button" data-suite-filter="proxy-mixed">Proxy / mixed</button>
-        <button class="suite-filter" type="button" data-suite-filter="blocked">Blocked</button>
+        <button class="suite-filter" type="button" data-suite-filter="proxy-mixed">Context / mixed</button>
+        <button class="suite-filter" type="button" data-suite-filter="blocked">Unavailable</button>
       </div>
       <div id="signalSuiteGrid" class="suite-grid compact"></div>
       <div id="signalSuiteSummary" class="suite-summary"></div>
@@ -545,23 +545,28 @@ const signalSuite = [
   {slug:"prepper-risk",tool:"Prepper Risk Scanner",lane:"local risk to checklist",truth:"mixed",read:"Browser-first local scan for official alerts where available, weather, air/smoke, nearby quakes, local internet probes and travel friction.",sources:"NWS for U.S. alerts, Open-Meteo, USGS, browser probes"},
   {slug:"prepper-command",tool:"Prepper Command Center Lite",lane:"readiness command",truth:"local",read:"Quick household readiness cockpit for water, food, power, go-bags, contacts and scenario playbooks.",sources:"Local browser calculations and checklist state"},
   {slug:"prepper-tools",tool:"Prepper Toolkit Pro",lane:"preparedness calculators",truth:"local",read:"Full household planner with supply targets, outage power, go-bag, family plan, inventory exports and printable reports.",sources:"Local browser calculations and exports"},
-  {slug:"signal-watch",tool:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",read:"Live public feeds with fallback layers for space weather, quakes, outages, conflict spillover, news and local checks.",sources:"NOAA, USGS, status pages, GDELT/Wikimedia, weather/news proxies"},
+  {slug:"signal-watch",tool:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",read:"Live public feeds with backup layers for space weather, quakes, outages, conflict spillover, news and local checks.",sources:"NOAA, USGS, status pages, GDELT/Wikimedia, weather/news context"},
   {slug:"aurora-watch",tool:"Aurora Watch",lane:"space weather",truth:"live",read:"Tonight visibility score from NOAA space weather plus local cloud/moonlight context.",sources:"NOAA SWPC, NOAA OVATION, Open-Meteo"},
-  {slug:"outage-radar",tool:"Outage Radar",lane:"internet health",truth:"mixed",read:"Official status pages plus browser reachability probes; carrier/app signals are still proxy-like.",sources:"Cloudflare, OpenAI, GitHub, Google, AWS, local probes"},
-  {slug:"cyber-threat",tool:"Cyber Threat Radar",lane:"public cyber signals",truth:"mixed",read:"Public cyber feeds with demo visualization fallback when browser access is blocked.",sources:"SANS ISC/DShield, CISA KEV, demo simulator"},
+  {slug:"outage-radar",tool:"Outage Radar",lane:"internet health",truth:"mixed",read:"Official status pages plus browser reachability probes; carrier/app signals are still context estimates.",sources:"Cloudflare, OpenAI, GitHub, Google, AWS, local probes"},
+  {slug:"cyber-threat",tool:"Cyber Threat Radar",lane:"public cyber signals",truth:"mixed",read:"Public cyber feeds with demo visualization backup when browser access is unavailable.",sources:"SANS ISC/DShield, CISA KEV, demo simulator"},
   {slug:"food-watch",tool:"Food Watch",lane:"recalls + commodity pressure",truth:"mixed",read:"Recall signals are live where possible; commodity shortage pressure still uses reference context.",sources:"openFDA, bundled commodity pressure rows"},
-  {slug:"meme-watch",tool:"Meme Watch",lane:"trend early warning",truth:"proxy",read:"Public attention proxies. Useful for trend smoke, not a full social firehose yet.",sources:"HN, GDELT, Wikipedia/Wikimedia"},
-  {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"Readable network health board for BTC fees, mempool pressure, ETH gas, activity and market context with source truth labels.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH fallback"},
-  {slug:"market-volume-pulse",tool:"Market Volume Pulse",lane:"market activity",truth:"delayed",read:"Most-active / dollar-volume style board using live or reference rows; full tape later.",sources:"Nifty API, Stooq/reference rows, optional Alpha Vantage"},
-  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"mixed",read:"Core positioning board for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee. CFTC is weekly, FINRA is delayed proxy, crypto uses exchange fallback when needed.",sources:"CFTC COT, FINRA short-volume proxy, OKX fallback, optional Binance probe hidden when covered"},
+  {slug:"meme-watch",tool:"Meme Watch",lane:"trend early warning",truth:"proxy",read:"Public attention context. Useful for trend smoke, not a full social firehose yet.",sources:"HN, GDELT, Wikipedia/Wikimedia"},
+  {slug:"crypto-pulse",tool:"Crypto Pulse",lane:"network stress",truth:"mixed",read:"Readable network health board for BTC fees, mempool pressure, ETH gas, activity and market context with source truth labels.",sources:"Blockchain.com, mempool.space, CoinGecko, ETH backup"},
+  {slug:"market-volume-pulse",tool:"Market Volume Pulse",lane:"market activity",truth:"delayed",read:"Most-active / dollar-volume style board using delayed quote rows; full tape later.",sources:"Nifty API, Yahoo delayed quotes, Stooq reference rows, optional Alpha Vantage"},
+  {slug:"positioning-radar",tool:"Market Positioning Radar",lane:"long/short crowding",truth:"mixed",read:"Core positioning board for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee. CFTC is weekly, FINRA is delayed context, crypto uses exchange backup when needed.",sources:"CFTC COT, FINRA delayed short-volume, OKX backup, optional Binance probe hidden when covered"},
   {slug:"admin",tool:"Admin Centre Lite",lane:"operations",truth:"local",read:"Local browser buffer now. Production analytics API/drain is the next real ops layer.",sources:"nt-analytics localStorage, Vercel Analytics later"}
 ];
 let signalSuiteFilter = "all";
+let remoteEvents = [];
+let remoteProviders = [];
 
 function $(id){return document.getElementById(id);}
-function readEvents(){
+function readLocalEvents(){
   try{return JSON.parse(localStorage.getItem(STORE_KEY) || "[]").filter(Boolean);}
   catch(err){return [];}
+}
+function readEvents(){
+  return readLocalEvents().concat(remoteEvents).filter(Boolean).sort(function(a,b){return Date.parse(b.ts || 0) - Date.parse(a.ts || 0);});
 }
 function writeEvents(events){
   localStorage.setItem(STORE_KEY, JSON.stringify(events.slice(-800)));
@@ -669,9 +674,10 @@ function signalSlugFromEvent(event){
 }
 function truthFromEvent(event, fallback){
   const raw = String(event.source_status || event.truth || event.status || fallback || "unknown").toLowerCase();
-  if(/blocked|error|failed|timeout/.test(raw) || event.event === "error") return "blocked";
+  if(/blocked|error|failed|timeout|unavailable/.test(raw) || event.event === "error") return "blocked";
+  if(/backup|fallback|covered/.test(raw)) return "backup";
   if(/sample|demo/.test(raw)) return "sample";
-  if(/proxy|reference|fallback/.test(raw)) return "proxy";
+  if(/proxy|reference|context/.test(raw)) return "proxy";
   if(/mixed|degraded/.test(raw)) return "mixed";
   if(/delayed/.test(raw)) return "delayed";
   if(/local/.test(raw)) return "local";
@@ -679,17 +685,18 @@ function truthFromEvent(event, fallback){
   return raw || fallback || "unknown";
 }
 function truthRank(truth){
-  return {blocked:0,sample:1,proxy:2,mixed:3,delayed:4,local:5,live:6}[truth] == null ? 3 : {blocked:0,sample:1,proxy:2,mixed:3,delayed:4,local:5,live:6}[truth];
+  return {blocked:0,sample:1,proxy:2,backup:3,mixed:4,delayed:5,local:6,live:7}[truth] == null ? 4 : {blocked:0,sample:1,proxy:2,backup:3,mixed:4,delayed:5,local:6,live:7}[truth];
 }
 function truthLabel(truth){
   return {
     live:"live",
     delayed:"delayed",
-    proxy:"proxy",
+    backup:"backup",
+    proxy:"context",
     mixed:"mixed",
-    sample:"sample",
+    sample:"demo",
     local:"local",
-    blocked:"blocked"
+    blocked:"unavailable"
   }[truth] || "watch";
 }
 function renderSignalSuite(events){
@@ -730,19 +737,19 @@ function renderSignalSuite(events){
     ["Seen locally", seenCount],
     ["Baseline only", baselineCount],
     ["Needs attention", attentionCount],
-    ["Blocked", blockedCount]
+    ["Unavailable", blockedCount]
   ].map(function(item){
     return '<div class="suite-stat"><span>'+escapeHTML(item[0])+'</span><b>'+item[1]+'</b></div>';
   }).join("");
-  $("signalSuiteSummary").innerHTML = ["live","delayed","mixed","proxy","sample","local","blocked"].filter(function(key){return counts[key];}).map(function(key){
-    return '<span><b>'+counts[key]+'</b> '+key+'</span>';
+  $("signalSuiteSummary").innerHTML = ["live","delayed","mixed","backup","proxy","sample","local","blocked"].filter(function(key){return counts[key];}).map(function(key){
+    return '<span><b>'+counts[key]+'</b> '+truthLabel(key)+'</span>';
   }).join("");
   const filtered = rows.filter(function(row){
     if(signalSuiteFilter === "attention") return row.needsAttention;
     if(signalSuiteFilter === "seen") return row.seen;
     if(signalSuiteFilter === "baseline") return row.baseline;
     if(signalSuiteFilter === "live-delayed") return row.truth === "live" || row.truth === "delayed";
-    if(signalSuiteFilter === "proxy-mixed") return row.truth === "proxy" || row.truth === "mixed";
+    if(signalSuiteFilter === "proxy-mixed") return row.truth === "proxy" || row.truth === "backup" || row.truth === "mixed";
     if(signalSuiteFilter === "blocked") return row.truth === "blocked";
     return true;
   });
@@ -827,8 +834,37 @@ function renderAttention(events){
   $("attentionScore").textContent = total;
   $("attentionMeta").textContent = total ? rows[0].tool + " leads the queue" : (events.length < 50 ? "warming up" : "no issues logged");
 }
+async function loadRemoteMetrics(){
+  try{
+    const response = await fetch("/api/admin-metrics?ts=" + Date.now(), {cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP " + response.status);
+    const payload = await response.json();
+    remoteEvents = Array.isArray(payload.events) ? payload.events : [];
+    remoteProviders = Array.isArray(payload.providers) ? payload.providers : [];
+    return payload;
+  }catch(err){
+    remoteEvents = [];
+    remoteProviders = [{source:"Admin metrics API",status:"unavailable",detail:String(err && err.message || err).slice(0,90)}];
+    return null;
+  }
+}
+function providerSummary(){
+  if(!remoteProviders.length) return "No server source checked yet.";
+  return remoteProviders.map(function(provider){
+    const status = provider.status || "unknown";
+    return provider.source + ": " + status;
+  }).join(" / ");
+}
+async function refreshDashboardFromSources(){
+  if(window.ntSignal) window.ntSignal.start("Syncing Admin Centre metrics");
+  await loadRemoteMetrics();
+  refreshDashboard();
+  if(window.ntSignal) window.ntSignal.finish(remoteEvents.length ? "Admin metrics connected" : "Admin using local buffer");
+}
 function refreshDashboard(){
   const events = readEvents();
+  const localCount = readLocalEvents().length;
+  const remoteCount = remoteEvents.length;
   const day = since(1);
   const week = since(7);
   const month = since(30);
@@ -848,8 +884,10 @@ function refreshDashboard(){
   renderSignalSuite(month);
   renderIssues(month);
   renderAttention(month);
-  $("sourceLabel").textContent = events.length ? "Local warm-up" : "Awaiting data";
-  $("sourceText").textContent = events.length ? "Reading " + events.length + " events from this browser only. Vercel has production pageviews separately." : "Open tools, click buttons, or load demo data to populate the shell.";
+  $("sourceLabel").textContent = remoteCount ? "Server connected" : (localCount ? "Local warm-up" : "Awaiting data");
+  $("sourceText").textContent = remoteCount
+    ? "Reading " + remoteCount + " server events plus " + localCount + " local browser events. " + providerSummary()
+    : (localCount ? "Reading " + localCount + " local browser events. " + providerSummary() : "Open tools, click buttons, or connect Supabase/Vercel drain data to populate the dashboard.");
 }
 function loadDemoData(){
   const now = Date.now();
@@ -860,7 +898,7 @@ function loadDemoData(){
     events.push({event:i % 5 === 0 ? "tool_action" : "tool_open", tool:tool, page:tool.toLowerCase().replace(/[^a-z0-9]+/g,"-"), action:i % 5 === 0 ? "Calculate" : "", session:"demo-"+(i % 13), ts:new Date(now - (i * 3.8 * 3600000)).toISOString(), source:i % 4 === 0 ? "google" : "direct / local"});
   }
   signalSuite.forEach(function(tool,i){
-    const statuses = ["mixed","live","mixed","proxy","sample","delayed","blocked","local"];
+    const statuses = ["mixed","live","mixed","context","demo","delayed","unavailable","local"];
     events.push({event:"signal_tool_open",tool:tool.tool,slug:tool.slug,page:tool.slug,lane:tool.lane,truth:tool.truth,source_status:tool.truth,session:"demo-signal",ts:new Date(now - i * 2100000).toISOString()});
     if(i % 4 === 2) events.push({event:"signal_source_health",tool:tool.tool,slug:tool.slug,page:tool.slug,source_status:statuses[i % statuses.length],session:"demo-signal",ts:new Date(now - i * 2400000).toISOString()});
   });
@@ -944,7 +982,7 @@ function startMatrix(){
 }
 bindSignalSuiteFilters();
 startMatrix();
-refreshDashboard();
+refreshDashboardFromSources();
 </script>
 
 <!-- NIFTY ANALYTICS START -->
@@ -952,6 +990,7 @@ refreshDashboard();
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

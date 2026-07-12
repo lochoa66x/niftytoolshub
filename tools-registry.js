@@ -15,15 +15,15 @@
   const HUBS = [
     {
       id: "signals",
-      name: "Signal Suite",
+      name: "Command Center",
       url: "/signal-suite.html",
       label: "Flagship",
-      description: "Early warning, internet weather, cyber, food, aurora, meme, crypto and market radars.",
+      description: "The flagship operating shelf: early warning, internet weather, cyber, food, aurora, meme, crypto and market radars.",
       icon: "SIG"
     },
     {
       id: "prepper",
-      name: "Prepper Tools",
+      name: "Prepper + Local Risk",
       url: "/prepper-command.html",
       label: "Flagship",
       description: "Calm readiness planning, daily risk checks, supplies, go-bags, power and family plans.",
@@ -31,7 +31,7 @@
     },
     {
       id: "markets",
-      name: "Market Tools",
+      name: "Markets",
       url: "/library.html?filter=market",
       label: "Live + delayed",
       description: "Crypto networks, volume leaders, long/short positioning, salary and finance calculators.",
@@ -66,7 +66,7 @@
   const RAW_TOOLS = [
     {
       slug: "signal-suite",
-      name: "Signal Suite Hub",
+      name: "Command Center",
       url: "/signal-suite.html",
       hub: "signals",
       category: "Signal hub",
@@ -75,7 +75,7 @@
       lane: "global + local radar shelf",
       featured: true,
       priority: 100,
-      description: "All flagship radar tools grouped by risk lane, source truth and best use.",
+      description: "All flagship radar tools grouped by signal lane, source quality and best next action.",
       tags: ["signal", "radar", "hub", "monitor", "prepper", "market", "internet"]
     },
     {

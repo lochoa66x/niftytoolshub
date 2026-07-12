@@ -1,5 +1,6 @@
 const ALPHA_URL = "https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS";
 const STOOQ_URL = "https://stooq.com/q/l/";
+const YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/";
 const USER_AGENT = "NiftyToolsHub/1.0 market-volume-pulse";
 
 const WATCH = [
@@ -71,7 +72,7 @@ const SAMPLE_ROWS = [
   row("AMD", 149.83, 3.2, 94000000, 62000000, "semiconductor follow-through", "sample"),
   row("SOFI", 17.54, 7.4, 91000000, 65000000, "retail finance pressure", "sample"),
   row("AAPL", 213.66, .6, 73000000, 61000000, "large-cap liquidity", "sample"),
-  row("MSTR", 421.31, 4.8, 36000000, 17500000, "bitcoin proxy flow", "sample"),
+  row("MSTR", 421.31, 4.8, 36000000, 17500000, "bitcoin context flow", "sample"),
   row("COIN", 288.40, 3.6, 25000000, 12000000, "crypto-linked equity pulse", "sample"),
   row("GME", 28.60, 8.2, 39000000, 17000000, "meme-stock attention", "sample"),
   row("XOM", 116.52, -1.2, 24000000, 17000000, "energy tape activity", "sample")
@@ -104,16 +105,33 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const stooqRows = await fetchStooq(WATCH);
-    if (stooqRows.length) {
-      rows = mergeRows(rows, stooqRows.filter((item) => item.group !== "etf"));
-      etfs = stooqRows.filter((item) => item.group === "etf");
-      sources.push({ source:"Stooq quote basket", status:"reference", detail:stooqRows.length + " public delayed quote rows parsed" });
+    const yahooRows = await fetchYahoo(WATCH);
+    if (yahooRows.length) {
+      rows = mergeRows(rows, yahooRows.filter((item) => item.group !== "etf"));
+      etfs = mergeRows(etfs, yahooRows.filter((item) => item.group === "etf"));
+      sources.push({ source:"Yahoo Finance delayed quote basket", status:"delayed", detail:yahooRows.length + " quote rows parsed with volume and average-volume context" });
     } else {
-      sources.push({ source:"Stooq quote basket", status:"sample", detail:"public quote basket returned no rows" });
+      sources.push({ source:"Yahoo Finance delayed quote basket", status:"reference", detail:"quote endpoint returned no rows" });
     }
   } catch (err) {
-    sources.push({ source:"Stooq quote basket", status:"blocked", detail:cleanError(err) });
+    sources.push({ source:"Yahoo Finance delayed quote basket", status:"blocked", detail:cleanError(err) });
+  }
+
+  if (rows.length < 6 || etfs.length < 4) {
+    try {
+      const stooqRows = await fetchStooq(WATCH);
+      if (stooqRows.length) {
+        rows = mergeRows(rows, stooqRows.filter((item) => item.group !== "etf"));
+        etfs = stooqRows.filter((item) => item.group === "etf");
+        sources.push({ source:"Stooq quote basket", status:"reference", detail:stooqRows.length + " public delayed quote rows parsed" });
+      } else {
+        sources.push({ source:"Stooq quote basket", status:"sample", detail:"public quote basket returned no rows" });
+      }
+    } catch (err) {
+      sources.push({ source:"Stooq quote basket", status:"blocked", detail:cleanError(err) });
+    }
+  } else {
+    sources.push({ source:"Stooq quote basket", status:"backup", detail:"optional reference feed skipped; delayed quote provider is active" });
   }
 
   if (rows.length < 6) rows = mergeRows(rows, SAMPLE_ROWS);
@@ -127,7 +145,7 @@ module.exports = async function handler(req, res) {
   res.status(200).json({
     ok:true,
     updatedAt:new Date().toISOString(),
-    mode:rows.some((item) => item.source === "live") ? "live" : rows.some((item) => item.source === "reference") ? "reference" : "sample",
+    mode:rows.some((item) => item.source === "live") ? "live" : rows.some((item) => item.source === "delayed") ? "delayed" : rows.some((item) => item.source === "reference") ? "reference" : "sample",
     note:"Market volume feeds are delayed or mixed-source unless a paid realtime data provider is connected. Context only, not financial advice.",
     rows:rows,
     etfs:etfs,
@@ -169,6 +187,44 @@ async function fetchStooq(items) {
     }
   }
   return out;
+}
+
+async function fetchYahoo(items) {
+  const out = [];
+  await mapLimit(items, 8, async (item) => {
+    const symbol = cleanSymbol(item.symbol);
+    const payload = await fetchJson(YAHOO_CHART_URL + encodeURIComponent(symbol) + "?range=5d&interval=1d&includePrePost=false");
+    const result = payload && payload.chart && Array.isArray(payload.chart.result) ? payload.chart.result[0] : null;
+    const meta = result && result.meta || {};
+    const quote = result && result.indicators && result.indicators.quote && result.indicators.quote[0] || {};
+    const closes = (quote.close || []).map(toNumber).filter(Number.isFinite);
+    const volumes = (quote.volume || []).map(toNumber).filter((value) => Number.isFinite(value) && value > 0);
+    const price = toNumber(meta.regularMarketPrice || closes[closes.length - 1]);
+    const previous = toNumber(meta.chartPreviousClose || closes[Math.max(0, closes.length - 2)]);
+    const volume = toNumber(meta.regularMarketVolume || volumes[volumes.length - 1]);
+    const avgVolume = Math.round(avgNumber(volumes) || item.avgVolume || metaFor(symbol).avgVolume || volume || 1);
+    if (!symbol || !Number.isFinite(price) || !Number.isFinite(volume) || volume <= 0) return;
+    out.push(row(symbol, price, calcChangePct(price, previous), volume, avgVolume, "delayed chart + volume pressure", "delayed"));
+  });
+  return out;
+}
+
+async function mapLimit(items, limit, worker) {
+  const queue = (items || []).slice();
+  const workers = Array.from({ length:Math.min(limit, queue.length) }, async () => {
+    while (queue.length) {
+      const item = queue.shift();
+      try { await worker(item); }
+      catch (_err) { /* Individual symbols can fail without dropping the whole board. */ }
+    }
+  });
+  await Promise.all(workers);
+}
+
+function avgNumber(values) {
+  const clean = (values || []).filter((value) => Number.isFinite(value));
+  if (!clean.length) return 0;
+  return clean.reduce((sum, value) => sum + value, 0) / clean.length;
 }
 
 function row(symbol, price, changePct, volume, avgVolume, signal, source) {
@@ -231,8 +287,9 @@ function guessGroup(symbol) {
 
 function detailFor(source, meta) {
   if (source === "live") return "Alpha Vantage most-active stock feed";
+  if (source === "delayed") return "Delayed quote provider with volume and average-volume context";
   if (source === "reference") return "Public delayed high-liquidity quote basket with local average-volume baselines";
-  return "Bundled reference row for layout and fallback mode";
+  return "Bundled reference row for layout and backup mode";
 }
 
 function attentionScore(volume, avgVolume, changePct, dollarVolume, price) {
@@ -258,6 +315,7 @@ function mergeRows(base, extra) {
 
 function sourceRank(source) {
   if (source === "live") return 0;
+  if (source === "delayed") return 1;
   if (source === "reference") return 1;
   return 2;
 }
@@ -322,6 +380,11 @@ function toNumber(value) {
 function round2(value) {
   const n = Number(value);
   return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
+}
+
+function calcChangePct(price, previousClose) {
+  if (!Number.isFinite(price) || !Number.isFinite(previousClose) || previousClose <= 0) return 0;
+  return ((price - previousClose) / previousClose) * 100;
 }
 
 function clamp(n, min, max) {

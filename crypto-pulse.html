@@ -109,6 +109,7 @@ body:before{opacity:.11}body:after{opacity:.62}
 @media(max-width:620px){.crypto-board-screen{padding:12px}.pulse-board{grid-template-columns:1fr}.pulse-score{display:block}.pulse-score span{text-align:left}.network-toggle-bar{width:100%;justify-content:space-between}.network-toggle-bar button{flex:1}.source-strip{grid-template-columns:1fr}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Crypto Network Pulse","url":"https://niftytoolshub.com/crypto-pulse.html","applicationCategory":"UtilityApplication","operatingSystem":"Any","description":"A browser-based signal dashboard for Bitcoin and Ethereum network activity, fee pressure, gas pressure and crypto network stress.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<link rel="stylesheet" href="/nt-nav.css">
 </head>
 <body>
 <header>
@@ -125,7 +126,7 @@ body:before{opacity:.11}body:after{opacity:.62}
 
 <main class="wrap">
   <div class="toolbar">
-    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Sample fallback</option></select></div>
+    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Demo backup</option></select></div>
     <div><label for="network">Network view</label><select id="network"><option value="combined">Combined</option><option value="btc">BTC only</option><option value="eth">ETH only</option></select></div>
     <button class="btn" type="button" onclick="refreshPulse(true)">Refresh pulse</button>
     <button class="btn ghost" type="button" onclick="copyReport(this)">Copy report</button>
@@ -141,7 +142,7 @@ body:before{opacity:.11}body:after{opacity:.62}
         <p class="lead">// Track Bitcoin and Ethereum network activity, fee pressure, gas pressure and market-volume context. This is network weather, not trading advice.</p>
         <div class="source-row">
           <span class="badge"><b>BTC:</b> Blockchain.com charts + mempool.space fees</span>
-          <span class="badge"><b>ETH:</b> Etherscan when configured, otherwise sample signal</span>
+          <span class="badge"><b>ETH:</b> Etherscan when configured, otherwise backup signal</span>
           <span class="badge"><b>Market:</b> CoinGecko context when available</span>
         </div>
       </div>
@@ -174,7 +175,7 @@ body:before{opacity:.11}body:after{opacity:.62}
       </div>
       <div class="pulse-layout">
         <div class="pulse-board-head">
-          <div class="board-note"><b>signal:</b>&nbsp;live where possible, sample fallback when blocked</div>
+          <div class="board-note"><b>signal:</b>&nbsp;live where possible, backup data when unavailable</div>
           <div class="network-toggle-bar" aria-label="Network view">
             <button type="button" data-view="combined" class="active">All</button>
             <button type="button" data-view="btc">BTC</button>
@@ -236,8 +237,8 @@ body:before{opacity:.11}body:after{opacity:.62}
         <div class="source-strip">
           <span><b id="sweepTag">sweep 01</b> / network watch</span>
           <span><b id="liveProbeMini">0</b> live probes</span>
-          <span><b id="blockedProbeMini">0</b> blocked probes</span>
-          <span><b>labels</b> live / delayed / proxy / sample / blocked</span>
+          <span><b id="blockedProbeMini">0</b> unavailable probes</span>
+          <span><b>labels</b> live / delayed / context / backup / demo / unavailable</span>
         </div>
         <div class="operator-read" id="operatorRead"><b>Operator read:</b> waiting for network pressure data.</div>
       </div>
@@ -298,7 +299,7 @@ body:before{opacity:.11}body:after{opacity:.62}
     <article class="panel">
       <h2>What this is</h2>
       <p class="truth"><b>Crypto Network Pulse</b> watches aggregate public network signals: transaction activity, fee/gas pressure, mempool congestion and market-volume context. It does not inspect wallets, addresses, transaction hashes or private activity.</p>
-      <p class="truth"><b>Live mode:</b> browser APIs can be blocked by CORS, API keys or rate limits. When that happens, the tool clearly falls back to sample signal data so the dashboard remains usable.</p>
+      <p class="truth"><b>Live mode:</b> browser APIs can be limited by CORS, API keys or rate limits. When that happens, the tool clearly switches to backup signal data so the dashboard remains usable.</p>
       <p class="truth"><b>Not financial advice:</b> this is operational network weather, not a buy/sell signal.</p>
     </article>
   </section>
@@ -537,7 +538,7 @@ body:before{opacity:.11}body:after{opacity:.62}
     const el = $(id);
     if (!el) return;
     el.className = "source-chip " + (status || "proxy");
-    el.textContent = status || "proxy";
+    el.textContent = window.ntSignal ? window.ntSignal.label(status || "proxy") : (status || "proxy");
   }
   function renderSpark(id, values){
     const el = $(id);
@@ -567,14 +568,14 @@ body:before{opacity:.11}body:after{opacity:.62}
     $("combinedState").textContent = stateFromScore(pulse.combined);
     $("miniBtc").textContent = pulse.btcScore + " / " + stateFromScore(pulse.btcScore);
     $("miniEth").textContent = pulse.ethScore + " / " + stateFromScore(pulse.ethScore);
-    $("miniMode").textContent = currentMode() === "live" ? "live/safe" : "sample";
+    $("miniMode").textContent = currentMode() === "live" ? "live/safe" : "demo";
     $("miniUpdated").textContent = new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
     $("updatedAt").textContent = "updated " + new Date().toLocaleTimeString();
-    $("sourceState").textContent = pulse.liveCount ? pulse.liveCount + " live probes / " + pulse.blockedCount + " blocked" : "sample fallback online";
+    $("sourceState").textContent = pulse.liveCount ? pulse.liveCount + " live probes / " + pulse.blockedCount + " unavailable" : "backup data online";
     $("readText").textContent = stateFromScore(pulse.combined) + " crypto rail signal";
     $("readMeter").style.width = pulse.combined + "%";
     $("strongestSignal").textContent = pulse.btcScore >= pulse.ethScore ? "Bitcoin fee / mempool pressure" : "Ethereum gas / activity pressure";
-    $("sourceHealth").textContent = pulse.liveCount + " live; " + pulse.blockedCount + " blocked; " + log.filter((x) => x.status === "sample").length + " sample";
+    $("sourceHealth").textContent = pulse.liveCount + " live; " + pulse.blockedCount + " unavailable; " + log.filter((x) => x.status === "sample").length + " demo";
 
     $("btcTx").textContent = fmt(data.btc.tx[data.btc.tx.length - 1]);
     $("btcFees").textContent = fmt(data.btc.feeFast) + " sat/vB";
@@ -669,12 +670,12 @@ body:before{opacity:.11}body:after{opacity:.62}
     const blocked = log.filter((item) => item.status === "blocked");
     const visible = live.concat(sample).slice(0,4);
     const pills = [
-      '<div class="stat-row"><span>source truth</span><b>' + live.length + ' live / ' + sample.length + ' sample / ' + blocked.length + ' blocked</b></div>',
-      '<div class="stat-row"><span>user view</span><b>' + (blocked.length ? 'mixed source, details hidden' : live.length ? 'public probes responding' : 'sample fallback active') + '</b></div>'
+      '<div class="stat-row"><span>source status</span><b>' + live.length + ' live / ' + sample.length + ' demo / ' + blocked.length + ' unavailable</b></div>',
+      '<div class="stat-row"><span>user view</span><b>' + (blocked.length ? 'mixed sources, unavailable details collapsed' : live.length ? 'public probes responding' : 'backup data active') + '</b></div>'
     ].join("");
-    const visibleHtml = visible.map((item) => '<div><b>' + item.source + '</b><br><span class="pill ' + (item.status === "sample" ? "warn" : "cyan") + '">' + item.status + '</span> ' + item.detail + '</div>').join("");
-    const blockedHtml = blocked.map((item) => '<div><b>' + item.source + '</b><br><span class="pill bad">blocked</span> ' + item.detail + '</div>').join("");
-    $("sourceLog").innerHTML = '<div class="source-health-summary">' + pills + '</div>' + visibleHtml + (blocked.length ? '<details class="source-details"><summary>' + blocked.length + ' blocked probe' + (blocked.length === 1 ? '' : 's') + '</summary>' + blockedHtml + '</details>' : "");
+    const visibleHtml = visible.map((item) => '<div><b>' + item.source + '</b><br><span class="pill ' + (item.status === "sample" ? "warn" : "cyan") + '">' + (window.ntSignal ? window.ntSignal.label(item.status) : item.status) + '</span> ' + item.detail + '</div>').join("");
+    const blockedHtml = blocked.map((item) => '<div><b>' + item.source + '</b><br><span class="pill bad">Unavailable</span> ' + item.detail + '</div>').join("");
+    $("sourceLog").innerHTML = '<div class="source-health-summary">' + pills + '</div>' + visibleHtml + (blocked.length ? '<details class="source-details"><summary>' + blocked.length + ' unavailable probe' + (blocked.length === 1 ? '' : 's') + '</summary>' + blockedHtml + '</details>' : "");
   }
   function reportText(){
     if (!latest) return "Crypto Network Pulse report loading.";
@@ -685,7 +686,7 @@ body:before{opacity:.11}body:after{opacity:.62}
       "Combined stress: " + p.combined + "/100 - " + stateFromScore(p.combined),
       "BTC: " + p.btcScore + "/100, tx/day " + fmt(latest.data.btc.tx[latest.data.btc.tx.length - 1]) + ", fee pressure " + fmt(latest.data.btc.feeFast) + " sat/vB, trend " + pct(p.btcTrend),
       "ETH: " + p.ethScore + "/100, tx/day " + fmt(latest.data.eth.tx[latest.data.eth.tx.length - 1]) + ", gas pressure " + fmt(latest.data.eth.gasGwei) + " gwei, trend " + pct(p.ethTrend),
-      "Source status: " + p.liveCount + " live probes, " + p.blockedCount + " blocked probes.",
+      "Source status: " + p.liveCount + " live probes, " + p.blockedCount + " unavailable probes.",
       "Interpretation: " + (p.combined >= 65 ? "Crypto rails are busy enough to watch fees before moving funds." : "Crypto rails look usable; still check fees before sending transactions."),
       "Note: network weather only, not financial advice."
     ].join("\n");
@@ -697,12 +698,13 @@ body:before{opacity:.11}body:after{opacity:.62}
     else bits.push("rails look usable, but still check final wallet fees");
     bits.push(". BTC is " + stateFromScore(pulse.btcScore) + " at " + fmt(data.btc.feeFast) + " sat/vB");
     bits.push("; ETH is " + stateFromScore(pulse.ethScore) + " at " + fmt(data.eth.gasGwei) + " gwei");
-    if (pulse.blockedCount) bits.push(". " + pulse.blockedCount + " public probe" + (pulse.blockedCount === 1 ? " is" : "s are") + " blocked, so this is mixed-source.");
+    if (pulse.blockedCount) bits.push(". " + pulse.blockedCount + " public probe" + (pulse.blockedCount === 1 ? " is" : "s are") + " unavailable, so this is mixed-source.");
     else if (pulse.liveCount) bits.push(". Live public probes are responding.");
-    else bits.push(". Sample fallback is active.");
+    else bits.push(". Backup data is active.");
     return bits.join("");
   }
   async function refreshPulse(manual){
+    if(window.ntSignal) window.ntSignal.start('Syncing crypto network sources');
     const mode = currentMode();
     const log = [];
     let data = JSON.parse(JSON.stringify(SAMPLE));
@@ -712,9 +714,10 @@ body:before{opacity:.11}body:after{opacity:.62}
       const market = await getMarket(log).catch(() => ({btc:{},eth:{}}));
       data = { btc:Object.assign({}, data.btc, btc, market.btc || {}), eth:Object.assign({}, data.eth, eth, market.eth || {}) };
     } else {
-      log.push({ source:"Sample signal pack", status:"sample", detail:"local fallback data active" });
+      log.push({ source:"Demo signal pack", status:"sample", detail:"local backup data active" });
     }
     render(data, log);
+    if(window.ntSignal) window.ntSignal.finish('Crypto Pulse updated');
     if (manual) track("crypto_pulse_refresh", { mode:mode, network:currentNetwork(), score_bucket:scoreBucket(latest.pulse.combined), source_status:latest.pulse.liveCount ? "mixed" : "sample" });
   }
   async function copyReport(button){
@@ -957,18 +960,21 @@ body:before{opacity:.11}body:after{opacity:.62}
     ctx.restore();
   }
   bind();
-  render(JSON.parse(JSON.stringify(SAMPLE)), [{ source:"Sample signal pack", status:"sample", detail:"boot fallback data active" }]);
+  render(JSON.parse(JSON.stringify(SAMPLE)), [{ source:"Demo signal pack", status:"sample", detail:"boot backup data active" }]);
   refreshPulse(false);
   requestAnimationFrame(draw);
   track("crypto_pulse_open", { mode:currentMode(), network:currentNetwork() });
 })();
 </script>
 
+<script src="/tools-registry.js"></script>
+<script defer src="/nt-nav.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

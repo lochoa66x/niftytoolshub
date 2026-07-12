@@ -363,6 +363,9 @@
       return await res.json();
     }finally{clearTimeout(t);}
   }
+  function unwrapProxy(payload){
+    return payload && payload.ok && Object.prototype.hasOwnProperty.call(payload,'data') ? payload.data : payload;
+  }
   function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
   async function fetchGdeltJson(url,timeout=11000){
     const run=async()=>{
@@ -384,7 +387,7 @@
     const msg=String(err&&err.message?err.message:err||'request failed');
     if(/abort|timeout|signal/i.test(msg))return 'timed out';
     if(/429|rate/i.test(msg))return 'rate limited';
-    if(/Failed to fetch|NetworkError|CORS/i.test(msg))return 'blocked/unreachable';
+    if(/Failed to fetch|NetworkError|CORS/i.test(msg))return 'unavailable/unreachable';
     return msg;
   }
   function neutralLocal(id,title,source,why,metrics={}){
@@ -433,18 +436,18 @@
   async function loadInternet(){
     const source='Public platform status summaries';
     const pages=[
-      ['Cloudflare','https://www.cloudflarestatus.com/api/v2/summary.json'],
-      ['GitHub','https://www.githubstatus.com/api/v2/summary.json'],
-      ['Vercel','https://www.vercel-status.com/api/v2/summary.json'],
-      ['OpenAI','https://status.openai.com/api/v2/summary.json'],
-      ['Discord','https://discordstatus.com/api/v2/summary.json'],
-      ['Atlassian','https://status.atlassian.com/api/v2/summary.json'],
-      ['Stripe','https://www.stripestatus.com/api/v2/summary.json'],
-      ['Zoom','https://status.zoom.us/api/v2/summary.json']
+      ['Cloudflare','/api/source-proxy?source=status-cloudflare'],
+      ['GitHub','/api/source-proxy?source=status-github'],
+      ['Vercel','/api/source-proxy?source=status-vercel'],
+      ['OpenAI','/api/source-proxy?source=status-openai'],
+      ['Discord','/api/source-proxy?source=status-discord'],
+      ['Atlassian','/api/source-proxy?source=status-atlassian'],
+      ['Stripe','/api/source-proxy?source=status-stripe'],
+      ['Zoom','/api/source-proxy?source=status-zoom']
     ];
-    const settled=await Promise.allSettled(pages.map(async ([name,url])=>[name,await fetchJson(url,8000)]));
+    const settled=await Promise.allSettled(pages.map(async ([name,url])=>[name,unwrapProxy(await fetchJson(url,9000))]));
     const ok=settled.filter(r=>r.status==='fulfilled').map(r=>r.value);
-    if(!ok.length)return unavailable('internet','Major Platform Outage Pulse','world',source,new Error('all status sources blocked or unavailable'));
+    if(!ok.length)return unavailable('internet','Major Platform Outage Pulse','world',source,new Error('all status sources unavailable'));
     let incidents=0,degraded=0,maintenance=0,indicatorScore=0,incidentProviders=0,degradedProviders=0,maintenanceProviders=0,names=[],statusMix=[];
     ok.forEach(([name,data])=>{
       const active=(data.incidents||[]).filter(i=>isActiveStatus(i.status));
@@ -492,13 +495,13 @@
   }
   function conflictFallback(reason){
     return loadConflictWikiProxy(reason).catch(()=>({
-      id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:18,status:'normal',confidence:'low',ok:true,updated:new Date().toISOString(),source:'Wikimedia public-interest proxy',
-      why:'Conflict-spillover news feed was slow, so a neutral public-interest proxy is active. This is civilian context, not tactical tracking.',
-      metrics:{'source mode':'fallback','primary feed':friendlyError(reason),'active regions':'not inferred','score mode':'neutral'}
+      id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:16,status:'normal',confidence:'low',ok:true,backup:true,displayLabel:'Context',updated:new Date().toISOString(),source:'Wikimedia public-interest backup',
+      why:'The primary conflict news feed was slow, so this card is using a low-confidence backup source. Treat it as context only, not an alert or tactical tracker.',
+      metrics:{'source mode':'backup','primary source':friendlyError(reason),'regions':'not inferred','score mode':'context only'}
     }));
   }
   async function loadConflictWikiProxy(reason){
-    const source='Wikimedia public-interest proxy';
+    const source='Wikimedia public-interest context';
     const pages=['Russo-Ukrainian_War','Israel-Hamas_war','Red_Sea_crisis','Sudanese_civil_war_(2023-present)','Civil_disorder','Travel_warning'];
     const end=new Date();end.setUTCDate(end.getUTCDate()-1);
     const start=new Date(end);start.setUTCDate(start.getUTCDate()-9);
@@ -516,14 +519,14 @@
     const topPressure=Math.max(0,top.ratio-2.4)*9;
     const broadPressure=Math.max(0,avgRatio-1.35)*12;
     const breadthPressure=elevatedRows>=3?12:elevatedRows>=2?8:elevatedRows?3:0;
-    const score=clamp(16+Math.min(20,topPressure)+Math.min(12,broadPressure)+breadthPressure);
-    const isFallbackElevated=score>=35&&elevatedRows>=1;
-    return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:level(score),confidence:'low',ok:true,updated:end.toISOString(),source,
-      why:isFallbackElevated?'Primary conflict news feed was slow; fallback pageviews show a stronger public-interest move. Treat this as context only, not tactical tracking.':'Primary conflict news feed was slow; fallback pageviews are shown as context only and do not indicate a broad spike.',
-      metrics:{'source mode':'fallback','primary feed':friendlyError(reason),'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x','breadth':elevatedRows+'/'+watchedRows+' pages >2.5x'}};
+    const rawScore=16+Math.min(20,topPressure)+Math.min(12,broadPressure)+breadthPressure;
+    const score=clamp(Math.min(24,rawScore));
+    return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:'normal',confidence:'low',ok:true,backup:true,displayLabel:'Context',updated:end.toISOString(),source:'Wikimedia pageview backup',
+      why:'The primary conflict news feed was slow, so this card is using public pageview movement as a low-confidence backup. Treat it as context only, not an alert or tactical tracker.',
+      metrics:{'source mode':'backup','primary source':friendlyError(reason),'top page':top.page.replaceAll('_',' '),'top ratio':fmt(top.ratio,2)+'x','breadth':elevatedRows+'/'+watchedRows+' watched pages'}};
   }
   async function loadConflict(){
-    const source='GDELT DOC API public news proxy';
+    const source='GDELT DOC API public news context';
     const query='(airstrike OR "missile strike" OR shelling OR "border clash" OR coup OR "civil unrest" OR "state of emergency" OR "evacuation order" OR mobilization OR "war escalation")';
     try{
       const url='https://api.gdeltproject.org/api/v2/doc/doc?query='+encodeURIComponent(query)+'&mode=ArtList&format=json&timespan=7d&maxrecords=80&sort=HybridRel';
@@ -538,8 +541,8 @@
       const regionText=regions.length?regions.slice(0,3).map(r=>r.name).join(', '):'general world feed';
       const score=clamp(10+Math.min(34,(ratio-1)*14)+Math.min(26,recentCount*.75)+Math.min(18,highTerms*2.8)+Math.min(12,Math.max(0,regions.length-1)*3));
       return {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score,status:level(score),confidence:articles.length?'medium':'low',ok:true,updated:new Date().toISOString(),source,
-        why:score>=45?'Public conflict-related coverage is elevated versus the recent baseline. Treat this as civilian context, not tactical tracking. Active regions: '+regionText+'.':'No broad conflict-spillover spike in the public news proxy right now.',
-        metrics:{'truth layer':'proxy / public news','24h articles':recentCount,'7d baseline/day':fmt(baseline,1),'coverage ratio':fmt(ratio,2)+'x','active regions':regionText}};
+        why:score>=45?'Public conflict-related coverage is elevated versus the recent baseline. Treat this as civilian context, not tactical tracking. Active regions: '+regionText+'.':'No broad conflict-spillover spike in the public news context right now.',
+        metrics:{'truth layer':'context / public news','24h articles':recentCount,'7d baseline/day':fmt(baseline,1),'coverage ratio':fmt(ratio,2)+'x','active regions':regionText}};
     }catch(err){return conflictFallback(err);}
   }
   async function loadMarkets(){
@@ -550,7 +553,7 @@
       const peg=Math.max(Math.abs((data.tether.usd||1)-1),Math.abs((data['usd-coin'].usd||1)-1));
       const score=clamp(10+Math.max(btc,eth)*7+peg*2500);
       return {id:'market',title:'Market Stress',scope:'world',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
-        why:score>=45?'Crypto volatility or stablecoin peg movement is elevated. This is a market-stress proxy, not financial advice.':'Crypto and stablecoin stress proxies are relatively calm.',
+        why:score>=45?'Crypto volatility or stablecoin peg movement is elevated. This is market-stress context, not financial advice.':'Crypto and stablecoin stress context is relatively calm.',
         metrics:{'BTC 24h move':fmt(data.bitcoin.usd_24h_change,2)+'%','ETH 24h move':fmt(data.ethereum.usd_24h_change,2)+'%','stablecoin drift':fmt(peg*100,2)+'%'}};
     }catch(err){return unavailable('market','Market Stress','world',source,err);}
   }
@@ -662,6 +665,7 @@
   }
 
   async function refreshSignals(){
+    if(window.ntSignal) window.ntSignal.start('Syncing Early Warning Radar sources');
     setPageBusy(true);
     setDisabled('refreshBtn',true);
     setText('placeLabel',cityName());
@@ -675,6 +679,7 @@
     }finally{
       setDisabled('refreshBtn',false);
       setPageBusy(false);
+      if(window.ntSignal) window.ntSignal.finish('Early Warning Radar updated');
     }
   }
   function setPageBusy(isBusy){
@@ -684,7 +689,7 @@
     if(isBusy){
       setText('heroUpdated','syncing live feeds');
       setText('heroTopSignal','Checking public sources');
-      setText('operatorNote','Live feeds are syncing. Scores appear as soon as the slowest source settles or falls back cleanly.');
+      setText('operatorNote','Live feeds are syncing. Scores appear as soon as the slowest source settles or a backup source takes over cleanly.');
     }
   }
   function seedLoading(){
@@ -708,7 +713,7 @@
       setText('localLabel','Syncing');
       setText('worldSources','syncing');
       setText('localSources','syncing');
-      setText('worldSummary','Checking public feeds. Scores will appear after sources answer or fall back.');
+      setText('worldSummary','Checking public feeds. Scores will appear after sources answer or backup data takes over.');
       setText('localSummary','For '+placeName()+': checking local feeds and browser probes.');
       setText('report','NiftyTools Early Warning Radar\n\nSyncing public sources...');
       syncRadarMeta(world,local,0,0);
@@ -732,13 +737,14 @@
     if(s.loading){
       return '<article class="signal loading" data-level="loading"><div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill">Syncing</span></div>'+
         '<div class="signal-score"><span class="spinner" aria-hidden="true"></span>--</div><div class="meter"><span></span></div>'+
-        '<p>Checking live source. This card will update when data arrives or a fallback source takes over.</p>'+
+        '<p>Checking live source. This card will update when data arrives or a backup source takes over.</p>'+
         '<div class="metric-list"><div class="metric"><span>status</span><b>syncing</b></div></div>'+
         '<div class="source">source: syncing - updated: -- - confidence: --</div></article>';
     }
-    const lvl=level(s.score);
+    const lvl=s.backup?'normal':level(s.score);
+    const cardLabel=s.displayLabel||label(s.score);
     const metrics=Object.entries(s.metrics||{}).map(([k,v])=>'<div class="metric"><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>').join('');
-    return '<article class="signal" data-level="'+lvl+'"><div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill '+lvl+'">'+esc(label(s.score))+'</span></div>'+
+    return '<article class="signal" data-level="'+lvl+'"><div class="signal-head"><h3>'+esc(s.title)+'</h3><span class="pill '+lvl+'">'+esc(cardLabel)+'</span></div>'+
       '<div class="signal-score">'+clamp(s.score)+'</div><div class="meter"><span style="width:'+clamp(s.score)+'%"></span></div>'+
       '<p>'+esc(s.why)+'</p><div class="metric-list">'+metrics+'</div>'+
       '<div class="source">source: '+esc(s.source)+' - updated: '+esc(age(s.updated))+' - confidence: '+esc(s.confidence)+'</div></article>';
@@ -807,7 +813,7 @@
       setText('heroPlace',placeName());
       setText('heroUpdated','syncing live feeds');
       setText('sourceTicker','Live sources loading');
-      setText('operatorNote','Live feeds are syncing. Scores appear as soon as sources answer or fall back cleanly.');
+      setText('operatorNote','Live feeds are syncing. Scores appear as soon as sources answer or backup data takes over cleanly.');
       const loadingMeter=$('heroPeakMeter');
       if(loadingMeter)loadingMeter.style.width='28%';
       return;
@@ -953,7 +959,7 @@
       {id:'space',title:'Space Weather',scope:'world',score:74,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: geomagnetic storm-level Kp activity.',metrics:{'max Kp next 36h':'6.7','NOAA scale':'G2'}},
       {id:'quakeWorld',title:'Global Earthquake Cluster',scope:'world',score:59,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: several M5+ earthquakes appeared in the daily feed.',metrics:{'max magnitude':'6.1','M5+ count':3}},
       {id:'internet',title:'Major Platform Outage Pulse',scope:'world',score:68,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: multiple major public status pages show active incidents or degraded components.',metrics:{'providers checked':'8/8','active incidents':2,'degraded components':4}},
-      {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:63,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: conflict-related public coverage is elevated across several regions. This is civilian context, not tactical tracking.',metrics:{'truth layer':'proxy / public news','24h articles':44,'coverage ratio':'2.6x','active regions':'Middle East, Eastern Europe'}},
+      {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:63,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: conflict-related public coverage is elevated across several regions. This is civilian context, not tactical tracking.',metrics:{'truth layer':'context / public news','24h articles':44,'coverage ratio':'2.6x','active regions':'Middle East, Eastern Europe'}},
       {id:'news',title:'News Panic Meter',scope:'world',score:57,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: public information-seeking jumped for emergency-related pages.',metrics:{'top page':'State of emergency','top ratio':'3.2x'}},
       {id:'market',title:'Market Stress',scope:'world',score:43,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: crypto volatility is elevated but stablecoins are holding.',metrics:{'BTC 24h move':'-5.7%'}},
       {id:'alerts',title:'Official Alerts',scope:'local',score:78,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: severe official alert active near the selected location.',metrics:{'active alerts':2,'top severity':'Severe','headline':'Severe thunderstorm warning'}},
@@ -1062,6 +1068,7 @@
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>

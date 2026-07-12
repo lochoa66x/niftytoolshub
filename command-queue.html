@@ -25,6 +25,7 @@ main{padding:22px 0 36px}.hero{border:1px solid rgba(70,224,122,.25);border-radi
 footer{border-top:1px solid var(--line);margin-top:28px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}@media(max-width:1180px){.templates{grid-template-columns:repeat(3,minmax(0,1fr))}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.board{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.wrap{padding:0 12px}.hero-grid,.hero-panel,.side,.field-row{grid-template-columns:1fr}.templates,.board{grid-template-columns:1fr}.lane{min-height:0}.lane-body{min-height:160px}.navlinks{display:none}.hero-actions .btn{width:100%}h1{font-size:36px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Command Queue","url":"https://niftytoolshub.com/command-queue.html","applicationCategory":"UtilitiesApplication","description":"A local-first command board for converting public signal and prepper alerts into action cards, checklists, notes and exportable reports."}</script>
+<link rel="stylesheet" href="/nt-nav.css">
 </head>
 <body>
 <header>
@@ -120,6 +121,8 @@ footer{border-top:1px solid var(--line);margin-top:28px;padding:24px 0;color:var
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script defer src="/command-queue.js"></script>
+<script src="/tools-registry.js"></script>
+<script defer src="/nt-nav.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

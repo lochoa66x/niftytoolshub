@@ -232,6 +232,9 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 180px
       throw err;
     });
   }
+  function unwrapProxy(payload){
+    return payload && payload.ok && Object.prototype.hasOwnProperty.call(payload,'data') ? payload.data : payload;
+  }
   async function probe(name, url, log){
     try{
       const data = await timeoutFetch(url, 8000);
@@ -246,8 +249,9 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 180px
   async function getOpenFdaRecalls(log){
     const start = recentDate(60);
     const end = recentDate(0);
-    const url = "https://api.fda.gov/food/enforcement.json?search=report_date:[" + start + "+TO+" + end + "]&sort=report_date:desc&limit=25";
+    const url = "/api/source-proxy?source=openfda-food&search=" + encodeURIComponent("report_date:[" + start + " TO " + end + "]") + "&limit=25";
     const res = await probe("openFDA food enforcement", url, log);
+    if (res.ok) res.data = unwrapProxy(res.data);
     if (!res.ok || !res.data || !Array.isArray(res.data.results)) return null;
     return res.data.results.map((item) => ({
       date:item.report_date || item.recall_initiation_date || "",
@@ -342,6 +346,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 180px
     ].join("\n");
   }
   async function refreshFoodWatch(manual){
+    if(window.ntSignal) window.ntSignal.start('Syncing recall and food-pressure sources');
     const mode = currentMode();
     const log = [{source:"World Bank commodity context",status:"sample",detail:"monthly data link; local commodity signal pack active"}];
     const data = {commodities:SAMPLE.commodities.slice(),recalls:SAMPLE.recalls.slice()};
@@ -352,6 +357,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 180px
       log.push({source:"Sample recall pack",status:"sample",detail:"local fallback data active"});
     }
     render(data, log);
+    if(window.ntSignal) window.ntSignal.finish('Food Watch updated');
     if (manual) track("food_watch_refresh", { mode, region:currentRegion(), category:currentCategory(), score_bucket:scoreBucket(latest.pulse.score), source_status:log.some(x => x.status === "live") ? "mixed" : "sample" });
   }
   async function copyReport(button){
@@ -463,6 +469,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 180px
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 </script>
 <script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/signal-ui.js"></script>
 <script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
 <!-- NIFTY ANALYTICS END -->
 </body>
