@@ -1,0 +1,290 @@
+/* Phase 2: library hierarchy and mission routing */
+.nt-library-orient {
+  margin: 18px 0 18px;
+  border: 1px solid rgba(70, 224, 122, 0.24);
+  border-radius: 8px;
+  background:
+    linear-gradient(rgba(70, 224, 122, 0.026) 1px, transparent 1px) 0 0 / 100% 28px,
+    linear-gradient(90deg, rgba(70, 224, 122, 0.02) 1px, transparent 1px) 0 0 / 28px 100%,
+    linear-gradient(180deg, rgba(13, 20, 13, 0.96), rgba(5, 9, 5, 0.98));
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28), inset 0 0 28px rgba(70, 224, 122, 0.035);
+  overflow: hidden;
+}
+
+.nt-library-orient * {
+  box-sizing: border-box;
+}
+
+.nt-library-orient-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid rgba(70, 224, 122, 0.14);
+}
+
+.nt-library-eyebrow {
+  color: var(--grn, #46e07a);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nt-library-orient h2 {
+  margin: 6px 0 7px;
+  color: var(--txt, #e4eee1);
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.04;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.nt-library-orient p {
+  margin: 0;
+  color: var(--dim, #aab7a6);
+  max-width: 720px;
+}
+
+.nt-library-count {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(70, 224, 122, 0.26);
+  border-radius: 999px;
+  padding: 0 13px;
+  color: var(--grn, #46e07a);
+  background: rgba(4, 10, 5, 0.78);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.nt-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px;
+}
+
+.nt-mission-card {
+  min-height: 154px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid rgba(70, 224, 122, 0.18);
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(11, 17, 11, 0.95), rgba(5, 8, 5, 0.98));
+  color: inherit;
+  padding: 14px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.nt-mission-card::after {
+  content: "";
+  position: absolute;
+  right: -34px;
+  bottom: -44px;
+  width: 116px;
+  height: 96px;
+  background: radial-gradient(circle, rgba(70, 224, 122, 0.13), transparent 66%);
+  pointer-events: none;
+}
+
+.nt-mission-card:hover,
+.nt-mission-card:focus-visible,
+.nt-mission-card.is-active {
+  border-color: var(--grn, #46e07a);
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(70, 224, 122, 0.25), 0 0 22px rgba(70, 224, 122, 0.08);
+}
+
+.nt-mission-card.is-active {
+  background: linear-gradient(180deg, rgba(18, 39, 22, 0.9), rgba(5, 12, 7, 0.98));
+}
+
+.nt-mission-kicker {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--mut, #82907d);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.nt-mission-kicker b {
+  color: var(--grn, #46e07a);
+}
+
+.nt-mission-title {
+  display: block;
+  color: var(--txt, #e4eee1);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.nt-mission-title::before {
+  content: "> ";
+  color: var(--grn, #46e07a);
+}
+
+.nt-mission-desc {
+  display: block;
+  margin-top: 8px;
+  color: var(--dim, #aab7a6);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.nt-mission-action {
+  color: var(--grn, #46e07a);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.nt-starter-rail {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.nt-starter-copy {
+  border: 1px solid rgba(70, 224, 122, 0.14);
+  border-radius: 7px;
+  padding: 14px;
+  background: rgba(3, 9, 4, 0.56);
+}
+
+.nt-starter-copy strong {
+  display: block;
+  color: var(--txt, #e4eee1);
+  margin-bottom: 6px;
+}
+
+.nt-starter-copy span {
+  color: var(--mut, #82907d);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.nt-starter-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nt-starter-link {
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(70, 224, 122, 0.17);
+  border-radius: 7px;
+  padding: 10px;
+  background: rgba(5, 10, 6, 0.72);
+  color: var(--txt, #e4eee1);
+  text-decoration: none;
+}
+
+.nt-starter-link:hover,
+.nt-starter-link:focus-visible {
+  border-color: var(--grn, #46e07a);
+  color: var(--grn, #46e07a);
+  outline: none;
+}
+
+.nt-starter-link small {
+  color: var(--mut, #82907d);
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.filters.nt-phase2-filters {
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(70, 224, 122, 0.16);
+  border-radius: 7px;
+  background: rgba(4, 10, 5, 0.45);
+}
+
+.filters.nt-phase2-filters::before {
+  content: "Quick filters";
+  color: var(--mut, #82907d);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
+.filters.nt-phase2-filters .chip {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.filters.nt-phase2-filters .chip b {
+  min-width: 22px;
+  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(70, 224, 122, 0.11);
+  color: currentColor;
+  font-size: 10px;
+}
+
+.tool-library .tool.nt-priority-tool {
+  border-color: rgba(70, 224, 122, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(70, 224, 122, 0.1);
+}
+
+.tool-library .tool.nt-priority-tool h3::after {
+  content: " flagship";
+  display: inline-flex;
+  margin-left: 8px;
+  color: var(--grn, #46e07a);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tool-library .grid.nt-grid-has-filter .tool.hidden {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .nt-mission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nt-starter-rail {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .nt-library-orient-head {
+    grid-template-columns: 1fr;
+    padding: 18px 16px 12px;
+  }
+
+  .nt-mission-grid,
+  .nt-starter-links {
+    grid-template-columns: 1fr;
+  }
+
+  .nt-mission-card {
+    min-height: 128px;
+  }
+}
