@@ -21,10 +21,10 @@
     },
     {
       id: "market",
-      title: "Markets",
+      title: "Market Signals",
       filter: "market",
-      label: "Market pulse",
-      description: "Crypto, positioning, volume leaders, salary and finance context."
+      label: "Markets + crypto",
+      description: "Crypto Pulse, Volume Pulse, Positioning Radar, salary and finance context."
     },
     {
       id: "utility",
@@ -107,13 +107,22 @@
     });
   }
 
+  const FILTER_LABELS = {
+    all: "all tools",
+    market: "Market Signals lane",
+    signal: "Command Center lane",
+    prepper: "Prepper lane",
+    utility: "Work Tools lane",
+    fun: "Fun Lab lane"
+  };
+
   function syncCount() {
     const box = document.getElementById("ntLibraryCount");
     if (!box) return;
     const total = cards().length;
     const visible = visibleCount();
     const filter = activeFilter();
-    const label = filter === "all" ? "all tools" : `${filter} lane`;
+    const label = FILTER_LABELS[filter] || `${filter} lane`;
     box.textContent = `${visible}/${total} showing · ${label}`;
     setActiveMission();
   }

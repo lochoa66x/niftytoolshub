@@ -363,7 +363,7 @@
     <div class="chip" data-f="screen" onclick="filter(this)">Screen</div>
     <div class="chip" data-f="monitor" onclick="filter(this)">Monitoring</div>
     <div class="chip" data-f="signal" onclick="filter(this)">Signals</div>
-    <div class="chip" data-f="market" onclick="filter(this)">Markets</div>
+    <div class="chip" data-f="market" onclick="filter(this)">Market Signals</div>
     <div class="chip" data-f="prepper" onclick="filter(this)">Preparedness</div>
     <div class="chip" data-f="utility" onclick="filter(this)">Utilities</div>
   </div>
@@ -935,7 +935,7 @@ A- 3</textarea></div>
   const root = document.getElementById("hubLauncher");
   if(!registry || !root) return;
   const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
-  root.innerHTML = registry.hubs.map(hub => {
+  root.innerHTML = registry.hubs.filter(hub => hub.id !== "markets").map(hub => {
     const count = registry.byHub(hub.id).length;
     return `
       <a class="hub-tile" href="${esc(hub.url)}" data-library-hub="${esc(hub.id)}">

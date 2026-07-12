@@ -31,9 +31,9 @@
     },
     {
       id: "markets",
-      name: "Markets",
+      name: "Market Signals",
       url: "/library.html?filter=market",
-      label: "Live + delayed",
+      label: "Market lane",
       description: "Crypto networks, volume leaders, long/short positioning, salary and finance calculators.",
       icon: "MKT"
     },

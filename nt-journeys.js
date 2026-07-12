@@ -158,7 +158,7 @@
       actions: [
         ["Positioning", "/positioning-radar.html", "Open crowding read."],
         ["Crypto Pulse", "/crypto-pulse.html", "Check chain pressure."],
-        ["Market Library", "/library.html?filter=market", "See all market tools."]
+        ["Market Signals", "/library.html?filter=market", "See all market tools."]
       ]
     },
     "/positioning-radar.html": {
@@ -167,7 +167,7 @@
       actions: [
         ["Volume Pulse", "/market-volume-pulse.html", "Check current participation."],
         ["Crypto Pulse", "/crypto-pulse.html", "Check BTC/ETH stress."],
-        ["Market Library", "/library.html?filter=market", "Open market lane."]
+        ["Market Signals", "/library.html?filter=market", "Open market lane."]
       ]
     },
     "/prepper-command.html": {
