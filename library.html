@@ -300,6 +300,19 @@
   /* NT LIBRARY ICON UPGRADE END */
 
 </style>
+<style>
+.hub-launcher{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:16px 0 8px}
+.hub-tile{position:relative;min-height:132px;border:1px solid var(--line);border-radius:6px;background:linear-gradient(180deg,rgba(13,18,13,.96),rgba(7,10,7,.98));padding:14px;overflow:hidden}
+.hub-tile:hover{border-color:var(--grnsoft);box-shadow:0 0 0 1px rgba(70,224,122,.25),0 0 20px rgba(70,224,122,.1);text-decoration:none}
+.hub-tile::after{content:"";position:absolute;right:-38px;bottom:-50px;width:120px;height:100px;background:radial-gradient(circle,rgba(70,224,122,.13),transparent 64%)}
+.hub-tile small{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--dim);font-size:10.5px;text-transform:uppercase;margin-bottom:12px}
+.hub-tile small b{color:var(--grn);font-size:13px}
+.hub-tile strong{display:block;color:var(--txt);font-size:13.5px;margin-bottom:8px}
+.hub-tile strong::before{content:"> ";color:var(--grn)}
+.hub-tile span{display:block;color:var(--dim);font-size:11.5px;line-height:1.45}
+@media(max-width:980px){.hub-launcher{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.hub-launcher{grid-template-columns:1fr}}
+</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"NiftyTools Hub Secondary Tool Library","url":"https://niftytoolshub.com/library.html","description":"A searchable library of NiftyTools Hub calculators, converters, tests, file tools, signal dashboards and playful utilities."}</script>
 </head>
 <body>
@@ -346,9 +359,12 @@
     <div class="chip" data-f="screen" onclick="filter(this)">Screen</div>
     <div class="chip" data-f="monitor" onclick="filter(this)">Monitoring</div>
     <div class="chip" data-f="signal" onclick="filter(this)">Signals</div>
+    <div class="chip" data-f="market" onclick="filter(this)">Markets</div>
     <div class="chip" data-f="prepper" onclick="filter(this)">Preparedness</div>
     <div class="chip" data-f="utility" onclick="filter(this)">Utilities</div>
   </div>
+
+  <div class="hub-launcher" id="hubLauncher" aria-label="Tool hubs"></div>
 
   <div class="grid" id="grid">
 
@@ -363,6 +379,13 @@
     <div class="tool" data-tags="free utility monitor signal premium pro alert watchlist saved locations thresholds briefing history" data-name="signal suite pro lite premium saved locations watchlists alert thresholds daily briefing history email sms webhook workspace" onclick="location.href='/signal-suite-pro.html'">
       <span class="badge free">Beta</span><div class="ico">PRO</div>
       <h3>Signal Suite Pro Lite</h3><p>Premium workspace for saved locations, watchlists, alert thresholds, event history and daily briefings.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+
+    <!-- Command Queue -->
+    <div class="tool" data-tags="free utility monitor signal prepper preparedness workflow command queue actions checklist audit timeline local" data-name="command queue action board signal to action workflow monitor prep investigate resolved audit log checklist report export local" onclick="location.href='/command-queue.html'">
+      <span class="badge free">Free</span><div class="ico">CMD</div>
+      <h3>Command Queue</h3><p>Turn radar signals and prepper checks into local action cards, checklists, notes and an audit timeline.</p>
       <div class="open">Open full tool -></div>
     </div>
 
@@ -900,6 +923,30 @@ A- 3</textarea></div>
 <footer>
   <div class="wrap">© 2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div>
 </footer>
+
+<script src="/tools-registry.js"></script>
+<script>
+(function(){
+  const registry = window.NIFTY_TOOLS_REGISTRY;
+  const root = document.getElementById("hubLauncher");
+  if(!registry || !root) return;
+  const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
+  root.innerHTML = registry.hubs.map(hub => {
+    const count = registry.byHub(hub.id).length;
+    return `
+      <a class="hub-tile" href="${esc(hub.url)}" data-library-hub="${esc(hub.id)}">
+        <small>${esc(hub.label)} <b>${count}</b></small>
+        <strong>${esc(hub.name)}</strong>
+        <span>${esc(hub.description)}</span>
+      </a>
+    `;
+  }).join("");
+  document.addEventListener("click", event => {
+    const hub = event.target.closest("[data-library-hub]");
+    if(hub && window.ntTrack) window.ntTrack("hub_open", {hub: hub.dataset.libraryHub, surface: "library_hub_launcher"});
+  }, true);
+})();
+</script>
 
 <!-- Dead pixel screen -->
 <div id="pixel" onclick="closePixel()"><div class="hint">Click anywhere to exit · look for spots that don't turn white</div>

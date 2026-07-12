@@ -47,6 +47,7 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
         <div class="actions">
           <a class="btn" href="/signal-watch.html" data-suite-link="signal-watch">Open Early Warning Radar</a>
           <a class="btn ghost" href="/personal-risk.html">Personal Risk Briefing</a>
+          <a class="btn ghost" href="/command-queue.html">Command Queue</a>
           <a class="btn ghost" href="/signal-suite-pro.html">Signal Suite Pro Lite</a>
           <a class="btn ghost" href="/prepper-risk.html">Prepper Risk Scanner</a>
           <a class="btn ghost" href="/prepper-command.html">Prepper Command</a>
@@ -95,9 +96,10 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
 
 <footer><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
 
+<script src="/tools-registry.js"></script>
 <script>
 (function(){
-  const TOOLS=[
+  const FALLBACK_TOOLS=[
     {slug:"signal-watch",name:"Early Warning Radar",lane:"global + local anomaly",truth:"mixed",group:["global","local","prepper"],watches:"Space weather, major earthquakes, internet status, conflict spillover, news panic, market stress, wildfire/air quality.",best:"Morning situational read and weird-day dashboard.",score:77},
     {slug:"personal-risk",name:"Personal Risk Briefing",lane:"daily personal command brief",truth:"mixed",group:["global","local","prepper","internet","market"],watches:"Weather, air/smoke, nearby quakes, outages, food recalls, market stress, cyber pressure and conflict/news context.",best:"A one-page daily read that turns the signal stack into an action queue.",score:81},
     {slug:"prepper-risk",name:"Prepper Risk Scanner",lane:"local risk to checklist",truth:"mixed",group:["prepper","local"],watches:"Official alerts where available, weather friction, air/smoke, nearby quakes, local internet probes and travel friction.",best:"Turning today's local conditions into a practical Prep Today checklist.",score:74},
@@ -112,6 +114,46 @@ main{padding:24px 0 36px}.hero{position:relative;border:1px solid rgba(70,224,12
     {slug:"market-volume-pulse",name:"Market Volume Pulse",lane:"market activity",truth:"delayed",group:["market"],watches:"Volume leaders, unusual activity and broad market participation.",best:"Seeing where attention/liquidity is concentrating.",score:57},
     {slug:"positioning-radar",name:"Market Positioning Radar",lane:"long/short crowding",truth:"delayed",group:["market"],watches:"CFTC weekly, FINRA proxy, OKX fallback and crowded long/short lanes.",best:"Crowding context for SPY/QQQ/BTC/ETH/gold/oil/coffee.",score:69}
   ];
+  const registry = window.NIFTY_TOOLS_REGISTRY;
+  const signalSlugs = new Set([
+    "signal-watch",
+    "personal-risk",
+    "command-queue",
+    "signal-suite-pro",
+    "prepper-risk",
+    "prepper-command",
+    "prepper-tools",
+    "aurora-watch",
+    "outage-radar",
+    "cyber-threat",
+    "food-watch",
+    "meme-watch",
+    "crypto-pulse",
+    "market-volume-pulse",
+    "positioning-radar"
+  ]);
+  function fromRegistry(tool){
+    const tags = Array.isArray(tool.tags) ? tool.tags : [];
+    const groups = new Set(tool.hubs || [tool.hub]);
+    if(groups.has("markets")) groups.add("market");
+    if(tags.some(tag => /prepper|preparedness|risk|weather|air|smoke|local/.test(tag))) groups.add("local");
+    if(tags.some(tag => /signal|radar|aurora|space weather|earthquake|conflict|food|meme|market/.test(tag))) groups.add("global");
+    if(tags.some(tag => /internet|outage|cloud|carrier|cyber|crypto|bitcoin|ethereum/.test(tag))) groups.add("internet");
+    if(tags.some(tag => /prepper|preparedness|checklist|water|food|power/.test(tag))) groups.add("prepper");
+    return {
+      slug: tool.slug,
+      name: tool.name,
+      lane: tool.lane || tool.category || "signal tool",
+      truth: tool.sourceTruth || tool.status || "mixed",
+      group: Array.from(groups),
+      watches: tool.description,
+      best: tool.best || tool.description,
+      score: tool.priority || 60
+    };
+  }
+  const TOOLS = registry
+    ? registry.all().filter(tool => signalSlugs.has(tool.slug)).map(fromRegistry)
+    : FALLBACK_TOOLS;
   const STACK=[
     ["global risk",72],["local risk",48],["internet risk",68],["market stress",62],["food/prepper",55]
   ];

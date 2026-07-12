@@ -10,6 +10,7 @@
     "signal-watch": "Early Warning Radar",
     "signal-suite": "Signal Suite Hub",
     "signal-suite-pro": "Signal Suite Pro Lite",
+    "command-queue": "Command Queue",
     "personal-risk": "Personal Risk Briefing",
     "aurora-watch": "Aurora Watch",
     "outage-radar": "Outage Radar",
@@ -58,6 +59,13 @@
       truth: "local",
       read: "Local saved-location, watchlist, threshold and briefing workflow before backend delivery",
       sources: "localStorage workspace, future auth/storage/notification backend"
+    },
+    "command-queue": {
+      name: "Command Queue",
+      lane: "signal to action workflow",
+      truth: "local",
+      read: "Local action board for turning signal and prepper checks into tasks, checklists, notes, evidence links and audit timeline",
+      sources: "localStorage command queue and user-created action cards"
     },
     "personal-risk": {
       name: "Personal Risk Briefing",
