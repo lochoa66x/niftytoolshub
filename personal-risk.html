@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Risk Briefing - daily signal report | NiftyTools Hub</title>
+<meta name="description" content="Generate a personal daily risk briefing for a location using weather, air quality, earthquakes, outages, food recalls, cyber, market and conflict/news context.">
+<meta property="og:title" content="Personal Risk Briefing - NiftyTools Hub">
+<meta property="og:description" content="A calm daily command brief that turns public signals into a practical action queue for your place.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://niftytoolshub.com/personal-risk.html">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#071007">
+<link rel="canonical" href="https://niftytoolshub.com/personal-risk.html">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
+:root{--bg:#071007;--panel:#0d140d;--txt:#dfeadf;--mut:#87957f;--dim:#adbaa6;--line:#1e3121;--line2:#29402d;--grn:#46e07a;--cyan:#63e6ff;--amber:#ffbd5b;--red:#ff6572;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--mono);font-size:14px;line-height:1.55;color:var(--txt);background:linear-gradient(rgba(70,224,122,.025) 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,rgba(70,224,122,.02) 1px,transparent 1px) 0 0/32px 100%,radial-gradient(880px 520px at 78% -12%,rgba(99,230,255,.08),transparent 62%),radial-gradient(600px 430px at 8% 4%,rgba(70,224,122,.08),transparent 62%),var(--bg);-webkit-font-smoothing:antialiased}
+body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px);opacity:.34}a{color:inherit;text-decoration:none}button,input,select{font:inherit}.wrap{max-width:1240px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(7,16,7,.88);backdrop-filter:blur(8px)}.nav{height:58px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{display:flex;align-items:center;gap:10px;font-weight:800}.mk{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--grn);color:var(--grn);box-shadow:0 0 18px rgba(70,224,122,.2)}.mk:before{content:"NT";font-size:11px}.navlinks{display:flex;gap:14px;color:var(--mut);font-size:13px}.navlinks a:hover{color:var(--grn)}
+main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-radius:8px;background:linear-gradient(180deg,rgba(13,20,13,.97),rgba(4,8,4,.99));box-shadow:0 0 44px rgba(70,224,122,.08),inset 0 0 30px rgba(70,224,122,.04);overflow:hidden}.bar-top{height:34px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:#0d130d;padding:0 14px;color:var(--mut);font-size:12px}.lights{display:flex;gap:5px}.lights i{width:9px;height:9px;border-radius:50%;background:var(--grn);box-shadow:0 0 10px rgba(70,224,122,.5)}.lights i:nth-child(2){background:var(--amber)}.lights i:nth-child(3){background:var(--cyan)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:20px;padding:22px}.eyebrow{margin:0 0 8px;color:var(--grn);font-size:12px;text-transform:uppercase;letter-spacing:1.5px}h1{font-size:clamp(34px,5.6vw,64px);line-height:1.02;margin:0 0 12px;text-transform:uppercase;text-shadow:0 0 22px rgba(70,224,122,.16)}h1 span{color:var(--grn)}.lead{max-width:790px;margin:0 0 17px;color:var(--dim);font-size:15px}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{min-height:39px;border:1px solid var(--grn);border-radius:5px;background:rgba(3,8,4,.75);color:var(--grn);font-weight:800;padding:8px 13px;cursor:pointer;transition:.15s;white-space:nowrap}.btn:hover:not(:disabled){background:var(--grn);color:#06120a}.btn.ghost{border-color:var(--line2);color:var(--txt)}.btn.ghost:hover:not(:disabled){background:transparent;border-color:var(--grn);color:var(--grn)}.btn:disabled{opacity:.58;cursor:wait}.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid rgba(99,230,255,.75);outline-offset:2px}
+.score-card{border:1px solid rgba(70,224,122,.24);border-radius:7px;background:radial-gradient(circle at 74% 12%,rgba(99,230,255,.08),transparent 38%),rgba(3,8,4,.78);padding:15px}.score-card small{display:block;color:var(--mut);text-transform:uppercase;letter-spacing:.7px}.score-row{display:flex;align-items:flex-end;gap:10px;margin:9px 0}.score-row b{font-size:58px;line-height:.92;color:var(--grn)}.score-row span{margin-bottom:7px;color:var(--mut)}.meter{height:10px;border:1px solid rgba(70,224,122,.24);background:#020602;border-radius:20px;overflow:hidden}.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red));transition:width .25s}.state{margin-top:10px;color:var(--dim);font-weight:800}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mini{border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(4,9,4,.72);padding:9px}.mini span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.mini b{display:block;margin-top:3px;color:var(--txt);font-size:16px}
+.controls{display:grid;grid-template-columns:190px 1fr 106px 106px 98px 116px auto;align-items:end;gap:9px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(3,8,4,.55);padding:12px 22px}.field label{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;margin-bottom:5px}input,select{width:100%;min-width:0;border:1px solid var(--line);border-radius:5px;background:rgba(3,8,4,.88);color:var(--txt);padding:9px 10px;outline:0;caret-color:var(--grn)}input:focus,select:focus{border-color:var(--grn)}
+.status-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:16px 22px 0}.truth{border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(3,8,4,.72);padding:9px 10px;min-height:62px}.truth span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.truth b{display:block;margin-top:4px;font-size:13px}.truth.official b,.truth.live b{color:var(--grn)}.truth.context b{color:var(--amber)}.truth.backup b{color:var(--cyan)}.truth.unavailable b{color:var(--red)}
+.content{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:14px;padding:16px 22px 22px}.panel{border:1px solid rgba(70,224,122,.2);border-radius:7px;background:linear-gradient(180deg,rgba(12,19,12,.96),rgba(4,8,4,.98));box-shadow:0 0 26px rgba(70,224,122,.045),inset 0 0 24px rgba(70,224,122,.025);padding:14px;overflow:hidden}.panel h2{margin:0 0 10px;font-size:15px;text-transform:uppercase}.panel h2:before{content:"// ";color:var(--grn)}.help{margin:-5px 0 12px;color:var(--mut);font-size:12px}.brief-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.module{border:1px solid rgba(223,234,223,.1);border-radius:7px;background:linear-gradient(180deg,rgba(6,12,7,.86),rgba(2,7,4,.9));padding:11px;min-height:170px}.module-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.module h3{margin:0;color:var(--txt);font-size:14px}.module .num{font-size:28px;font-weight:800;line-height:1;color:var(--txt)}.module p{margin:9px 0;color:var(--dim);font-size:12px}.module small{display:block;color:var(--mut);font-size:10.5px;margin-top:4px}.tag{display:inline-flex;align-items:center;border:1px solid rgba(70,224,122,.28);border-radius:999px;padding:3px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}.tag.live,.tag.official{border-color:rgba(70,224,122,.32);color:var(--grn)}.tag.context{border-color:rgba(255,189,91,.34);color:var(--amber)}.tag.backup{border-color:rgba(99,230,255,.34);color:var(--cyan)}.tag.unavailable{border-color:rgba(255,101,114,.34);color:var(--red)}.spark{height:7px;border:1px solid rgba(70,224,122,.24);background:#010502;border-radius:20px;overflow:hidden}.spark i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber),var(--red))}
+.side{display:grid;gap:14px}.profile{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile div,.brief-box,.action-item{border:1px solid rgba(223,234,223,.1);border-radius:5px;background:rgba(4,9,5,.72);padding:9px}.profile span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.profile b{display:block;margin-top:3px}.brief-box{white-space:pre-wrap;color:var(--dim);font-size:12px;min-height:220px}.action-list{display:grid;gap:7px}.action-item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;color:var(--dim);font-size:12px}.action-item input{width:auto;margin-top:3px;accent-color:var(--grn)}.action-item b{display:block;color:var(--txt);font-size:12px}.action-item i{font-style:normal;color:var(--amber);font-size:10px;text-transform:uppercase}.loading .module{position:relative;color:transparent}.loading .module:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(70,224,122,.08),transparent);animation:shimmer 1.2s infinite}@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(70,224,122,.25);border-top-color:var(--grn);border-radius:50%;vertical-align:-2px;margin-right:6px;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.footer{border-top:1px solid var(--line);margin-top:28px;padding:22px 0;color:var(--mut);font-size:12px;text-align:center}
+@media(max-width:1120px){.controls{grid-template-columns:1fr 1fr 1fr}.controls .btn{grid-column:1/-1}.hero,.content{grid-template-columns:1fr}.status-strip{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:720px){.wrap{padding:0 12px}.hero,.controls,.content,.status-strip{padding-left:14px;padding-right:14px}.controls,.brief-grid,.profile,.status-strip{grid-template-columns:1fr}.navlinks{display:none}.actions .btn{width:100%}.score-row b{font-size:48px}}
+@media print{header,.bar-top,.controls,.actions,.btn,body:after{display:none!important}body{background:#fff;color:#111;font-family:Arial,sans-serif}.wrap{max-width:none}.shell,.panel,.module,.score-card{border:1px solid #aaa;box-shadow:none;background:#fff;color:#111}.hero,.content{grid-template-columns:1fr;padding:12px}.brief-box{color:#111;background:#fff;border-color:#aaa}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Personal Risk Briefing","url":"https://niftytoolshub.com/personal-risk.html","applicationCategory":"UtilityApplication","operatingSystem":"Any","description":"A daily risk briefing tool that combines public weather, air, earthquake, outage, recall, market, cyber and conflict/news signals for a selected place.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
+    <nav class="navlinks">
+      <a href="/signal-suite.html">signal suite</a>
+      <a href="/prepper-risk.html">prepper risk</a>
+      <a href="/prepper-command.html">prepper command</a>
+      <a href="/library.html">library</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="shell">
+    <div class="bar-top"><span class="lights"><i></i><i></i><i></i></span> niftytoolshub: ~/personal-risk-briefing</div>
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Daily command brief</p>
+        <h1>Personal <span>Risk Briefing</span></h1>
+        <p class="lead">// One personal read for your place: weather, air, nearby quakes, internet outages, food recalls, market stress, cyber pressure and conflict/news context. It outputs a practical action queue, not panic noise.</p>
+        <div class="actions">
+          <button class="btn" id="scanBtn" type="button">Run briefing</button>
+          <button class="btn ghost" id="copyBtn" type="button">Copy brief</button>
+          <button class="btn ghost" id="exportBtn" type="button">Export JSON</button>
+          <button class="btn ghost" type="button" onclick="window.print()">Print</button>
+        </div>
+      </div>
+      <aside class="score-card">
+        <small>personal risk</small>
+        <div class="score-row"><b id="riskScore">--</b><span>/100</span></div>
+        <div class="meter"><i id="riskMeter"></i></div>
+        <div class="state" id="riskState">waiting for scan</div>
+        <div class="mini-grid">
+          <div class="mini"><span>top signal</span><b id="topSignal">--</b></div>
+          <div class="mini"><span>source health</span><b id="sourceHealth">--</b></div>
+          <div class="mini"><span>place</span><b id="placeRead">--</b></div>
+          <div class="mini"><span>updated</span><b id="updatedRead">--</b></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="controls">
+      <div class="field"><label for="place">Place preset</label><select id="place"></select></div>
+      <div class="field"><label for="label">Briefing label</label><input id="label" value="Toronto home base"></div>
+      <div class="field"><label for="lat">Latitude</label><input id="lat" type="number" step="0.0001"></div>
+      <div class="field"><label for="lon">Longitude</label><input id="lon" type="number" step="0.0001"></div>
+      <div class="field"><label for="people">People</label><input id="people" type="number" min="1" value="2"></div>
+      <div class="field"><label for="mode">Mode</label><select id="mode"><option value="home">home</option><option value="commute">commute</option><option value="travel">travel</option><option value="family">family check</option></select></div>
+      <button class="btn" id="profileBtn" type="button">Save + scan</button>
+    </div>
+
+    <div class="status-strip" id="truthStrip" aria-label="Source truth labels"></div>
+
+    <div class="content">
+      <section class="panel">
+        <h2>Signal lanes</h2>
+        <p class="help">Live and official sources are best. Context and backup rows are useful but should be read as directional, not tactical.</p>
+        <div class="brief-grid" id="laneGrid"></div>
+      </section>
+      <aside class="side">
+        <section class="panel">
+          <h2>Saved profile</h2>
+          <div class="profile">
+            <div><span>label</span><b id="profileLabel">--</b></div>
+            <div><span>mode</span><b id="profileMode">--</b></div>
+            <div><span>household</span><b id="profilePeople">--</b></div>
+            <div><span>coordinates</span><b id="profileCoords">--</b></div>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>Action queue</h2>
+          <p class="help">Checklist is generated from the highest signals and saved locally.</p>
+          <div class="action-list" id="actionList"></div>
+        </section>
+        <section class="panel">
+          <h2>Readable brief</h2>
+          <div class="brief-box" id="briefBox">Run a briefing to generate a personal daily read.</div>
+        </section>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer"><div class="wrap">2026 NiftyTools Hub - a Voynich Tech project - niftytoolshub.com</div></footer>
+
+<script>
+(function(){
+  const STORE="nifty_personal_risk_profile";
+  const CHECKS="nifty_personal_risk_checks";
+  const PLACES={
+    toronto:["Toronto, Canada",43.6532,-79.3832,"Canada","YYZ"],
+    montreal:["Montreal, Canada",45.5017,-73.5673,"Canada","YUL"],
+    vancouver:["Vancouver, Canada",49.2827,-123.1207,"Canada","YVR"],
+    nyc:["New York, USA",40.7128,-74.0060,"USA","JFK"],
+    la:["Los Angeles, USA",34.0522,-118.2437,"USA","LAX"],
+    miami:["Miami, USA",25.7617,-80.1918,"USA","MIA"],
+    mexico:["Mexico City, Mexico",19.4326,-99.1332,"Mexico","MEX"],
+    london:["London, UK",51.5072,-0.1276,"UK","LHR"],
+    madrid:["Madrid, Spain",40.4168,-3.7038,"Spain","MAD"],
+    manual:["Manual location",43.6532,-79.3832,"Manual","--"]
+  };
+  const WEIGHTS={weather:1.1,air:1,quake:.82,outage:.95,food:.75,market:.7,cyber:.8,conflict:.72};
+  const $=id=>document.getElementById(id);
+  let lanes=[],actions=[];
+
+  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));}
+  function clamp(n,min=0,max=100){return Math.max(min,Math.min(max,Math.round(Number(n)||0)));}
+  function fmt(n,d=1){return Number.isFinite(Number(n))?Number(n).toFixed(d):"--";}
+  function nowTime(){return new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});}
+  function level(score){return score>=80?"act":score>=58?"prep":score>=32?"watch":"quiet";}
+  function prettyLevel(score){const v=level(score);return v.charAt(0).toUpperCase()+v.slice(1);}
+  function tagClass(source){return source==="official"?"official":source==="live"?"live":source==="context"?"context":source==="backup"?"backup":"unavailable";}
+  function track(name,props){try{if(window.ntTrack)window.ntTrack(name,Object.assign({tool:"Personal Risk Briefing"},props||{}));}catch(_err){}}
+  async function fetchJson(url,timeout=10000){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),timeout);
+    try{
+      const res=await fetch(url,{signal:controller.signal,cache:"no-store"});
+      clearTimeout(timer);
+      if(!res.ok)throw new Error("HTTP "+res.status);
+      return await res.json();
+    }catch(err){clearTimeout(timer);throw err;}
+  }
+  function sourceProxy(source,params){
+    const query=new URLSearchParams(Object.assign({source},params||{}));
+    return fetchJson("/api/source-proxy?"+query.toString(),11000);
+  }
+  function fallback(id,title,source,error,score){
+    return {id,title,score:score==null?12:score,source:source||"unavailable",ok:false,summary:"Source unavailable or blocked. This lane is neutral until the feed answers.",detail:error&&error.message?error.message:"request failed",metrics:["status: neutral fallback"]};
+  }
+  function profile(){
+    const preset=PLACES[$("place").value]||PLACES.toronto;
+    return {
+      preset:$("place").value||"toronto",
+      label:$("label").value.trim()||preset[0],
+      lat:Number($("lat").value)||preset[1],
+      lon:Number($("lon").value)||preset[2],
+      country:preset[3],
+      airport:preset[4],
+      people:Math.max(1,Number($("people").value)||1),
+      mode:$("mode").value||"home"
+    };
+  }
+  function saveProfile(){try{localStorage.setItem(STORE,JSON.stringify(profile()));}catch(_err){}}
+  function loadProfile(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(STORE)||"null");
+      if(saved&&saved.preset&&PLACES[saved.preset]){$("place").value=saved.preset;applyPreset(false);$("label").value=saved.label||PLACES[saved.preset][0];$("lat").value=saved.lat;$("lon").value=saved.lon;$("people").value=saved.people||2;$("mode").value=saved.mode||"home";return;}
+    }catch(_err){}
+    $("place").value="toronto";applyPreset(true);
+  }
+  function applyPreset(setLabel){
+    const p=PLACES[$("place").value]||PLACES.toronto;
+    $("lat").value=p[1];$("lon").value=p[2];
+    if(setLabel!==false)$("label").value=$("place").value==="manual"?"Manual location":p[0]+" home base";
+  }
+  function initPlaces(){
+    $("place").innerHTML=Object.keys(PLACES).map(key=>'<option value="'+key+'">'+esc(PLACES[key][0])+'</option>').join("");
+    loadProfile();
+  }
+  function isLikelyUS(p){return p.lat>=18&&p.lat<=72&&p.lon>=-170&&p.lon<=-65;}
+  function distance(lat1,lon1,lat2,lon2){
+    const R=6371,toRad=x=>x*Math.PI/180,dLat=toRad(lat2-lat1),dLon=toRad(lon2-lon1);
+    const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  }
+  async function loadWeather(p){
+    try{
+      const data=await fetchJson("https://api.open-meteo.com/v1/forecast?latitude="+p.lat+"&longitude="+p.lon+"&hourly=temperature_2m,precipitation_probability,wind_gusts_10m,weather_code,visibility&forecast_hours=24&timezone=auto",9000);
+      const h=data.hourly||{},temps=(h.temperature_2m||[]).map(Number).filter(Number.isFinite);
+      const precip=Math.max(0,...(h.precipitation_probability||[]).map(Number)),gust=Math.max(0,...(h.wind_gusts_10m||[]).map(Number));
+      const rough=(h.weather_code||[]).map(Number).filter(c=>c===45||c===48||c>=61||c>=95).length;
+      const minT=temps.length?Math.min(...temps):0,maxT=temps.length?Math.max(...temps):0;
+      const tempRisk=maxT>=34?18:minT<=-15?18:maxT>=30||minT<=-8?10:0;
+      const score=clamp(10+precip*.35+Math.max(0,gust-38)*1.05+rough*5+tempRisk);
+      return {id:"weather",title:"Weather",score,source:"live",ok:true,summary:score>=58?"Weather may disrupt comfort, movement or plans today.":"Weather looks manageable in the next 24 hours.",detail:"Open-Meteo forecast",metrics:["precip max: "+fmt(precip,0)+"%","gust max: "+fmt(gust,0)+" km/h","temp: "+fmt(minT,0)+" to "+fmt(maxT,0)+" C"]};
+    }catch(err){return fallback("weather","Weather","live",err);}
+  }
+  async function loadAir(p){
+    try{
+      const data=await fetchJson("https://air-quality-api.open-meteo.com/v1/air-quality?latitude="+p.lat+"&longitude="+p.lon+"&current=us_aqi,pm2_5,pm10",9000);
+      const c=data.current||{},aqi=Number(c.us_aqi)||0;
+      const score=aqi>=200?92:aqi>=150?76:aqi>=100?58:aqi>=50?34:12;
+      return {id:"air",title:"Air / Smoke",score,source:"live",ok:true,summary:aqi>=100?"Air quality is unhealthy or close enough to adjust outdoor plans.":"Air quality is good-to-moderate.",detail:"Open-Meteo air quality",metrics:["AQI: "+aqi,"PM2.5: "+fmt(c.pm2_5,1),"PM10: "+fmt(c.pm10,1)]};
+    }catch(err){return fallback("air","Air / Smoke","live",err);}
+  }
+  async function loadQuakes(p){
+    try{
+      const data=await sourceProxy("usgs-quakes");
+      const quakes=(((data||{}).data||{}).features||[]).map(f=>({mag:Number(f.properties&&f.properties.mag)||0,ts:f.properties&&f.properties.time,coords:f.geometry&&f.geometry.coordinates||[]})).filter(q=>q.coords.length>=2);
+      const nearby=quakes.map(q=>Object.assign(q,{km:distance(p.lat,p.lon,q.coords[1],q.coords[0])})).filter(q=>q.km<=500&&q.mag>=2.5);
+      const max=nearby.reduce((m,q)=>Math.max(m,q.mag),0);
+      const score=clamp(8+nearby.length*8+Math.max(0,max-3)*18);
+      return {id:"quake",title:"Nearby Quakes",score,source:"live",ok:true,summary:nearby.length?"Recent M2.5+ earthquakes appeared within 500 km.":"No nearby M2.5+ quake cluster in the latest daily feed.",detail:"USGS all-day quake feed",metrics:["nearby: "+nearby.length,"max mag: "+fmt(max,1),"radius: 500 km"]};
+    }catch(err){return fallback("quake","Nearby Quakes","live",err);}
+  }
+  async function loadOutage(){
+    try{
+      const sources=["status-cloudflare","status-openai","status-github","status-vercel"];
+      const rows=await Promise.allSettled(sources.map(s=>sourceProxy(s)));
+      let issues=0,blocked=0,names=[];
+      rows.forEach((row,i)=>{
+        if(row.status!=="fulfilled"){blocked++;return;}
+        const data=row.value.data||{},indicator=data.status&&data.status.indicator||"none",desc=data.status&&data.status.description||"operational";
+        if(indicator&&indicator!=="none"){issues++;names.push((data.page&&data.page.name||sources[i])+" "+desc);}
+      });
+      const score=clamp(12+issues*26+blocked*6);
+      return {id:"outage",title:"Internet / Outage",score,source:"official",ok:true,summary:issues?names.slice(0,2).join("; "):"Major watched status pages are not reporting broad trouble.",detail:"Official status summaries through source proxy",metrics:["issues: "+issues,"blocked: "+blocked,"watched: "+sources.length]};
+    }catch(err){return fallback("outage","Internet / Outage","official",err);}
+  }
+  async function loadFood(){
+    try{
+      const data=await sourceProxy("openfda-food",{search:"report_date:[NOW-21DAY TO NOW]",limit:50});
+      const rows=(data.data&&data.data.results)||[];
+      const serious=rows.filter(r=>/allergen|listeria|salmonella|e\. coli|foreign|undeclared/i.test([r.reason_for_recall,r.product_description].join(" "))).length;
+      const score=clamp(12+Math.min(42,rows.length*.75)+serious*4);
+      return {id:"food",title:"Food / Recalls",score,source:"official",ok:true,summary:rows.length?"Recent food recall activity exists. Check if any products match your pantry.":"No recent recall pressure from this feed.",detail:"openFDA food enforcement",metrics:["recent recalls: "+rows.length,"higher-risk terms: "+serious,"window: 21 days"]};
+    }catch(err){return fallback("food","Food / Recalls","official",err);}
+  }
+  async function loadMarket(){
+    try{
+      const data=await fetchJson("/api/market-volume",9000);
+      const rows=data.markets||data.rows||data.leaders||[];
+      const active=Array.isArray(rows)?rows.slice(0,20):[];
+      const hot=active.filter(r=>Number(r.volumeRank||r.score||r.changeAbs||0)>70 || Math.abs(Number(r.changePct||r.change||0))>2.5).length;
+      const score=clamp(16+hot*7+Math.min(22,active.length));
+      return {id:"market",title:"Market Stress",score,source:"context",ok:true,summary:hot?"Market activity is elevated in the watched basket. Treat as attention/liquidity context.":"Market context is not showing a strong stress flag.",detail:"Nifty market volume endpoint",metrics:["rows: "+active.length,"hot rows: "+hot,"source: delayed/context"]};
+    }catch(err){return fallback("market","Market Stress","context",err,18);}
+  }
+  async function loadCyber(){
+    try{
+      const data=await sourceProxy("cisa-kev");
+      const vulns=((data||{}).data||{}).vulnerabilities||[];
+      const cutoff=Date.now()-1000*60*60*24*14;
+      const recent=vulns.filter(v=>Date.parse(v.dateAdded||"")>=cutoff).length;
+      const score=clamp(20+recent*5);
+      return {id:"cyber",title:"Cyber Pressure",score,source:"official",ok:true,summary:recent?"Recently added exploited vulnerabilities are present. Patch-facing teams should pay attention.":"No strong recent CISA KEV spike in the last two weeks.",detail:"CISA Known Exploited Vulnerabilities",metrics:["recent KEV: "+recent,"total feed: "+vulns.length,"window: 14 days"]};
+    }catch(err){return fallback("cyber","Cyber Pressure","official",err,18);}
+  }
+  async function loadConflict(){
+    try{
+      const data=await sourceProxy("gdelt-doc",{q:"(war OR conflict OR missile OR evacuation OR border) sourcelang:english",timespan:"24h",maxrecords:80});
+      const articles=(data.data&&data.data.articles)||[];
+      const score=clamp(18+Math.min(50,articles.length*.9));
+      const top=articles[0]&&articles[0].title||"public news attention";
+      return {id:"conflict",title:"Conflict / News",score,source:"context",ok:true,summary:articles.length?"Public conflict/news attention is active. Read as broad context, not tactical tracking.":"No meaningful public attention spike from this context feed.",detail:"GDELT document attention proxy",metrics:["articles: "+articles.length,"top: "+top.slice(0,56),"window: 24h"]};
+    }catch(err){return fallback("conflict","Conflict / News","context",err,16);}
+  }
+  function setLoading(on){
+    document.body.classList.toggle("loading",on);
+    $("scanBtn").disabled=on;$("profileBtn").disabled=on;
+    if(on){$("scanBtn").innerHTML='<span class="spinner"></span>Scanning';}
+    else{$("scanBtn").textContent="Run briefing";}
+  }
+  function renderSkeleton(){
+    lanes=["weather","air","quake","outage","food","market","cyber","conflict"].map(id=>({id,title:id,score:0,source:"unavailable",summary:"Checking source...",metrics:[]}));
+    renderAll(profile());
+  }
+  function scoreAll(rows){
+    const total=rows.reduce((sum,row)=>sum+row.score*(WEIGHTS[row.id]||1),0);
+    const weight=rows.reduce((sum,row)=>sum+(WEIGHTS[row.id]||1),0);
+    const elevated=rows.filter(r=>r.score>=58).length;
+    return clamp(total/weight+(elevated>=3?8:elevated>=2?4:0));
+  }
+  function renderAll(p){
+    const score=scoreAll(lanes);
+    const top=lanes.slice().sort((a,b)=>b.score-a.score)[0]||{title:"--",score:0};
+    $("riskScore").textContent=score||"--";
+    $("riskMeter").style.width=(score||0)+"%";
+    $("riskState").textContent=score?prettyLevel(score):"waiting for scan";
+    $("riskScore").style.color=score>=80?"var(--red)":score>=58?"var(--amber)":score>=32?"var(--cyan)":"var(--grn)";
+    $("topSignal").textContent=top.title||"--";
+    $("sourceHealth").textContent=lanes.filter(l=>l.ok).length+"/"+lanes.length;
+    $("placeRead").textContent=(p.label||"--").split(",")[0];
+    $("updatedRead").textContent=nowTime();
+    $("profileLabel").textContent=p.label;
+    $("profileMode").textContent=p.mode;
+    $("profilePeople").textContent=p.people+" people";
+    $("profileCoords").textContent=fmt(p.lat,3)+", "+fmt(p.lon,3);
+    $("truthStrip").innerHTML=truthStrip(lanes);
+    $("laneGrid").innerHTML=lanes.map(laneCard).join("");
+    actions=buildActions(lanes,p,score);
+    renderActions();
+    $("briefBox").textContent=briefText(lanes,p,score,actions);
+  }
+  function truthStrip(rows){
+    const buckets={official:0,live:0,context:0,backup:0,unavailable:0};
+    rows.forEach(r=>{buckets[r.source]=buckets[r.source]+1||1;});
+    return Object.keys(buckets).map(key=>'<div class="truth '+key+'"><span>'+esc(key)+'</span><b>'+buckets[key]+' lanes</b></div>').join("");
+  }
+  function laneCard(row){
+    return '<article class="module"><div class="module-head"><div><h3>'+esc(row.title)+'</h3><span class="tag '+tagClass(row.source)+'">'+esc(row.source)+'</span></div><div class="num">'+clamp(row.score)+'</div></div><div class="spark"><i style="width:'+clamp(row.score)+'%"></i></div><p>'+esc(row.summary)+'</p><small>'+esc(row.detail||"")+'</small><small>'+esc((row.metrics||[]).join(" / "))+'</small></article>';
+  }
+  function buildActions(rows,p,score){
+    const by=id=>rows.find(r=>r.id===id)||{score:0};
+    const items=[
+      ["Water","Stage "+Math.max(1,p.people)+" day(s) of drinking water for "+p.people+" people.","core"],
+      ["Power","Charge phones, battery packs and any medical devices.","core"],
+      ["Comms","Send your location and check-in plan to household contacts.","core"],
+      ["Documents","Keep ID, insurance, medication list and emergency cash together.","core"]
+    ];
+    if(score>=58)items.unshift(["Priority check","Review official local instructions and avoid unnecessary trips.","priority"]);
+    if(by("weather").score>=58)items.push(["Weather","Secure loose outdoor items and prepare for wind/rain/temperature disruption.","weather"]);
+    if(by("air").score>=58)items.push(["Air quality","Close windows, reduce outdoor exertion and stage masks/filter if available.","air"]);
+    if(by("outage").score>=45)items.push(["Internet","Save key phone numbers and maps offline before connectivity worsens.","outage"]);
+    if(by("food").score>=45)items.push(["Food recalls","Check recent recall notices against fridge/pantry items.","food"]);
+    if(by("market").score>=58)items.push(["Market context","Avoid reactive financial decisions. Treat market stress as context only.","market"]);
+    if(by("cyber").score>=45)items.push(["Cyber hygiene","Update critical devices and avoid suspicious links during high-alert cycles.","cyber"]);
+    if(by("conflict").score>=58)items.push(["News hygiene","Use verified sources and avoid resharing unconfirmed conflict claims.","context"]);
+    if(p.mode==="travel")items.push(["Travel mode","Save hotel, airport, route and emergency contacts offline.","travel"]);
+    return items;
+  }
+  function renderActions(){
+    const saved=readChecks();
+    $("actionList").innerHTML=actions.map((item,i)=>'<label class="action-item"><input type="checkbox" data-check="'+i+'" '+(saved[item[0]]?"checked":"")+'><span><b>'+esc(item[0])+'</b>'+esc(item[1])+'</span><i>'+esc(item[2])+'</i></label>').join("");
+    $("actionList").querySelectorAll("[data-check]").forEach(input=>input.addEventListener("change",function(){
+      const map=readChecks();map[actions[Number(input.dataset.check)][0]]=input.checked;
+      try{localStorage.setItem(CHECKS,JSON.stringify(map));}catch(_err){}
+    }));
+  }
+  function readChecks(){try{return JSON.parse(localStorage.getItem(CHECKS)||"{}");}catch(_err){return {};}}
+  function briefText(rows,p,score,items){
+    const top=rows.slice().sort((a,b)=>b.score-a.score).slice(0,3);
+    return [
+      "Personal Risk Briefing",
+      "Place: "+p.label+" | Mode: "+p.mode+" | Household: "+p.people,
+      "Overall: "+score+"/100 - "+prettyLevel(score),
+      "",
+      "Top signals:",
+      ...top.map(r=>"- "+r.title+": "+clamp(r.score)+"/100 ("+r.source+") - "+r.summary),
+      "",
+      "Action queue:",
+      ...items.slice(0,8).map(i=>"- "+i[0]+": "+i[1]),
+      "",
+      "Source truth: official/live feeds are strongest. Context and backup lanes are directional. Follow official local instructions during real incidents."
+    ].join("\\n");
+  }
+  async function scan(manual){
+    const p=profile();
+    saveProfile();
+    setLoading(true);renderSkeleton();
+    try{
+      const results=await Promise.allSettled([loadWeather(p),loadAir(p),loadQuakes(p),loadOutage(),loadFood(),loadMarket(),loadCyber(),loadConflict()]);
+      lanes=results.map((r,i)=>r.status==="fulfilled"?r.value:fallback(Object.keys(WEIGHTS)[i],Object.keys(WEIGHTS)[i],"unavailable",r.reason));
+      renderAll(p);
+      if(manual)track("personal_risk_scan",{score:scoreAll(lanes),place:p.label,mode:p.mode});
+    }finally{setLoading(false);}
+  }
+  async function copyBrief(){
+    const text=$("briefBox").textContent;
+    try{await navigator.clipboard.writeText(text);const old=$("copyBtn").textContent;$("copyBtn").textContent="Copied";setTimeout(()=>$("copyBtn").textContent=old,1100);}
+    catch(_err){window.prompt("Copy briefing",text);}
+    track("personal_risk_copy",{items:actions.length});
+  }
+  function exportJson(){
+    const payload={createdAt:new Date().toISOString(),profile:profile(),score:scoreAll(lanes),lanes,actions,brief:$("briefBox").textContent};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="personal-risk-briefing.json";a.click();URL.revokeObjectURL(a.href);
+    track("personal_risk_export",{score:payload.score});
+  }
+  $("scanBtn").addEventListener("click",()=>scan(true));
+  $("profileBtn").addEventListener("click",()=>scan(true));
+  $("copyBtn").addEventListener("click",copyBrief);
+  $("exportBtn").addEventListener("click",exportJson);
+  $("place").addEventListener("change",()=>{applyPreset(true);scan(true);});
+  ["label","lat","lon","people","mode"].forEach(id=>$(id).addEventListener("change",()=>{if(id==="lat"||id==="lon")$("place").value="manual";scan(true);}));
+  initPlaces();
+  renderSkeleton();
+  scan(false);
+  track("personal_risk_open",{place:profile().label});
+})();
+</script>
+
+<!-- NIFTY ANALYTICS START -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js" data-nifty-vercel-analytics></script>
+<script defer src="/nt-analytics.js" data-nifty-analytics-lite></script>
+<!-- NIFTY ANALYTICS END -->
+</body>
+</html>

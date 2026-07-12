@@ -10,6 +10,7 @@
     "signal-watch": "Early Warning Radar",
     "signal-suite": "Signal Suite Hub",
     "signal-suite-pro": "Signal Suite Pro Lite",
+    "personal-risk": "Personal Risk Briefing",
     "aurora-watch": "Aurora Watch",
     "outage-radar": "Outage Radar",
     "cyber-threat": "Cyber Threat Radar",
@@ -53,10 +54,17 @@
     },
     "signal-suite-pro": {
       name: "Signal Suite Pro Lite",
-      lane: "premium monitoring shell",
+      lane: "premium monitoring workspace",
       truth: "local",
       read: "Local saved-location, watchlist, threshold and briefing workflow before backend delivery",
-      sources: "localStorage shell, future auth/storage/notification backend"
+      sources: "localStorage workspace, future auth/storage/notification backend"
+    },
+    "personal-risk": {
+      name: "Personal Risk Briefing",
+      lane: "daily personal command brief",
+      truth: "mixed",
+      read: "Daily location brief across weather, air, quakes, outages, recalls, market, cyber and conflict context",
+      sources: "Open-Meteo, USGS, official status pages, openFDA, CISA KEV, GDELT/context proxies"
     },
     "signal-watch": {
       name: "Early Warning Radar",
