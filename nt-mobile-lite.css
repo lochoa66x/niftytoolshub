@@ -1,0 +1,509 @@
+/* Mobile Lite: phone-first presentation polish for NiftyTools Hub */
+:root {
+  --ntm-bg: rgba(2, 7, 4, 0.98);
+  --ntm-panel: rgba(6, 14, 8, 0.94);
+  --ntm-line: rgba(70, 224, 122, 0.22);
+  --ntm-line-strong: rgba(70, 224, 122, 0.42);
+  --ntm-text: #e7efe3;
+  --ntm-muted: #94a38f;
+  --ntm-green: #46e07a;
+  --ntm-cyan: #63e6ff;
+  --ntm-amber: #ffbd5b;
+  --ntm-red: #ff6572;
+}
+
+body:not(.nt-admin-page) .nt-public-source-health,
+body:not(.nt-admin-page) .nt-public-diagnostics {
+  display: none !important;
+}
+
+body:not(.nt-admin-page) .nt-mobile-explainer {
+  --nt-explainer-display: block;
+}
+
+@media (max-width: 760px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-width: 0 !important;
+    background:
+      radial-gradient(320px 170px at 50% -70px, rgba(70, 224, 122, 0.1), transparent 70%),
+      var(--ntm-bg) !important;
+  }
+
+  body::before {
+    opacity: 0.055 !important;
+  }
+
+  body::after {
+    opacity: 0.32 !important;
+  }
+
+  .wrap,
+  main.wrap,
+  header .wrap,
+  .nt-global-shell {
+    width: calc(100% - 20px) !important;
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  main {
+    padding-top: 10px !important;
+  }
+
+  .nt-global-header {
+    position: sticky !important;
+    top: 0 !important;
+    background: rgba(2, 7, 4, 0.9) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom-color: rgba(70, 224, 122, 0.18) !important;
+  }
+
+  .nt-global-shell {
+    min-height: 50px !important;
+    gap: 8px !important;
+  }
+
+  .nt-mark {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 11px !important;
+    box-shadow: 0 0 12px rgba(70, 224, 122, 0.12) !important;
+  }
+
+  .nt-brand {
+    gap: 8px !important;
+  }
+
+  .nt-brand span:last-child,
+  .nt-links a,
+  .nt-command-label {
+    display: none !important;
+  }
+
+  .nt-command-btn {
+    min-width: 52px !important;
+    min-height: 38px !important;
+    padding: 0 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .nt-keycap {
+    margin-right: 0 !important;
+  }
+
+  .nt-command-overlay {
+    padding: 60px 10px 14px !important;
+  }
+
+  .nt-command-panel {
+    max-height: calc(100dvh - 74px) !important;
+  }
+
+  .nt-next-steps,
+  .nt-journeys:not(.nt-journey-compact),
+  .nt-quality-rail,
+  .nt-tool-context,
+  .nt-mobile-explainer {
+    display: none !important;
+  }
+
+  .toolbar {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin: 0 0 10px !important;
+    padding: 8px !important;
+    border-radius: 10px !important;
+    background: rgba(4, 11, 6, 0.66) !important;
+    box-shadow: none !important;
+  }
+
+  .toolbar label {
+    margin-bottom: 4px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .toolbar select,
+  .toolbar input,
+  .toolbar .btn,
+  .toolbar button,
+  .toolbar a.btn {
+    width: 100% !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 8px 9px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .toolbar .btn.ghost,
+  .toolbar a.btn.ghost {
+    display: none !important;
+  }
+
+  .toolbar .btn:not(.ghost),
+  .toolbar button:not(.ghost) {
+    grid-column: 1 / -1 !important;
+  }
+
+  .hero,
+  .radar-command,
+  .main-grid,
+  .command-grid,
+  .layout,
+  .hero-grid,
+  .panel-grid,
+  .score-grid,
+  .network-grid,
+  .report-grid,
+  .impact-grid,
+  .commodity-grid,
+  .suite-grid,
+  .cards,
+  .heat-grid,
+  .lower-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    max-width: 100% !important;
+  }
+
+  .hero,
+  .panel,
+  .net-card,
+  .score-card,
+  .score-panel,
+  .core-market,
+  .market-row,
+  .row {
+    overflow: hidden !important;
+    border-radius: 12px !important;
+  }
+
+  .hero {
+    padding: 12px !important;
+  }
+
+  h1,
+  .title,
+  .screen-title,
+  .radar-title,
+  .board-head h2 {
+    letter-spacing: 0 !important;
+    line-height: 1 !important;
+    text-wrap: balance;
+  }
+
+  h1,
+  .title {
+    font-size: clamp(28px, 9vw, 40px) !important;
+  }
+
+  .lead {
+    max-width: 100% !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+
+  .crumb,
+  .source-row,
+  .badges,
+  .truth-strip,
+  .source-drawer,
+  .source-strip,
+  .visual-note,
+  .map-note,
+  .board-helper,
+  .read-note {
+    display: none !important;
+  }
+
+  .screen,
+  .radar-screen,
+  .crypto-board-screen,
+  .panel.board {
+    min-height: auto !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+  }
+
+  .screen-head,
+  .radar-topline,
+  .board-head {
+    min-height: 0 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .screen-time,
+  .radar-time,
+  .screen-head .kicker,
+  .board-head .sub,
+  .board-head p {
+    display: none !important;
+  }
+
+  .map-frame,
+  .canvas-frame,
+  .canvas-wrap {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: clamp(250px, 72vw, 410px) !important;
+    aspect-ratio: 4 / 3 !important;
+    overflow: hidden !important;
+    border-radius: 10px !important;
+    margin-top: 8px !important;
+  }
+
+  .map-frame canvas,
+  .canvas-frame canvas,
+  .canvas-wrap canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .map-tools,
+  .network-toggle-bar,
+  .network-tabs {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 8 !important;
+    max-width: calc(100% - 16px) !important;
+  }
+
+  .map-tools span,
+  .network-toggle-bar button,
+  .network-tabs button {
+    min-width: 42px !important;
+    min-height: 38px !important;
+    padding: 7px 9px !important;
+  }
+
+  .legend {
+    position: absolute !important;
+    left: 8px !important;
+    bottom: 8px !important;
+    max-width: calc(100% - 16px) !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+
+  .sweep-tag,
+  .map-live-strip {
+    display: none !important;
+  }
+
+  .readouts,
+  .radar-overlay,
+  .result-grid,
+  .mini-grid {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  .readout,
+  .mini,
+  .status-chip,
+  .truth,
+  .stat-row {
+    min-height: 62px !important;
+    padding: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .readout b,
+  .mini b,
+  .score-row b,
+  .score b,
+  .stat-row b,
+  .signal-row b {
+    font-size: clamp(22px, 7vw, 34px) !important;
+    line-height: 1.05 !important;
+  }
+
+  .pulse-layout {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    aspect-ratio: auto !important;
+    padding: 10px !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+  }
+
+  .pulse-board-head {
+    display: block !important;
+  }
+
+  .board-note {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 8px !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    white-space: normal !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+  }
+
+  .network-toggle-bar {
+    position: static !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  .network-toggle-bar button {
+    flex: 1 1 auto !important;
+  }
+
+  .pulse-board {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .pulse-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    padding: 10px !important;
+  }
+
+  .pulse-row .spark,
+  .trend-bars {
+    min-height: 38px !important;
+    max-height: 56px !important;
+  }
+
+  .operator-read,
+  .report-box {
+    max-width: 100% !important;
+    max-height: 220px !important;
+    overflow: auto !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .core-strip {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .market-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    gap: 8px !important;
+  }
+
+  .market-detail,
+  .table-head,
+  .head {
+    display: none !important;
+  }
+
+  .balance,
+  .bar-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .side,
+  .radar-side {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .side .panel:nth-child(n+3),
+  .radar-side .operator-feed {
+    display: none !important;
+  }
+
+  .signal-row,
+  .stat-row,
+  .truth,
+  .source-log,
+  .list,
+  .source-health-summary,
+  .source-card {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    white-space: normal !important;
+  }
+
+  .signal-row,
+  .stat-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .link-grid,
+  .source-health-summary {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .report-grid,
+  .impact-grid {
+    margin-top: 12px !important;
+  }
+
+  .report-grid > article:nth-child(n+2),
+  .impact-grid > article:nth-child(n+2) {
+    display: none !important;
+  }
+
+  details.drawer > summary,
+  .drawer > summary {
+    min-height: 46px !important;
+    align-content: center !important;
+  }
+
+  footer {
+    padding: 18px 10px 76px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .toolbar,
+  .readouts,
+  .radar-overlay,
+  .result-grid,
+  .mini-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
