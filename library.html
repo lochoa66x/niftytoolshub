@@ -228,6 +228,77 @@
 
   /* NT HOMEPAGE REFRESH END */
 
+
+
+  /* NT LIBRARY ICON UPGRADE START */
+  .tool .ico.nt-icon{
+    position:relative;
+    width:46px;
+    height:46px;
+    border-radius:7px;
+    margin-bottom:13px;
+    overflow:hidden;
+    color:var(--icon-main,var(--grn));
+    background:
+      radial-gradient(circle at 35% 28%,rgba(255,255,255,.16),transparent 18%),
+      radial-gradient(circle at 50% 105%,var(--icon-bg,rgba(70,224,122,.18)),transparent 60%),
+      linear-gradient(145deg,rgba(12,22,13,.96),rgba(2,7,4,.98));
+    border-color:color-mix(in srgb,var(--icon-main,var(--grn)) 42%,var(--line));
+    box-shadow:
+      inset 0 0 20px rgba(255,255,255,.025),
+      0 0 0 1px rgba(0,0,0,.35),
+      0 0 20px var(--icon-glow,rgba(70,224,122,.12));
+    isolation:isolate;
+  }
+  .tool .ico.nt-icon::before{
+    content:"";
+    position:absolute;
+    inset:-35%;
+    background:conic-gradient(from 180deg,transparent 0 18%,var(--icon-sweep,rgba(70,224,122,.24)) 27%,transparent 38% 100%);
+    opacity:.7;
+    transform:rotate(-18deg);
+    transition:transform .3s ease,opacity .2s ease;
+    z-index:-1;
+  }
+  .tool .ico.nt-icon::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 4px);
+    opacity:.16;
+    pointer-events:none;
+  }
+  .tool:hover .ico.nt-icon{
+    transform:translateY(-1px);
+    border-color:var(--icon-main,var(--grn));
+    box-shadow:
+      inset 0 0 22px rgba(255,255,255,.035),
+      0 0 0 1px color-mix(in srgb,var(--icon-main,var(--grn)) 34%,transparent),
+      0 0 26px var(--icon-glow,rgba(70,224,122,.2));
+  }
+  .tool:hover .ico.nt-icon::before{transform:rotate(24deg);opacity:1}
+  .nt-icon-svg{
+    width:25px;
+    height:25px;
+    display:block;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.75;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:drop-shadow(0 0 8px var(--icon-main,var(--grn)));
+  }
+  .nt-tone-green{--icon-main:#46e07a;--icon-bg:rgba(70,224,122,.20);--icon-glow:rgba(70,224,122,.22);--icon-sweep:rgba(70,224,122,.28)}
+  .nt-tone-cyan{--icon-main:#63e6ff;--icon-bg:rgba(99,230,255,.18);--icon-glow:rgba(99,230,255,.20);--icon-sweep:rgba(99,230,255,.26)}
+  .nt-tone-amber{--icon-main:#ffbd5b;--icon-bg:rgba(255,189,91,.18);--icon-glow:rgba(255,189,91,.20);--icon-sweep:rgba(255,189,91,.25)}
+  .nt-tone-violet{--icon-main:#b88cff;--icon-bg:rgba(184,140,255,.17);--icon-glow:rgba(184,140,255,.20);--icon-sweep:rgba(184,140,255,.24)}
+  .nt-tone-red{--icon-main:#ff6572;--icon-bg:rgba(255,101,114,.17);--icon-glow:rgba(255,101,114,.20);--icon-sweep:rgba(255,101,114,.24)}
+  @media(max-width:620px){
+    .tool .ico.nt-icon{width:42px;height:42px}
+    .nt-icon-svg{width:23px;height:23px}
+  }
+  /* NT LIBRARY ICON UPGRADE END */
+
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"NiftyTools Hub Secondary Tool Library","url":"https://niftytoolshub.com/library.html","description":"A searchable library of NiftyTools Hub calculators, converters, tests, file tools, signal dashboards and playful utilities."}</script>
 </head>
@@ -285,6 +356,13 @@
     <div class="tool" data-tags="free utility monitor signal radar outage aurora cyber food meme crypto market positioning prepper" data-name="signal suite hub early warning radar aurora outage cyber threat food watch meme watch crypto pulse market volume positioning radar" onclick="location.href='/signal-suite.html'">
       <span class="badge free">Free</span><div class="ico">SIG</div>
       <h3>Signal Suite Hub</h3><p>All flagship radar tools grouped by signal lane, source truth and best use.</p>
+      <div class="open">Open full tool -></div>
+    </div>
+
+    <!-- Signal Suite Pro Lite -->
+    <div class="tool" data-tags="free utility monitor signal premium pro alert watchlist saved locations thresholds briefing history" data-name="signal suite pro lite premium saved locations watchlists alert thresholds daily briefing history email sms webhook shell" onclick="location.href='/signal-suite-pro.html'">
+      <span class="badge free">Beta</span><div class="ico">PRO</div>
+      <h3>Signal Suite Pro Lite</h3><p>Premium shell for saved locations, watchlists, alert thresholds, event history and daily briefings.</p>
       <div class="open">Open full tool -></div>
     </div>
 
@@ -1155,6 +1233,7 @@ A- 3</textarea></div>
   bootLibraryFromUrl();
 
 </script>
+<script defer src="/library-icons.js" data-nifty-library-icons></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

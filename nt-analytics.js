@@ -9,6 +9,7 @@
   var TOOL_NAMES = {
     "signal-watch": "Early Warning Radar",
     "signal-suite": "Signal Suite Hub",
+    "signal-suite-pro": "Signal Suite Pro Lite",
     "aurora-watch": "Aurora Watch",
     "outage-radar": "Outage Radar",
     "cyber-threat": "Cyber Threat Radar",
@@ -50,11 +51,18 @@
       read: "Local hub grouping the flagship radar tools with source truth labels",
       sources: "NiftyTools Hub tool catalog and local analytics events"
     },
+    "signal-suite-pro": {
+      name: "Signal Suite Pro Lite",
+      lane: "premium monitoring shell",
+      truth: "local",
+      read: "Local saved-location, watchlist, threshold and briefing workflow before backend delivery",
+      sources: "localStorage shell, future auth/storage/notification backend"
+    },
     "signal-watch": {
       name: "Early Warning Radar",
       lane: "global + local anomaly",
       truth: "mixed",
-      read: "Live public feeds with local/browser fallback",
+      read: "Live public feeds with local/browser backup",
       sources: "NOAA, USGS, status pages, weather/news proxies"
     },
     "aurora-watch": {
@@ -75,7 +83,7 @@
       name: "Cyber Threat Radar",
       lane: "public cyber signals",
       truth: "mixed",
-      read: "Public feeds with animated demo fallback when blocked",
+      read: "Public feeds with animated demo backup when unavailable",
       sources: "SANS ISC/DShield, CISA KEV, demo simulator"
     },
     "food-watch": {
@@ -97,21 +105,21 @@
       lane: "on-chain network stress",
       truth: "mixed",
       read: "BTC public APIs are strongest; ETH needs backend key for full depth",
-      sources: "Blockchain.com, mempool.space, CoinGecko, ETH fallback"
+      sources: "Blockchain.com, mempool.space, CoinGecko, ETH backup"
     },
     "market-volume-pulse": {
       name: "Market Volume Pulse",
       lane: "market activity",
       truth: "delayed",
-      read: "Live/reference quote basket; full real-time market tape is later",
+      read: "Delayed quote basket; full real-time market tape is later",
       sources: "Nifty API, Stooq/reference rows, optional Alpha Vantage"
     },
     "positioning-radar": {
       name: "Market Positioning Radar",
       lane: "long/short crowding",
       truth: "delayed",
-      read: "CFTC/FINRA/OKX are useful but delayed/proxy-based",
-      sources: "CFTC COT, FINRA short volume, OKX, Binance fallback"
+      read: "CFTC/FINRA/OKX are useful but mixed-frequency context",
+      sources: "CFTC COT, FINRA short volume, OKX, Binance backup"
     },
     "admin": {
       name: "Admin Centre Lite",
@@ -258,9 +266,10 @@
 
   function signalTruthFromProps(props, meta) {
     var status = String((props && (props.source_status || props.status || props.truth)) || (meta && meta.truth) || "unknown").toLowerCase();
-    if (/blocked|error|failed|timeout/.test(status)) return "blocked";
+    if (/blocked|error|failed|timeout|unavailable/.test(status)) return "blocked";
+    if (/backup|fallback|covered/.test(status)) return "backup";
     if (/sample|demo/.test(status)) return "sample";
-    if (/proxy|reference|fallback/.test(status)) return "proxy";
+    if (/proxy|reference|context/.test(status)) return "proxy";
     if (/mixed|degraded/.test(status)) return "mixed";
     if (/delayed/.test(status)) return "delayed";
     if (/local/.test(status)) return "local";
@@ -287,13 +296,14 @@
   window.NiftySignalSuite = {
     tools: SIGNAL_SUITE_TOOLS,
     truthLabels: {
-      live: "Real feed working",
-      delayed: "Real but delayed",
-      proxy: "Useful estimate",
-      mixed: "Live plus fallback",
-      sample: "Fallback/sample",
-      local: "Local browser only",
-      blocked: "Feed blocked"
+      live: "Live",
+      delayed: "Delayed",
+      backup: "Backup",
+      proxy: "Context",
+      mixed: "Mixed",
+      sample: "Demo",
+      local: "Local",
+      blocked: "Unavailable"
     }
   };
 
