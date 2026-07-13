@@ -37,6 +37,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 <script defer src="/nt-mobile-lite.js"></script>
 <link rel="stylesheet" href="/nt-mobile-phase2.css">
 <script defer src="/nt-mobile-phase2.js"></script>
+<link rel="stylesheet" href="/nt-homepage-polish.css">
 </head>
 <body>
 <header>
@@ -58,35 +59,41 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
     <div>
       <div class="kickers">
         <span class="pill"><span class="dot"></span> command center online</span>
-        <span class="pill">prepper toolkit active</span>
-        <span class="pill">signal radars live</span>
+        <span class="pill">local briefings ready</span>
+        <span class="pill">market pulse active</span>
       </div>
       <h1>Command Center for<br><span class="grad">weird internet days.</span></h1>
-      <p class="sub">// Signal radars, prepper planning, market context, work tools and playful experiments. The homepage shows the strongest systems first; the full library keeps the small utilities easy to find.</p>
-      <div class="actions">
+      <p class="sub">// A result-first toolbox for signal radars, preparedness, market context and everyday utilities. Start with the command center, run a personal risk brief, or drop into the full library when you need a specific tool.</p>
+      <div class="actions hero-actions">
         <a class="btn" href="/signal-suite.html">Open Command Center</a>
         <a class="ghost" href="/personal-risk.html">Personal Risk Briefing</a>
-        <a class="ghost" href="/command-queue.html">Command Queue</a>
-        <a class="ghost" href="/signal-suite-pro.html">Signal Suite Pro Lite</a>
         <a class="ghost" href="/prepper-command.html">Prepper Command</a>
-        <a class="ghost" href="/library.html">Browse full library</a>
       </div>
-      <div class="metrics">
-        <div class="metric"><b id="flagshipMetric">12</b><span>flagship tools</span></div>
-        <div class="metric"><b id="libraryMetric">50+</b><span>library utilities</span></div>
-        <div class="metric"><b>0</b><span>account needed</span></div>
+      <div class="hero-secondary" aria-label="Secondary homepage routes">
+        <a href="/library.html">Full library</a>
+        <a href="/command-queue.html">Command Queue</a>
+        <a href="/signal-suite-pro.html">Pro Lite</a>
+      </div>
+      <div class="metrics hero-proof">
+        <div class="metric"><b id="flagshipMetric">12</b><span>signal systems</span></div>
+        <div class="metric"><b id="libraryMetric">50+</b><span>tools in reserve</span></div>
+        <div class="metric"><b>Live</b><span>where feeds allow</span></div>
       </div>
     </div>
-    <a class="radar" href="/signal-watch.html" aria-label="Open Early Warning Radar">
+    <a class="radar" href="/signal-watch.html" aria-label="Open Early Warning Radar live signal stack">
       <div class="rain"></div>
+      <div class="radar-copy">
+        <span>Live stack</span>
+        <b>Signals, prep, markets and outages in one scan.</b>
+      </div>
       <div class="ring"></div>
       <div class="sweep"></div>
       <i class="blip b1"></i><i class="blip b2"></i><i class="blip b3"></i>
       <div class="status-lines">
-        <span>world score <b>live</b></span>
-        <span>local score <b>by place</b></span>
-        <span>prep status <b>ready</b></span>
-        <span>signal stack <b>active</b></span>
+        <span>world signals <b>live</b></span>
+        <span>local risk <b>by place</b></span>
+        <span>prep layer <b>ready</b></span>
+        <span>market pulse <b>active</b></span>
       </div>
     </a>
   </div>
@@ -94,8 +101,8 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 
 <section id="featured" class="wrap">
   <div class="section-head">
-    <h2>Command Center</h2>
-    <p>The top shelf is now organized by mission: Command Center, Prepper + Local Risk, Market Signals, Work Tools and Fun Lab.</p>
+    <h2>Flagship Systems</h2>
+    <p>Start with the systems that explain the day. Smaller utilities stay reachable in the full library.</p>
   </div>
   <div class="feature-grid" id="featuredGrid">
     <a class="feature" href="/signal-suite.html">
@@ -220,7 +227,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
   const labelFor = tool => tool.label || registry.statusLabels[tool.status] || tool.status || "Tool";
 
   if(featuredGrid){
-    featuredGrid.innerHTML = registry.featured(12).map(tool => `
+    featuredGrid.innerHTML = registry.featured(9).map(tool => `
       <a class="feature" href="${esc(tool.url)}" data-featured-tool="${esc(tool.slug)}">
         <span class="tag">${esc(tool.category || registry.hubLookup[tool.hub]?.name || "Tool")}</span>
         <span class="status">${esc(labelFor(tool))}</span>
