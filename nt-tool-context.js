@@ -152,8 +152,14 @@
     if (document.querySelector("[data-nt-tool-context]")) return;
     const header = document.querySelector("header");
     const context = document.createElement("section");
-    context.className = "nt-tool-context";
+    const slug = normalizePath(window.location.pathname)
+      .replace(/^\//, "")
+      .replace(/\.html$/, "")
+      .replace(/[^a-z0-9-]/gi, "-")
+      .toLowerCase() || "home";
+    context.className = "nt-tool-context nt-tool-context-" + slug;
     context.setAttribute("data-nt-tool-context", "");
+    context.setAttribute("data-tool-context-slug", slug);
     context.innerHTML = `
       <div class="nt-tool-context-grid">
         <div class="nt-tool-context-main">
@@ -171,7 +177,7 @@
           <p>${esc(config.use)}</p>
           <div class="nt-tool-facts">
             <div class="nt-tool-fact"><span>Best use</span><b>${esc(config.use)}</b></div>
-            <div class="nt-tool-fact"><span>Source quality</span><b>${esc(config.status)}</b></div>
+            <div class="nt-tool-fact"><span>Data timing</span><b>${esc(config.status)}</b></div>
             <div class="nt-tool-fact"><span>Input layer</span><b>${esc(config.source)}</b></div>
           </div>
         </div>

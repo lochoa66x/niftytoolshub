@@ -275,3 +275,80 @@
     width: 100%;
   }
 }
+
+
+/* Mobile context and public diagnostics polish */
+body:not(.nt-admin-page) .nt-admin-source-hook,
+body:not(.nt-admin-page) .nt-public-source-health,
+body:not(.nt-admin-page) .nt-public-source-panel,
+body:not(.nt-admin-page) .nt-public-diagnostics {
+  display: none !important;
+  visibility: hidden !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.nt-tool-context {
+  width: min(100% - 28px, 1320px);
+  margin: 10px auto 12px;
+}
+
+.nt-tool-context-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
+}
+
+.nt-tool-context-main,
+.nt-tool-context-side {
+  padding: 12px 14px;
+}
+
+.nt-tool-breadcrumb {
+  margin-bottom: 6px;
+}
+
+.nt-tool-context-title {
+  margin-bottom: 6px;
+}
+
+.nt-tool-context h2 {
+  font-size: clamp(21px, 2vw, 28px);
+}
+
+.nt-tool-context p {
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.nt-tool-facts {
+  margin-top: 9px;
+  gap: 7px;
+}
+
+.nt-tool-fact {
+  min-height: 54px;
+  padding: 8px 9px;
+}
+
+.nt-tool-fact b {
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.nt-tool-action {
+  min-height: 34px;
+}
+
+.nt-tool-related {
+  padding: 9px;
+}
+
+.nt-tool-note {
+  font-size: 10.8px;
+}
+
+@media (max-width: 760px) {
+  body:not(.nt-admin-page) .nt-tool-context {
+    display: none !important;
+  }
+}

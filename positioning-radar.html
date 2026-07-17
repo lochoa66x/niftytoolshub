@@ -97,13 +97,581 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 @media(max-width:1080px){.split-dashboard{grid-template-columns:1fr}.split-panel p{text-align:left}.leader-board{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.split-dashboard{gap:8px}.split-panel{padding:9px}.split-panel-head{display:block}.split-panel p{margin-top:5px}.split-row{grid-template-columns:1fr;gap:7px}.split-read{display:flex;justify-content:space-between;justify-items:stretch}.leader-board{grid-template-columns:1fr}.leader-item{grid-template-columns:24px minmax(0,1fr) 48px}.split-rail{height:24px}}
 </style>
+<style>
+/* Positioning polish pass: result-first layout, compact chrome, clearer tape. */
+body.positioning-radar-page .wrap {
+  max-width: 1260px;
+}
+
+body.positioning-radar-page main.wrap {
+  padding-top: 12px;
+}
+
+body.positioning-radar-page .toolbar {
+  grid-template-columns: 170px 170px minmax(220px, 1fr) auto auto auto;
+  margin-bottom: 10px;
+  padding: 7px;
+}
+
+body.positioning-radar-page .hero {
+  border-radius: 10px;
+}
+
+body.positioning-radar-page .hero-grid {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 12px;
+  padding: 14px;
+}
+
+body.positioning-radar-page .title {
+  font-size: clamp(30px, 4vw, 48px);
+  margin-bottom: 8px;
+}
+
+body.positioning-radar-page .lead {
+  max-width: 760px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+body.positioning-radar-page .truth-strip {
+  display: none;
+}
+
+body.positioning-radar-page .score-card {
+  padding: 12px;
+}
+
+body.positioning-radar-page .score-row b {
+  font-size: 46px;
+}
+
+body.positioning-radar-page .insight-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 10px;
+}
+
+body.positioning-radar-page .insight-card {
+  min-height: 92px;
+  padding: 10px;
+}
+
+body.positioning-radar-page .main-grid {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+body.positioning-radar-page .board {
+  padding: 12px;
+}
+
+body.positioning-radar-page .board-head {
+  margin-bottom: 10px;
+}
+
+body.positioning-radar-page .board-head p,
+body.positioning-radar-page .board-helper,
+body.positioning-radar-page .read-note {
+  display: none;
+}
+
+body.positioning-radar-page .split-dashboard {
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 9px;
+}
+
+body.positioning-radar-page .split-panel {
+  background:
+    radial-gradient(360px 160px at 22% 0, rgba(70, 224, 122, 0.08), transparent 64%),
+    linear-gradient(180deg, rgba(9, 17, 10, 0.96), rgba(2, 7, 4, 0.98));
+}
+
+body.positioning-radar-page .split-row {
+  grid-template-columns: 82px minmax(0, 1fr) 96px;
+  min-height: 52px;
+}
+
+body.positioning-radar-page .split-row:first-child {
+  border-color: rgba(255, 189, 91, 0.36);
+  box-shadow: 0 0 18px rgba(255, 189, 91, 0.08);
+}
+
+body.positioning-radar-page .split-rail {
+  height: 22px;
+}
+
+body.positioning-radar-page .leader-board {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+body.positioning-radar-page .leader-item {
+  min-height: 44px;
+}
+
+body.positioning-radar-page .core-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body.positioning-radar-page .core-market {
+  min-height: 90px;
+}
+
+body.positioning-radar-page .position-table {
+  margin-top: 4px;
+}
+
+body.positioning-radar-page .market-row {
+  min-height: 66px;
+  grid-template-columns: 1.08fr 118px minmax(190px, 1fr) 92px 68px;
+}
+
+body.positioning-radar-page .side {
+  gap: 10px;
+}
+
+body.positioning-radar-page .side .panel:first-child {
+  position: sticky;
+  top: 68px;
+}
+
+body.positioning-radar-page .heat-panel,
+body.positioning-radar-page .report-grid {
+  margin-top: 12px;
+}
+
+body.positioning-radar-page .report-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+}
+
+body.positioning-radar-page .report-grid .panel:last-child {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  body.positioning-radar-page .toolbar,
+  body.positioning-radar-page .hero-grid,
+  body.positioning-radar-page .main-grid,
+  body.positioning-radar-page .report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.positioning-radar-page .side .panel:first-child {
+    position: static;
+  }
+
+  body.positioning-radar-page .split-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  body.positioning-radar-page .leader-board,
+  body.positioning-radar-page .core-strip,
+  body.positioning-radar-page .insight-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.positioning-radar-page .market-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body.positioning-radar-page main.wrap {
+    gap: 10px !important;
+    padding-top: 8px !important;
+  }
+
+  body.positioning-radar-page .toolbar {
+    order: 2 !important;
+    grid-template-columns: 1fr !important;
+    padding: 10px !important;
+  }
+
+  body.positioning-radar-page .toolbar > div:nth-child(2),
+  body.positioning-radar-page .toolbar > div:nth-child(3) {
+    display: none !important;
+  }
+
+  body.positioning-radar-page .hero {
+    order: 1 !important;
+  }
+
+  body.positioning-radar-page .hero-grid {
+    grid-template-columns: 1fr !important;
+    padding: 12px !important;
+  }
+
+  body.positioning-radar-page .kicker,
+  body.positioning-radar-page .lead,
+  body.positioning-radar-page .source-row,
+  body.positioning-radar-page .legend,
+  body.positioning-radar-page .heat-panel,
+  body.positioning-radar-page .report-grid {
+    display: none !important;
+  }
+
+  body.positioning-radar-page .title {
+    display: block !important;
+    font-size: clamp(28px, 8.5vw, 38px) !important;
+    line-height: 1 !important;
+    margin: 0 0 8px !important;
+  }
+
+  body.positioning-radar-page .score-card {
+    order: -1 !important;
+  }
+
+  body.positioning-radar-page .score-row b {
+    font-size: 48px !important;
+  }
+
+  body.positioning-radar-page .insight-strip {
+    order: 3 !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  body.positioning-radar-page .insight-card {
+    min-height: 82px !important;
+  }
+
+  body.positioning-radar-page .insight-card small {
+    display: none !important;
+  }
+
+  body.positioning-radar-page .main-grid {
+    order: 4 !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .board-head {
+    display: block !important;
+  }
+
+  body.positioning-radar-page .board-head h2 {
+    font-size: 26px !important;
+  }
+
+  body.positioning-radar-page .split-dashboard,
+  body.positioning-radar-page .leader-board,
+  body.positioning-radar-page .core-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .split-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .split-tape .split-row:nth-child(n+5),
+  body.positioning-radar-page .leader-list .leader-item:nth-child(n+4),
+  body.positioning-radar-page #positionRows .market-row:nth-child(n+5),
+  body.positioning-radar-page .side {
+    display: none !important;
+  }
+
+  body.positioning-radar-page .core-strip {
+    order: 2 !important;
+  }
+
+  body.positioning-radar-page .position-table {
+    order: 3 !important;
+  }
+
+  body.positioning-radar-page .table-head {
+    display: none !important;
+  }
+
+  body.positioning-radar-page .market-row {
+    padding: 10px !important;
+  }
+}
+</style>
+<style>
+/* Positioning Phase 1: market-data presentation hierarchy */
+body.positioning-radar-page .nt-next-steps,
+body.positioning-radar-page .nt-journeys,
+body.positioning-radar-page .nt-tool-context,
+body.positioning-radar-page .nt-quality-rail {
+  display: none !important;
+}
+
+body.positioning-radar-page main.wrap {
+  max-width: 1240px;
+}
+
+body.positioning-radar-page .options-drawer {
+  order: 3;
+  margin: 10px 0 12px;
+  border: 1px solid rgba(70, 224, 122, 0.22);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(8, 16, 9, 0.86), rgba(3, 8, 4, 0.88));
+  overflow: hidden;
+}
+
+body.positioning-radar-page .options-drawer summary {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  cursor: pointer;
+  color: var(--txt);
+  font-weight: 800;
+  list-style: none;
+}
+
+body.positioning-radar-page .options-drawer summary::-webkit-details-marker {
+  display: none;
+}
+
+body.positioning-radar-page .options-drawer summary:before {
+  content: "//";
+  color: var(--grn);
+  font-weight: 800;
+}
+
+body.positioning-radar-page .options-drawer summary small {
+  justify-self: end;
+  color: var(--mut);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+body.positioning-radar-page .options-drawer summary:after {
+  content: "+";
+  color: var(--grn);
+}
+
+body.positioning-radar-page .options-drawer[open] summary:after {
+  content: "-";
+}
+
+body.positioning-radar-page .options-drawer .toolbar {
+  margin: 0;
+  border-width: 1px 0 0;
+  border-radius: 0;
+  background: rgba(3, 8, 4, 0.72);
+}
+
+body.positioning-radar-page .market-lenses {
+  order: 2;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 0;
+}
+
+body.positioning-radar-page .lens-btn {
+  min-height: 34px;
+  border: 1px solid rgba(70, 224, 122, 0.22);
+  border-radius: 999px;
+  background: rgba(3, 8, 4, 0.72);
+  color: var(--dim);
+  padding: 0 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+body.positioning-radar-page .lens-btn:hover,
+body.positioning-radar-page .lens-btn.is-active {
+  border-color: var(--grn);
+  color: var(--grn);
+  box-shadow: 0 0 16px rgba(70, 224, 122, 0.12);
+}
+
+body.positioning-radar-page .hero {
+  margin-top: 0;
+}
+
+body.positioning-radar-page .hero-grid {
+  grid-template-columns: minmax(0, 0.95fr) 320px;
+}
+
+body.positioning-radar-page .hero .lead {
+  max-width: 700px;
+}
+
+body.positioning-radar-page .split-dashboard {
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+}
+
+body.positioning-radar-page .split-panel:first-child {
+  min-height: 340px;
+}
+
+body.positioning-radar-page .split-tape {
+  gap: 8px;
+}
+
+body.positioning-radar-page .split-row {
+  grid-template-columns: 90px minmax(260px, 1fr) 132px;
+  min-height: 58px;
+}
+
+body.positioning-radar-page .split-rail {
+  height: 26px;
+}
+
+body.positioning-radar-page .split-read span {
+  font-size: 9.5px;
+}
+
+body.positioning-radar-page .split-read b {
+  font-size: 15px;
+}
+
+body.positioning-radar-page .leader-board {
+  gap: 12px;
+}
+
+body.positioning-radar-page .core-strip {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+body.positioning-radar-page .heat-panel h2 {
+  align-items: center;
+}
+
+body.positioning-radar-page .heat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+body.positioning-radar-page .heat-card {
+  position: relative;
+  min-height: 132px;
+  padding: 13px;
+  overflow: hidden;
+  background:
+    radial-gradient(220px 120px at 50% 0, rgba(70, 224, 122, calc((var(--heat, 40) / 100) * 0.16)), transparent 70%),
+    linear-gradient(180deg, rgba(10, 17, 11, 0.95), rgba(3, 8, 4, 0.98));
+}
+
+body.positioning-radar-page .heat-card:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--grn), var(--cyan), var(--amber), var(--red));
+  opacity: calc(0.25 + (var(--heat, 40) / 140));
+}
+
+body.positioning-radar-page .heat-card b {
+  font-size: 28px;
+}
+
+body.positioning-radar-page .heat-card em {
+  display: inline-flex;
+  margin-top: 8px;
+  border: 1px solid rgba(70, 224, 122, 0.22);
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: var(--grn);
+  font-size: 10px;
+  font-style: normal;
+  text-transform: uppercase;
+}
+
+body.positioning-radar-page .heat-card.short em {
+  border-color: rgba(255, 101, 114, 0.32);
+  color: var(--red);
+}
+
+body.positioning-radar-page .source-pill {
+  color: var(--dim);
+}
+
+body.positioning-radar-page .source-pill.weekly,
+body.positioning-radar-page .source-pill.proxy,
+body.positioning-radar-page .source-pill.fallback,
+body.positioning-radar-page .source-pill.sample,
+body.positioning-radar-page .source-pill.reference {
+  border-color: rgba(255, 189, 91, 0.32);
+  color: var(--amber);
+}
+
+body.positioning-radar-page .source-pill.live {
+  border-color: rgba(70, 224, 122, 0.34);
+  color: var(--grn);
+}
+
+@media (max-width: 1120px) {
+  body.positioning-radar-page .split-dashboard,
+  body.positioning-radar-page .hero-grid,
+  body.positioning-radar-page .heat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  body.positioning-radar-page .split-panel:first-child,
+  body.positioning-radar-page .split-panel:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  body.positioning-radar-page .market-lenses {
+    order: 2 !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 4px !important;
+    margin-top: 0 !important;
+  }
+
+  body.positioning-radar-page .lens-btn {
+    flex: 0 0 auto;
+  }
+
+  body.positioning-radar-page .options-drawer {
+    order: 3 !important;
+    margin: 0 !important;
+  }
+
+  body.positioning-radar-page .options-drawer summary small {
+    display: none;
+  }
+
+  body.positioning-radar-page .options-drawer .toolbar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .split-dashboard,
+  body.positioning-radar-page .hero-grid,
+  body.positioning-radar-page .heat-grid,
+  body.positioning-radar-page .insight-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .split-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .heat-panel {
+    display: block !important;
+    order: 5 !important;
+  }
+
+  body.positioning-radar-page .heat-grid {
+    gap: 8px !important;
+  }
+
+  body.positioning-radar-page .heat-card {
+    min-height: 94px !important;
+  }
+}
+</style>
+
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Positioning Radar","url":"https://niftytoolshub.com/positioning-radar.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A browser-based dashboard for long versus short positioning, CFTC weekly positioning context, ETF short references and crypto long short ratios.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="/nt-nav.css">
-<link rel="stylesheet" href="/nt-tool-context.css">
-<link rel="stylesheet" href="/nt-quality-rails.css">
-<script src="/nt-quality-rails.js"></script>
-<link rel="stylesheet" href="/nt-journeys.css">
-<script defer src="/nt-journeys.js"></script>
 <link rel="stylesheet" href="/nt-display-system.css">
 <script defer src="/nt-display-system.js"></script>
 <link rel="stylesheet" href="/nt-mobile-lite.css">
@@ -111,7 +679,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 <link rel="stylesheet" href="/nt-mobile-phase2.css">
 <script defer src="/nt-mobile-phase2.js"></script>
 </head>
-<body>
+<body class="positioning-radar-page">
 <header>
   <div class="wrap nav">
     <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
@@ -125,15 +693,6 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 </header>
 
 <main class="wrap">
-  <div class="toolbar">
-    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Demo board</option></select></div>
-    <div><label for="group">Market group</label><select id="group"><option value="all">All markets</option><option value="equities">Equities</option><option value="crypto">Crypto</option><option value="metals">Metals</option><option value="energy">Energy</option><option value="softs">Softs</option><option value="grains">Grains</option></select></div>
-    <div><label for="searchMarket">Find market</label><input id="searchMarket" type="search" placeholder="spy, bitcoin, gold, oil, coffee"></div>
-    <button class="btn" type="button" onclick="refreshPositioning(true)">Refresh radar</button>
-    <button class="btn ghost" type="button" onclick="copyReport(this)">Copy report</button>
-    <button class="btn ghost" type="button" onclick="downloadSnapshot()">Download JSON</button>
-  </div>
-
   <section class="hero">
     <div class="hero-grid">
       <div>
@@ -164,6 +723,28 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
   </section>
 
   <section class="insight-strip" id="insightStrip" aria-label="Market positioning quick read"></section>
+
+  <section class="market-lenses" aria-label="Market lenses">
+    <button class="lens-btn is-active" type="button" data-market-group="all">All</button>
+    <button class="lens-btn" type="button" data-market-group="equities">Stocks</button>
+    <button class="lens-btn" type="button" data-market-group="crypto">Crypto</button>
+    <button class="lens-btn" type="button" data-market-group="metals">Metals</button>
+    <button class="lens-btn" type="button" data-market-group="energy">Energy</button>
+    <button class="lens-btn" type="button" data-market-group="softs">Softs</button>
+    <button class="lens-btn" type="button" data-market-group="grains">Grains</button>
+  </section>
+
+  <details class="options-drawer">
+    <summary><span>Options</span><small>filters, search, export</small></summary>
+  <div class="toolbar">
+    <div><label for="mode">Data mode</label><select id="mode"><option value="live">Live where possible</option><option value="sample">Demo board</option></select></div>
+    <div><label for="group">Market group</label><select id="group"><option value="all">All markets</option><option value="equities">Equities</option><option value="crypto">Crypto</option><option value="metals">Metals</option><option value="energy">Energy</option><option value="softs">Softs</option><option value="grains">Grains</option></select></div>
+    <div><label for="searchMarket">Find market</label><input id="searchMarket" type="search" placeholder="spy, bitcoin, gold, oil, coffee"></div>
+    <button class="btn" type="button" onclick="refreshPositioning(true)">Refresh radar</button>
+    <button class="btn ghost nt-mobile-advanced-action" type="button" onclick="copyReport(this)">Copy report</button>
+    <button class="btn ghost nt-mobile-advanced-action" type="button" onclick="downloadSnapshot()">Download JSON</button>
+  </div>
+  </details>
 
   <section class="main-grid">
     <div class="panel board">
@@ -203,7 +784,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       </section>
       <div class="core-strip" id="coreStrip" aria-label="Core market positioning"></div>
       <div class="position-table">
-        <div class="table-head"><span>Secondary lane</span><span>Source truth</span><span>Long / short</span><span>Net</span><span>Crowd</span></div>
+        <div class="table-head"><span>Market</span><span>Data timing</span><span>Long / short</span><span>Net</span><span>Crowd</span></div>
         <div id="positionRows"></div>
       </div>
     </div>
@@ -224,7 +805,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
   </section>
 
   <section class="panel panel-pad heat-panel">
-    <h2>Group heat <span id="heatSummary">all markets</span></h2>
+    <h2>Positioning heatmap <span id="heatSummary">all markets</span></h2>
     <div class="heat-grid" id="heatGrid"></div>
   </section>
 
@@ -261,6 +842,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     {id:"eth",symbol:"ETH",name:"Ethereum perps",group:"crypto",type:"crypto perps",longPct:49,shortPct:51,pctile:49,source:"sample",detail:"OKX/Binance exchange ratio when available"},
     {id:"gold",symbol:"GC",name:"Gold futures",group:"metals",type:"CFTC futures",longPct:62,shortPct:38,pctile:73,source:"sample",detail:"managed money / non-commercial positioning context"},
     {id:"silver",symbol:"SI",name:"Silver futures",group:"metals",type:"CFTC futures",longPct:57,shortPct:43,pctile:66,source:"sample",detail:"weekly CFTC futures positioning context"},
+    {id:"copper",symbol:"HG",name:"Copper futures",group:"metals",type:"CFTC futures",longPct:54,shortPct:46,pctile:62,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"oil",symbol:"WTI",name:"WTI crude oil",group:"energy",type:"CFTC futures",longPct:45,shortPct:55,pctile:70,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"gas",symbol:"NG",name:"Natural gas",group:"energy",type:"CFTC futures",longPct:40,shortPct:60,pctile:76,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"coffee",symbol:"KC",name:"Coffee futures",group:"softs",type:"CFTC futures",longPct:68,shortPct:32,pctile:82,source:"sample",detail:"soft commodity crowding can reverse quickly"},
@@ -270,7 +852,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     {id:"corn",symbol:"ZC",name:"Corn futures",group:"grains",type:"CFTC futures",longPct:49,shortPct:51,pctile:50,source:"sample",detail:"weekly CFTC futures positioning context"},
     {id:"soy",symbol:"ZS",name:"Soybeans futures",group:"grains",type:"CFTC futures",longPct:53,shortPct:47,pctile:54,source:"sample",detail:"weekly CFTC futures positioning context"}
   ];
-  const CORE_MARKETS = ["spy","qqq","btc","eth","gold","silver","oil","coffee"];
+  const CORE_MARKETS = ["spy","qqq","btc","eth","gold","silver","copper","oil","gas","coffee"];
   let latest = {markets:clone(SAMPLE),log:[],updated:new Date().toISOString()};
   const pendingTracks = [];
   let flushTimer = 0;
@@ -447,6 +1029,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     $("longSignal").textContent = c.longCrowd ? c.longCrowd.name + " at " + fmtPct(c.longCrowd.longPct) + " long" : "--";
     $("shortSignal").textContent = c.shortCrowd ? c.shortCrowd.name + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "--";
     $("truthStrip").innerHTML = truthTiles(markets, c.sourceLog);
+    syncLensButtons();
     if ($("splitTape")) {
       $("splitTape").innerHTML = splitTapeHtml(c.visible);
       $("longLeaders").innerHTML = leaderListHtml(c.visible, "long");
@@ -510,8 +1093,8 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
   function splitTapeRow(item){
     const n = net(item);
     const leading = n >= 0 ? "long" : "short";
-    const leadingPct = leading === "long" ? item.longPct : item.shortPct;
-    return '<div class="split-row"><div class="split-label"><b>' + safe(item.symbol) + '</b><small>' + safe(item.group + " / " + item.type) + '</small></div><div class="split-rail" aria-label="' + safe(item.symbol) + ' ' + fmtPct(item.longPct) + ' long and ' + fmtPct(item.shortPct) + ' short"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><div class="split-read ' + leading + '"><span>' + safe(leading) + ' lead</span><b>' + fmtPct(leadingPct) + '</b></div></div>';
+    const leadText = leading + " +" + Math.abs(Math.round(n));
+    return '<div class="split-row"><div class="split-label"><b>' + safe(item.symbol) + '</b><small>' + safe(item.group + " / " + item.type) + '</small></div><div class="split-rail" aria-label="' + safe(item.symbol) + ' ' + fmtPct(item.longPct) + ' long and ' + fmtPct(item.shortPct) + ' short"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><div class="split-read ' + leading + '"><span>L ' + fmtPct(item.longPct) + ' / S ' + fmtPct(item.shortPct) + '</span><b>' + safe(leadText) + '</b></div></div>';
   }
   function leaderListHtml(markets, side){
     const rows = leaderItems(markets, side, 5);
@@ -546,13 +1129,14 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
   }
   function sourceLabel(item){
     const detail = String(item && item.detail || "");
-    if (item && item.source === "sample") return "Demo";
-    if (item && item.source === "blocked") return "Unavailable";
-    if (/FINRA|short-volume|short volume/i.test(detail)) return "Delayed FINRA";
-    if (/OKX|fallback/i.test(detail)) return "Backup OKX";
-    if (/CFTC/i.test(detail)) return "Weekly CFTC";
-    if (item && item.source === "live") return "live";
-    return item && item.source || "source";
+    if (item && item.source === "sample") return "Context";
+    if (item && item.source === "blocked") return "Context";
+    if (/FINRA|short-volume|short volume/i.test(detail)) return "Delayed";
+    if (/OKX|fallback/i.test(detail)) return "Backup";
+    if (/CFTC/i.test(detail)) return "Weekly";
+    if (item && item.source === "live") return "Live";
+    if (item && item.source === "reference") return "Context";
+    return "Context";
   }
   function truthTiles(markets, log){
     const rows = Array.isArray(log) ? log : [];
@@ -592,7 +1176,10 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       const items = markets.filter(function(item){return item.group === group;});
       const score = items.length ? Math.round(items.reduce(function(sum,item){return sum + crowdScore(item);},0) / items.length) : 0;
       const top = items.slice().sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0];
-      return '<article class="heat-card"><span>' + group + '</span><b>' + score + '/100</b><small>' + (top ? safe(top.symbol + " leads: " + (net(top) >= 0 ? "long" : "short") + " skew") : "no signal") + '</small></article>';
+      const avgNet = items.length ? Math.round(items.reduce(function(sum,item){return sum + net(item);},0) / items.length) : 0;
+      const bias = avgNet >= 0 ? "long" : "short";
+      const topText = top ? top.symbol + " " + (net(top) >= 0 ? "long" : "short") + " skew" : "no signal";
+      return '<article class="heat-card ' + bias + '" style="--heat:' + score + '"><span>' + safe(group) + '</span><b>' + score + '/100</b><small>' + safe(topText) + '</small><em>' + safe(bias + " " + Math.abs(avgNet)) + '</em></article>';
     }).join("");
   }
   function alertRows(items){
@@ -628,7 +1215,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     if (!item) return "source";
     if (item.status === "blocked") return "Unavailable";
     if (item.status === "covered") return "Backup";
-    if (item.status === "sample") return "Demo";
+    if (item.status === "sample") return "Context";
     if (/CFTC/i.test(text)) return "live CFTC";
     if (/FINRA/i.test(text)) return "Delayed";
     if (/OKX|fallback/i.test(text)) return "Backup";
@@ -637,6 +1224,11 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
   }
   function safe(value){
     return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
+  }
+  function syncLensButtons(){
+    document.querySelectorAll("[data-market-group]").forEach(function(button){
+      button.classList.toggle("is-active", button.getAttribute("data-market-group") === currentGroup());
+    });
   }
   function reportText(c){
     return [
@@ -736,7 +1328,6 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 
 <script src="/tools-registry.js"></script>
 <script defer src="/nt-nav.js"></script>
-<script defer src="/nt-tool-context.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
