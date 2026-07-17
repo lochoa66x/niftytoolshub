@@ -27,14 +27,83 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 .table{display:grid;gap:7px}.head,.row{display:grid;grid-template-columns:1fr 92px minmax(170px,1fr) 76px 76px;gap:9px;align-items:center}.head{padding:0 10px 3px;color:var(--mut);font-size:10px;text-transform:uppercase}.row{min-height:70px;border:1px solid rgba(223,234,223,.1);border-radius:7px;background:linear-gradient(90deg,rgba(70,224,122,.034),rgba(6,12,7,.88) 34%,rgba(2,7,4,.92));padding:9px 10px;transition:.15s}.row:hover{border-color:rgba(70,224,122,.36);box-shadow:0 0 22px rgba(70,224,122,.08)}.ticker b{display:block;color:var(--txt);font-size:15px}.ticker small{display:block;color:var(--mut);font-size:10.5px}.signal{display:inline-flex;margin-top:6px;border:1px solid rgba(99,230,255,.24);border-radius:999px;padding:3px 7px;color:var(--cyan);font-size:10px;text-transform:uppercase}.signal.hot{border-color:rgba(255,189,91,.35);color:var(--amber)}.signal.bad{border-color:rgba(255,101,114,.35);color:var(--red)}.price b{display:block}.price span{color:var(--mut);font-size:11px}.up{color:var(--grn)}.down{color:var(--red)}.source,.pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(70,224,122,.28);border-radius:999px;padding:4px 8px;color:var(--grn);font-size:10px;text-transform:uppercase;white-space:nowrap}.source.reference,.pill.reference{border-color:rgba(99,230,255,.32);color:var(--cyan)}.source.sample,.pill.sample{border-color:rgba(255,189,91,.34);color:var(--amber)}.source.blocked,.pill.blocked{border-color:rgba(255,101,114,.34);color:var(--red)}
 .bar{display:grid;gap:5px}.rail{height:18px;border:1px solid rgba(223,234,223,.11);border-radius:999px;overflow:hidden;background:#010502}.rail i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--grn),var(--cyan),var(--amber));box-shadow:0 0 16px rgba(70,224,122,.24)}.bar small{color:var(--mut);font-size:10px}.score{font-size:20px;font-weight:800;color:var(--amber)}.side{display:grid;gap:12px}.stat{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.76);border-radius:6px;padding:10px;margin-top:8px}.stat span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}.stat b{display:block;margin-top:5px;color:var(--txt);font-size:14px;line-height:1.35}.list{display:grid;gap:7px;max-height:286px;overflow:auto;padding-right:2px}.item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:6px;padding:8px 9px;color:var(--mut);font-size:12px}.item b{color:var(--txt)}.item small{display:block;color:var(--mut);font-size:11px}.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.report{border:1px dashed rgba(70,224,122,.28);border-radius:6px;background:rgba(3,8,4,.72);padding:12px;color:var(--dim);font-size:12px;white-space:pre-wrap;min-height:150px}.truth{font-size:11.5px;color:var(--mut);line-height:1.65}.truth b{color:var(--txt)}.links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.links a{border:1px solid rgba(223,234,223,.1);background:rgba(5,9,5,.72);border-radius:5px;padding:9px 10px;color:var(--txt);font-size:12px}.links span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}footer{border-top:1px solid var(--line);margin-top:30px;padding:24px 0;color:var(--mut);font-size:12px;text-align:center}
 @media(max-width:1050px){.toolbar{grid-template-columns:1fr 1fr 1fr}.hero-grid,.main-grid,.report-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.head{display:none}.row{grid-template-columns:1fr}.source{width:max-content}.bar{max-width:560px}}@media(max-width:640px){.wrap{padding:0 12px}.toolbar,.cards,.links{grid-template-columns:1fr}.btn{width:100%}.board-head{display:block}.legend{margin-top:8px}.title{font-size:34px}.score-row b{font-size:42px}.badges .badge{width:100%}}
+
+
+/* Market Volume Phase 3: result-first public board */
+.market-volume-page .nt-tool-context,
+.market-volume-page .nt-quality-rails,
+.market-volume-page .nt-journeys,
+.market-volume-page .nt-admin-source-hook,
+.market-volume-page .source-health,
+.market-volume-page .nt-source-health,
+.market-volume-page [data-source-health]{
+  display:none!important;
+}
+.market-volume-page .hero{margin-top:0}
+.market-volume-page .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+.market-volume-page .card{min-height:112px;padding:14px}
+.market-volume-page .card b{font-size:20px}
+.volume-lenses{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding:8px;border:1px solid rgba(70,224,122,.2);border-radius:8px;background:rgba(3,8,4,.66)}
+.volume-lenses button{height:34px;border:1px solid var(--line);border-radius:999px;background:rgba(3,8,4,.72);color:var(--dim);font-weight:800;padding:6px 12px;cursor:pointer}
+.volume-lenses button:hover,.volume-lenses button.active{border-color:var(--grn);color:var(--grn);box-shadow:0 0 16px rgba(70,224,122,.13)}
+.options-drawer,.timing-guide{margin-top:10px;border:1px solid rgba(70,224,122,.22);border-radius:8px;background:linear-gradient(180deg,rgba(10,17,11,.92),rgba(3,7,4,.96));overflow:hidden}
+.options-drawer summary,.timing-guide summary{min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 12px;cursor:pointer;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.options-drawer summary span,.timing-guide summary span{color:var(--grn);font-weight:800}
+.options-drawer summary b,.timing-guide summary b{color:var(--dim);font-size:11px}
+.options-drawer summary::-webkit-details-marker,.timing-guide summary::-webkit-details-marker{display:none}
+.options-drawer[open] summary,.timing-guide[open] summary{border-bottom:1px solid rgba(70,224,122,.18)}
+.compact-toolbar{margin:0;border:0;border-radius:0;background:rgba(3,8,4,.58);box-shadow:none}
+.timing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}
+.timing-grid div{border:1px solid rgba(223,234,223,.1);border-radius:7px;background:rgba(5,9,5,.78);padding:10px}
+.timing-grid span{display:block;color:var(--mut);font-size:10px;text-transform:uppercase}
+.timing-grid b{display:block;margin-top:4px;color:var(--txt)}
+.timing-grid small{display:block;margin-top:6px;color:var(--mut);line-height:1.4}
+.market-volume-page .row{grid-template-columns:minmax(190px,1.15fr) 90px minmax(230px,1.3fr) 84px 76px}
+.market-volume-page .bar small{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.metric-chip{display:inline-flex;align-items:center;border:1px solid rgba(223,234,223,.1);border-radius:999px;padding:2px 6px;background:rgba(5,9,5,.72);color:var(--dim)}
+.market-volume-page .source{min-width:78px}
+.market-volume-page .report-grid{grid-template-columns:1fr}
+@media(max-width:900px){
+  .market-volume-page main{padding-top:12px}
+  .market-volume-page .hero-grid{grid-template-columns:1fr}
+  .market-volume-page .cards{grid-template-columns:1fr 1fr}
+  .market-volume-page .main-grid{grid-template-columns:1fr}
+  .market-volume-page .timing-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .market-volume-page .wrap{padding:0 14px}
+  .market-volume-page .nav{height:68px}
+  .market-volume-page .navlinks a:not(:last-child){display:none}
+  .market-volume-page .hero{border-radius:12px}
+  .market-volume-page .hero-grid{padding:16px}
+  .market-volume-page .title{font-size:30px;line-height:1.02}
+  .market-volume-page .lead{font-size:12px}
+  .market-volume-page .badges{display:none}
+  .market-volume-page .score-card{order:-1}
+  .market-volume-page .cards{grid-template-columns:1fr;margin-top:10px}
+  .market-volume-page .card{min-height:auto}
+  .volume-lenses{overflow-x:auto;flex-wrap:nowrap;padding:8px;margin-left:-2px;margin-right:-2px}
+  .volume-lenses button{flex:0 0 auto}
+  .options-drawer:not([open]) .toolbar{display:none}
+  .options-drawer summary,.timing-guide summary{min-height:50px}
+  .compact-toolbar{grid-template-columns:1fr!important;padding:12px}
+  .nt-mobile-advanced-action{display:none!important}
+  .market-volume-page .board{padding:12px}
+  .market-volume-page .board-head{margin-bottom:12px}
+  .market-volume-page .legend{display:none}
+  .market-volume-page .row{display:grid;grid-template-columns:1fr;gap:10px;min-height:auto;padding:12px;border-radius:10px}
+  .market-volume-page .source{justify-self:start}
+  .market-volume-page .bar{max-width:none}
+  .market-volume-page .price{display:flex;align-items:center;gap:10px}
+  .market-volume-page .score{font-size:28px}
+  .market-volume-page .side{gap:10px}
+  .market-volume-page .report-grid{display:none}
+  footer{padding-bottom:90px}
+}
+
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Volume Pulse","url":"https://niftytoolshub.com/market-volume-pulse.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A compact market attention radar for most-active stocks, unusual volume, dollar-volume leaders and ETF pressure.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="/nt-nav.css">
-<link rel="stylesheet" href="/nt-tool-context.css">
-<link rel="stylesheet" href="/nt-quality-rails.css">
-<script src="/nt-quality-rails.js"></script>
-<link rel="stylesheet" href="/nt-journeys.css">
-<script defer src="/nt-journeys.js"></script>
 <link rel="stylesheet" href="/nt-display-system.css">
 <script defer src="/nt-display-system.js"></script>
 <link rel="stylesheet" href="/nt-mobile-lite.css">
@@ -42,7 +111,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 <link rel="stylesheet" href="/nt-mobile-phase2.css">
 <script defer src="/nt-mobile-phase2.js"></script>
 </head>
-<body>
+<body class="market-volume-page">
 <header>
   <div class="wrap nav">
     <a class="logo" href="/"><span class="mk"></span> niftytoolshub</a>
@@ -56,16 +125,6 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 </header>
 
 <main class="wrap">
-  <div class="toolbar">
-    <div><label for="lane">Signal lane</label><select id="lane"><option value="all">All signals</option><option value="active">Most active</option><option value="unusual">Unusual volume</option><option value="dollar">Dollar volume</option><option value="etfs">ETF pressure</option><option value="movers">Big movers</option></select></div>
-    <div><label for="group">Group</label><select id="group"><option value="all">All groups</option><option value="large">Large caps</option><option value="tech">Tech</option><option value="crypto">Crypto-linked</option><option value="financials">Financials</option><option value="energy">Energy</option><option value="meme">Meme</option><option value="etf">ETFs</option></select></div>
-    <div><label for="noise">Penny noise</label><select id="noise"><option value="off">Off</option><option value="on">On</option></select></div>
-    <div><label for="searchTicker">Find ticker</label><input id="searchTicker" type="search" placeholder="nvda, spy, coin, gme"></div>
-    <button class="btn" type="button" onclick="refreshVolume(true)">Refresh pulse</button>
-    <button class="btn ghost" type="button" onclick="copyVolumeReport(this)">Copy report</button>
-    <button class="btn ghost" type="button" onclick="downloadVolumeJson()">Download JSON</button>
-  </div>
-
   <section class="hero">
     <div class="hero-grid">
       <div>
@@ -94,6 +153,37 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
   </section>
 
   <section class="cards" id="pulseCards" aria-label="Market volume quick read"></section>
+
+  <section class="volume-lenses" aria-label="Market volume lanes">
+    <button type="button" data-volume-lane="all">All</button>
+    <button type="button" data-volume-lane="active">Most active</button>
+    <button type="button" data-volume-lane="unusual">Unusual</button>
+    <button type="button" data-volume-lane="dollar">Dollar volume</button>
+    <button type="button" data-volume-lane="movers">Big movers</button>
+    <button type="button" data-volume-lane="etfs">ETFs</button>
+  </section>
+
+  <details class="options-drawer" id="volumeOptions">
+    <summary><span>Options</span><b id="optionsSummary">All signals / all groups</b></summary>
+      <div class="toolbar compact-toolbar">
+        <div><label for="lane">Signal lane</label><select id="lane"><option value="all">All signals</option><option value="active">Most active</option><option value="unusual">Unusual volume</option><option value="dollar">Dollar volume</option><option value="etfs">ETF pressure</option><option value="movers">Big movers</option></select></div>
+        <div><label for="group">Group</label><select id="group"><option value="all">All groups</option><option value="large">Large caps</option><option value="tech">Tech</option><option value="crypto">Crypto-linked</option><option value="financials">Financials</option><option value="energy">Energy</option><option value="meme">Meme</option><option value="etf">ETFs</option></select></div>
+        <div><label for="noise">Penny noise</label><select id="noise"><option value="off">Off</option><option value="on">On</option></select></div>
+        <div><label for="searchTicker">Find ticker</label><input id="searchTicker" type="search" placeholder="nvda, spy, coin, gme"></div>
+        <button class="btn" type="button" onclick="refreshVolume(true)">Refresh pulse</button>
+        <button class="btn ghost nt-mobile-advanced-action" type="button" onclick="copyVolumeReport(this)">Copy report</button>
+        <button class="btn ghost nt-mobile-advanced-action" type="button" onclick="downloadVolumeJson()">Download JSON</button>
+      </div>
+  </details>
+
+  <details class="timing-guide">
+    <summary><span>Data timing</span><b>Delayed public tape</b></summary>
+    <div class="timing-grid">
+      <div><span>Stocks + ETFs</span><b>Delayed / reference basket</b><small>Best for attention and liquidity context, not execution.</small></div>
+      <div><span>Relative volume</span><b>Baseline estimate</b><small>Compares current volume against average volume where available.</small></div>
+      <div><span>Upgrade path</span><b>Provider API</b><small>Alpha Vantage, Polygon, Finnhub or Nasdaq data can broaden the universe later.</small></div>
+    </div>
+  </details>
 
   <section class="main-grid">
     <div class="panel board">
@@ -236,15 +326,20 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     if (score >= 45) return "normal activity";
     return "quiet tape";
   }
+  function sourceLabel(status){
+    const labels = {live:"Live",delayed:"Delayed",reference:"Context",sample:"Backup",blocked:"Unavailable",local:"Local"};
+    return labels[status] || status || "Context";
+  }
   function sourceSummary(sources){
+    sources = sources || [];
     const live = sources.filter(function(item){return item.status === "live";}).length;
     const delayed = sources.filter(function(item){return item.status === "delayed";}).length;
     const ref = sources.filter(function(item){return item.status === "reference";}).length;
     const sample = sources.filter(function(item){return item.status === "sample";}).length;
-    if (live) return live + " live";
-    if (delayed) return delayed + " delayed";
-    if (ref) return ref + " reference";
-    return sample ? "demo" : "unknown";
+    if (live) return live + " live source" + (live === 1 ? "" : "s");
+    if (delayed) return delayed + " delayed source" + (delayed === 1 ? "" : "s");
+    if (ref) return ref + " context source" + (ref === 1 ? "" : "s");
+    return sample ? "backup mode" : "source pending";
   }
   function compute(){
     const rows = sortRows(filterRows(allRows()));
@@ -253,7 +348,8 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     const unusual = rows.slice().sort(function(a,b){return b.relVolume - a.relVolume;})[0] || null;
     const dollar = rows.slice().sort(function(a,b){return b.dollarVolume - a.dollarVolume;})[0] || null;
     const etfs = sortRows(filterRows(latest.etfs));
-    return {rows,score,active,unusual,dollar,etfs};
+    const mover = rows.slice().sort(function(a,b){return Math.abs(b.changePct)-Math.abs(a.changePct);})[0] || null;
+    return {rows,score,active,unusual,dollar,etfs,mover};
   }
   function render(){
     const c = compute();
@@ -273,14 +369,17 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     $("sourceLog").innerHTML = sourceHtml(latest.sources);
     $("alertList").innerHTML = alertsHtml(c.rows);
     $("reportText").textContent = reportText(c);
+    const options = $("optionsSummary");
+    if (options) options.textContent = $("lane").selectedOptions[0].textContent + " / " + $("group").selectedOptions[0].textContent;
+    syncLaneButtons();
   }
   function cardsHtml(c){
-    const mover = c.rows.slice().sort(function(a,b){return Math.abs(b.changePct)-Math.abs(a.changePct);})[0] || null;
+    const mover = c.mover;
     return [
-      card("most active", c.active ? c.active.symbol + " " + vol(c.active.volume) : "--", c.active ? c.active.name + " leads raw volume." : "No matching ticker.", "hot"),
-      card("unusual volume", c.unusual ? c.unusual.symbol + " " + Number(c.unusual.relVolume).toFixed(2) + "x" : "--", c.unusual ? c.unusual.name + " is above its baseline." : "No spike in this view.", "live"),
-      card("dollar volume", c.dollar ? c.dollar.symbol + " " + money(c.dollar.dollarVolume) : "--", c.dollar ? "Liquidity-weighted attention leader." : "No dollar-volume signal.", "good"),
-      card("biggest move", mover ? mover.symbol + " " + pct(mover.changePct) : "--", mover ? mover.signal : "No mover in this view.", Number(mover && mover.changePct) < 0 ? "bad" : "hot")
+      card("most active", c.active ? c.active.symbol + " / " + vol(c.active.volume) : "--", c.active ? c.active.name + " leads share volume." : "No matching ticker.", "hot"),
+      card("relative spike", c.unusual ? c.unusual.symbol + " / " + Number(c.unusual.relVolume).toFixed(2) + "x" : "--", c.unusual ? "Trading above its normal baseline." : "No spike in this view.", "live"),
+      card("dollar volume", c.dollar ? c.dollar.symbol + " / " + money(c.dollar.dollarVolume) : "--", c.dollar ? "Liquidity-weighted attention leader." : "No dollar-volume signal.", "good"),
+      card("big move", mover ? mover.symbol + " / " + pct(mover.changePct) : "--", mover ? mover.signal : "No mover in this view.", Number(mover && mover.changePct) < 0 ? "bad" : "hot")
     ].join("");
   }
   function card(label,value,detail,tone){
@@ -291,7 +390,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     const changeCls = Number(item.changePct) >= 0 ? "up" : "down";
     const signalCls = item.score >= 78 ? "hot" : isPennyNoise(item) ? "bad" : "";
     const relWidth = clamp(Number(item.relVolume) * 34, 5, 100);
-    return '<div class="row"><div class="ticker"><b>'+safe(item.symbol)+' - '+safe(item.name)+'</b><small>'+safe(item.group)+' / '+safe(item.signal)+'</small><span class="signal '+signalCls+'">'+safe(signalLabel(item))+'</span></div><span class="source '+cls+'">'+safe(window.ntSignal ? window.ntSignal.label(item.source) : item.source)+'</span><div class="bar"><div class="rail"><i style="width:'+relWidth+'%"></i></div><small>'+vol(item.volume)+' shares / '+Number(item.relVolume).toFixed(2)+'x avg / '+money(item.dollarVolume)+'</small></div><div class="price"><b>$'+Number(item.price).toFixed(2)+'</b><span class="'+changeCls+'">'+pct(item.changePct)+'</span></div><div><b class="score">'+Math.round(item.score)+'</b><small> pulse</small></div></div>';
+    return '<div class="row"><div class="ticker"><b>'+safe(item.symbol)+' - '+safe(item.name)+'</b><small>'+safe(item.group)+' / '+safe(item.signal)+'</small><span class="signal '+signalCls+'">'+safe(signalLabel(item))+'</span></div><span class="source '+cls+'">'+safe(sourceLabel(item.source))+'</span><div class="bar"><div class="rail"><i style="width:'+relWidth+'%"></i></div><small><span class="metric-chip">'+vol(item.volume)+' shares</span><span class="metric-chip">'+Number(item.relVolume).toFixed(2)+'x avg</span><span class="metric-chip">'+money(item.dollarVolume)+' dollar vol</span></small></div><div class="price"><b>$'+Number(item.price).toFixed(2)+'</b><span class="'+changeCls+'">'+pct(item.changePct)+'</span></div><div><b class="score">'+Math.round(item.score)+'</b><small> pulse</small></div></div>';
   }
   function signalLabel(item){
     if (item.score >= 82) return "attention spike";
@@ -304,7 +403,7 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     const order = { live:0, delayed:1, reference:2, sample:3, blocked:4 };
     return (sources || []).slice().sort(function(a,b){return (order[a.status]||2)-(order[b.status]||2);}).map(function(item){
       const cls = item.status === "live" ? "" : item.status === "delayed" || item.status === "reference" ? "reference" : item.status === "blocked" ? "blocked" : "sample";
-      return '<div class="item"><div><b>'+safe(item.source)+'</b><small>'+safe(item.detail)+'</small></div><span class="pill '+cls+'">'+safe(window.ntSignal ? window.ntSignal.label(item.status) : item.status)+'</span></div>';
+      return '<div class="item"><div><b>'+safe(item.source)+'</b><small>'+safe(item.detail)+'</small></div><span class="pill '+cls+'">'+safe(sourceLabel(item.status))+'</span></div>';
     }).join("") || '<div class="item"><div><b>Demo volume pack</b><small>local backup data active</small></div><span class="pill sample">Demo</span></div>';
   }
   function alertsHtml(rows){
@@ -388,6 +487,11 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
     URL.revokeObjectURL(a.href);
     track("market_volume_export", { lane:currentLane(), group:currentGroup(), format:"json" });
   }
+  function syncLaneButtons(){
+    document.querySelectorAll("[data-volume-lane]").forEach(function(button){
+      button.classList.toggle("active", button.getAttribute("data-volume-lane") === currentLane());
+    });
+  }
   function safe(value){
     return String(value == null ? "" : value).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch];});
   }
@@ -399,6 +503,13 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
       });
     });
     $("searchTicker").addEventListener("input", render);
+    document.querySelectorAll("[data-volume-lane]").forEach(function(button){
+      button.addEventListener("click", function(){
+        $("lane").value = button.getAttribute("data-volume-lane");
+        track("market_volume_lens_change", { lane:currentLane(), group:currentGroup() });
+        render();
+      });
+    });
   }
   window.refreshVolume = refreshVolume;
   window.copyVolumeReport = copyVolumeReport;
@@ -413,7 +524,6 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:160px 150px
 
 <script src="/tools-registry.js"></script>
 <script defer src="/nt-nav.js"></script>
-<script defer src="/nt-tool-context.js"></script>
 <!-- NIFTY ANALYTICS START -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
