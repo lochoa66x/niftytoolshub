@@ -7,10 +7,10 @@
   const MISSIONS = [
     {
       id: "signal",
-      title: "Command Center",
+      title: "Signal Suite",
       filter: "signal",
       label: "Flagship",
-      description: "Radars, live signals, source quality and daily operational context."
+      description: "Radars, live signals, daily reads and public OSINT-style context."
     },
     {
       id: "prepper",
@@ -43,7 +43,7 @@
   ];
 
   const STARTERS = [
-    ["Command Center", "/signal-suite.html", "flagship"],
+    ["Signal Suite Hub", "/signal-suite.html", "flagship"],
     ["Crypto Pulse", "/crypto-pulse.html", "crypto network"],
     ["Stock Volume Pulse", "/market-volume-pulse.html", "stocks volume"],
     ["Shorts vs Longs", "/positioning-radar.html", "positioning"],
@@ -157,7 +157,7 @@
   const FILTER_LABELS = {
     all: "all tools",
     market: "Market Tools lane",
-    signal: "Command Center lane",
+    signal: "Signal Suite lane",
     prepper: "Prepper lane",
     utility: "Work Tools lane",
     fun: "Fun Lab lane"
@@ -270,7 +270,7 @@
     section.innerHTML = `
       <div class="nt-library-orient-head">
         <div>
-          <div class="nt-library-eyebrow">Phase 2 hierarchy</div>
+          <div class="nt-library-eyebrow">Product lanes</div>
           <h2>Pick a lane before searching.</h2>
           <p>The full toolbox is still here. This layer makes the big product systems obvious first, then lets users drop into the smaller utilities without scrolling a wall of cards.</p>
         </div>
@@ -291,7 +291,7 @@
       <div class="nt-starter-rail">
         <div class="nt-starter-copy">
           <strong>Recommended starting points</strong>
-          <span>These routes should carry the product. Everything else stays reachable in the secondary library.</span>
+          <span>These routes carry the product. Everything else stays reachable in the secondary library.</span>
         </div>
         <div class="nt-starter-links">
           ${STARTERS.map(([name, url, label]) => `

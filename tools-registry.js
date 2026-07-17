@@ -15,10 +15,10 @@
   const HUBS = [
     {
       id: "signals",
-      name: "Command Center",
+      name: "Signal Suite",
       url: "/signal-suite.html",
       label: "Flagship",
-      description: "The flagship operating shelf: early warning, internet weather, cyber, food, aurora, meme, crypto and market radars.",
+      description: "The public signal shelf: early warning, internet weather, cyber, food, aurora, meme, crypto and market radars.",
       icon: "SIG"
     },
     {
@@ -66,7 +66,7 @@
   const RAW_TOOLS = [
     {
       slug: "signal-suite",
-      name: "Command Center",
+      name: "Signal Suite Hub",
       url: "/signal-suite.html",
       hub: "signals",
       category: "Signal hub",
@@ -75,7 +75,7 @@
       lane: "global + local radar shelf",
       featured: true,
       priority: 100,
-      description: "All flagship radar tools grouped by signal lane, source quality and best next action.",
+      description: "All flagship radar tools grouped by signal lane, source status and best next action.",
       tags: ["signal", "radar", "hub", "monitor", "prepper", "market", "internet"]
     },
     {
@@ -191,7 +191,7 @@
       lane: "public cyber signals",
       featured: true,
       priority: 88,
-      description: "Public cyber-signal map with attack-style arcs, source health, top ports and vulnerability pulse.",
+      description: "Public cyber-signal map with attack-style arcs, top ports and vulnerability pulse.",
       tags: ["signal", "cyber", "security", "threat", "attack map", "vulnerability", "cisa", "sans"]
     },
     {

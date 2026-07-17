@@ -8,3 +8,25 @@
 .nt-command-search{display:grid;gap:10px;padding:16px;border-bottom:1px solid rgba(70,224,122,.14)}.nt-command-search input{width:100%;min-height:52px;border:1px solid rgba(70,224,122,.34);border-radius:7px;background:rgba(1,7,3,.92);color:var(--nt-text);padding:0 14px;font:inherit;font-size:16px;outline:none}.nt-command-search input:focus{border-color:var(--nt-green);box-shadow:0 0 0 3px rgba(70,224,122,.11)}.nt-command-chips{display:flex;gap:7px;flex-wrap:wrap}.nt-command-chip{min-height:34px;border:1px solid rgba(70,224,122,.18);border-radius:999px;background:rgba(3,9,5,.74);color:var(--nt-muted);padding:0 10px;font:inherit;font-size:12px;cursor:pointer}.nt-command-chip:hover,.nt-command-chip:focus-visible{color:var(--nt-green);border-color:var(--nt-green);outline:none}
 .nt-command-results{overflow:auto;padding:8px}.nt-command-result{width:100%;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--nt-text);padding:12px;text-align:left;font:inherit;cursor:pointer}.nt-command-result:hover,.nt-command-result:focus-visible,.nt-command-result.is-selected{border-color:rgba(70,224,122,.34);background:rgba(70,224,122,.075);outline:none}.nt-command-title{display:block;font-weight:800}.nt-command-desc{display:block;margin-top:4px;color:var(--nt-muted);font-size:12px;line-height:1.45}.nt-command-meta{display:inline-flex;align-items:center;min-height:28px;border:1px solid rgba(70,224,122,.2);border-radius:999px;color:var(--nt-green);padding:0 9px;font-size:11px;text-transform:uppercase;white-space:nowrap}.nt-command-empty{padding:28px 16px;color:var(--nt-muted);text-align:center}
 @media(max-width:980px){.nt-global-shell{width:min(100% - 24px,1360px);min-height:58px}.nt-links{overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.nt-links::-webkit-scrollbar{display:none}.nt-brand span:last-child{display:none}}@media(max-width:680px){.nt-global-shell{gap:10px}.nt-links a{display:none}.nt-command-label{display:none}.nt-command-overlay{padding-top:70px}}@media(prefers-reduced-motion:reduce){.nt-links a,.nt-command-btn,.nt-command-close,.nt-command-chip,.nt-command-result{transition:none}}
+
+/* Phase 1: public pages show user signal state; source-health/debug modules belong in admin. */
+body:not(.nt-admin-page) .nt-admin-source-hook,
+body:not(.nt-admin-page) .nt-public-source-health,
+body:not(.nt-admin-page) .nt-public-source-panel,
+body:not(.nt-admin-page) .nt-public-diagnostics,
+body:not(.nt-admin-page) .source-health,
+body:not(.nt-admin-page) .source-health-summary,
+body:not(.nt-admin-page) .source-details,
+body:not(.nt-admin-page) .nt-source-health,
+body:not(.nt-admin-page) [data-source-health],
+body:not(.nt-admin-page) #sourceHealth,
+body:not(.nt-admin-page) #sourceLog {
+  display: none !important;
+  visibility: hidden !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}

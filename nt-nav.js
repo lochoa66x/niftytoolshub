@@ -3,7 +3,7 @@
   if(window.__niftyGlobalNav)return;
   window.__niftyGlobalNav=true;
   const NAV=[
-    ["command","Command Center","/signal-suite.html"],
+    ["command","Signal Suite","/signal-suite.html"],
     ["prepper","Prepper","/prepper-command.html"],
     ["markets","Market Tools","/library.html?filter=market"],
     ["work","Work Tools","/library.html?filter=utility"],
@@ -18,7 +18,7 @@
     "/tarot-tools.html":"fun","/astrology-tools.html":"fun","/shuman-tool.html":"fun","/library.html":"library"
   };
   const FALLBACK=[
-    ["signal-suite","Command Center","/signal-suite.html","command","All flagship radar tools in one command shelf."],
+    ["signal-suite","Signal Suite Hub","/signal-suite.html","command","All flagship radar tools in one public signal shelf."],
     ["personal-risk","Personal Risk Briefing","/personal-risk.html","command","Local risk across weather, air, outages, food, markets and cyber."],
     ["signal-watch","Early Warning Radar","/signal-watch.html","command","Space weather, quakes, outages, conflict, news and market stress."],
     ["outage-radar","Outage Radar","/outage-radar.html","command","App, cloud, carrier and internet-core status signals."],
@@ -36,7 +36,7 @@
     ["astrology-tools","Birth Chart / Zodiac Toolkit","/astrology-tools.html","fun","Zodiac, numerology and compatibility."],
     ["library","Full Tool Library","/library.html","library","Browse every tool by category."]
   ].map(([slug,name,url,hub,description])=>({slug,name,url,hub,hubs:[hub],category:hub,description,tags:[]}));
-  const HUB={signals:"Command Center",command:"Command Center",prepper:"Prepper",markets:"Market Tools",work:"Work Tools",utilities:"Work Tools",fun:"Fun Lab",library:"Library"};
+  const HUB={signals:"Signal Suite",command:"Signal Suite",prepper:"Prepper",markets:"Market Tools",work:"Work Tools",utilities:"Work Tools",fun:"Fun Lab",library:"Library"};
   let selected=0,lastFocus=null;
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
   function active(){
