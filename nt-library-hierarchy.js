@@ -21,10 +21,10 @@
     },
     {
       id: "market",
-      title: "Market Signals",
+      title: "Market Tools",
       filter: "market",
-      label: "Markets + crypto",
-      description: "Crypto Pulse, Volume Pulse, Positioning Radar, salary and finance context."
+      label: "Markets",
+      description: "Crypto Pulse, Stock Volume Pulse and Shorts vs Longs first. Finance calculators stay secondary."
     },
     {
       id: "utility",
@@ -44,11 +44,56 @@
 
   const STARTERS = [
     ["Command Center", "/signal-suite.html", "flagship"],
-    ["Personal Risk Briefing", "/personal-risk.html", "daily read"],
+    ["Crypto Pulse", "/crypto-pulse.html", "crypto network"],
+    ["Stock Volume Pulse", "/market-volume-pulse.html", "stocks volume"],
+    ["Shorts vs Longs", "/positioning-radar.html", "positioning"],
     ["Prepper Command", "/prepper-command.html", "readiness"],
-    ["Crypto Pulse", "/crypto-pulse.html", "markets"],
-    ["PDF Toolkit", "/pdf-tools.html", "work"],
-    ["Fun Lab", "/library.html?filter=fun", "play"]
+    ["PDF Toolkit", "/pdf-tools.html", "work"]
+  ];
+
+  const MARKET_TOOLS = [
+    {
+      title: "Crypto Pulse",
+      url: "/crypto-pulse.html",
+      badge: "Crypto network",
+      desc: "BTC/ETH fees, rails, gas, mempool and transaction pressure.",
+      core: true
+    },
+    {
+      title: "Stock Volume Pulse",
+      url: "/market-volume-pulse.html",
+      badge: "Stocks volume",
+      desc: "Most-traded stocks, ETF activity, volume leaders and attention spikes.",
+      core: true
+    },
+    {
+      title: "Shorts vs Longs",
+      url: "/positioning-radar.html",
+      badge: "Positioning",
+      desc: "Long/short crowding for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee.",
+      core: true
+    },
+    {
+      title: "Salary / Paycheck",
+      url: "/salary-tools.html",
+      badge: "Finance helper",
+      desc: "Take-home pay, raises, overtime and job-offer comparison.",
+      core: false
+    },
+    {
+      title: "Mortgage Calculator",
+      url: "/mortgage.html",
+      badge: "Finance helper",
+      desc: "Payments, amortization and extra-payment scenarios.",
+      core: false
+    },
+    {
+      title: "Auto Loan Calculator",
+      url: "/auto-loan.html",
+      badge: "Finance helper",
+      desc: "Car payment estimates with trade-in, tax and amortization.",
+      core: false
+    }
   ];
 
   const PRIORITY_NAMES = new Set([
@@ -62,7 +107,9 @@
     "cyber threat radar",
     "crypto pulse",
     "market positioning radar",
+    "shorts vs longs radar",
     "market volume pulse",
+    "stock volume pulse",
     "image toolkit",
     "pdf toolkit",
     "salary / paycheck calculator pro"
@@ -109,7 +156,7 @@
 
   const FILTER_LABELS = {
     all: "all tools",
-    market: "Market Signals lane",
+    market: "Market Tools lane",
     signal: "Command Center lane",
     prepper: "Prepper lane",
     utility: "Work Tools lane",
@@ -124,6 +171,8 @@
     const filter = activeFilter();
     const label = FILTER_LABELS[filter] || `${filter} lane`;
     box.textContent = `${visible}/${total} showing · ${label}`;
+    const marketLane = document.getElementById("ntMarketLane");
+    if (marketLane) marketLane.hidden = !(filter === "all" || filter === "market");
     setActiveMission();
   }
 
@@ -162,6 +211,52 @@
         }
       });
     });
+  }
+
+
+  function renderMarketLane() {
+    const libraryHead = document.querySelector(".library-head");
+    const search = document.querySelector(".library-search");
+    if (!libraryHead || document.getElementById("ntMarketLane")) return;
+    const anchor = search || libraryHead.nextElementSibling;
+    const core = MARKET_TOOLS.filter(tool => tool.core);
+    const helpers = MARKET_TOOLS.filter(tool => !tool.core);
+    const section = document.createElement("section");
+    section.id = "ntMarketLane";
+    section.className = "nt-market-lane";
+    section.innerHTML = `
+      <div class="nt-market-lane-head">
+        <div>
+          <div class="nt-library-eyebrow">Market Tools lane</div>
+          <h2>Crypto, stocks and shorts vs longs.</h2>
+          <p>Open the exact market screen first. Finance calculators stay available as helpers, not as the main market product.</p>
+        </div>
+        <a class="nt-market-all" href="/library.html?filter=market">All market tools</a>
+      </div>
+      <div class="nt-market-core">
+        ${core.map(tool => `
+          <a class="nt-market-card is-core" href="${esc(tool.url)}">
+            <span>${esc(tool.badge)}</span>
+            <strong>${esc(tool.title)}</strong>
+            <small>${esc(tool.desc)}</small>
+            <b>Open tool -&gt;</b>
+          </a>
+        `).join("")}
+      </div>
+      <details class="nt-market-secondary">
+        <summary>Finance helpers <span>${helpers.length} tools</span></summary>
+        <div class="nt-market-helper-grid">
+          ${helpers.map(tool => `
+            <a class="nt-market-card" href="${esc(tool.url)}">
+              <span>${esc(tool.badge)}</span>
+              <strong>${esc(tool.title)}</strong>
+              <small>${esc(tool.desc)}</small>
+            </a>
+          `).join("")}
+        </div>
+      </details>
+    `;
+    libraryHead.parentNode.insertBefore(section, anchor);
   }
 
   function renderOrientation() {
@@ -270,6 +365,7 @@
   function init() {
     if (!document.querySelector(".tool-library")) return;
     renderOrientation();
+    renderMarketLane();
     enhanceFilters();
     markPriorityTools();
     bindMissionCards();

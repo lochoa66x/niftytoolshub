@@ -31,10 +31,10 @@
     },
     {
       id: "markets",
-      name: "Market Signals",
+      name: "Market Tools",
       url: "/library.html?filter=market",
       label: "Market lane",
-      description: "Crypto networks, volume leaders, long/short positioning, salary and finance calculators.",
+      description: "Core market screens: Crypto Pulse, Stock Volume Pulse and Shorts vs Longs. Finance calculators stay secondary.",
       icon: "MKT"
     },
     {
@@ -221,11 +221,11 @@
       featured: true,
       priority: 83,
       description: "BTC and ETH activity, fees, mempool pressure and market context in a cleaner pulse view.",
-      tags: ["market", "crypto", "bitcoin", "ethereum", "network", "fees", "mempool", "signal"]
+      tags: ["market", "crypto", "bitcoin", "btc", "ethereum", "eth", "network", "fees", "gas", "mempool", "on-chain", "transaction volume", "signal"]
     },
     {
       slug: "positioning-radar",
-      name: "Market Positioning Radar",
+      name: "Shorts vs Longs Radar",
       url: "/positioning-radar.html",
       hub: "markets",
       hubs: ["markets", "signals"],
@@ -235,22 +235,23 @@
       lane: "long/short crowding",
       featured: true,
       priority: 82,
-      description: "Crowding context for SPY, QQQ, BTC, ETH, gold, silver, oil, coffee and major futures.",
-      tags: ["market", "positioning", "long short", "spy", "qqq", "bitcoin", "gold", "oil", "coffee"]
+      description: "Long/short crowding context for SPY, QQQ, BTC, ETH, gold, silver, oil, coffee and major futures.",
+      tags: ["market", "positioning", "shorts", "longs", "long short", "long/short", "short interest", "crowding", "spy", "qqq", "bitcoin", "btc", "ethereum", "eth", "gold", "silver", "oil", "coffee", "futures"]
     },
     {
       slug: "market-volume-pulse",
-      name: "Market Volume Pulse",
+      name: "Stock Volume Pulse",
       url: "/market-volume-pulse.html",
       hub: "markets",
+      hubs: ["markets"],
       category: "Volume leaders",
       status: "delayed",
       sourceTruth: "delayed",
       lane: "market activity",
       featured: true,
       priority: 80,
-      description: "Most-active stocks, dollar-volume style board and participation pulse.",
-      tags: ["market", "stocks", "volume", "leaders", "trading", "liquidity"]
+      description: "Most-active stocks, dollar-volume style board, volume leaders and participation pulse.",
+      tags: ["market", "stocks", "stock", "volume", "stocks volume", "volume leaders", "most traded", "shares", "trading", "liquidity", "attention leaders"]
     },
     {
       slug: "food-watch",

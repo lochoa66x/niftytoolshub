@@ -367,7 +367,7 @@
     <div class="chip" data-f="screen" onclick="filter(this)">Screen</div>
     <div class="chip" data-f="monitor" onclick="filter(this)">Monitoring</div>
     <div class="chip" data-f="signal" onclick="filter(this)">Signals</div>
-    <div class="chip" data-f="market" onclick="filter(this)">Market Signals</div>
+    <div class="chip" data-f="market" onclick="filter(this)">Market Tools</div>
     <div class="chip" data-f="prepper" onclick="filter(this)">Preparedness</div>
     <div class="chip" data-f="utility" onclick="filter(this)">Utilities</div>
   </div>
@@ -402,6 +402,26 @@
       <span class="badge free">Free</span><div class="ico">BRF</div>
       <h3>Personal Risk Briefing</h3><p>Generate a daily location brief across weather, air, quakes, outages, recalls, markets, cyber and conflict context.</p>
       <div class="open">Open full tool -></div>
+    </div>
+
+
+    <!-- Market Tools Core -->
+    <div class="tool nt-market-tool" data-tags="free utility monitor signal market crypto bitcoin btc ethereum eth network fees gas mempool on-chain transaction volume" data-name="crypto pulse bitcoin ethereum btc eth network stress fees gas mempool on chain transaction volume rails" onclick="location.href='/crypto-pulse.html'">
+      <span class="badge free">Market</span><div class="ico">BTC</div>
+      <h3>Crypto Pulse</h3><p>BTC/ETH network stress, fees, gas, mempool pressure and transaction-volume context.</p>
+      <div class="open">Open full tool -&gt;</div>
+    </div>
+
+    <div class="tool nt-market-tool" data-tags="free utility monitor signal market stocks stock volume stocks volume volume leaders most traded shares etf trading liquidity attention leaders" data-name="stock volume pulse market volume pulse most traded stocks etf volume leaders liquidity attention spike" onclick="location.href='/market-volume-pulse.html'">
+      <span class="badge free">Market</span><div class="ico">VOL</div>
+      <h3>Stock Volume Pulse</h3><p>Most-traded stocks, ETF activity, volume leaders and market attention spikes.</p>
+      <div class="open">Open full tool -&gt;</div>
+    </div>
+
+    <div class="tool nt-market-tool" data-tags="free utility monitor signal market positioning shorts longs short long long short long/short short interest crowding spy qqq btc eth bitcoin ethereum gold silver oil coffee futures" data-name="shorts vs longs radar market positioning radar long short crowding spy qqq btc eth gold silver oil coffee futures short interest" onclick="location.href='/positioning-radar.html'">
+      <span class="badge free">Market</span><div class="ico">L/S</div>
+      <h3>Shorts vs Longs Radar</h3><p>Long/short crowding context for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee.</p>
+      <div class="open">Open full tool -&gt;</div>
     </div>
 
     <!-- Prepper Command Center -->
@@ -641,7 +661,7 @@ Dana</textarea></div>
     </div>
 
     <!-- Loan / mortgage -->
-    <div class="tool" data-tags="free utility convert" data-name="mortgage loan auto car payment calculator amortization monthly refinance">
+    <div class="tool" data-tags="free utility convert finance market mortgage loan auto car payment calculator amortization monthly refinance" data-name="mortgage loan auto car payment calculator amortization monthly refinance">
       <span class="badge free">Free</span>
       <div class="ico">🏠</div>
       <h3>Loan & Mortgage</h3>
@@ -759,7 +779,7 @@ A- 3</textarea></div>
 
 
     <!-- Salary paycheck pro -->
-    <div class="tool" data-tags="free utility convert finance business salary paycheck hourly wage overtime raise job offer income tax estimate" data-name="salary paycheck calculator pro hourly yearly monthly biweekly wage overtime take home pay gross net deductions raise calculator job offer comparison income estimate" onclick="location.href='/salary-tools.html'">
+    <div class="tool" data-tags="free utility convert finance market business salary paycheck hourly wage overtime raise job offer income tax estimate" data-name="salary paycheck calculator pro hourly yearly monthly biweekly wage overtime take home pay gross net deductions raise calculator job offer comparison income estimate" onclick="location.href='/salary-tools.html'">
       <span class="badge free">Free</span><div class="ico">PAY</div>
       <h3>Salary / Paycheck Calculator Pro</h3><p>Estimate take-home pay, overtime, deductions, raises and competing job offers.</p>
       <div class="open">Open full tool -></div>
@@ -939,7 +959,7 @@ A- 3</textarea></div>
   const root = document.getElementById("hubLauncher");
   if(!registry || !root) return;
   const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[ch]));
-  root.innerHTML = registry.hubs.filter(hub => hub.id !== "markets").map(hub => {
+  root.innerHTML = registry.hubs.map(hub => {
     const count = registry.byHub(hub.id).length;
     return `
       <a class="hub-tile" href="${esc(hub.url)}" data-library-hub="${esc(hub.id)}">

@@ -5,7 +5,7 @@
   const NAV=[
     ["command","Command Center","/signal-suite.html"],
     ["prepper","Prepper","/prepper-command.html"],
-    ["markets","Markets","/library.html?filter=market"],
+    ["markets","Market Tools","/library.html?filter=market"],
     ["work","Work Tools","/library.html?filter=utility"],
     ["fun","Fun Lab","/library.html?filter=fun"],
     ["library","Library","/library.html"]
@@ -27,16 +27,16 @@
     ["prepper-command","Prepper Command Center","/prepper-command.html","prepper","Water, food, power, go-bag and family readiness."],
     ["prepper-tools","Prepper Toolkit Pro","/prepper-tools.html","prepper","Checklists and readiness helpers."],
     ["crypto-pulse","Crypto Pulse","/crypto-pulse.html","markets","BTC and ETH activity, fees and market context."],
-    ["market-volume-pulse","Market Volume Pulse","/market-volume-pulse.html","markets","Most-active stocks and volume leaders."],
-    ["positioning-radar","Market Positioning Radar","/positioning-radar.html","markets","Long/short and crowding context."],
+    ["market-volume-pulse","Stock Volume Pulse","/market-volume-pulse.html","markets","Stocks, ETFs, most-traded names and volume leaders."],
+    ["positioning-radar","Shorts vs Longs Radar","/positioning-radar.html","markets","Long/short crowding across SPY, QQQ, BTC, ETH, gold, oil and coffee."],
     ["image-tools","Image Toolkit","/image-tools.html","work","Compress, resize and convert images."],
     ["pdf-tools","PDF Toolkit","/pdf-tools.html","work","Merge, extract and optimize PDFs."],
     ["qr-tools","QR Code Toolkit Pro","/qr-tools.html","work","Build QR codes for links, Wi-Fi and more."],
     ["tarot-tools","Tarot Reader","/tarot-tools.html","fun","Card spreads and playful interpretations."],
     ["astrology-tools","Birth Chart / Zodiac Toolkit","/astrology-tools.html","fun","Zodiac, numerology and compatibility."],
     ["library","Full Tool Library","/library.html","library","Browse every tool by category."]
-  ].map(([slug,name,url,hub,description])=>({slug,name,url,hub,category:hub,description,tags:[]}));
-  const HUB={signals:"Command Center",command:"Command Center",prepper:"Prepper",markets:"Markets",work:"Work Tools",utilities:"Work Tools",fun:"Fun Lab",library:"Library"};
+  ].map(([slug,name,url,hub,description])=>({slug,name,url,hub,hubs:[hub],category:hub,description,tags:[]}));
+  const HUB={signals:"Command Center",command:"Command Center",prepper:"Prepper",markets:"Market Tools",work:"Work Tools",utilities:"Work Tools",fun:"Fun Lab",library:"Library"};
   let selected=0,lastFocus=null;
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
   function active(){
@@ -52,11 +52,12 @@
   }
   function tools(){
     const r=window.NIFTY_TOOLS_REGISTRY;
-    if(r&&typeof r.all==="function")return r.all().map(t=>({slug:t.slug,name:t.name,url:t.url,hub:t.hub,category:t.category,description:t.description,tags:t.tags||[]}));
+    if(r&&typeof r.all==="function")return r.all().map(t=>({slug:t.slug,name:t.name,url:t.url,hub:t.hub,hubs:Array.isArray(t.hubs)&&t.hubs.length?t.hubs:[t.hub],category:t.category,description:t.description,tags:t.tags||[]}));
     return FALLBACK;
   }
   function score(t,q){
-    const hay=[t.name,t.category,HUB[t.hub]||t.hub,t.description,(t.tags||[]).join(" ")].join(" ").toLowerCase();
+    const hubNames=(Array.isArray(t.hubs)&&t.hubs.length?t.hubs:[t.hub]).map(h=>HUB[h]||h).join(" ");
+    const hay=[t.name,t.category,HUB[t.hub]||t.hub,hubNames,t.description,(t.tags||[]).join(" ")].join(" ").toLowerCase();
     q=(q||"").toLowerCase().trim();
     if(!q)return 10;
     if((t.name||"").toLowerCase()===q)return 100;
@@ -67,8 +68,8 @@
   function list(q,hub){
     return tools().map(t=>({t,s:score(t,q)})).filter(x=>x.s>0).filter(x=>{
       if(!hub)return true;
-      const h=x.t.hub==="signals"?"command":x.t.hub;
-      return h===hub||(hub==="work"&&x.t.hub==="utilities");
+      const hubs=(Array.isArray(x.t.hubs)&&x.t.hubs.length?x.t.hubs:[x.t.hub]).map(h=>h==="signals"?"command":h);
+      return hubs.includes(hub)||(hub==="work"&&hubs.includes("utilities"));
     }).sort((a,b)=>b.s-a.s||a.t.name.localeCompare(b.t.name)).slice(0,9).map(x=>x.t);
   }
   function render(){
