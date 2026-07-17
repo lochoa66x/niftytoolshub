@@ -58,7 +58,7 @@
       if (isExplainerHeading(h)) panel.classList.add("nt-mobile-explainer");
     });
 
-    document.querySelectorAll("#sourceHealth, #sourceLog, .source-log, .source-strip, .source-health-summary, .source-details, .source-drawer, .source-row, .truth-strip").forEach(function (node) {
+    document.querySelectorAll("#sourceHealth, #sourceLog, .source-log, .source-strip, .source-health-summary, .source-details, .source-drawer, .source-row, .truth-strip, .source-note").forEach(function (node) {
       const target = node.closest(".panel, article, section, aside, details") || node;
       target.classList.add("nt-public-source-health", "nt-public-source-panel");
     });
@@ -171,40 +171,19 @@
 
   function headingText(node) {
     const heading = node.querySelector(":scope > h2, :scope > h3, :scope > .panel-head h2, :scope > .panel-head h3, :scope > summary, :scope .panel-head h2, :scope .panel-head h3");
-    return clean(heading && heading.textContent).toLowerCase();
+    return clean(heading && heading.textContent).toLowerCase().replace(/^(\/\/|>|\+|-)\s*/, "").trim();
   }
 
   function isSourceHeading(text) {
-    return [
-      "source health",
-      "source quality",
-      "source status",
-      "data coverage",
-      "official links",
-      "official sources",
-      "watch coverage"
-    ].includes(text);
+    return /\b(source health|source quality|source status|data coverage|official links|official sources|watch coverage)\b/.test(text);
   }
 
   function isDiagnosticHeading(text) {
-    return [
-      "debug",
-      "raw feed",
-      "feed log",
-      "source log",
-      "signals log",
-      "runtime log"
-    ].includes(text);
+    return /\b(debug|raw feed|feed log|source log|signals log|runtime log)\b/.test(text);
   }
 
   function isExplainerHeading(text) {
-    return [
-      "what this is",
-      "how to read this board",
-      "how to read",
-      "related tools",
-      "readable report"
-    ].includes(text);
+    return /\b(what this is|how to read this board|how to read|related tools|readable report|source honesty|how it decides|what counts as early)\b/.test(text);
   }
 
   function isPhone() {

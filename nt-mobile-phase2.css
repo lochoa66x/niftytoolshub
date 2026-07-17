@@ -502,3 +502,76 @@ body:not(.nt-admin-page) .nt-admin-source-hook {
     scroll-behavior: auto !important;
   }
 }
+
+/* Phase 2: OSINT mobile result-first refinements */
+@media (max-width: 760px) {
+  body.nt-mobile-phase2.nt-osint-layout .nt-public-explainer-panel,
+  body.nt-mobile-phase2.nt-osint-layout .nt-mobile-explainer,
+  body.nt-mobile-phase2.nt-osint-layout .source-note,
+  body.nt-mobile-phase2.nt-osint-layout .nt-admin-source-hook {
+    display: none !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout h1,
+  body.nt-mobile-phase2.nt-osint-layout .title,
+  body.nt-mobile-phase2.nt-osint-layout .screen-title,
+  body.nt-mobile-phase2.nt-osint-layout .radar-title {
+    font-size: clamp(30px, 10vw, 42px) !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .lead {
+    margin-bottom: 10px !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .hero {
+    min-height: auto !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .hero-grid {
+    padding: 10px !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .score-card,
+  body.nt-mobile-phase2.nt-osint-layout .score-panel {
+    order: -1 !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .side .panel:nth-child(n+2),
+  body.nt-mobile-phase2.nt-osint-layout .radar-side .panel:nth-child(n+2),
+  body.nt-mobile-phase2.nt-osint-layout .report-grid,
+  body.nt-mobile-phase2.nt-osint-layout .lower-grid,
+  body.nt-mobile-phase2.nt-osint-layout .impact-grid {
+    display: none !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .status-strip,
+  body.nt-mobile-phase2.nt-osint-layout .truth-strip {
+    display: none !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .module-grid,
+  body.nt-mobile-phase2.nt-osint-layout .brief-grid,
+  body.nt-mobile-phase2.nt-osint-layout .pulse-board,
+  body.nt-mobile-phase2.nt-osint-layout .cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .module,
+  body.nt-mobile-phase2.nt-osint-layout .card,
+  body.nt-mobile-phase2.nt-osint-layout .core-market,
+  body.nt-mobile-phase2.nt-osint-layout .market-row,
+  body.nt-mobile-phase2.nt-osint-layout .row,
+  body.nt-mobile-phase2.nt-osint-layout .pulse-row {
+    min-height: auto !important;
+  }
+
+  body.nt-mobile-phase2.nt-osint-layout .source,
+  body.nt-mobile-phase2.nt-osint-layout .hint,
+  body.nt-mobile-phase2.nt-osint-layout .note {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+}
+/* End Phase 2: OSINT mobile result-first refinements */
