@@ -75,6 +75,27 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
 .blocked-details .signal-row{border-color:rgba(255,101,114,.16);margin:0 8px 8px}
 @media(max-width:1080px){.core-strip,.truth-strip{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.core-strip,.source-health-summary,.truth-strip{grid-template-columns:1fr}.core-market{min-height:auto}}
+
+/* Positioning split leaders: restore a direct visual long/short read. */
+.split-dashboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:10px;margin:0 0 12px}
+.split-panel{border:1px solid rgba(70,224,122,.2);border-radius:8px;background:linear-gradient(180deg,rgba(8,15,9,.9),rgba(2,7,4,.94));box-shadow:inset 0 0 22px rgba(70,224,122,.025);padding:11px;min-width:0}
+.split-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:9px}
+.split-panel h3{margin:0;color:var(--txt);font-size:15px;text-transform:uppercase;letter-spacing:.35px}
+.split-panel p{margin:0;max-width:430px;color:var(--mut);font-size:11px;line-height:1.45;text-align:right}
+.micro-label{display:block;color:var(--grn);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px}
+.split-tape{display:grid;gap:7px}
+.split-row{display:grid;grid-template-columns:96px minmax(0,1fr) 122px;gap:10px;align-items:center;border:1px solid rgba(223,234,223,.09);border-radius:7px;background:rgba(3,8,4,.64);padding:8px}
+.split-label b{display:block;color:var(--txt);font-size:14px}.split-label small{display:block;color:var(--mut);font-size:9.5px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.split-rail{position:relative;height:28px;border:1px solid rgba(223,234,223,.12);border-radius:999px;overflow:hidden;background:#010502;box-shadow:inset 0 0 14px rgba(70,224,122,.08)}
+.split-rail i{position:absolute;top:0;bottom:0}.split-rail .long{left:0;background:linear-gradient(90deg,rgba(70,224,122,.9),rgba(99,230,255,.55))}.split-rail .short{right:0;background:linear-gradient(90deg,rgba(255,189,91,.55),rgba(255,101,114,.88))}
+.split-rail:after{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(223,234,223,.5);box-shadow:0 0 12px rgba(223,234,223,.3)}
+.split-read{display:grid;justify-items:end;gap:1px;color:var(--mut);font-size:10px;text-transform:uppercase}.split-read b{font-size:14px;color:var(--txt)}.split-read.long b{color:var(--grn)}.split-read.short b{color:var(--red)}
+.leader-board{display:grid;grid-template-columns:1fr 1fr;gap:9px}.leader-column h4{margin:0 0 8px;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.45px}.leader-column.long h4{color:var(--grn)}.leader-column.short h4{color:var(--red)}
+.leader-list{display:grid;gap:7px}.leader-item{display:grid;grid-template-columns:28px minmax(0,1fr) 54px;gap:8px;align-items:center;border:1px solid rgba(223,234,223,.09);border-radius:7px;background:rgba(3,8,4,.64);padding:8px;min-width:0}.leader-item .rank{color:var(--mut);font-size:11px}.leader-item b{display:block;color:var(--txt);font-size:13px}.leader-item small{display:block;color:var(--mut);font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.leader-item strong{font-size:14px;text-align:right}.leader-item.long strong{color:var(--grn)}.leader-item.short strong{color:var(--red)}
+.leader-mini-rail{position:relative;height:7px;margin-top:6px;border-radius:999px;background:#010502;overflow:hidden;border:1px solid rgba(223,234,223,.08)}.leader-mini-rail i{position:absolute;top:0;bottom:0}.leader-mini-rail .long{left:0;background:rgba(70,224,122,.8)}.leader-mini-rail .short{right:0;background:rgba(255,101,114,.82)}
+.leader-empty{border:1px dashed rgba(70,224,122,.18);border-radius:7px;padding:12px;color:var(--mut);font-size:11px}
+@media(max-width:1080px){.split-dashboard{grid-template-columns:1fr}.split-panel p{text-align:left}.leader-board{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.split-dashboard{gap:8px}.split-panel{padding:9px}.split-panel-head{display:block}.split-panel p{margin-top:5px}.split-row{grid-template-columns:1fr;gap:7px}.split-read{display:flex;justify-content:space-between;justify-items:stretch}.leader-board{grid-template-columns:1fr}.leader-item{grid-template-columns:24px minmax(0,1fr) 48px}.split-rail{height:24px}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Positioning Radar","url":"https://niftytoolshub.com/positioning-radar.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A browser-based dashboard for long versus short positioning, CFTC weekly positioning context, ETF short references and crypto long short ratios.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="/nt-nav.css">
@@ -159,6 +180,27 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
         <summary>How to read this board</summary>
         <div><b>Long % / short %</b> shows directional pressure inside each data lane. <b>Crowd</b> scores how stretched that lane looks. CFTC rows are weekly futures context, FINRA rows are delayed short-volume context, and crypto rows are exchange-specific long/short readings or backup feeds.</div>
       </details>
+      <section class="split-dashboard" aria-label="Long and short crowding leaders">
+        <article class="split-panel">
+          <div class="split-panel-head">
+            <div><span class="micro-label">visual read</span><h3>Crowding tape</h3></div>
+            <p id="splitNarrative">Ranking the strongest long and short pressure in the current view.</p>
+          </div>
+          <div class="split-tape" id="splitTape"></div>
+        </article>
+        <article class="split-panel">
+          <div class="leader-board">
+            <div class="leader-column long">
+              <h4>Most long-biased</h4>
+              <div class="leader-list" id="longLeaders"></div>
+            </div>
+            <div class="leader-column short">
+              <h4>Most short-biased</h4>
+              <div class="leader-list" id="shortLeaders"></div>
+            </div>
+          </div>
+        </article>
+      </section>
       <div class="core-strip" id="coreStrip" aria-label="Core market positioning"></div>
       <div class="position-table">
         <div class="table-head"><span>Secondary lane</span><span>Source truth</span><span>Long / short</span><span>Net</span><span>Crowd</span></div>
@@ -405,6 +447,12 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
     $("longSignal").textContent = c.longCrowd ? c.longCrowd.name + " at " + fmtPct(c.longCrowd.longPct) + " long" : "--";
     $("shortSignal").textContent = c.shortCrowd ? c.shortCrowd.name + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "--";
     $("truthStrip").innerHTML = truthTiles(markets, c.sourceLog);
+    if ($("splitTape")) {
+      $("splitTape").innerHTML = splitTapeHtml(c.visible);
+      $("longLeaders").innerHTML = leaderListHtml(c.visible, "long");
+      $("shortLeaders").innerHTML = leaderListHtml(c.visible, "short");
+      $("splitNarrative").textContent = splitNarrative(c);
+    }
     $("positionRows").innerHTML = secondaryRows(c.sorted).map(rowHtml).join("") || '<div class="market-row"><div class="market-title"><b>No secondary markets match this view</b><small>The core lanes above are still pinned for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee.</small></div></div>';
     $("coreStrip").innerHTML = coreCards(markets);
     $("insightStrip").innerHTML = insightCards(c);
@@ -433,6 +481,54 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       const bias = Math.abs(n) < 5 ? "even" : (n > 0 ? "long +" : "short +") + Math.abs(Math.round(n));
       return '<article class="core-market"><b>' + safe(item.symbol) + '<span class="score-num">' + score + '</span></b><small>' + safe(item.name) + '</small><div class="core-balance"><div class="rail"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><span>' + safe(bias) + '</span></div><div class="core-read"><em>' + safe(read.label) + '</em><span class="source-pill ' + sourceTone(item) + '">' + safe(sourceLabel(item)) + '</span></div></article>';
     }).join("");
+  }
+  function leaderItems(markets, side, limit){
+    const key = side === "long" ? "longPct" : "shortPct";
+    return markets.slice().filter(function(item){return Number.isFinite(Number(item[key]));}).sort(function(a,b){
+      const pctDiff = Number(b[key]) - Number(a[key]);
+      if (pctDiff !== 0) return pctDiff;
+      return crowdScore(b) - crowdScore(a);
+    }).slice(0, limit || 5);
+  }
+  function splitNarrative(c){
+    const long = leaderItems(c.visible, "long", 1)[0];
+    const short = leaderItems(c.visible, "short", 1)[0];
+    if (!long && !short) return "No markets match this filter. Clear search or change market group.";
+    const left = long ? long.symbol + " " + fmtPct(long.longPct) + " long-biased" : "no long-biased lane";
+    const right = short ? short.symbol + " " + fmtPct(short.shortPct) + " short-biased" : "no short-biased lane";
+    return left + " / " + right + ".";
+  }
+  function splitTapeHtml(markets){
+    const rows = markets.slice().sort(function(a,b){
+      const scoreDiff = crowdScore(b) - crowdScore(a);
+      if (scoreDiff !== 0) return scoreDiff;
+      return absNet(b) - absNet(a);
+    }).slice(0,6);
+    if (!rows.length) return '<div class="leader-empty">No markets match this view.</div>';
+    return rows.map(splitTapeRow).join("");
+  }
+  function splitTapeRow(item){
+    const n = net(item);
+    const leading = n >= 0 ? "long" : "short";
+    const leadingPct = leading === "long" ? item.longPct : item.shortPct;
+    return '<div class="split-row"><div class="split-label"><b>' + safe(item.symbol) + '</b><small>' + safe(item.group + " / " + item.type) + '</small></div><div class="split-rail" aria-label="' + safe(item.symbol) + ' ' + fmtPct(item.longPct) + ' long and ' + fmtPct(item.shortPct) + ' short"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div><div class="split-read ' + leading + '"><span>' + safe(leading) + ' lead</span><b>' + fmtPct(leadingPct) + '</b></div></div>';
+  }
+  function leaderListHtml(markets, side){
+    const rows = leaderItems(markets, side, 5);
+    if (!rows.length) return '<div class="leader-empty">No ' + safe(side) + ' leaders in this view.</div>';
+    return rows.map(function(item,index){return leaderRowHtml(item, side, index);}).join("");
+  }
+  function leaderRowHtml(item, side, index){
+    const pct = side === "long" ? item.longPct : item.shortPct;
+    return '<article class="leader-item ' + side + '"><span class="rank">' + String(index + 1).padStart(2,"0") + '</span><div><b>' + safe(item.symbol) + '</b><small>' + safe(item.name + " · " + item.group) + '</small><div class="leader-mini-rail"><i class="long" style="width:' + clamp(item.longPct,0,100) + '%"></i><i class="short" style="width:' + clamp(item.shortPct,0,100) + '%"></i></div></div><strong>' + fmtPct(pct) + '</strong></article>';
+  }
+  function leaderSummary(markets, side){
+    const rows = leaderItems(markets, side, 3);
+    if (!rows.length) return "none";
+    return rows.map(function(item){
+      const pct = side === "long" ? item.longPct : item.shortPct;
+      return item.symbol + " " + fmtPct(pct);
+    }).join(", ");
   }
   function secondaryRows(rows){
     const q = searchTerm();
@@ -549,6 +645,8 @@ main{padding:18px 0 34px}.toolbar{display:grid;grid-template-columns:180px 190px
       "Crowding pressure: " + c.avgScore + "/100 - " + stateFromScore(c.avgScore),
       "Strongest long crowd: " + (c.longCrowd ? c.longCrowd.symbol + " at " + fmtPct(c.longCrowd.longPct) + " long" : "none"),
       "Strongest short crowd: " + (c.shortCrowd ? c.shortCrowd.symbol + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "none"),
+      "Most long-biased lanes: " + leaderSummary(c.visible, "long"),
+      "Most short-biased lanes: " + leaderSummary(c.visible, "short"),
       "Live sources: " + c.liveCount + " / backup sources: " + c.coveredCount + " / unavailable probes: " + c.blockedCount,
       "Interpretation: " + (c.avgScore >= 70 ? "positioning is crowded enough to treat moves as squeeze/reversal sensitive." : "positioning is not broadly extreme; watch individual crowded lanes."),
       "Note: crowding context only, not financial advice."
