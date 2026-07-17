@@ -670,6 +670,246 @@ body.positioning-radar-page .source-pill.live {
 }
 </style>
 
+<style>
+/* Positioning Phase 2: terminal board comprehension pass */
+body.positioning-radar-page .hero {
+  margin-bottom: 10px;
+}
+
+body.positioning-radar-page .insight-strip {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr 1.05fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+body.positioning-radar-page .insight-card {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-color: rgba(70, 224, 122, 0.24);
+  background:
+    radial-gradient(300px 140px at 50% -20%, rgba(70, 224, 122, 0.09), transparent 70%),
+    linear-gradient(180deg, rgba(8, 15, 9, 0.96), rgba(2, 7, 4, 0.98));
+}
+
+body.positioning-radar-page .insight-card b {
+  font-size: clamp(22px, 2.5vw, 34px);
+  line-height: 1.02;
+}
+
+body.positioning-radar-page .insight-card small {
+  min-height: 32px;
+}
+
+body.positioning-radar-page .source-guide {
+  order: 4;
+  margin: 0 0 12px;
+  border: 1px solid rgba(255, 189, 91, 0.22);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(20, 15, 6, 0.28), rgba(3, 8, 4, 0.88));
+  overflow: hidden;
+}
+
+body.positioning-radar-page .source-guide summary {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 0 12px;
+  color: var(--amber);
+  font-weight: 800;
+  cursor: pointer;
+  list-style: none;
+}
+
+body.positioning-radar-page .source-guide summary::-webkit-details-marker {
+  display: none;
+}
+
+body.positioning-radar-page .source-guide summary:before {
+  content: "i";
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 189, 91, 0.38);
+  border-radius: 999px;
+  color: var(--amber);
+  font-size: 12px;
+}
+
+body.positioning-radar-page .source-guide summary small {
+  justify-self: end;
+  color: var(--mut);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+body.positioning-radar-page .source-guide summary:after {
+  content: "+";
+  color: var(--amber);
+}
+
+body.positioning-radar-page .source-guide[open] summary:after {
+  content: "-";
+}
+
+body.positioning-radar-page .source-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+
+body.positioning-radar-page .cadence-card {
+  border: 1px solid rgba(223, 234, 223, 0.1);
+  border-radius: 7px;
+  background: rgba(3, 8, 4, 0.78);
+  padding: 10px;
+  min-height: 92px;
+}
+
+body.positioning-radar-page .cadence-card span {
+  display: inline-flex;
+  border: 1px solid rgba(255, 189, 91, 0.28);
+  border-radius: 999px;
+  color: var(--amber);
+  padding: 2px 7px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+body.positioning-radar-page .cadence-card b {
+  display: block;
+  margin-top: 8px;
+  color: var(--txt);
+  font-size: 13px;
+}
+
+body.positioning-radar-page .cadence-card small {
+  display: block;
+  margin-top: 5px;
+  color: var(--mut);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+body.positioning-radar-page .split-panel:first-child {
+  min-height: 0;
+}
+
+body.positioning-radar-page .split-tape {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.positioning-radar-page .split-row {
+  grid-template-columns: 86px minmax(180px, 1fr) 128px;
+  min-height: 64px;
+  padding: 10px;
+}
+
+body.positioning-radar-page .split-label b {
+  font-size: 16px;
+}
+
+body.positioning-radar-page .split-rail {
+  height: 32px;
+}
+
+body.positioning-radar-page .split-read {
+  text-align: right;
+}
+
+body.positioning-radar-page .leader-item {
+  min-height: 52px;
+}
+
+body.positioning-radar-page .core-strip {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+body.positioning-radar-page .core-market {
+  min-height: 112px;
+}
+
+body.positioning-radar-page .core-balance .rail {
+  height: 20px;
+}
+
+body.positioning-radar-page .market-row {
+  grid-template-columns: minmax(180px, 1.05fr) 104px minmax(240px, 1.1fr) 96px 72px;
+}
+
+body.positioning-radar-page .balance .rail {
+  height: 28px;
+}
+
+body.positioning-radar-page .heat-card {
+  min-height: 118px;
+}
+
+body.positioning-radar-page .report-grid {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  body.positioning-radar-page .insight-strip,
+  body.positioning-radar-page .core-strip,
+  body.positioning-radar-page .source-guide-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.positioning-radar-page .split-tape {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  body.positioning-radar-page .insight-strip {
+    grid-template-columns: 1fr 1fr !important;
+    margin: 8px 0 !important;
+  }
+
+  body.positioning-radar-page .insight-card {
+    min-height: 88px !important;
+    padding: 10px !important;
+  }
+
+  body.positioning-radar-page .insight-card b {
+    font-size: 21px !important;
+  }
+
+  body.positioning-radar-page .source-guide {
+    order: 6 !important;
+  }
+
+  body.positioning-radar-page .source-guide summary small {
+    display: none;
+  }
+
+  body.positioning-radar-page .source-guide-grid,
+  body.positioning-radar-page .core-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.positioning-radar-page .split-tape .split-row:nth-child(n+5) {
+    display: none !important;
+  }
+
+  body.positioning-radar-page .split-rail,
+  body.positioning-radar-page .balance .rail {
+    height: 26px !important;
+  }
+
+  body.positioning-radar-page .market-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Market Positioning Radar","url":"https://niftytoolshub.com/positioning-radar.html","applicationCategory":"FinanceApplication","operatingSystem":"Any","description":"A browser-based dashboard for long versus short positioning, CFTC weekly positioning context, ETF short references and crypto long short ratios.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link rel="stylesheet" href="/nt-nav.css">
 <link rel="stylesheet" href="/nt-display-system.css">
@@ -746,6 +986,16 @@ body.positioning-radar-page .source-pill.live {
   </div>
   </details>
 
+  <details class="source-guide">
+    <summary><span>Data timing guide</span><small>what each label means</small></summary>
+    <div class="source-guide-grid">
+      <div class="cadence-card"><span>Weekly</span><b>CFTC futures</b><small>Official futures positioning. Useful for crowding context, not intraday timing.</small></div>
+      <div class="cadence-card"><span>Delayed</span><b>ETF short context</b><small>FINRA/Nasdaq style short-volume references. Treat as delayed participation context.</small></div>
+      <div class="cadence-card"><span>Backup</span><b>Crypto exchange ratio</b><small>Exchange-specific BTC/ETH long-short ratios. Good signal, not universal market truth.</small></div>
+      <div class="cadence-card"><span>Context</span><b>Fallback lane</b><small>Shown only when a feed is limited, blocked, or better treated as reference data.</small></div>
+    </div>
+  </details>
+
   <section class="main-grid">
     <div class="panel board">
       <div class="board-head">
@@ -756,7 +1006,7 @@ body.positioning-radar-page .source-pill.live {
         </div>
         <div class="legend"><span><i class="dot"></i> long</span><span><i class="dot short"></i> short</span><span><i class="dot net"></i> crowded</span></div>
       </div>
-      <div class="board-helper"><b>Core read:</b> SPY, QQQ, BTC, ETH, gold, silver, oil and coffee stay pinned here. Secondary futures lanes appear below only when they add useful context for the selected view.</div>
+      <div class="board-helper"><b>Core read:</b> SPY, QQQ, BTC, ETH, gold, silver, copper, oil, gas and coffee stay pinned here. Secondary futures lanes appear below only when they add useful context for the selected view.</div>
       <details class="read-note">
         <summary>How to read this board</summary>
         <div><b>Long % / short %</b> shows directional pressure inside each data lane. <b>Crowd</b> scores how stretched that lane looks. CFTC rows are weekly futures context, FINRA rows are delayed short-volume context, and crypto rows are exchange-specific long/short readings or backup feeds.</div>
@@ -1036,7 +1286,7 @@ body.positioning-radar-page .source-pill.live {
       $("shortLeaders").innerHTML = leaderListHtml(c.visible, "short");
       $("splitNarrative").textContent = splitNarrative(c);
     }
-    $("positionRows").innerHTML = secondaryRows(c.sorted).map(rowHtml).join("") || '<div class="market-row"><div class="market-title"><b>No secondary markets match this view</b><small>The core lanes above are still pinned for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee.</small></div></div>';
+    $("positionRows").innerHTML = secondaryRows(c.sorted).map(rowHtml).join("") || '<div class="market-row"><div class="market-title"><b>No secondary markets match this view</b><small>The core lanes above are still pinned for SPY, QQQ, BTC, ETH, gold, silver, copper, oil, gas and coffee.</small></div></div>';
     $("coreStrip").innerHTML = coreCards(markets);
     $("insightStrip").innerHTML = insightCards(c);
     $("heatSummary").textContent = currentGroup() === "all" ? "current view" : currentGroup();
@@ -1155,15 +1405,16 @@ body.positioning-radar-page .source-pill.live {
     return '<div class="truth-tile ' + tone + '"><span>' + safe(label) + '</span><b>' + safe(value) + '</b></div>';
   }
   function insightCards(c){
-    const top = c.sorted[0] || null;
-    const squeeze = c.sorted.filter(function(item){return net(item) < 0;}).sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0] || null;
-    const unwind = c.sorted.filter(function(item){return net(item) > 0;}).sort(function(a,b){return crowdScore(b) - crowdScore(a);})[0] || null;
-    const sourceMode = c.liveCount ? c.liveCount + " live sources" : "demo/context mode";
+    const crowded = c.sorted[0] || null;
+    const mostLong = leaderItems(c.visible, "long", 1)[0] || null;
+    const mostShort = leaderItems(c.visible, "short", 1)[0] || null;
+    const dataMode = c.liveCount ? c.liveCount + " live" : "context";
+    const backupText = c.coveredCount ? c.coveredCount + " backup" : "weekly/delayed mix";
     return [
-      insightHtml("market mood", top ? stateFromScore(c.avgScore) : "no match", top ? "Top crowding: " + top.symbol + " " + biasRead(top).label : "Clear search or change filters.", "hot"),
-      insightHtml("short squeeze watch", squeeze ? squeeze.symbol + " " + fmtPct(squeeze.shortPct) + " short" : "none", squeeze ? squeeze.name + " carries the strongest short-side skew." : "No short-heavy lane in this view.", "short"),
-      insightHtml("long unwind watch", unwind ? unwind.symbol + " " + fmtPct(unwind.longPct) + " long" : "none", unwind ? unwind.name + " carries the strongest long-side skew." : "No long-heavy lane in this view.", "long"),
-      insightHtml("source mode", sourceMode, c.blockedCount ? c.blockedCount + " unavailable probes need attention." : (c.coveredCount ? c.coveredCount + " exchange probes are covered by backup feeds." : "No unavailable source probes in this refresh."), "live")
+      insightHtml("most crowded", crowded ? crowded.symbol + " " + crowdScore(crowded) + "/100" : "no match", crowded ? crowded.name + " carries the highest crowding score in this view." : "Clear search or change filters.", "hot"),
+      insightHtml("most long", mostLong ? mostLong.symbol + " " + fmtPct(mostLong.longPct) : "none", mostLong ? mostLong.name + " leads the long side." : "No long-biased lane in this view.", "long"),
+      insightHtml("most short", mostShort ? mostShort.symbol + " " + fmtPct(mostShort.shortPct) : "none", mostShort ? mostShort.name + " leads the short side." : "No short-biased lane in this view.", "short"),
+      insightHtml("data timing", dataMode, backupText + ". See timing guide for what each label means.", "live")
     ].join("");
   }
   function insightHtml(label, value, detail, tone){
@@ -1239,7 +1490,7 @@ body.positioning-radar-page .source-pill.live {
       "Strongest short crowd: " + (c.shortCrowd ? c.shortCrowd.symbol + " at " + fmtPct(c.shortCrowd.shortPct) + " short" : "none"),
       "Most long-biased lanes: " + leaderSummary(c.visible, "long"),
       "Most short-biased lanes: " + leaderSummary(c.visible, "short"),
-      "Live sources: " + c.liveCount + " / backup sources: " + c.coveredCount + " / unavailable probes: " + c.blockedCount,
+      "Data timing: " + c.liveCount + " live / " + c.coveredCount + " backup / " + c.blockedCount + " unavailable probes.",
       "Interpretation: " + (c.avgScore >= 70 ? "positioning is crowded enough to treat moves as squeeze/reversal sensitive." : "positioning is not broadly extreme; watch individual crowded lanes."),
       "Note: crowding context only, not financial advice."
     ].join("\n");
