@@ -321,6 +321,8 @@
 
   function syncCount() {
     const filter = activeFilter();
+    const hasFocusedLane = FOCUSED_LIBRARY_LANES.has(filter);
+    document.body.classList.toggle("nt-focused-library-mode", hasFocusedLane);
     document.body.classList.toggle("nt-market-library-mode", filter === "market");
 
     const box = document.getElementById("ntLibraryCount");
@@ -333,8 +335,16 @@
 
     const marketLane = document.getElementById("ntMarketLane");
     if (marketLane) marketLane.hidden = filter !== "market";
+
+    const laneChooser = document.getElementById("ntLaneChooser");
+    if (laneChooser) {
+      const useGenericLane = hasFocusedLane && filter !== "market";
+      laneChooser.hidden = !useGenericLane;
+      if (useGenericLane) updateLaneChooser(filter);
+    }
+
     const indieLane = document.getElementById("ntIndieLane");
-    if (indieLane) indieLane.hidden = filter !== "indie";
+    if (indieLane) indieLane.hidden = true;
     setActiveMission();
   }
 
@@ -370,6 +380,190 @@
         }
       });
     });
+  }
+
+
+  const FOCUSED_LIBRARY_LANES = new Set(["signal", "prepper", "market", "work", "utility", "fun", "indie"]);
+
+  const LANE_GUIDES = {
+    signal: {
+      eyebrow: "Signal Suite",
+      title: "Choose the signal board.",
+      intro: "Use this lane for live-ish public signals, local risk context and operational awareness. Source details belong in Admin, not in the public chooser.",
+      stats: [["10", "flagship tools"], ["5", "radar boards"], ["1", "daily brief"]],
+      primary: [
+        ["Signal Suite Hub", "/signal-suite.html", "Start here", "What is working, delayed or contextual?", "Best overview for all signal tools.", ["Tool status", "Source truth", "Next board"]],
+        ["Personal Risk Briefing", "/personal-risk.html", "Daily read", "What matters near me today?", "Location-first briefing across weather, air, food, outage, cyber, market and conflict context.", ["Local score", "Action queue", "Saved profile"]],
+        ["Early Warning Radar", "/signal-watch.html", "World/local radar", "Are broad anomaly signals rising?", "Space weather, quakes, outages, air, market stress, news and conflict spillover in one view.", ["Global", "Local", "Trend"]],
+        ["Outage Radar", "/outage-radar.html", "Internet weather", "Is the service broken or is it me?", "Provider status and outage context for apps, cloud and carriers.", ["Apps", "Cloud", "Carriers"]]
+      ],
+      secondary: [
+        ["Cyber Threat Radar", "/cyber-threat.html", "Public cyber signals"],
+        ["Food Watch", "/food-watch.html", "Recalls + food pressure"],
+        ["Aurora Watch", "/aurora-watch.html", "Sky watch"],
+        ["Meme Watch", "/meme-watch.html", "Trend early warning"],
+        ["Command Queue", "/command-queue.html", "Turn signals into actions"]
+      ]
+    },
+    prepper: {
+      eyebrow: "Preparedness",
+      title: "Start with the practical risk.",
+      intro: "Preparedness tools should turn uncertainty into simple actions: water, power, documents, smoke days, travel friction and household checklists.",
+      stats: [["4", "core tools"], ["1", "daily brief"], ["0", "panic copy"]],
+      primary: [
+        ["Personal Risk Briefing", "/personal-risk.html", "Local briefing", "What should I pay attention to today?", "The highest-signal entry point for home, travel and local conditions.", ["Weather", "Air", "Outages"]],
+        ["Prepper Command Center", "/prepper-command.html", "Household plan", "What do I need ready at home?", "Water, food, power, go-bag, family contacts and inventory planning.", ["Water", "Power", "Go-bag"]],
+        ["Prepper Risk Scanner", "/prepper-risk.html", "Local scan", "What changed around my location?", "Local alerts, weather, smoke, quakes, internet and travel friction.", ["Alerts", "Smoke", "Travel"]],
+        ["Prepper Toolkit Pro", "/prepper-tools.html", "Build kit", "What should I stage or print?", "Practical household readiness plans, exports and comms cards.", ["Inventory", "Checklist", "Exports"]]
+      ],
+      secondary: [
+        ["Command Queue", "/command-queue.html", "Action cards"],
+        ["Food Watch", "/food-watch.html", "Food recalls"],
+        ["Outage Radar", "/outage-radar.html", "Internet outage check"],
+        ["Aurora Watch", "/aurora-watch.html", "Sky conditions"]
+      ]
+    },
+    work: {
+      eyebrow: "Work Tools",
+      title: "Pick the production job.",
+      intro: "Work tools should be direct and task-specific: files, documents, images, QR, receipts, developer utilities and text cleanup.",
+      stats: [["8", "core work tools"], ["4", "file tools"], ["1", "developer suite"]],
+      primary: [
+        ["PDF Toolkit", "/pdf-tools.html", "Documents", "Need to merge, split or convert a PDF?", "Merge, extract, optimize, image-to-PDF and export page images.", ["Merge", "Extract", "Optimize"]],
+        ["Image Toolkit", "/image-tools.html", "Images", "Need a lighter or resized image?", "Compress, resize, convert WebP/JPG/PNG and remove simple backgrounds.", ["Compress", "Resize", "Convert"]],
+        ["Developer Toolkit", "/dev-tools.html", "Developer", "Need to clean or decode data?", "JSON, YAML, CSV, Base64, URL, JWT, hashes, UUIDs, regex and timestamps.", ["Format", "Decode", "Validate"]],
+        ["QR Code Toolkit Pro", "/qr-tools.html", "Share/export", "Need a scannable code?", "URL, text, Wi-Fi, vCard, email, SMS, phone and event QR codes.", ["Wi-Fi", "vCard", "PNG/SVG"]]
+      ],
+      secondary: [
+        ["Text & Writing Toolkit Pro", "/text-tools.html", "Clean writing"],
+        ["Receipt Generator", "/receipt-tools.html", "Printable receipts"],
+        ["File Organizer Toolkit", "/file-organizer.html", "Organize files"],
+        ["Color Palette Studio", "/color-tools.html", "Design colors"]
+      ]
+    },
+    utility: {
+      eyebrow: "Everyday Utilities",
+      title: "Fast helpers, no ceremony.",
+      intro: "Small tools should stay easy to reach without competing with the flagship systems. Open a utility only when you know the quick job.",
+      stats: [["12+", "small tools"], ["3", "daily helpers"], ["0", "accounts"]],
+      primary: [
+        ["Unit Converter Pro", "/unit-tools.html", "Converters", "Need to convert a measurement?", "Length, area, volume, mass, temperature, speed, time, data, pressure, energy and angles.", ["Units", "Batch", "Favorites"]],
+        ["World Clock / Time Zone Studio", "/time-tools.html", "Time", "Need to plan across time zones?", "Live city clocks, timezone converter, meeting planner and countdowns.", ["Clocks", "UTC", "Meetings"]],
+        ["Device Test Suite", "/device-tests.html", "Diagnostics", "Need to check your hardware?", "Webcam, mic, speakers, keyboard, mouse, screen, typing speed and browser info.", ["Camera", "Mic", "Keyboard"]],
+        ["Math Lab Pro", "/math-tools.html", "Math", "Need a quick calculation?", "Scientific calculator, statistics, prime checks, factors, GCD/LCM, factorials and Fibonacci.", ["Scientific", "Stats", "Factors"]]
+      ],
+      secondary: [
+        ["Salary / Paycheck", "/salary-tools.html", "Paycheck math"],
+        ["Mortgage Calculator", "/mortgage.html", "Loan planning"],
+        ["Auto Loan Calculator", "/auto-loan.html", "Car payments"],
+        ["Random Toolkit Pro", "/random-tools.html", "Randomizers"]
+      ]
+    },
+    fun: {
+      eyebrow: "Fun Lab",
+      title: "Pick the playful tool.",
+      intro: "Fun tools should feel intentional, not like filler. Keep the weird internet energy, but route users into a clear experience.",
+      stats: [["6", "play tools"], ["2", "astrology tools"], ["1", "prank terminal"]],
+      primary: [
+        ["Tarot Card Reader", "/tarot-tools.html", "Tarot", "Want a reflective draw?", "Daily cards, quick answers, spreads, reversals and interpretations.", ["Daily", "Spread", "Reflection"]],
+        ["Birth Chart / Zodiac Toolkit", "/astrology-tools.html", "Zodiac", "Want birth chart and compatibility context?", "Sun, moon, rising, compatibility, numerology, daily vibe and lucky color.", ["Sun", "Moon", "Rising"]],
+        ["Fake Hacker Terminal", "/fake-hacker.html", "Prank", "Need a harmless movie terminal?", "Cinematic fake hacking simulator for pranks, streams and presentations.", ["Safe", "Cinematic", "Fullscreen"]],
+        ["Meme Watch", "/meme-watch.html", "Trend play", "Want internet trend smoke?", "Rising phrases and internet jokes before mainstream coverage catches up.", ["Trends", "Memes", "Context"]]
+      ],
+      secondary: [
+        ["Random Toolkit Pro", "/random-tools.html", "Dice, coin, picker"],
+        ["Gematria Calculator", "/library.html?q=gematria", "Inline mini tool"],
+        ["Zodiac Finder", "/library.html?q=zodiac", "Inline mini tool"],
+        ["Magic 8-Ball", "/library.html?q=magic", "Inline mini tool"]
+      ]
+    },
+    indie: {
+      eyebrow: "Indie Developers",
+      title: "Founder lane is queued.",
+      intro: "This lane is intentionally empty until we build real founder tools. It should show direction without pretending there is a finished product.",
+      stats: [["0", "live tools"], ["5", "queued ideas"], ["1", "future lane"]],
+      primary: [
+        ["Launch Checklist", "/library.html?filter=indie", "Coming soon", "What must ship before launch?", "Positioning, analytics, SEO, QA, pricing and launch tasks.", ["Planned", "Founder ops", "Checklist"]],
+        ["Pricing Sanity Check", "/library.html?filter=indie", "Coming soon", "Is this offer priced clearly?", "Simple pricing review for indie products and tools.", ["Planned", "Pricing", "Offer"]],
+        ["Landing Page Teardown", "/library.html?filter=indie", "Coming soon", "Does the page explain the product fast?", "A structured teardown for hero, proof, CTA and friction.", ["Planned", "UX", "Copy"]],
+        ["Status Page Starter", "/library.html?filter=indie", "Coming soon", "Can users tell if your app is healthy?", "Lightweight public status and incident notes for indie products.", ["Planned", "Ops", "Trust"]]
+      ],
+      secondary: [
+        ["Full Library", "/library.html", "Use existing tools"],
+        ["Command Center", "/signal-suite.html", "Borrow signal patterns"],
+        ["Work Tools", "/library.html?filter=work", "Production helpers"]
+      ]
+    }
+  };
+
+  function renderLaneChooser() {
+    const libraryHead = document.querySelector(".library-head");
+    const search = document.querySelector(".library-search");
+    if (!libraryHead || document.getElementById("ntLaneChooser")) return;
+    const anchor = search || libraryHead.nextElementSibling;
+    const section = document.createElement("section");
+    section.id = "ntLaneChooser";
+    section.className = "nt-lane-chooser";
+    section.hidden = true;
+    libraryHead.parentNode.insertBefore(section, anchor);
+  }
+
+  function updateLaneChooser(filter) {
+    const section = document.getElementById("ntLaneChooser");
+    const guide = LANE_GUIDES[filter];
+    if (!section || !guide) return;
+    const primary = guide.primary || [];
+    const secondary = guide.secondary || [];
+    section.innerHTML = `
+      <div class="nt-lane-shell">
+        <div class="nt-lane-hero">
+          <div>
+            <div class="nt-library-eyebrow">${esc(guide.eyebrow)}</div>
+            <h2>${esc(guide.title)}</h2>
+            <p>${esc(guide.intro)}</p>
+          </div>
+          <div class="nt-lane-stats" aria-label="${esc(guide.eyebrow)} summary">
+            ${(guide.stats || []).map(([value, label]) => `<span><b>${esc(value)}</b>${esc(label)}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="nt-lane-router" aria-label="${esc(guide.eyebrow)} routes">
+          ${primary.map((tool, index) => {
+            const [name, url, badge, question, desc, scope = []] = tool;
+            return `
+              <a class="nt-lane-card ${index === 0 ? "is-primary" : ""} ${filter === "indie" ? "is-planned" : ""}" href="${esc(url)}">
+                <span class="nt-lane-card-top">
+                  <b>${String(index + 1).padStart(2, "0")}</b>
+                  <em>${esc(badge)}</em>
+                </span>
+                <strong>${esc(name)}</strong>
+                <span class="nt-lane-question">${esc(question)}</span>
+                <small>${esc(desc)}</small>
+                <span class="nt-lane-scope">
+                  ${scope.map(item => `<i>${esc(item)}</i>`).join("")}
+                </span>
+                <span class="nt-lane-open">${filter === "indie" ? "View lane" : "Open tool"} -&gt;</span>
+              </a>
+            `;
+          }).join("")}
+        </div>
+
+        <div class="nt-lane-bottom">
+          <details class="nt-lane-secondary">
+            <summary>More in this lane <span>${secondary.length} links</span></summary>
+            <div class="nt-lane-secondary-grid">
+              ${secondary.map(([name, url, label]) => `
+                <a class="nt-lane-secondary-link" href="${esc(url)}">
+                  <strong>${esc(name)}</strong>
+                  <small>${esc(label)}</small>
+                </a>
+              `).join("")}
+            </div>
+          </details>
+          <a class="nt-lane-all" href="/library.html">Open full library</a>
+        </div>
+      </div>
+    `;
   }
 
 
@@ -548,8 +742,9 @@
       if (!mission) return;
       event.preventDefault();
       activateFilter(mission.dataset.ntMissionFilter || "all");
-      const grid = document.getElementById("grid");
-      if (grid) grid.scrollIntoView({ behavior: "smooth", block: "start" });
+      const visibleLane = Array.from(document.querySelectorAll("#ntMarketLane, #ntLaneChooser, #grid"))
+        .find(item => item && item.hidden !== true && getComputedStyle(item).display !== "none");
+      if (visibleLane) visibleLane.scrollIntoView({ behavior: "smooth", block: "start" });
       if (window.ntTrack) {
         window.ntTrack("library_lane_select", {
           lane: mission.dataset.ntMissionFilter || "all",
@@ -594,6 +789,7 @@
     normalizeCatalogueLanes();
     wrapExistingFilter();
     renderOrientation();
+    renderLaneChooser();
     renderMarketLane();
     renderIndieLane();
     enhanceFilters();
