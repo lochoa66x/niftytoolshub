@@ -274,7 +274,7 @@
 
       <div class="panel">
         <h2>World vs local</h2>
-        <p class="note">World radar watches broad public signals: space weather, major earthquakes, internet infrastructure, market stress and global attention spikes.</p>
+        <p class="note">World radar watches broad public signals: space weather, major earthquakes, internet infrastructure, market activity and global attention spikes.</p>
         <p class="note">Local radar focuses on the selected place: nearby quakes, air/smoke, weather alerts, connectivity checks, local news pressure and travel friction.</p>
       </div>
     </section>
@@ -564,10 +564,10 @@
       const btc=Math.abs(data.bitcoin.usd_24h_change||0), eth=Math.abs(data.ethereum.usd_24h_change||0);
       const peg=Math.max(Math.abs((data.tether.usd||1)-1),Math.abs((data['usd-coin'].usd||1)-1));
       const score=clamp(10+Math.max(btc,eth)*7+peg*2500);
-      return {id:'market',title:'Market Stress',scope:'world',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
-        why:score>=45?'Crypto volatility or stablecoin peg movement is elevated. This is market-stress context, not financial advice.':'Crypto and stablecoin stress context is relatively calm.',
+      return {id:'market',title:'Market Activity',scope:'world',score,status:level(score),confidence:'medium',ok:true,updated:new Date().toISOString(),source,
+        why:score>=45?'Crypto volatility or stablecoin peg movement is elevated. This is market-activity context, not financial advice.':'Crypto and stablecoin stress context is relatively calm.',
         metrics:{'BTC 24h move':fmt(data.bitcoin.usd_24h_change,2)+'%','ETH 24h move':fmt(data.ethereum.usd_24h_change,2)+'%','stablecoin drift':fmt(peg*100,2)+'%'}};
-    }catch(err){return unavailable('market','Market Stress','world',source,err);}
+    }catch(err){return unavailable('market','Market Activity','world',source,err);}
   }
   async function loadAir(){
     const source='Open-Meteo Air Quality API';
@@ -706,7 +706,7 @@
   }
   function seedLoading(){
     latestSignals=[
-      ['space','Space Weather','world'],['quakeWorld','Global Earthquake Cluster','world'],['internet','Major Platform Outage Pulse','world'],['conflict','Conflict Spillover Pulse','world'],['news','News Panic Meter','world'],['market','Market Stress','world'],
+      ['space','Space Weather','world'],['quakeWorld','Global Earthquake Cluster','world'],['internet','Major Platform Outage Pulse','world'],['conflict','Conflict Spillover Pulse','world'],['news','News Panic Meter','world'],['market','Market Activity','world'],
       ['alerts','Official Alerts','local'],['quakeLocal','Nearby Earthquakes','local'],['air','Wildfire / Air Quality','local'],['weather','Local Weather Friction','local'],
       ['internetLocal','Local Internet Health','local'],['newsLocal','Local News Spike','local'],['travel','Airport / Travel Friction','local']
     ].map(([id,title,scope])=>({id,title,scope,score:null,status:'loading',confidence:'--',ok:false,loading:true,updated:null,source:'syncing',why:'Checking source...',metrics:{}}));
@@ -973,7 +973,7 @@
       {id:'internet',title:'Major Platform Outage Pulse',scope:'world',score:68,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: multiple major public status pages show active incidents or degraded components.',metrics:{'providers checked':'8/8','active incidents':2,'degraded components':4}},
       {id:'conflict',title:'Conflict Spillover Pulse',scope:'world',score:63,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: conflict-related public coverage is elevated across several regions. This is civilian context, not tactical tracking.',metrics:{'truth layer':'context / public news','24h articles':44,'coverage ratio':'2.6x','active regions':'Middle East, Eastern Europe'}},
       {id:'news',title:'News Panic Meter',scope:'world',score:57,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: public information-seeking jumped for emergency-related pages.',metrics:{'top page':'State of emergency','top ratio':'3.2x'}},
-      {id:'market',title:'Market Stress',scope:'world',score:43,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: crypto volatility is elevated but stablecoins are holding.',metrics:{'BTC 24h move':'-5.7%'}},
+      {id:'market',title:'Market Activity',scope:'world',score:43,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: crypto volatility is elevated but stablecoins are holding.',metrics:{'BTC 24h move':'-5.7%'}},
       {id:'alerts',title:'Official Alerts',scope:'local',score:78,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: severe official alert active near the selected location.',metrics:{'active alerts':2,'top severity':'Severe','headline':'Severe thunderstorm warning'}},
       {id:'quakeLocal',title:'Nearby Earthquakes',scope:'local',score:38,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: minor nearby quake cluster within 500 km.',metrics:{'nearby count':4,'nearby max':'3.4'}},
       {id:'air',title:'Wildfire / Air Quality',scope:'local',score:72,confidence:'demo',ok:true,updated:new Date().toISOString(),source:'demo',why:'Demo: AQI is unhealthy, consistent with smoke or heavy pollution.',metrics:{'US AQI':162,'PM2.5':'67.4 ug/m3'}},

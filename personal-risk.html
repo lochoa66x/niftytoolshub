@@ -153,7 +153,7 @@ main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-rad
       <div class="hero-copy">
         <p class="eyebrow">Daily command brief</p>
         <h1>Personal <span>Risk Briefing</span></h1>
-        <p class="lead">// One personal read for your place: weather, air, nearby quakes, internet outages, food recalls, market stress, cyber pressure and conflict/news context. It outputs a practical action queue, not panic noise.</p>
+        <p class="lead">// One personal read for your place: weather, air, nearby quakes, internet outages, food recalls, market activity, cyber pressure and conflict/news context. It outputs a practical action queue, not panic noise.</p>
         <div class="actions">
           <button class="btn" id="scanBtn" type="button">Run briefing</button>
           <button class="btn ghost" id="copyBtn" type="button">Copy brief</button>
@@ -358,8 +358,8 @@ main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-rad
       const active=Array.isArray(rows)?rows.slice(0,20):[];
       const hot=active.filter(r=>Number(r.volumeRank||r.score||r.changeAbs||0)>70 || Math.abs(Number(r.changePct||r.change||0))>2.5).length;
       const score=clamp(16+hot*7+Math.min(22,active.length));
-      return {id:"market",title:"Market Stress",score,source:"context",ok:true,summary:hot?"Market activity is elevated in the watched basket. Treat as attention/liquidity context.":"Market context is not showing a strong stress flag.",detail:"Nifty market volume endpoint",metrics:["rows: "+active.length,"hot rows: "+hot,"source: delayed/context"]};
-    }catch(err){return fallback("market","Market Stress","context",err,18);}
+      return {id:"market",title:"Market Activity",score,source:"context",ok:true,summary:hot?"Market activity is elevated in the watched basket. Treat as attention/liquidity context.":"Market context is not showing a strong stress flag.",detail:"Nifty market volume endpoint",metrics:["rows: "+active.length,"hot rows: "+hot,"source: delayed/context"]};
+    }catch(err){return fallback("market","Market Activity","context",err,18);}
   }
   async function loadCyber(){
     try{
@@ -438,7 +438,7 @@ main{padding:24px 0 38px}.shell{border:1px solid rgba(70,224,122,.24);border-rad
     if(by("air").score>=58)items.push(["Air quality","Close windows, reduce outdoor exertion and stage masks/filter if available.","air"]);
     if(by("outage").score>=45)items.push(["Internet","Save key phone numbers and maps offline before connectivity worsens.","outage"]);
     if(by("food").score>=45)items.push(["Food recalls","Check recent recall notices against fridge/pantry items.","food"]);
-    if(by("market").score>=58)items.push(["Market context","Avoid reactive financial decisions. Treat market stress as context only.","market"]);
+    if(by("market").score>=58)items.push(["Market context","Avoid reactive financial decisions. Treat market activity as context only.","market"]);
     if(by("cyber").score>=45)items.push(["Cyber hygiene","Update critical devices and avoid suspicious links during high-alert cycles.","cyber"]);
     if(by("conflict").score>=58)items.push(["News hygiene","Use verified sources and avoid resharing unconfirmed conflict claims.","context"]);
     if(p.mode==="travel")items.push(["Travel mode","Save hotel, airport, route and emergency contacts offline.","travel"]);

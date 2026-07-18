@@ -3,10 +3,10 @@
   if(window.__niftyGlobalNav)return;
   window.__niftyGlobalNav=true;
   const NAV=[
-    ["command","Signal Suite","/signal-suite.html"],
+    ["command","Command Center","/signal-suite.html"],
     ["prepper","Prepper","/prepper-command.html"],
     ["markets","Market Tools","/library.html?filter=market"],
-    ["work","Work Tools","/library.html?filter=utility"],
+    ["work","Work Tools","/library.html?filter=work"],
     ["fun","Fun Lab","/library.html?filter=fun"],
     ["library","Library","/library.html"]
   ];
@@ -20,7 +20,7 @@
   const FALLBACK=[
     ["signal-suite","Signal Suite Hub","/signal-suite.html","command","All flagship radar tools in one public signal shelf."],
     ["personal-risk","Personal Risk Briefing","/personal-risk.html","command","Local risk across weather, air, outages, food, markets and cyber."],
-    ["signal-watch","Early Warning Radar","/signal-watch.html","command","Space weather, quakes, outages, conflict, news and market stress."],
+    ["signal-watch","Early Warning Radar","/signal-watch.html","command","Space weather, quakes, outages, conflict, news and market activity."],
     ["outage-radar","Outage Radar","/outage-radar.html","command","App, cloud, carrier and internet-core status signals."],
     ["cyber-threat","Cyber Threat Radar","/cyber-threat.html","command","Public cyber signals and threat map."],
     ["aurora-watch","Aurora Watch","/aurora-watch.html","command","Northern lights visibility context."],
@@ -36,7 +36,7 @@
     ["astrology-tools","Birth Chart / Zodiac Toolkit","/astrology-tools.html","fun","Zodiac, numerology and compatibility."],
     ["library","Full Tool Library","/library.html","library","Browse every tool by category."]
   ].map(([slug,name,url,hub,description])=>({slug,name,url,hub,hubs:[hub],category:hub,description,tags:[]}));
-  const HUB={signals:"Signal Suite",command:"Signal Suite",prepper:"Prepper",markets:"Market Tools",work:"Work Tools",utilities:"Work Tools",fun:"Fun Lab",library:"Library"};
+  const HUB={signals:"Command Center",command:"Command Center",prepper:"Preparedness",markets:"Market Tools",work:"Work Tools",utilities:"Everyday Utilities",fun:"Fun Lab",indie:"Indie Developers",library:"Library"};
   let selected=0,lastFocus=null;
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
   function active(){
@@ -45,7 +45,9 @@
     if(path==="/library.html"){
       if(["market","markets","crypto","finance"].includes(filter))return"markets";
       if(["fun","play","zodiac","tarot"].includes(filter))return"fun";
-      if(["utility","utilities","convert","developer","image","pdf","text","work"].includes(filter))return"work";
+      if(["work","developer","image","pdf","text","file","receipt","qr"].includes(filter))return"work";
+      if(["utility","utilities","convert","time","screen","calculator","device"].includes(filter))return"library";
+      if(["indie","founder","startup","launch"].includes(filter))return"library";
       return"library";
     }
     return PAGE[path]||"library";
@@ -69,7 +71,7 @@
     return tools().map(t=>({t,s:score(t,q)})).filter(x=>x.s>0).filter(x=>{
       if(!hub)return true;
       const hubs=(Array.isArray(x.t.hubs)&&x.t.hubs.length?x.t.hubs:[x.t.hub]).map(h=>h==="signals"?"command":h);
-      return hubs.includes(hub)||(hub==="work"&&hubs.includes("utilities"));
+      return hubs.includes(hub);
     }).sort((a,b)=>b.s-a.s||a.t.name.localeCompare(b.t.name)).slice(0,9).map(x=>x.t);
   }
   function render(){

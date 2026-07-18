@@ -9,39 +9,40 @@
     context: "Context",
     beta: "Beta",
     backup: "Backup",
-    sample: "Sample"
+    sample: "Sample",
+    coming: "Coming soon"
   };
 
   const HUBS = [
     {
       id: "signals",
-      name: "Signal Suite",
+      name: "Command Center",
       url: "/signal-suite.html",
-      label: "Flagship",
-      description: "The public signal shelf: early warning, internet weather, cyber, food, aurora, meme, crypto and market radars.",
-      icon: "SIG"
+      label: "Signal Suite",
+      description: "The flagship public signal shelf: early warning, internet weather, cyber, food, aurora, meme and risk briefings.",
+      icon: "CMD"
     },
     {
       id: "prepper",
-      name: "Prepper + Local Risk",
+      name: "Preparedness",
       url: "/prepper-command.html",
-      label: "Flagship",
-      description: "Calm readiness planning, daily risk checks, supplies, go-bags, power and family plans.",
+      label: "Local Risk",
+      description: "Calm readiness planning, local risk checks, supplies, go-bags, power and family plans.",
       icon: "PREP"
     },
     {
       id: "markets",
       name: "Market Tools",
       url: "/library.html?filter=market",
-      label: "Market lane",
-      description: "Core market screens: Crypto Pulse, Stock Volume Pulse and Shorts vs Longs. Finance calculators stay secondary.",
+      label: "Market Pulse",
+      description: "Core market screens: Crypto Pulse, Market Volume Pulse and Market Positioning Radar. Finance calculators stay secondary.",
       icon: "MKT"
     },
     {
       id: "work",
       name: "Work Tools",
-      url: "/library.html?filter=utility",
-      label: "Utility",
+      url: "/library.html?filter=work",
+      label: "Production",
       description: "PDFs, images, receipts, QR, developer helpers, writing tools and file organization.",
       icon: "WORK"
     },
@@ -50,7 +51,7 @@
       name: "Everyday Utilities",
       url: "/library.html?filter=utility",
       label: "Local-first",
-      description: "Converters, clocks, device tests, math, percentages, loans and practical small tools.",
+      description: "Converters, clocks, calculators, device tests and practical small tools.",
       icon: "UTIL"
     },
     {
@@ -60,6 +61,14 @@
       label: "Play",
       description: "Tarot, zodiac, randomizers, fake hacker terminal and low-stakes weird internet toys.",
       icon: "FUN"
+    },
+    {
+      id: "indie",
+      name: "Indie Developers",
+      url: "/library.html?filter=indie",
+      label: "Coming soon",
+      description: "Launch checklists, pricing calculators, changelog helpers, waitlist copy and small founder utilities.",
+      icon: "INDIE"
     }
   ];
 
