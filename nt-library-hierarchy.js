@@ -320,15 +320,19 @@
   };
 
   function syncCount() {
-    const box = document.getElementById("ntLibraryCount");
-    if (!box) return;
-    const total = cards().length;
-    const visible = visibleCount();
     const filter = activeFilter();
-    const label = FILTER_LABELS[filter] || `${filter} lane`;
-    box.textContent = `${visible}/${total} showing · ${label}`;
+    document.body.classList.toggle("nt-market-library-mode", filter === "market");
+
+    const box = document.getElementById("ntLibraryCount");
+    if (box) {
+      const total = cards().length;
+      const visible = visibleCount();
+      const label = FILTER_LABELS[filter] || `${filter} lane`;
+      box.textContent = `${visible}/${total} showing · ${label}`;
+    }
+
     const marketLane = document.getElementById("ntMarketLane");
-    if (marketLane) marketLane.hidden = !(filter === "all" || filter === "market");
+    if (marketLane) marketLane.hidden = filter !== "market";
     const indieLane = document.getElementById("ntIndieLane");
     if (indieLane) indieLane.hidden = filter !== "indie";
     setActiveMission();
@@ -374,42 +378,90 @@
     const search = document.querySelector(".library-search");
     if (!libraryHead || document.getElementById("ntMarketLane")) return;
     const anchor = search || libraryHead.nextElementSibling;
-    const core = MARKET_TOOLS.filter(tool => tool.core);
+    const byTitle = new Map(MARKET_TOOLS.map(tool => [tool.title, tool]));
+    const routes = [
+      {
+        title: "Market Positioning Radar",
+        display: "Long/Short Positioning",
+        number: "01",
+        question: "Who is crowded long or short?",
+        decision: "Use this before reading market direction. It shows squeeze and unwind risk across ETFs, crypto and commodities.",
+        scope: ["SPY / QQQ", "BTC / ETH", "Gold, silver, oil, coffee"],
+        cta: "Open positioning"
+      },
+      {
+        title: "Market Volume Pulse",
+        display: "Market Volume Pulse",
+        number: "02",
+        question: "What is getting unusual attention?",
+        decision: "Use this for current tape pressure, high-volume stocks, ETF participation and unusual trading activity.",
+        scope: ["Most traded stocks", "ETF activity", "Attention spikes"],
+        cta: "Open volume"
+      },
+      {
+        title: "Crypto Pulse",
+        display: "Crypto Network Pulse",
+        number: "03",
+        question: "Are BTC or ETH rails stressed?",
+        decision: "Use this before moving crypto. It focuses on fees, gas, mempool pressure and public network activity.",
+        scope: ["BTC fees", "ETH gas", "Network congestion"],
+        cta: "Open crypto"
+      }
+    ].map(route => ({ ...(byTitle.get(route.title) || {}), ...route })).filter(tool => tool.url);
     const helpers = MARKET_TOOLS.filter(tool => !tool.core);
     const section = document.createElement("section");
     section.id = "ntMarketLane";
     section.className = "nt-market-lane";
+    section.hidden = true;
     section.innerHTML = `
-      <div class="nt-market-lane-head">
-        <div>
-          <div class="nt-library-eyebrow">Market Tools lane</div>
-          <h2>Crypto, stocks and shorts vs longs.</h2>
-          <p>Open the exact market screen first. Finance calculators stay available as helpers, not as the main market product.</p>
+      <div class="nt-market-shell">
+        <div class="nt-market-hero">
+          <div>
+            <div class="nt-library-eyebrow">Market Tools</div>
+            <h2>Pick the market question first.</h2>
+            <p>Three market screens, three jobs. Start with the decision you are trying to make, then open the right board.</p>
+          </div>
+          <div class="nt-market-quick-read" aria-label="Market tools summary">
+            <span><b>3</b> core boards</span>
+            <span><b>6+</b> markets covered</span>
+            <span><b>0</b> source health clutter</span>
+          </div>
         </div>
-        <a class="nt-market-all" href="/library.html?filter=market">All market tools</a>
-      </div>
-      <div class="nt-market-core">
-        ${core.map(tool => `
-          <a class="nt-market-card is-core" href="${esc(tool.url)}">
-            <span>${esc(tool.badge)}</span>
-            <strong>${esc(tool.title)}</strong>
-            <small>${esc(tool.desc)}</small>
-            <b>Open tool -&gt;</b>
-          </a>
-        `).join("")}
-      </div>
-      <details class="nt-market-secondary">
-        <summary>Finance helpers <span>${helpers.length} tools</span></summary>
-        <div class="nt-market-helper-grid">
-          ${helpers.map(tool => `
-            <a class="nt-market-card" href="${esc(tool.url)}">
-              <span>${esc(tool.badge)}</span>
-              <strong>${esc(tool.title)}</strong>
-              <small>${esc(tool.desc)}</small>
+
+        <div class="nt-market-router" aria-label="Choose a market tool">
+          ${routes.map(tool => `
+            <a class="nt-market-card ${tool.number === "01" ? "is-primary" : ""}" href="${esc(tool.url)}">
+              <span class="nt-market-card-top">
+                <b>${esc(tool.number)}</b>
+                <em>${esc(tool.badge || "Market tool")}</em>
+              </span>
+              <strong>${esc(tool.display)}</strong>
+              <span class="nt-market-question">${esc(tool.question)}</span>
+              <small>${esc(tool.decision)}</small>
+              <span class="nt-market-scope">
+                ${tool.scope.map(item => `<i>${esc(item)}</i>`).join("")}
+              </span>
+              <span class="nt-market-open">${esc(tool.cta)} -&gt;</span>
             </a>
           `).join("")}
         </div>
-      </details>
+
+        <div class="nt-market-bottom">
+          <details class="nt-market-secondary">
+            <summary>Finance helpers <span>${helpers.length} calculators</span></summary>
+            <div class="nt-market-helper-grid">
+              ${helpers.map(tool => `
+                <a class="nt-market-helper" href="${esc(tool.url)}">
+                  <span>${esc(tool.badge)}</span>
+                  <strong>${esc(tool.title)}</strong>
+                  <small>${esc(tool.desc)}</small>
+                </a>
+              `).join("")}
+            </div>
+          </details>
+          <a class="nt-market-all" href="/library.html">Open full library</a>
+        </div>
+      </div>
     `;
     libraryHead.parentNode.insertBefore(section, anchor);
   }
