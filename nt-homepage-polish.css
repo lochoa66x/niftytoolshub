@@ -332,3 +332,197 @@ body {
     transform: none;
   }
 }
+
+
+/* Homepage IA simplification pass */
+.nt-journeys:not(.nt-journey-compact) {
+  display: none !important;
+}
+
+.hero {
+  margin-top: 28px;
+}
+
+.hero .sub {
+  max-width: 650px;
+}
+
+.feature-grid .feature:nth-child(n+7) {
+  display: none;
+}
+
+.nt-library-handoff {
+  margin-top: 30px;
+}
+
+.nt-handoff-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+  gap: 18px;
+  align-items: center;
+  border: 1px solid rgba(70,224,122,.18);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(13,20,13,.92), rgba(4,8,4,.96));
+  padding: 22px;
+}
+
+.nt-handoff-grid h2 {
+  margin: 12px 0 8px;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.nt-handoff-grid p {
+  margin: 0;
+  max-width: 720px;
+  color: var(--mut);
+}
+
+.nt-handoff-links {
+  justify-content: flex-end;
+}
+
+.nt-handoff-links a:first-child {
+  color: var(--grn);
+  border-color: rgba(70,224,122,.45);
+}
+
+@media (max-width: 760px) {
+  .hero {
+    margin-top: 12px;
+  }
+
+  .feature-grid .feature:nth-child(n+5) {
+    display: none;
+  }
+
+  .nt-handoff-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .nt-handoff-links {
+    justify-content: flex-start;
+  }
+
+  .nt-handoff-links a {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+  }
+}
+
+
+/* Homepage hierarchy repair: one primary CTA, no clipped routes */
+.hero-grid > :first-child { min-width: 0; }
+
+.hero h1 {
+  max-width: 760px;
+}
+
+.hero-actions {
+  grid-template-columns: minmax(220px, 1fr) minmax(190px, .74fr) !important;
+  max-width: 620px !important;
+}
+
+.hero-actions .btn,
+.hero-actions .ghost {
+  min-width: 0;
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.hero-route-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 680px;
+  margin-top: 10px;
+}
+
+.hero-route-strip a {
+  min-width: 0;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid rgba(70,224,122,.16);
+  border-radius: 8px;
+  background: rgba(3,8,4,.62);
+  padding: 10px 12px;
+}
+
+.hero-route-strip span {
+  color: var(--grn);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.hero-route-strip b {
+  color: var(--txt);
+  font-size: 12px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.hero-route-strip a:hover,
+.hero-route-strip a:focus-visible {
+  border-color: rgba(70,224,122,.46);
+  color: var(--grn);
+  outline: none;
+}
+
+@media (min-width: 981px) and (max-width: 1260px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, .72fr) !important;
+    gap: 22px !important;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 4.6vw, 64px);
+  }
+
+  .hero-actions,
+  .hero-route-strip,
+  .hero-proof {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero-route-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-secondary,
+  .hero-proof {
+    display: none !important;
+  }
+}
+
+
+/* Hero no-clip emergency guard */
+.hero-grid > :first-child { min-width: 0 !important; }
+.hero-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  max-width: 620px !important;
+}
+.hero-actions .btn,
+.hero-actions .ghost {
+  flex: 1 1 220px !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+}
+@media (min-width: 981px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, .92fr) minmax(360px, .84fr) !important;
+  }
+}

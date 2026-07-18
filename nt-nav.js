@@ -3,7 +3,7 @@
   if(window.__niftyGlobalNav)return;
   window.__niftyGlobalNav=true;
   const NAV=[
-    ["command","Command Center","/signal-suite.html"],
+    ["command","Command Centre","/signal-suite.html"],
     ["prepper","Prepper","/prepper-command.html"],
     ["markets","Market Tools","/library.html?filter=market"],
     ["work","Work Tools","/library.html?filter=work"],
@@ -24,7 +24,7 @@
     ["outage-radar","Outage Radar","/outage-radar.html","command","App, cloud, carrier and internet-core status signals."],
     ["cyber-threat","Cyber Threat Radar","/cyber-threat.html","command","Public cyber signals and threat map."],
     ["aurora-watch","Aurora Watch","/aurora-watch.html","command","Northern lights visibility context."],
-    ["prepper-command","Prepper Command Center","/prepper-command.html","prepper","Water, food, power, go-bag and family readiness."],
+    ["prepper-command","Prepper Command Centre","/prepper-command.html","prepper","Water, food, power, go-bag and family readiness."],
     ["prepper-tools","Prepper Toolkit Pro","/prepper-tools.html","prepper","Checklists and readiness helpers."],
     ["crypto-pulse","Crypto Pulse","/crypto-pulse.html","markets","BTC and ETH activity, fees and market context."],
     ["market-volume-pulse","Stock Volume Pulse","/market-volume-pulse.html","markets","Stocks, ETFs, most-traded names and volume leaders."],
@@ -36,7 +36,7 @@
     ["astrology-tools","Birth Chart / Zodiac Toolkit","/astrology-tools.html","fun","Zodiac, numerology and compatibility."],
     ["library","Full Tool Library","/library.html","library","Browse every tool by category."]
   ].map(([slug,name,url,hub,description])=>({slug,name,url,hub,hubs:[hub],category:hub,description,tags:[]}));
-  const HUB={signals:"Command Center",command:"Command Center",prepper:"Preparedness",markets:"Market Tools",work:"Work Tools",utilities:"Everyday Utilities",fun:"Fun Lab",indie:"Indie Developers",library:"Library"};
+  const HUB={signals:"Command Centre",command:"Command Centre",prepper:"Preparedness",markets:"Market Tools",work:"Work Tools",utilities:"Everyday Utilities",fun:"Fun Lab",indie:"Indie Developers",library:"Library"};
   let selected=0,lastFocus=null;
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
   function active(){
