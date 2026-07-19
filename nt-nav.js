@@ -27,7 +27,7 @@
     ["prepper-command","Prepper Command Centre","/prepper-command.html","prepper","Water, food, power, go-bag and family readiness."],
     ["prepper-tools","Prepper Toolkit Pro","/prepper-tools.html","prepper","Checklists and readiness helpers."],
     ["crypto-pulse","Crypto Pulse","/crypto-pulse.html","markets","BTC and ETH activity, fees and market context."],
-    ["market-volume-pulse","Stock Volume Pulse","/market-volume-pulse.html","markets","Stocks, ETFs, most-traded names and volume leaders."],
+    ["market-volume-pulse","Stock Volume Pulse","/market-volume-pulse.html","markets","Most-traded stocks, ETF activity, volume leaders and attention spikes."],
     ["positioning-radar","Shorts vs Longs Radar","/positioning-radar.html","markets","Long/short crowding across SPY, QQQ, BTC, ETH, gold, oil and coffee."],
     ["image-tools","Image Toolkit","/image-tools.html","work","Compress, resize and convert images."],
     ["pdf-tools","PDF Toolkit","/pdf-tools.html","work","Merge, extract and optimize PDFs."],
@@ -36,7 +36,7 @@
     ["astrology-tools","Birth Chart / Zodiac Toolkit","/astrology-tools.html","fun","Zodiac, numerology and compatibility."],
     ["library","Full Tool Library","/library.html","library","Browse every tool by category."]
   ].map(([slug,name,url,hub,description])=>({slug,name,url,hub,hubs:[hub],category:hub,description,tags:[]}));
-  const HUB={signals:"Command Centre",command:"Command Centre",prepper:"Preparedness",markets:"Market Tools",work:"Work Tools",utilities:"Everyday Utilities",fun:"Fun Lab",indie:"Indie Developers",library:"Library"};
+  const HUB={signals:"Command Centre",command:"Command Centre",prepper:"Prepper",markets:"Market Tools",work:"Work Tools",utilities:"Everyday Utilities",fun:"Fun Lab",indie:"Indie Developers",library:"Library"};
   let selected=0,lastFocus=null;
   const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]));
   function active(){

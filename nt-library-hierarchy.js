@@ -7,16 +7,16 @@
   const MISSIONS = [
     {
       id: "signal",
-      title: "Command Center",
+      title: "Command Centre",
       filter: "signal",
       label: "Signal Suite",
       description: "Flagship radars, live signals, daily reads and public OSINT-style context."
     },
     {
       id: "prepper",
-      title: "Preparedness",
+      title: "Prepper",
       filter: "prepper",
-      label: "Local Risk",
+      label: "Prepper",
       description: "Household readiness, local risk scanning, checklists and practical plans."
     },
     {
@@ -24,7 +24,7 @@
       title: "Market Tools",
       filter: "market",
       label: "Market Pulse",
-      description: "Crypto Pulse, Market Volume and Market Positioning first. Finance helpers stay secondary."
+      description: "Crypto Pulse, Stock Volume and Shorts vs Longs first. Finance helpers stay secondary."
     },
     {
       id: "work",
@@ -57,11 +57,11 @@
   ];
 
   const STARTERS = [
-    ["Command Center", "/signal-suite.html", "flagship"],
+    ["Command Centre", "/signal-suite.html", "flagship"],
     ["Personal Risk Briefing", "/personal-risk.html", "daily read"],
     ["Crypto Pulse", "/crypto-pulse.html", "crypto network"],
     ["Market Positioning Radar", "/positioning-radar.html", "long vs short"],
-    ["Market Volume Pulse", "/market-volume-pulse.html", "volume"],
+    ["Stock Volume Pulse", "/market-volume-pulse.html", "volume"],
     ["Prepper Command", "/prepper-command.html", "readiness"],
     ["PDF Toolkit", "/pdf-tools.html", "work"]
   ];
@@ -75,14 +75,14 @@
       core: true
     },
     {
-      title: "Market Volume Pulse",
+      title: "Stock Volume Pulse",
       url: "/market-volume-pulse.html",
       badge: "Stocks volume",
       desc: "Most-traded stocks, ETF activity, volume leaders and attention spikes.",
       core: true
     },
     {
-      title: "Market Positioning Radar",
+      title: "Shorts vs Longs Radar",
       url: "/positioning-radar.html",
       badge: "Long vs short",
       desc: "Crowding context for SPY, QQQ, BTC, ETH, gold, silver, oil and coffee.",
@@ -112,11 +112,11 @@
   ];
 
   const PRIORITY_NAMES = new Set([
-    "command center",
+    "command centre",
     "signal suite hub",
     "personal risk briefing",
-    "prepper command center lite",
-    "prepper command center",
+    "prepper command centre lite",
+    "prepper command centre",
     "early warning radar",
     "outage radar",
     "cyber threat radar",
@@ -168,8 +168,8 @@
       "food watch"
     ],
     prepper: [
-      "prepper command center lite",
-      "prepper command center",
+      "prepper command centre lite",
+      "prepper command centre",
       "prepper risk scanner",
       "prepper toolkit pro",
       "personal risk briefing"
@@ -311,8 +311,8 @@
   const FILTER_LABELS = {
     all: "all tools",
     market: "Market Tools lane",
-    signal: "Command Center lane",
-    prepper: "Preparedness lane",
+    signal: "Command Centre lane",
+    prepper: "Prepper lane",
     work: "Work Tools lane",
     utility: "Everyday Utilities lane",
     fun: "Fun Lab lane",
@@ -406,13 +406,13 @@
       ]
     },
     prepper: {
-      eyebrow: "Preparedness",
-      title: "Start with the practical risk.",
+      eyebrow: "Prepper",
+      title: "Start with the prep decision.",
       intro: "Preparedness tools should turn uncertainty into simple actions: water, power, documents, smoke days, travel friction and household checklists.",
       stats: [["4", "core tools"], ["1", "daily brief"], ["0", "panic copy"]],
       primary: [
         ["Personal Risk Briefing", "/personal-risk.html", "Local briefing", "What should I pay attention to today?", "The highest-signal entry point for home, travel and local conditions.", ["Weather", "Air", "Outages"]],
-        ["Prepper Command Center", "/prepper-command.html", "Household plan", "What do I need ready at home?", "Water, food, power, go-bag, family contacts and inventory planning.", ["Water", "Power", "Go-bag"]],
+        ["Prepper Command Centre", "/prepper-command.html", "Household plan", "What do I need ready at home?", "Water, food, power, go-bag, family contacts and inventory planning.", ["Water", "Power", "Go-bag"]],
         ["Prepper Risk Scanner", "/prepper-risk.html", "Local scan", "What changed around my location?", "Local alerts, weather, smoke, quakes, internet and travel friction.", ["Alerts", "Smoke", "Travel"]],
         ["Prepper Toolkit Pro", "/prepper-tools.html", "Build kit", "What should I stage or print?", "Practical household readiness plans, exports and comms cards.", ["Inventory", "Checklist", "Exports"]]
       ],
@@ -490,7 +490,7 @@
       ],
       secondary: [
         ["Full Library", "/library.html", "Use existing tools"],
-        ["Command Center", "/signal-suite.html", "Borrow signal patterns"],
+        ["Command Centre", "/signal-suite.html", "Borrow signal patterns"],
         ["Work Tools", "/library.html?filter=work", "Production helpers"]
       ]
     }
@@ -512,8 +512,9 @@
     const section = document.getElementById("ntLaneChooser");
     const guide = LANE_GUIDES[filter];
     if (!section || !guide) return;
-    const primary = guide.primary || [];
-    const secondary = guide.secondary || [];
+    const primaryAll = guide.primary || [];
+    const primary = primaryAll.slice(0, 3);
+    const secondary = (guide.secondary || []).concat(primaryAll.slice(3).map(item => [item[0], item[1], item[2] || "More"]));
     section.innerHTML = `
       <div class="nt-lane-shell">
         <div class="nt-lane-hero">
@@ -575,8 +576,8 @@
     const byTitle = new Map(MARKET_TOOLS.map(tool => [tool.title, tool]));
     const routes = [
       {
-        title: "Market Positioning Radar",
-        display: "Long/Short Positioning",
+        title: "Shorts vs Longs Radar",
+        display: "Shorts vs Longs Radar",
         number: "01",
         question: "Who is crowded long or short?",
         decision: "Use this before reading market direction. It shows squeeze and unwind risk across ETFs, crypto and commodities.",
@@ -584,8 +585,8 @@
         cta: "Open positioning"
       },
       {
-        title: "Market Volume Pulse",
-        display: "Market Volume Pulse",
+        title: "Stock Volume Pulse",
+        display: "Stock Volume Pulse",
         number: "02",
         question: "What is getting unusual attention?",
         decision: "Use this for current tape pressure, high-volume stocks, ETF participation and unusual trading activity.",

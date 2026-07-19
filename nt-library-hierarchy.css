@@ -1136,3 +1136,86 @@ body.nt-focused-library-mode .nt-market-lane {
     font-size: 24px;
   }
 }
+
+
+/* Navigation + Category Truth Pass */
+.nt-starter-rail {
+  display: none !important;
+}
+
+.nt-library-orient {
+  margin-top: 22px;
+}
+
+.nt-library-orient-head {
+  padding: 18px 22px 14px;
+}
+
+.nt-library-orient-head p {
+  max-width: 620px;
+}
+
+.nt-mission-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px;
+}
+
+.nt-mission-card {
+  min-height: 148px;
+}
+
+.nt-mission-desc {
+  max-width: 38rem;
+}
+
+.nt-lane-router,
+.nt-market-router {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.nt-lane-card,
+.nt-market-card {
+  min-height: 220px;
+}
+
+.nt-lane-card strong,
+.nt-market-card strong {
+  overflow-wrap: anywhere;
+}
+
+.nt-lane-secondary,
+.nt-market-secondary {
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .nt-mission-grid,
+  .nt-lane-router,
+  .nt-market-router {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .nt-library-orient-head {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .nt-mission-grid,
+  .nt-lane-router,
+  .nt-market-router {
+    grid-template-columns: 1fr !important;
+  }
+
+  .nt-mission-card,
+  .nt-lane-card,
+  .nt-market-card {
+    min-height: auto;
+  }
+
+  .nt-library-count {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

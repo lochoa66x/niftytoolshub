@@ -30,3 +30,20 @@ body:not(.nt-admin-page) #sourceLog {
   padding: 0 !important;
   border: 0 !important;
 }
+
+
+/* Category truth pass source-health hardening */
+body:not(.nt-admin-page) .source-log,
+body:not(.nt-admin-page) .source-strip,
+body:not(.nt-admin-page) .source-drawer,
+body:not(.nt-admin-page) .source-row,
+body:not(.nt-admin-page) .truth-strip,
+body:not(.nt-admin-page) .source-note {
+  display: none !important;
+  visibility: hidden !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}

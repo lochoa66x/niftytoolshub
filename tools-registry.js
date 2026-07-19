@@ -16,7 +16,7 @@
   const HUBS = [
     {
       id: "signals",
-      name: "Command Center",
+      name: "Command Centre",
       url: "/signal-suite.html",
       label: "Signal Suite",
       description: "The flagship public signal shelf: early warning, internet weather, cyber, food, aurora, meme and risk briefings.",
@@ -24,10 +24,10 @@
     },
     {
       id: "prepper",
-      name: "Preparedness",
+      name: "Prepper",
       url: "/prepper-command.html",
-      label: "Local Risk",
-      description: "Calm readiness planning, local risk checks, supplies, go-bags, power and family plans.",
+      label: "Prepper",
+      description: "Household readiness, local risk checks, supplies, go-bags, power and family plans.",
       icon: "PREP"
     },
     {
@@ -35,7 +35,7 @@
       name: "Market Tools",
       url: "/library.html?filter=market",
       label: "Market Pulse",
-      description: "Core market screens: Crypto Pulse, Market Volume Pulse and Market Positioning Radar. Finance calculators stay secondary.",
+      description: "Core market screens: Crypto Pulse, Stock Volume Pulse and Shorts vs Longs Radar. Finance calculators stay secondary.",
       icon: "MKT"
     },
     {
@@ -148,7 +148,7 @@
     },
     {
       slug: "prepper-command",
-      name: "Prepper Command Center",
+      name: "Prepper Command Centre",
       url: "/prepper-command.html",
       hub: "prepper",
       category: "Preparedness",
