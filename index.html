@@ -37,7 +37,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
 <script defer src="/nt-mobile-lite.js"></script>
 <link rel="stylesheet" href="/nt-mobile-phase2.css">
 <script defer src="/nt-mobile-phase2.js"></script>
-<link rel="stylesheet" href="/nt-homepage-polish.css?v=hero-no-clip-20260718">
+<link rel="stylesheet" href="/nt-homepage-polish.css?v=home-hierarchy-20260718">
 </head>
 <body>
 <header>
@@ -62,7 +62,7 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
         <span class="pill">local briefings ready</span>
       </div>
       <h1>Command Centre<br><span class="grad">for weird internet days.</span></h1>
-      <p class="sub">// Signals, prep, outages, markets and practical utilities in one clean starting point.</p>
+      <p class="sub">// One clean starting point for signals, prep, markets and practical tools.</p>
       <div class="actions hero-actions">
         <a class="btn" href="/signal-suite.html">Open Command Centre</a>
         <a class="ghost" href="/personal-risk.html">Run Risk Brief</a>
@@ -101,10 +101,38 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
   </div>
 </section>
 
-<section id="featured" class="wrap">
+  <section class="wrap nt-home-paths" aria-labelledby="homePathsTitle">
+    <div class="nt-home-path-head">
+      <span class="tag">Next best paths</span>
+      <h2 id="homePathsTitle">Start With One Read</h2>
+      <p>Pick the job you need right now. Everything else stays in the library.</p>
+    </div>
+    <div class="nt-home-path-grid">
+      <a class="nt-home-path-card is-primary" href="/personal-risk.html">
+        <span>Daily read</span>
+        <h3>Personal Risk Briefing</h3>
+        <p>One local read across weather, air, outages, food, cyber, conflict and markets.</p>
+        <b>Run brief -></b>
+      </a>
+      <a class="nt-home-path-card" href="/prepper-command.html">
+        <span>Preparedness</span>
+        <h3>Prepper Command</h3>
+        <p>Turn household readiness into water, food, power and go-bag checks.</p>
+        <b>Open prep -></b>
+      </a>
+      <a class="nt-home-path-card" href="/library.html?filter=market">
+        <span>Market pulse</span>
+        <h3>Market Tools</h3>
+        <p>Open volume, positioning and crypto network context without treating delayed data as live tape.</p>
+        <b>Open markets -></b>
+      </a>
+    </div>
+  </section>
+
+  <section id="featured" class="wrap">
   <div class="section-head">
     <h2>Flagship Systems</h2>
-    <p>Start with the systems that explain the day. Smaller utilities stay reachable in the full library.</p>
+      <p>Core signal systems only. Personal routes and prep workflows sit above so this shelf stays clean.</p>
   </div>
   <div class="feature-grid" id="featuredGrid">
     <a class="feature" href="/signal-suite.html">
@@ -211,7 +239,11 @@ body:after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;back
   const labelFor = tool => tool.label || registry.statusLabels[tool.status] || tool.status || "Tool";
 
   if(featuredGrid){
-    featuredGrid.innerHTML = registry.featured(6).map(tool => `
+      const homeFlagshipSlugs = ["signal-suite","signal-watch","outage-radar","cyber-threat","food-watch","aurora-watch"];
+      const allTools = registry.all();
+      const homeFlagshipTools = homeFlagshipSlugs.map(slug => allTools.find(tool => tool.slug === slug)).filter(Boolean);
+      const featuredTools = homeFlagshipTools.length ? homeFlagshipTools : registry.featured(6);
+      featuredGrid.innerHTML = featuredTools.map(tool => `
       <a class="feature" href="${esc(tool.url)}" data-featured-tool="${esc(tool.slug)}">
         <span class="tag">${esc(tool.category || registry.hubLookup[tool.hub]?.name || "Tool")}</span>
         <span class="status">${esc(labelFor(tool))}</span>
